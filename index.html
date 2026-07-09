@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flightlab — Fra første kast til siste putt</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/framer-motion@11.11.17/dist/framer-motion.js"></script>
+<script>window.Motion = window.FramerMotion;</script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          heading: ['"Space Grotesk"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+        },
+        colors: {
+          forest: '#1B4332',
+          paper: '#FAF9F5',
+          signal: '#FF6B35',
+        },
+        borderRadius: {
+          DEFAULT: '9999px',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html, body { background: #000; margin: 0; }
+
+  .liquid-glass {
+    background: rgba(255, 255, 255, 0.01);
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: none;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  .liquid-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: linear-gradient(180deg,
+      rgba(255,255,255,0.45) 0%,
+      rgba(255,255,255,0.15) 20%,
+      rgba(255,255,255,0) 40%,
+      rgba(255,255,255,0) 60%,
+      rgba(255,255,255,0.15) 80%,
+      rgba(255,255,255,0.45) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .liquid-glass-strong {
+    background: rgba(255, 255, 255, 0.01);
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(50px);
+    -webkit-backdrop-filter: blur(50px);
+    border: none;
+    box-shadow: 4px 4px 4px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .liquid-glass-strong::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: linear-gradient(180deg,
+      rgba(255,255,255,0.5) 0%,
+      rgba(255,255,255,0.2) 20%,
+      rgba(255,255,255,0) 40%,
+      rgba(255,255,255,0) 60%,
+      rgba(255,255,255,0.2) 80%,
+      rgba(255,255,255,0.5) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Brand-green tint pass over the placeholder stock footage below — drop this
+     once real Flightlab/disc golf video is available, the FadingVideo
+     component itself needs no changes. */
+  .brand-video-tint {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background: linear-gradient(180deg, rgba(11,31,23,0.6) 0%, rgba(27,67,50,0.35) 55%, rgba(11,31,23,0.65) 100%);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body class="bg-black">
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useEffect, useRef, useState } = React;
+const { motion } = window.Motion;
+
+// ---------- Icons ----------
+function ArrowUpRight({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 17L17 7" />
+      <path d="M7 7h10v10" />
+    </svg>
+  );
+}
+
+function PlayIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <polygon points="6 4 20 12 6 20 6 4" />
+    </svg>
+  );
+}
+
+function TruckIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4ZM6 18.5c-.83 0-1.5-.67-1.5-1.5S5.17 15.5 6 15.5s1.5.67 1.5 1.5S6.83 18.5 6 18.5Zm11.5-9 1.96 2.5H15V9.5h2.5Zm.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5Z" />
+    </svg>
+  );
+}
+
+function StarIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+    </svg>
+  );
+}
+
+function TagIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.41l9 9c.36.36.86.59 1.41.59.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.05-.59-1.42M5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7Z" />
+    </svg>
+  );
+}
+
+function ClockIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function GlobeIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3Z" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// ---------- BlurText ----------
+function BlurText({ text, className }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setVisible(true);
+        });
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const words = text.split(' ');
+
+  return (
+    <p
+      ref={ref}
+      className={className}
+      style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', rowGap: '0.1em' }}
+    >
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          initial={{ filter: 'blur(10px)', opacity: 0, y: 50 }}
+          animate={visible ? {
+            filter: ['blur(10px)', 'blur(5px)', 'blur(0px)'],
+            opacity: [0, 0.5, 1],
+            y: [50, -5, 0],
+          } : {}}
+          transition={{ duration: 0.7, times: [0, 0.5, 1], ease: 'easeOut', delay: (i * 100) / 1000 }}
+          style={{ display: 'inline-block', marginRight: '0.28em' }}
+        >
+          {word}
+        </motion.span>
+      ))}
+    </p>
+  );
+}
+
+// ---------- FadingVideo ----------
+const FADE_MS = 500;
+const FADE_OUT_LEAD = 0.55;
+
+function FadingVideo({ src, className, style }) {
+  const videoRef = useRef(null);
+  const rafRef = useRef(null);
+  const fadingOutRef = useRef(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const fadeTo = (target, duration) => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      const start = parseFloat(video.style.opacity) || 0;
+      const startTime = performance.now();
+      const step = (now) => {
+        const t = Math.min((now - startTime) / duration, 1);
+        video.style.opacity = start + (target - start) * t;
+        if (t < 1) {
+          rafRef.current = requestAnimationFrame(step);
+        }
+      };
+      rafRef.current = requestAnimationFrame(step);
+    };
+
+    const onLoadedData = () => {
+      video.style.opacity = 0;
+      video.play().catch(() => {});
+      fadeTo(1, FADE_MS);
+    };
+
+    const onTimeUpdate = () => {
+      if (!fadingOutRef.current && video.duration - video.currentTime <= FADE_OUT_LEAD && video.duration - video.currentTime > 0) {
+        fadingOutRef.current = true;
+        fadeTo(0, FADE_MS);
+      }
+    };
+
+    const onEnded = () => {
+      video.style.opacity = 0;
+      setTimeout(() => {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+        fadingOutRef.current = false;
+        fadeTo(1, FADE_MS);
+      }, 100);
+    };
+
+    video.addEventListener('loadeddata', onLoadedData);
+    video.addEventListener('timeupdate', onTimeUpdate);
+    video.addEventListener('ended', onEnded);
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      video.removeEventListener('loadeddata', onLoadedData);
+      video.removeEventListener('timeupdate', onTimeUpdate);
+      video.removeEventListener('ended', onEnded);
+    };
+  }, [src]);
+
+  return (
+    <video
+      ref={videoRef}
+      className={className}
+      style={{ opacity: 0, ...style }}
+      autoPlay
+      muted
+      playsInline
+      preload="auto"
+      src={src}
+    />
+  );
+}
+
+// ---------- Navbar ----------
+function Navbar() {
+  const links = ['Hjem', 'Discer', 'Om Oss', 'Fordeler', 'Kontakt'];
+  return (
+    <div className="fixed top-4 left-0 right-0 px-8 lg:px-16 z-50 flex items-center justify-between">
+      <div
+        className="liquid-glass w-12 h-12 rounded-full flex items-center justify-center"
+        style={{ background: 'rgba(27,67,50,0.35)' }}
+      >
+        <span className="font-heading italic text-white text-2xl lowercase">f</span>
+      </div>
+
+      <div className="hidden lg:flex items-center liquid-glass rounded-full px-1.5 py-1.5 gap-1">
+        {links.map((link) => (
+          <a key={link} href="#" className="px-3 py-2 text-sm font-medium text-white/90 font-body">
+            {link}
+          </a>
+        ))}
+        <a
+          href="#interesse"
+          className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap text-paper"
+          style={{ background: '#1B4332' }}
+        >
+          Meld Interesse
+          <ArrowUpRight className="h-4 w-4" />
+        </a>
+      </div>
+
+      <div className="w-12 h-12" />
+    </div>
+  );
+}
+
+// ---------- Hero ----------
+function Hero() {
+  return (
+    <section className="relative w-full h-screen overflow-hidden bg-black">
+      <FadingVideo
+        src="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        className="absolute left-1/2 top-0 -translate-x-1/2 object-cover object-top z-0"
+        style={{ width: '120%', height: '120%' }}
+      />
+      <div className="brand-video-tint" />
+
+      <div className="relative z-10 flex flex-col h-full">
+        <Navbar />
+
+        <div className="flex-1 flex flex-col items-center justify-center pt-24 px-4">
+          <motion.div
+            initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
+            animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
+            className="liquid-glass rounded-full flex items-center pr-3"
+          >
+            <span
+              className="rounded-full px-3 py-1 text-xs font-semibold text-white m-1.5"
+              style={{ background: '#FF6B35' }}
+            >
+              Nytt
+            </span>
+            <span className="text-sm text-white/90 font-body">Flightlab åpner snart i Norge</span>
+          </motion.div>
+
+          <BlurText
+            text="Fra Første Kast Til Siste Putt"
+            className="text-6xl md:text-7xl lg:text-[5.5rem] font-heading italic text-white leading-[0.8] max-w-3xl justify-center tracking-[-2px] mt-6"
+          />
+
+          <motion.p
+            initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
+            animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.8 }}
+            className="mt-4 text-sm md:text-base text-white max-w-2xl text-center font-body font-light leading-tight"
+          >
+            Flightlab er den nye discgolf-butikken for Norge og Norden. Kvalitetsutstyr fra
+            store merker, skarpe priser og rask levering — rett til døra di.
+          </motion.p>
+
+          <motion.div
+            initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
+            animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: 1.1 }}
+            className="flex items-center gap-6 mt-6"
+          >
+            <a
+              href="#interesse"
+              className="liquid-glass-strong rounded-full px-5 py-2.5 text-sm font-medium text-white flex items-center gap-2"
+              style={{ background: 'rgba(27,67,50,0.3)' }}
+            >
+              Meld Interesse
+              <ArrowUpRight className="h-5 w-5" />
+            </a>
+            <a href="#fordeler" className="flex items-center gap-2 text-sm font-medium text-white">
+              Se Sortiment
+              <PlayIcon className="h-4 w-4" />
+            </a>
+          </motion.div>
+
+          <motion.div
+            initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
+            animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: 1.3 }}
+            className="flex items-stretch gap-4 mt-8"
+          >
+            <div className="liquid-glass p-5 w-[220px] rounded-[1.25rem]">
+              <ClockIcon className="h-7 w-7 text-white" />
+              <div className="font-heading italic text-white text-4xl tracking-[-1px] leading-none mt-4">179 kr</div>
+              <div className="text-xs text-white font-body font-light mt-2">Pris Per Disc</div>
+            </div>
+            <div className="liquid-glass p-5 w-[220px] rounded-[1.25rem]">
+              <GlobeIcon className="h-7 w-7 text-white" />
+              <div className="font-heading italic text-white text-4xl tracking-[-1px] leading-none mt-4">1–3 Dager</div>
+              <div className="text-xs text-white font-body font-light mt-2">Levering i Norden</div>
+            </div>
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
+          animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 1.4 }}
+          className="flex flex-col items-center gap-4 pb-8"
+        >
+          <div className="liquid-glass rounded-full px-3.5 py-1 text-xs font-medium text-white">
+            Vi samarbeider med ledende discgolf-merker
+          </div>
+          <div className="flex items-center gap-12 md:gap-16 flex-wrap justify-center px-4">
+            {['Discmania', 'Kastaplast', 'Latitude 64', 'Westside', 'Dynamic Discs'].map((name) => (
+              <span key={name} className="font-heading italic text-white text-2xl md:text-3xl tracking-tight">
+                {name}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ---------- Capabilities ----------
+const CARDS = [
+  {
+    Icon: TruckIcon,
+    tags: ['Norge · Norden', '1–3 Dager', 'Sporbar Frakt', 'Trygg Pakking'],
+    title: 'Rask Levering',
+    body: 'Vi sender raskt fra nordisk lager med sporing hele veien og trygg pakking — uansett om det er én disc eller et helt startsett.',
+  },
+  {
+    Icon: StarIcon,
+    tags: ['Discmania', 'Kastaplast', 'Latitude 64', 'Westside'],
+    title: 'Store Merker',
+    body: 'Vi jobber kun med anerkjente produsenter, slik at du får discer med riktig flight rating og jevn kvalitet fra kast til kast.',
+  },
+  {
+    Icon: TagIcon,
+    tags: ['179 kr Per Disc', 'Ingen Skjulte Kostnader', 'Startsett', 'Nordisk Pris'],
+    title: 'Skarpe Priser',
+    body: '179 kr per disc, uten overraskelser i kassen. Vi kutter mellomledd for å underkutte svenske og norske konkurrenter.',
+  },
+];
+
+function Capabilities() {
+  return (
+    <section id="fordeler" className="relative w-full min-h-screen overflow-hidden bg-black">
+      <FadingVideo
+        src="https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        className="absolute inset-0 w-full h-full object-cover z-0"
+      />
+      <div className="brand-video-tint" />
+
+      <div className="relative z-10 px-8 md:px-16 lg:px-20 pt-24 pb-10 flex flex-col min-h-screen">
+        <div className="mb-auto">
+          <div className="text-sm font-body text-white/80 mb-6">// Fordeler</div>
+          <h2 className="font-heading italic text-white text-6xl md:text-7xl lg:text-[6rem] leading-[0.9] tracking-[-2px]">
+            Utstyr som
+            <br />
+            flyr
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+          {CARDS.map(({ Icon, tags, title, body }) => (
+            <div key={title} className="liquid-glass rounded-[1.25rem] p-6 min-h-[360px] flex flex-col">
+              <div className="flex items-start justify-between gap-4">
+                <div
+                  className="liquid-glass w-11 h-11 rounded-[0.75rem] flex items-center justify-center shrink-0"
+                  style={{ background: 'rgba(27,67,50,0.4)' }}
+                >
+                  <Icon className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex flex-wrap justify-end gap-1.5 max-w-[70%]">
+                  {tags.map((tag) => (
+                    <span key={tag} className="liquid-glass rounded-full px-3 py-1 text-[11px] text-white/90 font-body whitespace-nowrap">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex-1" />
+
+              <div className="mt-6">
+                <h3 className="font-heading italic text-white text-3xl md:text-4xl tracking-[-1px] leading-none">
+                  {title}
+                </h3>
+                <p className="mt-3 text-sm text-white/90 font-body font-light leading-snug max-w-[32ch]">
+                  {body}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------- App ----------
+function App() {
+  return (
+    <div>
+      <Hero />
+      <Capabilities />
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
