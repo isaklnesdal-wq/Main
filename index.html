@@ -225,7 +225,13 @@ function BlurText({ text, className }) {
 
 // ---------- Navbar ----------
 function Navbar() {
-  const links = ['Hjem', 'Discer', 'Om Oss', 'Fordeler', 'Kontakt'];
+  const links = [
+    { label: 'Hjem', href: '#' },
+    { label: 'Discer', href: '#discer' },
+    { label: 'Om Oss', href: '#fordeler' },
+    { label: 'Fordeler', href: '#fordeler' },
+    { label: 'Kontakt', href: '#interesse' },
+  ];
   return (
     <div className="fixed top-4 left-0 right-0 px-8 lg:px-16 z-50 flex items-center justify-between">
       <div
@@ -236,9 +242,9 @@ function Navbar() {
       </div>
 
       <div className="hidden lg:flex items-center liquid-glass rounded-full px-1.5 py-1.5 gap-1">
-        {links.map((link) => (
-          <a key={link} href="#" className="px-3 py-2 text-sm font-medium text-white/90 font-body">
-            {link}
+        {links.map(({ label, href }) => (
+          <a key={label} href={href} className="px-3 py-2 text-sm font-medium text-white/90 font-body">
+            {label}
           </a>
         ))}
         <a
@@ -364,6 +370,56 @@ function Hero() {
   );
 }
 
+// ---------- Products ----------
+const PRODUCTS = [
+  {
+    image: 'https://images.pexels.com/photos/11998664/pexels-photo-11998664.jpeg?auto=compress&cs=tinysrgb&w=800',
+    alt: 'Flygende disc i luften',
+    name: 'Driver — Distance Pro',
+    price: '179 kr',
+  },
+  {
+    image: 'https://images.pexels.com/photos/15749077/pexels-photo-15749077.jpeg?auto=compress&cs=tinysrgb&w=800',
+    alt: 'Spiller kaster en disc utendørs',
+    name: 'Midrange — All-Terrain',
+    price: '179 kr',
+  },
+  {
+    image: 'https://images.pexels.com/photos/10398350/pexels-photo-10398350.jpeg?auto=compress&cs=tinysrgb&w=800',
+    alt: 'Person som holder en disc',
+    name: 'Putter — Precision',
+    price: '179 kr',
+  },
+];
+
+function Products() {
+  return (
+    <section id="discer" className="relative w-full bg-black px-8 md:px-16 lg:px-20 py-24">
+      <div className="text-sm font-body text-white/60 mb-6">// Sortiment</div>
+      <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-7xl leading-[0.9] tracking-[-2px] mb-16">
+        Våre Discer
+      </h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {PRODUCTS.map(({ image, alt, name, price }) => (
+          <div key={name} className="liquid-glass rounded-[1.25rem] p-4 flex flex-col">
+            <div className="rounded-[0.9rem] overflow-hidden aspect-[4/3]">
+              <img src={image} alt={alt} className="w-full h-full object-cover" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-between mt-4 px-1">
+              <h3 className="font-heading italic text-white text-xl tracking-[-0.5px]">{name}</h3>
+              <span className="text-white/90 font-body text-sm">{price}</span>
+            </div>
+            <span className="mt-3 mx-1 self-start liquid-glass rounded-full px-3 py-1 text-[11px] text-white/80 font-body">
+              Snart i butikken
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // ---------- Capabilities ----------
 const CARDS = [
   {
@@ -389,13 +445,19 @@ const CARDS = [
 function Capabilities() {
   return (
     <section id="fordeler" className="relative w-full min-h-screen overflow-hidden bg-black">
-      <img
-        src="https://images.pexels.com/photos/158251/pexels-photo-158251.jpeg?auto=compress&cs=tinysrgb&w=1920"
-        alt="Solfylt skog med lange skygger mellom trærne"
+      <video
         className="absolute inset-0 w-full h-full object-cover z-0"
-        loading="lazy"
+        src="https://commons.wikimedia.org/wiki/Special:FilePath/Video_of_trees.webm"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
       />
       <div className="brand-media-tint" />
+      <div className="absolute bottom-2 right-3 z-10 text-[10px] text-white/40 font-body">
+        Video: Wikimedia Commons (CC BY-SA 4.0)
+      </div>
 
       <div className="relative z-10 px-8 md:px-16 lg:px-20 pt-24 pb-10 flex flex-col min-h-screen">
         <div className="mb-auto">
@@ -449,6 +511,7 @@ function App() {
   return (
     <div>
       <Hero />
+      <Products />
       <Capabilities />
     </div>
   );
