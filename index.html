@@ -237,6 +237,78 @@
     66% { transform: rotate(calc(var(--a) + 4deg)); }
     84% { transform: rotate(calc(var(--a) - 2deg)); }
   }
+
+  /* ---- Førstepersons-flytur (POV) ---- */
+  .pov-tree {
+    transform: translate(0, 0) scale(var(--ts0));
+    transform-origin: 50% 100%;
+    opacity: 0.75;
+  }
+  .pov-tree.pass {
+    animation: treePass var(--dur, 1.1s) cubic-bezier(0.3, 0.05, 0.75, 1) both;
+  }
+  @keyframes treePass {
+    0% { transform: translate(0, 0) scale(var(--ts0)); opacity: 0.75; }
+    80% { opacity: 1; }
+    100% { transform: translate(var(--tx1), 34vh) scale(9); opacity: 0; }
+  }
+  .wall-grow {
+    animation: wallGrow 2.6s ease-in forwards;
+  }
+  @keyframes wallGrow {
+    from { transform: scale(1); }
+    to { transform: scale(1.9); }
+  }
+  .basket-anim {
+    animation: basketApproach 2.6s cubic-bezier(0.32, 0.05, 0.65, 1) forwards;
+  }
+  @keyframes basketApproach {
+    from { transform: translate(6vw, -21vh) scale(0.055); }
+    to { transform: translate(0, 0) scale(1); }
+  }
+  .cam-bob {
+    animation: camBob 0.85s ease-in-out 3;
+  }
+  @keyframes camBob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(7px) rotate(0.4deg); }
+  }
+  .cam-shake {
+    animation: camShake 0.55s ease-out 1;
+  }
+  @keyframes camShake {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    20% { transform: translate(-8px, 6px) rotate(-0.7deg); }
+    40% { transform: translate(7px, -5px) rotate(0.5deg); }
+    60% { transform: translate(-4px, 3px) rotate(-0.3deg); }
+    80% { transform: translate(2px, -2px) rotate(0.2deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  .speed-rays {
+    position: absolute;
+    inset: -20%;
+    background: repeating-conic-gradient(from 0deg at 50% 55%, rgba(255,255,255,0.05) 0deg 1deg, transparent 1deg 14deg);
+    -webkit-mask-image: radial-gradient(circle at 50% 55%, transparent 28%, black 72%);
+    mask-image: radial-gradient(circle at 50% 55%, transparent 28%, black 72%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .speed-rays.on {
+    opacity: 1;
+    animation: raysSpin 2.6s linear both;
+  }
+  @keyframes raysSpin {
+    from { transform: rotate(0deg) scale(1); }
+    to { transform: rotate(9deg) scale(1.3); }
+  }
+  .disc-wobble {
+    animation: discWobble 0.55s ease-in-out infinite;
+  }
+  @keyframes discWobble {
+    0%, 100% { transform: rotate(2.5deg); }
+    50% { transform: rotate(-2.5deg); }
+  }
 </style>
 </head>
 <body class="bg-black">
@@ -510,7 +582,21 @@ const INTRO_CAPTIONS = [
   'Flightlab. Fra første kast til siste putt.',
 ];
 
-// ---------- IntroOverlay: disc flyr gjennom naturen og treffer kurven ----------
+// ---------- IntroOverlay: POV — du kaster selv, gjennom skogen, inn i kurven ----------
+// Trær som suser forbi i førsteperson: [startX %, delay, varighet, sluttX, startskala, bredde, høyde]
+const POV_TREES = [
+  { x0: 46, d: 0.05, dur: 1.0, tx: '-75vw', ts0: 0.10, w: 90, h: 150 },
+  { x0: 56, d: 0.2, dur: 1.05, tx: '80vw', ts0: 0.12, w: 100, h: 160 },
+  { x0: 44, d: 0.45, dur: 1.1, tx: '-80vw', ts0: 0.09, w: 85, h: 145 },
+  { x0: 58, d: 0.6, dur: 1.0, tx: '85vw', ts0: 0.11, w: 95, h: 165 },
+  { x0: 47, d: 0.85, dur: 1.05, tx: '-70vw', ts0: 0.10, w: 105, h: 170 },
+  { x0: 55, d: 1.0, dur: 1.1, tx: '75vw', ts0: 0.10, w: 90, h: 150 },
+  { x0: 45, d: 1.25, dur: 1.0, tx: '-85vw', ts0: 0.12, w: 100, h: 160 },
+  { x0: 57, d: 1.4, dur: 1.05, tx: '85vw', ts0: 0.09, w: 85, h: 150 },
+  { x0: 48, d: 1.6, dur: 1.0, tx: '-65vw', ts0: 0.11, w: 95, h: 160 },
+  { x0: 54, d: 1.75, dur: 1.0, tx: '70vw', ts0: 0.10, w: 90, h: 155 },
+];
+
 function IntroOverlay({ onDone }) {
   // Faser: title → flying → impact → landed → ready
   const [phase, setPhase] = useState('title');
@@ -518,27 +604,29 @@ function IntroOverlay({ onDone }) {
   useEffect(() => {
     const timers = [
       setTimeout(() => setPhase('flying'), 1400),
-      setTimeout(() => setPhase('impact'), 3600),
-      setTimeout(() => setPhase('landed'), 4200),
-      setTimeout(() => setPhase('ready'), 5400),
+      setTimeout(() => setPhase('impact'), 4000),
+      setTimeout(() => setPhase('landed'), 4600),
+      setTimeout(() => setPhase('ready'), 5800),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
 
+  const flying = phase === 'flying';
   const hit = phase === 'impact' || phase === 'landed' || phase === 'ready';
+  const started = flying || hit;
   const driver = DISC_TYPES[2];
 
+  // Discen sett fra din hånd: S-kurve fremover mot kurven, krymper med avstanden
   const discAnim =
     phase === 'title'
-      ? { x: 0, y: 0, opacity: 0, scale: 0.8 }
-      : phase === 'flying'
-      ? { x: [0, '38vw', '69vw'], y: [0, '-22vh', '-7vh'], opacity: [0, 1, 1], scale: [0.8, 1, 0.85] }
-      : { x: '69vw', y: '1vh', opacity: 0.85, scale: 0.45 };
+      ? { x: 0, y: 0, scale: 1, opacity: 0 }
+      : flying
+      ? { x: [0, '4vw', '-1vw', '-1vw'], y: [0, '-10vh', '-8vh', '-4vh'], scale: [1, 0.72, 0.52, 0.38], opacity: [0, 1, 1, 1] }
+      : { x: '-1vw', y: '-2vh', scale: 0.26, opacity: 0 };
 
-  const discTransition =
-    phase === 'flying'
-      ? { duration: 2.2, times: [0, 0.58, 1], ease: 'easeOut' }
-      : { duration: 0.35, ease: 'easeIn' };
+  const discTransition = flying
+    ? { duration: 2.6, times: [0, 0.4, 0.75, 1], ease: 'easeOut' }
+    : { duration: 0.3, ease: 'easeIn' };
 
   const chainAngles = [-16, -11, -6, -2, 2, 6, 11, 16];
 
@@ -548,39 +636,73 @@ function IntroOverlay({ onDone }) {
       exit={{ opacity: 0, scale: 1.06, filter: 'blur(10px)' }}
       transition={{ duration: 0.8, ease: 'easeInOut' }}
     >
-      {/* Naturscene */}
-      <div className="intro-sky" />
-      <div className="intro-sun" />
-      {[...Array(9)].map((_, i) => (
-        <span
-          key={'far' + i}
-          className="pine"
-          style={{
-            left: `${i * 12 - 3}%`,
-            width: 70 + (i % 3) * 22,
-            height: 100 + (i % 4) * 26,
-            background: '#08130C',
-            opacity: 0.85,
-          }}
-        />
-      ))}
-      {[...Array(6)].map((_, i) => (
-        <span
-          key={'near' + i}
-          className="pine"
-          style={{
-            left: `${[2, 14, 30, 78, 88, 95][i]}%`,
-            bottom: '9vh',
-            width: 110 + (i % 3) * 30,
-            height: 170 + (i % 3) * 40,
-            background: '#040B07',
-          }}
-        />
-      ))}
-      <div className="intro-ground" />
+      {/* Kamera-laget: bob under flyturen, risting ved treff */}
+      <div className={'absolute inset-0 ' + (flying ? 'cam-bob' : phase === 'impact' ? 'cam-shake' : '')}>
+        <div className="intro-sky" />
+        <div className="intro-sun" style={{ left: '46%', top: '44%' }} />
 
-      {/* Discgolf-kurv */}
-      <div className="absolute" style={{ left: '66%', bottom: '13vh', width: 130, height: 210 }} aria-hidden="true">
+        {/* Fjern skogvegg i horisonten — vokser sakte mot deg */}
+        {[...Array(7)].map((_, i) => (
+          <span
+            key={'wall' + i}
+            className={'pine' + (started ? ' wall-grow' : '')}
+            style={{
+              left: `${i * 15 + 3}%`,
+              bottom: '42vh',
+              width: 60 + (i % 3) * 18,
+              height: 80 + (i % 4) * 20,
+              background: '#08130C',
+              opacity: 0.8,
+              transformOrigin: '50% 100%',
+            }}
+          />
+        ))}
+
+        {/* Trær som suser forbi på begge sider (POV) */}
+        {POV_TREES.map((t, i) => (
+          <span
+            key={'pov' + i}
+            className={'pine pov-tree' + (started ? ' pass' : '')}
+            style={{
+              left: `${t.x0}%`,
+              bottom: '38vh',
+              width: t.w,
+              height: t.h,
+              background: '#040B07',
+              '--tx1': t.tx,
+              '--ts0': t.ts0,
+              '--dur': t.dur + 's',
+              animationDelay: t.d + 's',
+            }}
+          />
+        ))}
+
+        {/* To store trær ved utkastfeltet — de passerer først */}
+        <span
+          className={'pine pov-tree' + (started ? ' pass' : '')}
+          style={{ left: '8%', bottom: '2vh', width: 230, height: 350, background: '#030906', '--tx1': '-90vw', '--ts0': 1, '--dur': '0.7s', animationDelay: '0s' }}
+        />
+        <span
+          className={'pine pov-tree' + (started ? ' pass' : '')}
+          style={{ left: '80%', bottom: '4vh', width: 210, height: 310, background: '#030906', '--tx1': '90vw', '--ts0': 1, '--dur': '0.75s', animationDelay: '0.05s' }}
+        />
+
+        <div className="intro-ground" />
+        <div className={'speed-rays' + (flying ? ' on' : '')} />
+
+        {/* Discgolf-kurv — vokser mot deg når kastet går */}
+        <div
+          className={'absolute' + (started ? ' basket-anim' : '')}
+          style={{
+            left: '42%',
+            bottom: '13vh',
+            width: 130,
+            height: 210,
+            transformOrigin: '50% 100%',
+            transform: started ? undefined : 'translate(6vw, -21vh) scale(0.055)',
+          }}
+          aria-hidden="true"
+        >
         <div
           className="absolute"
           style={{ left: '50%', bottom: 0, transform: 'translateX(-50%)', width: 5, height: 210, background: 'linear-gradient(90deg, #6E6E6E, #C9C9C9 45%, #5A5A5A)', borderRadius: 3 }}
@@ -619,18 +741,21 @@ function IntroOverlay({ onDone }) {
         </AnimatePresence>
       </div>
 
-      {/* Discen som flyr */}
-      <motion.div
-        className="absolute pointer-events-none"
-        style={{ left: '-6%', top: '55%' }}
-        animate={discAnim}
-        transition={discTransition}
-      >
-        <DiscMesh size={95} rim={driver.rim} glow={driver.glow} face={driver.face} brand={driver.brand} model={driver.model} numbers={driver.numbers} />
-      </motion.div>
+        {/* Discen — sett fra din egen hånd, wobbler i lufta */}
+        <motion.div
+          className="absolute pointer-events-none"
+          style={{ left: '43%', top: '64%' }}
+          animate={discAnim}
+          transition={discTransition}
+        >
+          <div className={flying ? 'disc-wobble' : undefined}>
+            <DiscMesh size={150} rim={driver.rim} glow={driver.glow} face={driver.face} brand={driver.brand} model={driver.model} numbers={driver.numbers} />
+          </div>
+        </motion.div>
+      </div>
 
-      {/* Intro-tekst: introduksjonen av Flightlab */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
+      {/* Intro-tekst: introduksjonen av Flightlab (øverst, over kastet) */}
+      <div className="absolute inset-0 flex flex-col items-center text-center px-6 pointer-events-none" style={{ paddingTop: '10vh' }}>
         <motion.div
           initial={{ opacity: 0, filter: 'blur(12px)', y: 24 }}
           animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
