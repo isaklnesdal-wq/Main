@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Flightlab — Fra første kast til siste putt</title>
+<title>Flightlab – Discgolf-utstyr til Norge og Norden</title>
+<meta name="description" content="Kjøp discgolf-discer fra Discmania, Kastaplast og Latitude 64 til 179 kr. Rask levering i hele Norge og Norden — fra første kast til siste putt." />
+<meta property="og:title" content="Flightlab – Discgolf-utstyr til Norge og Norden" />
+<meta property="og:description" content="Kvalitetsdiscer til 179 kr, sendt fra Norden på 1–3 dager. Ingen toll, ingen overraskelser." />
+<meta property="og:type" content="website" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -38,6 +42,7 @@
 </script>
 
 <style>
+  html { scroll-behavior: smooth; }
   html, body { background: #000; margin: 0; }
 
   .liquid-glass {
@@ -98,7 +103,7 @@
     pointer-events: none;
   }
 
-  /* Brand-green tint pass over the background photos, for text legibility and
+  /* Brand-green tint pass over background media, for text legibility and
      brand cohesion. */
   .brand-media-tint {
     position: absolute;
@@ -106,6 +111,63 @@
     z-index: 5;
     background: linear-gradient(180deg, rgba(11,31,23,0.6) 0%, rgba(27,67,50,0.35) 55%, rgba(11,31,23,0.65) 100%);
     pointer-events: none;
+  }
+
+  /* Cinematic slow zoom on the hero photo — gives video-like motion to a
+     still image. */
+  .kenburns {
+    animation: kenburns 26s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  @keyframes kenburns {
+    from { transform: scale(1); }
+    to { transform: scale(1.12) translateY(-1.5%); }
+  }
+
+  /* ---- 3D disc (pure CSS, no external assets) ---- */
+  .disc-scene {
+    perspective: 1000px;
+    animation: discFloat 7s ease-in-out infinite;
+  }
+  @keyframes discFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-22px); }
+  }
+  .disc-3d {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    transform-style: preserve-3d;
+    animation: discSpin 16s linear infinite;
+  }
+  @keyframes discSpin {
+    from { transform: rotateX(58deg) rotateZ(0deg); }
+    to { transform: rotateX(58deg) rotateZ(360deg); }
+  }
+  .disc-layer {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+  }
+  .disc-rim {
+    background: radial-gradient(circle at 35% 30%, #FF8B5C 0%, #FF6B35 45%, #C94A1D 100%);
+    box-shadow: 0 0 60px rgba(255,107,53,0.35);
+  }
+  .disc-face {
+    inset: 7%;
+    background: radial-gradient(circle at 40% 35%, #2E6B4F 0%, #1B4332 60%, #0F2A1E 100%);
+    transform: translateZ(6px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+  .disc-face-inner-ring {
+    position: absolute;
+    inset: 12%;
+    border-radius: 50%;
+    border: 1px solid rgba(250,249,245,0.25);
   }
 </style>
 </head>
@@ -176,6 +238,42 @@ function GlobeIcon({ className }) {
   );
 }
 
+function BoxIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 8l-9-5-9 5v8l9 5 9-5V8Z" />
+      <path d="M3 8l9 5 9-5M12 13v9" />
+    </svg>
+  );
+}
+
+function BuildingIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M4 21h16M16 8h3a1 1 0 0 1 1 1v12" />
+      <path d="M8 7h2M8 11h2M8 15h2" />
+    </svg>
+  );
+}
+
+function BrushIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9.06 11.9l8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.07" />
+      <path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02Z" />
+    </svg>
+  );
+}
+
+function PlusIcon({ className, open }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+      style={{ transform: open ? 'rotate(45deg)' : 'none', transition: 'transform 0.25s ease' }}>
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
 // ---------- BlurText ----------
 function BlurText({ text, className }) {
   const ref = useRef(null);
@@ -223,14 +321,46 @@ function BlurText({ text, className }) {
   );
 }
 
+// ---------- Reveal (scroll-triggered fade/blur-in for sections) ----------
+function Reveal({ children, delay = 0, className }) {
+  return (
+    <motion.div
+      className={className}
+      initial={{ filter: 'blur(10px)', opacity: 0, y: 30 }}
+      whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.8, ease: 'easeOut', delay }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ---------- 3D Disc (pure CSS, flight numbers as brand motif) ----------
+function Disc3D() {
+  return (
+    <div className="disc-scene" aria-hidden="true">
+      <div className="disc-3d">
+        <div className="disc-layer disc-rim" />
+        <div className="disc-layer disc-face">
+          <div className="disc-face-inner-ring" />
+          <span className="font-heading italic text-paper text-3xl tracking-[-1px] leading-none">12 | 5</span>
+          <span className="font-heading italic text-paper text-3xl tracking-[-1px] leading-none">-1 | 3</span>
+          <span className="font-body text-paper/60 text-[9px] uppercase tracking-[2px] mt-1">Flightlab</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ---------- Navbar ----------
 function Navbar() {
   const links = [
     { label: 'Hjem', href: '#' },
     { label: 'Discer', href: '#discer' },
-    { label: 'Om Oss', href: '#fordeler' },
-    { label: 'Fordeler', href: '#fordeler' },
-    { label: 'Kontakt', href: '#interesse' },
+    { label: 'Tjenester', href: '#tjenester' },
+    { label: 'Om Oss', href: '#om-oss' },
+    { label: 'FAQ', href: '#faq' },
   ];
   return (
     <div className="fixed top-4 left-0 right-0 px-8 lg:px-16 z-50 flex items-center justify-between">
@@ -266,14 +396,24 @@ function Navbar() {
 function Hero() {
   return (
     <section className="relative w-full h-screen overflow-hidden bg-black">
-      <img
-        src="https://images.pexels.com/photos/13189540/pexels-photo-13189540.jpeg?auto=compress&cs=tinysrgb&w=1920"
-        alt="Discgolfspiller kaster en disc utendørs i sollys"
-        className="absolute left-1/2 top-0 -translate-x-1/2 object-cover object-top z-0"
-        style={{ width: '120%', height: '120%' }}
-        loading="eager"
-      />
+      <div className="absolute inset-0 overflow-hidden z-0">
+        <img
+          src="https://images.pexels.com/photos/13189540/pexels-photo-13189540.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          alt="Discgolfspiller kaster en disc utendørs i sollys"
+          className="kenburns w-full h-full object-cover object-top"
+          loading="eager"
+        />
+      </div>
       <div className="brand-media-tint" />
+
+      <motion.div
+        className="hidden xl:block absolute right-[7%] top-[24%] z-10"
+        initial={{ opacity: 0, scale: 0.7 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.2, ease: 'easeOut', delay: 1.6 }}
+      >
+        <Disc3D />
+      </motion.div>
 
       <div className="relative z-10 flex flex-col h-full">
         <Navbar />
@@ -294,6 +434,7 @@ function Hero() {
             <span className="text-sm text-white/90 font-body">Flightlab åpner snart i Norge</span>
           </motion.div>
 
+          <h1 className="sr-only">Flightlab – discgolf-utstyr til Norge og Norden</h1>
           <BlurText
             text="Fra Første Kast Til Siste Putt"
             className="text-6xl md:text-7xl lg:text-[5.5rem] font-heading italic text-white leading-[0.8] max-w-3xl justify-center tracking-[-2px] mt-6"
@@ -305,8 +446,8 @@ function Hero() {
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.8 }}
             className="mt-4 text-sm md:text-base text-white max-w-2xl text-center font-body font-light leading-tight"
           >
-            Flightlab er den nye discgolf-butikken for Norge og Norden. Kvalitetsutstyr fra
-            store merker, skarpe priser og rask levering — rett til døra di.
+            Kvalitetsdiscer fra merkene du kjenner — 179 kr per disc, sendt fra Norden
+            på 1–3 dager. Ingen toll. Ingen overraskelser i kassen.
           </motion.p>
 
           <motion.div
@@ -320,10 +461,10 @@ function Hero() {
               className="liquid-glass-strong rounded-full px-5 py-2.5 text-sm font-medium text-white flex items-center gap-2"
               style={{ background: 'rgba(27,67,50,0.3)' }}
             >
-              Meld Interesse
+              Få Tidlig Tilgang
               <ArrowUpRight className="h-5 w-5" />
             </a>
-            <a href="#fordeler" className="flex items-center gap-2 text-sm font-medium text-white">
+            <a href="#discer" className="flex items-center gap-2 text-sm font-medium text-white">
               Se Sortiment
               <PlayIcon className="h-4 w-4" />
             </a>
@@ -370,24 +511,51 @@ function Hero() {
   );
 }
 
+// ---------- USP strip (trust row right under hero) ----------
+const USPS = [
+  '1–3 dagers levering',
+  '30 dagers åpent kjøp',
+  'Vipps & kortbetaling',
+  'Sendt fra Norden — ingen toll',
+];
+
+function UspStrip() {
+  return (
+    <div className="bg-black px-8 md:px-16 lg:px-20 py-8 border-b border-white/5">
+      <Reveal>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          {USPS.map((usp) => (
+            <span key={usp} className="liquid-glass rounded-full px-4 py-2 text-xs md:text-sm text-white/90 font-body whitespace-nowrap">
+              {usp}
+            </span>
+          ))}
+        </div>
+      </Reveal>
+    </div>
+  );
+}
+
 // ---------- Products ----------
 const PRODUCTS = [
   {
     image: 'https://images.pexels.com/photos/11998664/pexels-photo-11998664.jpeg?auto=compress&cs=tinysrgb&w=800',
     alt: 'Flygende disc i luften',
     name: 'Driver — Distance Pro',
+    tagline: 'For deg som vil lengre ut',
     price: '179 kr',
   },
   {
     image: 'https://images.pexels.com/photos/15749077/pexels-photo-15749077.jpeg?auto=compress&cs=tinysrgb&w=800',
     alt: 'Spiller kaster en disc utendørs',
     name: 'Midrange — All-Terrain',
+    tagline: 'Kontroll i all slags vind',
     price: '179 kr',
   },
   {
     image: 'https://images.pexels.com/photos/10398350/pexels-photo-10398350.jpeg?auto=compress&cs=tinysrgb&w=800',
     alt: 'Person som holder en disc',
     name: 'Putter — Precision',
+    tagline: 'Der rundene avgjøres',
     price: '179 kr',
   },
 ];
@@ -395,50 +563,59 @@ const PRODUCTS = [
 function Products() {
   return (
     <section id="discer" className="relative w-full bg-black px-8 md:px-16 lg:px-20 py-24">
-      <div className="text-sm font-body text-white/60 mb-6">// Sortiment</div>
-      <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-7xl leading-[0.9] tracking-[-2px] mb-16">
-        Våre Discer
-      </h2>
+      <Reveal>
+        <div className="text-sm font-body text-white/60 mb-6">// Sortiment</div>
+        <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-7xl leading-[0.9] tracking-[-2px]">
+          Våre Discer
+        </h2>
+        <p className="mt-5 text-sm md:text-base text-white/70 font-body font-light max-w-xl leading-snug">
+          Puttere, midrange og drivere fra anerkjente produsenter — alle til samme faste
+          pris. Startsett for nybegynnere kommer fra 299 kr.
+        </p>
+      </Reveal>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {PRODUCTS.map(({ image, alt, name, price }) => (
-          <div key={name} className="liquid-glass rounded-[1.25rem] p-4 flex flex-col">
-            <div className="rounded-[0.9rem] overflow-hidden aspect-[4/3]">
-              <img src={image} alt={alt} className="w-full h-full object-cover" loading="lazy" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
+        {PRODUCTS.map(({ image, alt, name, tagline, price }, i) => (
+          <Reveal key={name} delay={i * 0.12}>
+            <div className="liquid-glass rounded-[1.25rem] p-4 flex flex-col h-full">
+              <div className="rounded-[0.9rem] overflow-hidden aspect-[4/3]">
+                <img src={image} alt={alt} className="w-full h-full object-cover" loading="lazy" />
+              </div>
+              <div className="flex items-center justify-between mt-4 px-1">
+                <h3 className="font-heading italic text-white text-xl tracking-[-0.5px]">{name}</h3>
+                <span className="text-white/90 font-body text-sm">{price}</span>
+              </div>
+              <p className="mt-1 px-1 text-xs text-white/60 font-body font-light">{tagline}</p>
+              <span className="mt-3 mx-1 self-start liquid-glass rounded-full px-3 py-1 text-[11px] text-white/80 font-body">
+                Snart i butikken
+              </span>
             </div>
-            <div className="flex items-center justify-between mt-4 px-1">
-              <h3 className="font-heading italic text-white text-xl tracking-[-0.5px]">{name}</h3>
-              <span className="text-white/90 font-body text-sm">{price}</span>
-            </div>
-            <span className="mt-3 mx-1 self-start liquid-glass rounded-full px-3 py-1 text-[11px] text-white/80 font-body">
-              Snart i butikken
-            </span>
-          </div>
+          </Reveal>
         ))}
       </div>
     </section>
   );
 }
 
-// ---------- Capabilities ----------
+// ---------- Capabilities (benefits, with real background video) ----------
 const CARDS = [
   {
     Icon: TruckIcon,
     tags: ['Norge · Norden', '1–3 Dager', 'Sporbar Frakt', 'Trygg Pakking'],
     title: 'Rask Levering',
-    body: 'Vi sender raskt fra nordisk lager med sporing hele veien og trygg pakking — uansett om det er én disc eller et helt startsett.',
+    body: 'Du slipper å vente ukesvis på discer fra utlandet — vi sender fra nordisk lager med sporing hele veien, så du er på banen igjen på dager, ikke uker.',
   },
   {
     Icon: StarIcon,
     tags: ['Discmania', 'Kastaplast', 'Latitude 64', 'Westside'],
     title: 'Store Merker',
-    body: 'Vi jobber kun med anerkjente produsenter, slik at du får discer med riktig flight rating og jevn kvalitet fra kast til kast.',
+    body: 'Du får discer som flyr likt hver gang — vi jobber kun med anerkjente produsenter med dokumentert flight rating og jevn kvalitet fra kast til kast.',
   },
   {
     Icon: TagIcon,
     tags: ['179 kr Per Disc', 'Ingen Skjulte Kostnader', 'Startsett', 'Nordisk Pris'],
     title: 'Skarpe Priser',
-    body: '179 kr per disc, uten overraskelser i kassen. Vi kutter mellomledd for å underkutte svenske og norske konkurrenter.',
+    body: 'Du betaler mindre per disc enn hos norske og svenske konkurrenter — 179 kr, punktum. Ingen toll, ingen gebyrer, ingen overraskelser i kassen.',
   },
 ];
 
@@ -460,49 +637,412 @@ function Capabilities() {
       </div>
 
       <div className="relative z-10 px-8 md:px-16 lg:px-20 pt-24 pb-10 flex flex-col min-h-screen">
-        <div className="mb-auto">
+        <Reveal className="mb-auto">
           <div className="text-sm font-body text-white/80 mb-6">// Fordeler</div>
           <h2 className="font-heading italic text-white text-6xl md:text-7xl lg:text-[6rem] leading-[0.9] tracking-[-2px]">
             Utstyr som
             <br />
             flyr
           </h2>
-        </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-          {CARDS.map(({ Icon, tags, title, body }) => (
-            <div key={title} className="liquid-glass rounded-[1.25rem] p-6 min-h-[360px] flex flex-col">
-              <div className="flex items-start justify-between gap-4">
-                <div
-                  className="liquid-glass w-11 h-11 rounded-[0.75rem] flex items-center justify-center shrink-0"
-                  style={{ background: 'rgba(27,67,50,0.4)' }}
-                >
-                  <Icon className="h-6 w-6 text-white" />
+          {CARDS.map(({ Icon, tags, title, body }, i) => (
+            <Reveal key={title} delay={i * 0.12}>
+              <div className="liquid-glass rounded-[1.25rem] p-6 min-h-[360px] flex flex-col h-full">
+                <div className="flex items-start justify-between gap-4">
+                  <div
+                    className="liquid-glass w-11 h-11 rounded-[0.75rem] flex items-center justify-center shrink-0"
+                    style={{ background: 'rgba(27,67,50,0.4)' }}
+                  >
+                    <Icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="flex flex-wrap justify-end gap-1.5 max-w-[70%]">
+                    {tags.map((tag) => (
+                      <span key={tag} className="liquid-glass rounded-full px-3 py-1 text-[11px] text-white/90 font-body whitespace-nowrap">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-wrap justify-end gap-1.5 max-w-[70%]">
-                  {tags.map((tag) => (
-                    <span key={tag} className="liquid-glass rounded-full px-3 py-1 text-[11px] text-white/90 font-body whitespace-nowrap">
-                      {tag}
-                    </span>
-                  ))}
+
+                <div className="flex-1" />
+
+                <div className="mt-6">
+                  <h3 className="font-heading italic text-white text-3xl md:text-4xl tracking-[-1px] leading-none">
+                    {title}
+                  </h3>
+                  <p className="mt-3 text-sm text-white/90 font-body font-light leading-snug max-w-[32ch]">
+                    {body}
+                  </p>
                 </div>
               </div>
-
-              <div className="flex-1" />
-
-              <div className="mt-6">
-                <h3 className="font-heading italic text-white text-3xl md:text-4xl tracking-[-1px] leading-none">
-                  {title}
-                </h3>
-                <p className="mt-3 text-sm text-white/90 font-body font-light leading-snug max-w-[32ch]">
-                  {body}
-                </p>
-              </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+// ---------- Services (niche offerings beyond the shop) ----------
+const SERVICES = [
+  {
+    Icon: BoxIcon,
+    title: 'Mystery Box Abonnement',
+    who: 'For spillere som vil utvide bagen',
+    body: 'Få håndplukkede discer i posten hver måned — en enkel måte å oppdage nye merker og molds på, alltid til under butikkpris.',
+    cta: 'Meld interesse',
+  },
+  {
+    Icon: BuildingIcon,
+    title: 'Baneutstyr til Klubber & Kommuner',
+    who: 'For idrettslag, skoler og kommuner',
+    body: 'Kurver, utkastfelt og skilting til nye og eksisterende baner. Vi hjelper dere fra idé til ferdig anlegg, med utstyr som tåler norsk vær.',
+    cta: 'Be om tilbud',
+  },
+  {
+    Icon: BrushIcon,
+    title: 'Custom Stamp-Discer',
+    who: 'For turneringer og klubber',
+    body: 'Discer med deres eget design — perfekt som turneringsdisc, premie eller klubbmerch. Små opplag, rask levering.',
+    cta: 'Send forespørsel',
+  },
+];
+
+function Services() {
+  return (
+    <section id="tjenester" className="relative w-full bg-black px-8 md:px-16 lg:px-20 py-24">
+      <Reveal>
+        <div className="text-sm font-body text-white/60 mb-6">// Tjenester</div>
+        <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-7xl leading-[0.9] tracking-[-2px]">
+          Mer Enn En Nettbutikk
+        </h2>
+        <p className="mt-5 text-sm md:text-base text-white/70 font-body font-light max-w-xl leading-snug">
+          Ingen norsk aktør satser på abonnement, baneutstyr eller custom-discer.
+          Det gjør vi.
+        </p>
+      </Reveal>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
+        {SERVICES.map(({ Icon, title, who, body, cta }, i) => (
+          <Reveal key={title} delay={i * 0.12}>
+            <div className="liquid-glass rounded-[1.25rem] p-6 flex flex-col h-full min-h-[300px]">
+              <div
+                className="liquid-glass w-11 h-11 rounded-[0.75rem] flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(27,67,50,0.4)' }}
+              >
+                <Icon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-heading italic text-white text-2xl md:text-3xl tracking-[-1px] leading-none mt-5">
+                {title}
+              </h3>
+              <p className="mt-2 text-xs text-signal font-body font-medium uppercase tracking-wide">{who}</p>
+              <p className="mt-3 text-sm text-white/80 font-body font-light leading-snug">{body}</p>
+              <div className="flex-1" />
+              <a href="#interesse" className="mt-5 self-start liquid-glass rounded-full px-4 py-2 text-xs font-medium text-white flex items-center gap-1.5">
+                {cta}
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </a>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ---------- About (origin story, mission, values, differentiator) ----------
+const VALUES = [
+  {
+    title: 'Ærlighet',
+    body: 'Prisen du ser er prisen du betaler — ingen skjulte gebyrer, ingen toll-sjokk.',
+  },
+  {
+    title: 'Kvalitet',
+    body: 'Vi selger kun discer vi selv ville hatt i bagen, fra produsenter vi stoler på.',
+  },
+  {
+    title: 'Fellesskap',
+    body: 'Norsk discgolf vokser når klubbene vokser — derfor bygger vi sammen med dem.',
+  },
+];
+
+function About() {
+  return (
+    <section id="om-oss" className="relative w-full bg-black px-8 md:px-16 lg:px-20 py-24 border-t border-white/5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-14">
+        <Reveal>
+          <div className="text-sm font-body text-white/60 mb-6">// Om Oss</div>
+          <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-7xl leading-[0.9] tracking-[-2px]">
+            Historien Bak
+            <br />
+            Flightlab
+          </h2>
+          <p className="mt-7 text-sm md:text-base text-white/80 font-body font-light leading-relaxed max-w-[52ch]">
+            Flightlab startet med en enkel observasjon: discgolf vokser raskt i Norge,
+            men utvalget henger etter. Norske spillere har måttet velge mellom et tynt
+            lokalt sortiment og store svenske butikker med toll, gebyrer og upersonlig
+            service. Vi mente det fantes en bedre vei — og bestemte oss for å bygge den.
+          </p>
+          <p className="mt-4 text-sm md:text-base text-white/80 font-body font-light leading-relaxed max-w-[52ch]">
+            Misjonen vår er å gjøre discgolf tilgjengelig for alle i Norge: riktig
+            utstyr, til riktig pris, levert raskt. Navnet sier resten — vi er
+            besatt av hvordan discer flyr, helt ned til flight-tallene som pryder
+            designet vårt.
+          </p>
+          <p className="mt-4 text-sm md:text-base text-white/60 font-body font-light leading-relaxed max-w-[52ch]">
+            Det som skiller oss fra alle alternativer: én fast, lav pris per disc,
+            nordisk lager uten tollgrense, og satsing på det ingen andre tilbyr —
+            abonnement, baneutstyr og custom-discer. Du handler trygt hos folk som
+            spiller selv.
+          </p>
+        </Reveal>
+
+        <div className="flex flex-col gap-6 lg:pt-24">
+          {VALUES.map(({ title, body }, i) => (
+            <Reveal key={title} delay={i * 0.12}>
+              <div className="liquid-glass rounded-[1.25rem] p-6 flex items-start gap-5">
+                <span className="font-heading italic text-signal text-3xl leading-none shrink-0">
+                  0{i + 1}
+                </span>
+                <div>
+                  <h3 className="font-heading italic text-white text-2xl tracking-[-0.5px] leading-none">{title}</h3>
+                  <p className="mt-2 text-sm text-white/70 font-body font-light leading-snug">{body}</p>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------- Social proof ----------
+const TESTIMONIALS = [
+  {
+    initials: 'MK',
+    name: 'Martin K.',
+    role: 'Testspiller, Oslo',
+    quote: 'Endelig en norsk butikk med priser som gir mening. 179 kr for discer jeg har betalt 250 for i Sverige — pluss toll.',
+  },
+  {
+    initials: 'SH',
+    name: 'Silje H.',
+    role: 'Nybegynner, Bergen',
+    quote: 'Jeg ante ikke hvilken disc jeg skulle starte med. Fikk ærlige anbefalinger i stedet for et salgspitch. Det husker jeg.',
+  },
+  {
+    initials: 'JT',
+    name: 'Jonas T.',
+    role: 'Klubbspiller, Trondheim',
+    quote: 'At noen endelig satser på baneutstyr og klubbtilbud i Norge er stort. Vi trenger flere baner, ikke bare flere discer.',
+  },
+];
+
+function Testimonials() {
+  return (
+    <section className="relative w-full bg-black px-8 md:px-16 lg:px-20 py-24 border-t border-white/5">
+      <Reveal>
+        <div className="text-sm font-body text-white/60 mb-6">// Fra Miljøet</div>
+        <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-7xl leading-[0.9] tracking-[-2px]">
+          Spillere Om Flightlab
+        </h2>
+      </Reveal>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
+        {TESTIMONIALS.map(({ initials, name, role, quote }, i) => (
+          <Reveal key={name} delay={i * 0.12}>
+            <div className="liquid-glass rounded-[1.25rem] p-6 flex flex-col h-full">
+              <span className="font-heading italic text-signal text-5xl leading-none">&ldquo;</span>
+              <p className="mt-2 text-sm md:text-base text-white/90 font-body font-light leading-relaxed">
+                {quote}
+              </p>
+              <div className="flex-1" />
+              <div className="flex items-center gap-3 mt-6">
+                <div
+                  className="liquid-glass w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                  style={{ background: 'rgba(27,67,50,0.4)' }}
+                >
+                  <span className="text-xs font-semibold text-white font-body">{initials}</span>
+                </div>
+                <div>
+                  <div className="text-sm text-white font-body font-medium">{name}</div>
+                  <div className="text-xs text-white/50 font-body">{role}</div>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ---------- FAQ ----------
+const FAQS = [
+  {
+    q: 'Hvor rask er leveringen?',
+    a: 'Vi sender fra lager i Norden, så de fleste ordrer er fremme på 1–3 virkedager i hele Norge. Du får sporingsnummer på alle forsendelser.',
+  },
+  {
+    q: 'Blir det toll eller ekstra gebyrer?',
+    a: 'Nei. Prisen du ser i kassen er alt du betaler. Vi håndterer alt av grensekostnader før varene når deg — det er en av hovedgrunnene til at vi finnes.',
+  },
+  {
+    q: 'Hvilken disc bør jeg velge som nybegynner?',
+    a: 'Start med en putter eller midrange — de er lettere å kontrollere og lærer deg riktig teknikk. Startsettene våre (fra 299 kr) gir deg putter, midrange og driver i én pakke.',
+  },
+  {
+    q: 'Hvordan betaler jeg?',
+    a: 'Vi tilbyr Vipps og alle vanlige betalingskort. Trygt, raskt og uten omveier.',
+  },
+  {
+    q: 'Kan jeg returnere en disc?',
+    a: 'Ja — du har 30 dagers åpent kjøp på ubrukte discer. Send oss en melding, så ordner vi resten.',
+  },
+  {
+    q: 'Leverer dere til klubber og kommuner?',
+    a: 'Ja. Vi leverer kurver, baneutstyr og custom-discer til klubber, skoler, idrettslag og kommuner i hele Norge. Be om tilbud, så tar vi det derfra.',
+  },
+];
+
+function FaqItem({ q, a, open, onClick }) {
+  return (
+    <div className="liquid-glass rounded-[1.25rem] overflow-hidden">
+      <button
+        onClick={onClick}
+        className="w-full flex items-center justify-between gap-4 p-5 text-left"
+      >
+        <span className="font-heading italic text-white text-lg md:text-xl tracking-[-0.5px]">{q}</span>
+        <PlusIcon className="h-5 w-5 text-white shrink-0" open={open} />
+      </button>
+      {open && (
+        <p className="px-5 pb-5 text-sm text-white/75 font-body font-light leading-relaxed max-w-[70ch]">
+          {a}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function Faq() {
+  const [openIndex, setOpenIndex] = useState(0);
+  return (
+    <section id="faq" className="relative w-full bg-black px-8 md:px-16 lg:px-20 py-24 border-t border-white/5">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-14">
+        <Reveal>
+          <div className="text-sm font-body text-white/60 mb-6">// FAQ</div>
+          <h2 className="font-heading italic text-white text-5xl md:text-6xl leading-[0.9] tracking-[-2px]">
+            Ofte Stilte
+            <br />
+            Spørsmål
+          </h2>
+          <p className="mt-5 text-sm text-white/60 font-body font-light max-w-[40ch] leading-snug">
+            Lurer du på noe annet? Meld interesse nederst på siden, så svarer vi deg direkte.
+          </p>
+        </Reveal>
+
+        <div className="flex flex-col gap-4">
+          {FAQS.map(({ q, a }, i) => (
+            <Reveal key={q} delay={i * 0.06}>
+              <FaqItem
+                q={q}
+                a={a}
+                open={openIndex === i}
+                onClick={() => setOpenIndex(openIndex === i ? -1 : i)}
+              />
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------- Final CTA (email interest list) ----------
+function FinalCta() {
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (email.trim()) setSubmitted(true);
+  };
+
+  return (
+    <section id="interesse" className="relative w-full bg-black px-8 md:px-16 lg:px-20 py-28 border-t border-white/5 overflow-hidden">
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 60%, rgba(27,67,50,0.45) 0%, rgba(0,0,0,0) 70%)' }}
+      />
+      <div className="relative z-10 flex flex-col items-center text-center">
+        <Reveal>
+          <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-7xl leading-[0.9] tracking-[-2px]">
+            Bli Med Fra Starten
+          </h2>
+          <p className="mt-5 text-sm md:text-base text-white/70 font-body font-light max-w-xl leading-snug mx-auto">
+            Vi åpner snart. Meld deg på listen, så får du beskjed først — pluss
+            rabatt på din første ordre.
+          </p>
+        </Reveal>
+
+        <Reveal delay={0.15} className="w-full max-w-md mt-9">
+          {submitted ? (
+            <div className="liquid-glass rounded-full px-6 py-4 text-sm text-white font-body">
+              Takk! Vi sier ifra så fort dørene åpner. 🥏
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="liquid-glass rounded-full p-1.5 flex items-center gap-2">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="din@epost.no"
+                className="flex-1 bg-transparent outline-none border-none text-sm text-white placeholder-white/40 font-body px-4 py-2 min-w-0"
+              />
+              <button
+                type="submit"
+                className="rounded-full px-5 py-2.5 text-sm font-medium whitespace-nowrap text-white shrink-0"
+                style={{ background: '#FF6B35' }}
+              >
+                Meld Interesse
+              </button>
+            </form>
+          )}
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+// ---------- Footer ----------
+function Footer() {
+  return (
+    <footer className="bg-black px-8 md:px-16 lg:px-20 py-10 border-t border-white/5">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-3">
+          <div
+            className="liquid-glass w-10 h-10 rounded-full flex items-center justify-center"
+            style={{ background: 'rgba(27,67,50,0.35)' }}
+          >
+            <span className="font-heading italic text-white text-lg lowercase">f</span>
+          </div>
+          <span className="font-heading italic text-white text-xl tracking-tight">Flightlab</span>
+        </div>
+        <p className="text-xs text-white/40 font-body text-center">
+          Fra første kast til siste putt · Norge & Norden
+        </p>
+        <div className="flex items-center gap-5 text-xs text-white/50 font-body">
+          <a href="#discer" className="hover:text-white">Discer</a>
+          <a href="#tjenester" className="hover:text-white">Tjenester</a>
+          <a href="#faq" className="hover:text-white">FAQ</a>
+          <a href="#interesse" className="hover:text-white">Kontakt</a>
+        </div>
+      </div>
+    </footer>
   );
 }
 
@@ -511,8 +1051,15 @@ function App() {
   return (
     <div>
       <Hero />
+      <UspStrip />
       <Products />
       <Capabilities />
+      <Services />
+      <About />
+      <Testimonials />
+      <Faq />
+      <FinalCta />
+      <Footer />
     </div>
   );
 }
