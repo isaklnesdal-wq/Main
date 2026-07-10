@@ -113,26 +113,7 @@
     pointer-events: none;
   }
 
-  /* Cinematic slow zoom on the hero photo — gives video-like motion to a
-     still image. */
-  .kenburns {
-    animation: kenburns 26s ease-in-out infinite alternate;
-    will-change: transform;
-  }
-  @keyframes kenburns {
-    from { transform: scale(1); }
-    to { transform: scale(1.12) translateY(-1.5%); }
-  }
-
   /* ---- 3D disc (pure CSS, no external assets) ---- */
-  .disc-scene {
-    perspective: 1000px;
-    animation: discFloat 7s ease-in-out infinite;
-  }
-  @keyframes discFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-22px); }
-  }
   .disc-3d {
     position: relative;
     width: 200px;
@@ -148,20 +129,6 @@
     position: absolute;
     inset: 0;
     border-radius: 50%;
-  }
-  .disc-rim {
-    background: radial-gradient(circle at 35% 30%, #FF8B5C 0%, #FF6B35 45%, #C94A1D 100%);
-    box-shadow: 0 0 60px rgba(255,107,53,0.35);
-  }
-  .disc-face {
-    inset: 7%;
-    background: radial-gradient(circle at 40% 35%, #2E6B4F 0%, #1B4332 60%, #0F2A1E 100%);
-    transform: translateZ(6px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
   }
   .disc-face-inner-ring {
     position: absolute;
@@ -216,6 +183,59 @@
     50% { transform: translate3d(44vw, -7vh, 0) scale(1); }
     88% { opacity: 0.9; }
     100% { transform: translate3d(115vw, 3vh, 0) scale(0.7); opacity: 0; }
+  }
+
+  /* ---- IntroOverlay: nature scene with disc golf basket ---- */
+  .intro-sky {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 55% 40% at 72% 62%, rgba(255,107,53,0.28) 0%, transparent 65%),
+      linear-gradient(180deg, #04110B 0%, #0A2418 45%, #143D2B 78%, #0A1F15 100%);
+  }
+  .intro-sun {
+    position: absolute;
+    left: 68%;
+    top: 52%;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,170,90,0.85) 0%, rgba(255,107,53,0.35) 45%, transparent 70%);
+    filter: blur(6px);
+  }
+  .pine {
+    position: absolute;
+    bottom: 14vh;
+    clip-path: polygon(50% 0%, 78% 38%, 66% 34%, 92% 72%, 78% 68%, 100% 100%, 0% 100%, 22% 68%, 8% 72%, 34% 34%, 22% 38%);
+  }
+  .intro-ground {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 15vh;
+    background: linear-gradient(180deg, #0E2C1E 0%, #061710 60%, #030B07 100%);
+  }
+  .basket-chain {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 2px;
+    height: 78px;
+    background: linear-gradient(180deg, #ECECEC 0%, #9C9C9C 60%, #6E6E6E 100%);
+    transform-origin: top center;
+    transform: rotate(var(--a));
+    border-radius: 2px;
+  }
+  .basket-chain.shake {
+    animation: chainShake 0.8s ease-in-out;
+  }
+  @keyframes chainShake {
+    0%, 100% { transform: rotate(var(--a)); }
+    18% { transform: rotate(calc(var(--a) + 8deg)); }
+    42% { transform: rotate(calc(var(--a) - 7deg)); }
+    66% { transform: rotate(calc(var(--a) + 4deg)); }
+    84% { transform: rotate(calc(var(--a) - 2deg)); }
   }
 </style>
 </head>
@@ -384,26 +404,8 @@ function Reveal({ children, delay = 0, className }) {
   );
 }
 
-// ---------- 3D Disc (pure CSS, flight numbers as brand motif) ----------
-function Disc3D() {
-  return (
-    <div className="disc-scene" aria-hidden="true">
-      <div className="disc-3d">
-        <div className="disc-layer disc-rim" />
-        <div className="disc-layer disc-face">
-          <div className="disc-face-inner-ring" />
-          <span className="font-heading italic text-paper text-3xl tracking-[-1px] leading-none">12 | 5</span>
-          <span className="font-heading italic text-paper text-3xl tracking-[-1px] leading-none">-1 | 3</span>
-          <span className="font-body text-paper/60 text-[9px] uppercase tracking-[2px] mt-1">Flightlab</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ---------- DiscMesh (parametrisk 3D-disc, gjenbrukbar) ----------
-function DiscMesh({ size = 160, rim, glow, face, numbers }) {
-  const [n1, n2, n3, n4] = numbers;
+// ---------- DiscMesh (parametrisk 3D-disc med ekte merkevare-stamp) ----------
+function DiscMesh({ size = 160, rim, glow, face, brand, model, numbers }) {
   return (
     <div style={{ perspective: '900px' }} aria-hidden="true">
       <div className="disc-3d" style={{ width: size, height: size }}>
@@ -428,17 +430,23 @@ function DiscMesh({ size = 160, rim, glow, face, numbers }) {
           }}
         >
           <div className="disc-face-inner-ring" />
-          <span className="font-heading italic text-paper leading-none" style={{ fontSize: size * 0.16, letterSpacing: '-1px' }}>
-            {n1} | {n2}
-          </span>
-          <span className="font-heading italic text-paper leading-none" style={{ fontSize: size * 0.16, letterSpacing: '-1px' }}>
-            {n3} | {n4}
-          </span>
           <span
             className="font-body uppercase"
-            style={{ fontSize: Math.max(7, size * 0.05), letterSpacing: 2, color: 'rgba(250,249,245,0.6)', marginTop: 2 }}
+            style={{ fontSize: Math.max(7, size * 0.055), letterSpacing: 2, color: 'rgba(250,249,245,0.75)' }}
           >
-            Flightlab
+            {brand}
+          </span>
+          <span
+            className="font-heading italic text-paper leading-none"
+            style={{ fontSize: size * 0.13, letterSpacing: '-0.5px', whiteSpace: 'nowrap', marginTop: 2 }}
+          >
+            {model}
+          </span>
+          <span
+            className="font-body"
+            style={{ fontSize: Math.max(7, size * 0.06), letterSpacing: 1, color: 'rgba(250,249,245,0.55)', marginTop: 3 }}
+          >
+            {numbers.join(' · ')}
           </span>
         </div>
       </div>
@@ -446,42 +454,51 @@ function DiscMesh({ size = 160, rim, glow, face, numbers }) {
   );
 }
 
-// ---------- FlightIntro (3D-intro med klikkbare discer) ----------
+// ---------- Disc-data: ekte merker og modeller med korrekte flight-tall ----------
 const DISC_TYPES = [
   {
     id: 'putter',
     short: 'Putter',
-    name: 'Putter — Precision',
+    brand: 'Kastaplast',
+    model: 'Reko',
+    name: 'Kastaplast Reko',
+    discClass: 'Putter',
     price: '179 kr',
     numbers: [3, 3, 0, 1],
-    rim: ['#FFFFFF', '#E8E6DF', '#AEAB9F'],
-    glow: 'rgba(250,249,245,0.35)',
-    face: ['#2E6B4F', '#1B4332', '#0F2A1E'],
-    desc: 'Din mest presise disc. Rolig, stabil flukt som lander der du sikter — putteren er discen du kommer til å bruke mest.',
+    rim: ['#C8E05A', '#A9C93B', '#7C9A24'],
+    glow: 'rgba(180,211,52,0.45)',
+    face: ['#22301A', '#18220F', '#0E1408'],
+    desc: 'Kastaplasts legendariske svenske putter — rett, rolig flukt og et grep spillere sverger til. Discen du kommer til å bruke aller mest.',
     perfect: 'Putting og korte, presise kast',
   },
   {
     id: 'midrange',
     short: 'Midrange',
-    name: 'Midrange — All-Terrain',
+    brand: 'Discmania',
+    model: 'MD3',
+    name: 'Discmania MD3',
+    discClass: 'Midrange',
     price: '179 kr',
-    numbers: [5, 5, -1, 1],
-    rim: ['#3E8A66', '#1B4332', '#0F2A1E'],
-    glow: 'rgba(46,107,79,0.5)',
-    face: ['#153826', '#0F2A1E', '#0A1D15'],
-    desc: 'Allrounderen i bagen. Forutsigbar i vind og mellom trærne — discen som bygger teknikken din.',
+    numbers: [5, 5, 0, 2],
+    rim: ['#4A6FD4', '#24439B', '#152A66'],
+    glow: 'rgba(74,111,212,0.5)',
+    face: ['#101B3E', '#0B1330', '#070D22'],
+    desc: 'Discmanias mest allsidige midrange fra Finland — forutsigbar i vind og mellom trærne. Discen som bygger teknikken din.',
     perfect: 'Kontrollerte kast på 60–90 meter',
   },
   {
     id: 'driver',
     short: 'Driver',
-    name: 'Driver — Distance Pro',
+    brand: 'Latitude 64',
+    model: 'Ballista Pro',
+    name: 'Latitude 64 Ballista Pro',
+    discClass: 'Distansedriver',
     price: '179 kr',
-    numbers: [12, 5, -1, 3],
-    rim: ['#FF8B5C', '#FF6B35', '#C94A1D'],
-    glow: 'rgba(255,107,53,0.4)',
-    face: ['#2E6B4F', '#1B4332', '#0F2A1E'],
-    desc: 'Maks lengde fra utkastfeltet. Krever fart i kastet — og belønner deg med meter du ikke visste du hadde.',
+    numbers: [14, 4, 0, 3],
+    rim: ['#FFD34D', '#F2B705', '#B98603'],
+    glow: 'rgba(242,183,5,0.4)',
+    face: ['#2E2408', '#221A05', '#141003'],
+    desc: 'Latitude 64 sin råeste distansedriver — maks lengde fra utkastfeltet når du gir den fart. Belønner deg med meter du ikke visste du hadde.',
     perfect: 'Lange drives på 90 meter og oppover',
   },
 ];
@@ -493,7 +510,179 @@ const INTRO_CAPTIONS = [
   'Flightlab. Fra første kast til siste putt.',
 ];
 
-function FlightIntro() {
+// ---------- IntroOverlay: disc flyr gjennom naturen og treffer kurven ----------
+function IntroOverlay({ onDone }) {
+  // Faser: title → flying → impact → landed → ready
+  const [phase, setPhase] = useState('title');
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setPhase('flying'), 1400),
+      setTimeout(() => setPhase('impact'), 3600),
+      setTimeout(() => setPhase('landed'), 4200),
+      setTimeout(() => setPhase('ready'), 5400),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  const hit = phase === 'impact' || phase === 'landed' || phase === 'ready';
+  const driver = DISC_TYPES[2];
+
+  const discAnim =
+    phase === 'title'
+      ? { x: 0, y: 0, opacity: 0, scale: 0.8 }
+      : phase === 'flying'
+      ? { x: [0, '38vw', '69vw'], y: [0, '-22vh', '-7vh'], opacity: [0, 1, 1], scale: [0.8, 1, 0.85] }
+      : { x: '69vw', y: '1vh', opacity: 0.85, scale: 0.45 };
+
+  const discTransition =
+    phase === 'flying'
+      ? { duration: 2.2, times: [0, 0.58, 1], ease: 'easeOut' }
+      : { duration: 0.35, ease: 'easeIn' };
+
+  const chainAngles = [-16, -11, -6, -2, 2, 6, 11, 16];
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[100] overflow-hidden"
+      exit={{ opacity: 0, scale: 1.06, filter: 'blur(10px)' }}
+      transition={{ duration: 0.8, ease: 'easeInOut' }}
+    >
+      {/* Naturscene */}
+      <div className="intro-sky" />
+      <div className="intro-sun" />
+      {[...Array(9)].map((_, i) => (
+        <span
+          key={'far' + i}
+          className="pine"
+          style={{
+            left: `${i * 12 - 3}%`,
+            width: 70 + (i % 3) * 22,
+            height: 100 + (i % 4) * 26,
+            background: '#08130C',
+            opacity: 0.85,
+          }}
+        />
+      ))}
+      {[...Array(6)].map((_, i) => (
+        <span
+          key={'near' + i}
+          className="pine"
+          style={{
+            left: `${[2, 14, 30, 78, 88, 95][i]}%`,
+            bottom: '9vh',
+            width: 110 + (i % 3) * 30,
+            height: 170 + (i % 3) * 40,
+            background: '#040B07',
+          }}
+        />
+      ))}
+      <div className="intro-ground" />
+
+      {/* Discgolf-kurv */}
+      <div className="absolute" style={{ left: '66%', bottom: '13vh', width: 130, height: 210 }} aria-hidden="true">
+        <div
+          className="absolute"
+          style={{ left: '50%', bottom: 0, transform: 'translateX(-50%)', width: 5, height: 210, background: 'linear-gradient(90deg, #6E6E6E, #C9C9C9 45%, #5A5A5A)', borderRadius: 3 }}
+        />
+        <div
+          className="absolute"
+          style={{ left: '50%', top: 2, transform: 'translateX(-50%)', width: 34, height: 10, background: 'linear-gradient(180deg, #D9D9D9, #8A8A8A)', borderRadius: 5 }}
+        />
+        {chainAngles.map((a, i) => (
+          <span
+            key={i}
+            className={'basket-chain' + (hit ? ' shake' : '')}
+            style={{ '--a': a + 'deg', animationDelay: `${i * 0.03}s` }}
+          />
+        ))}
+        <div
+          className="absolute"
+          style={{ left: '50%', top: 96, transform: 'translateX(-50%)', width: 104, height: 34, background: 'linear-gradient(180deg, #B8B8B8 0%, #7A7A7A 30%, #4F4F4F 100%)', borderRadius: '8px 8px 14px 14px', boxShadow: 'inset 0 3px 5px rgba(255,255,255,0.35), 0 4px 10px rgba(0,0,0,0.5)' }}
+        />
+        <div
+          className="absolute"
+          style={{ left: '50%', top: 94, transform: 'translateX(-50%)', width: 110, height: 6, background: 'linear-gradient(180deg, #E8E8E8, #909090)', borderRadius: 4 }}
+        />
+        {/* Treff-flash */}
+        <AnimatePresence>
+          {hit && (
+            <motion.span
+              key="flash"
+              className="absolute rounded-full pointer-events-none"
+              style={{ left: '50%', top: 40, width: 90, height: 90, marginLeft: -45, border: '3px solid rgba(255,213,77,0.9)', boxShadow: '0 0 40px rgba(255,213,77,0.6)' }}
+              initial={{ opacity: 1, scale: 0.3 }}
+              animate={{ opacity: 0, scale: 2.4 }}
+              transition={{ duration: 0.9, ease: 'easeOut' }}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Discen som flyr */}
+      <motion.div
+        className="absolute pointer-events-none"
+        style={{ left: '-6%', top: '55%' }}
+        animate={discAnim}
+        transition={discTransition}
+      >
+        <DiscMesh size={95} rim={driver.rim} glow={driver.glow} face={driver.face} brand={driver.brand} model={driver.model} numbers={driver.numbers} />
+      </motion.div>
+
+      {/* Intro-tekst: introduksjonen av Flightlab */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
+        <motion.div
+          initial={{ opacity: 0, filter: 'blur(12px)', y: 24 }}
+          animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+          transition={{ duration: 1, ease: 'easeOut', delay: 0.35 }}
+        >
+          <div className="font-heading italic text-white text-6xl md:text-8xl tracking-[-3px] leading-none">
+            FLIGHTLAB
+          </div>
+          <div className="mt-4 text-sm md:text-base text-white/75 font-body font-light">
+            Norsk discgolfs nye hjem — kvalitetsdiscer til 179 kr, levert på 1–3 dager.
+          </div>
+        </motion.div>
+
+        {(phase === 'landed' || phase === 'ready') && (
+          <motion.div
+            initial={{ opacity: 0, filter: 'blur(8px)', y: 16 }}
+            animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className="mt-6 font-heading italic text-2xl md:text-3xl tracking-[-1px]"
+            style={{ color: '#FFD34D' }}
+          >
+            Fra første kast til siste putt.
+          </motion.div>
+        )}
+
+        {phase === 'ready' && (
+          <motion.button
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            onClick={onDone}
+            className="liquid-glass-strong rounded-full px-7 py-3 text-sm font-medium text-white flex items-center gap-2 mt-9 pointer-events-auto cursor-pointer border-none"
+            style={{ background: 'rgba(27,67,50,0.35)' }}
+          >
+            Utforsk Nettsiden
+            <ArrowUpRight className="h-5 w-5" />
+          </motion.button>
+        )}
+      </div>
+
+      <button
+        onClick={onDone}
+        className="absolute top-5 right-6 z-10 text-xs text-white/50 font-body bg-transparent border-none cursor-pointer hover:text-white"
+      >
+        Hopp over intro →
+      </button>
+    </motion.div>
+  );
+}
+
+// ---------- DiscHero: toppseksjonen — 3D-scene med klikkbare merkediscer ----------
+function DiscHero() {
   const [selected, setSelected] = useState(null);
   const [cap, setCap] = useState(0);
 
@@ -505,7 +694,7 @@ function FlightIntro() {
   const active = DISC_TYPES.find((d) => d.id === selected);
 
   return (
-    <section id="opplev" className="relative w-full min-h-screen overflow-hidden bg-black py-24 flex flex-col">
+    <section id="opplev" className="relative w-full min-h-screen overflow-hidden bg-black pt-28 pb-16 flex flex-col">
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div
           style={{
@@ -528,23 +717,63 @@ function FlightIntro() {
           />
         ))}
         <div className="fly-disc">
-          <DiscMesh size={110} rim={DISC_TYPES[2].rim} glow={DISC_TYPES[2].glow} face={DISC_TYPES[2].face} numbers={DISC_TYPES[2].numbers} />
+          <DiscMesh size={110} rim={DISC_TYPES[2].rim} glow={DISC_TYPES[2].glow} face={DISC_TYPES[2].face} brand={DISC_TYPES[2].brand} model={DISC_TYPES[2].model} numbers={DISC_TYPES[2].numbers} />
         </div>
       </div>
 
-      <div className="relative z-10 px-8 md:px-16 lg:px-20 text-center">
-        <Reveal>
-          <div className="text-sm font-body text-white/60 mb-6">// Intro</div>
-          <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-7xl leading-[0.9] tracking-[-2px]">
-            Opplev Flightlab i 3D
-          </h2>
-          <p className="mt-5 text-sm md:text-base text-white/70 font-body font-light max-w-xl leading-snug mx-auto">
-            Hele sortimentet vårt i tre klasser. Trykk på en disc og se hvordan den flyr.
-          </p>
-        </Reveal>
+      <Navbar />
+
+      <div className="relative z-10 flex flex-col items-center px-4 text-center">
+        <motion.div
+          initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
+          animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
+          className="liquid-glass rounded-full flex items-center pr-3"
+        >
+          <span className="rounded-full px-3 py-1 text-xs font-semibold text-white m-1.5" style={{ background: '#FF6B35' }}>
+            Nytt
+          </span>
+          <span className="text-sm text-white/90 font-body">Flightlab åpner snart i Norge</span>
+        </motion.div>
+
+        <h1 className="sr-only">Flightlab – discgolf-utstyr til Norge og Norden</h1>
+        <BlurText
+          text="Fra Første Kast Til Siste Putt"
+          className="text-5xl md:text-6xl lg:text-7xl font-heading italic text-white leading-[0.85] max-w-3xl justify-center tracking-[-2px] mt-6"
+        />
+
+        <motion.p
+          initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
+          animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.7 }}
+          className="mt-4 text-sm md:text-base text-white/80 max-w-2xl font-body font-light leading-tight"
+        >
+          Ekte discer fra Kastaplast, Discmania og Latitude 64 — 179 kr per disc,
+          uten toll og gebyrer. Trykk på en disc og bli kjent med den.
+        </motion.p>
+
+        <motion.div
+          initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
+          animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 1.0 }}
+          className="flex items-center gap-6 mt-6"
+        >
+          <a
+            href="#interesse"
+            className="liquid-glass-strong rounded-full px-5 py-2.5 text-sm font-medium text-white flex items-center gap-2"
+            style={{ background: 'rgba(27,67,50,0.3)' }}
+          >
+            Få Tidlig Tilgang
+            <ArrowUpRight className="h-5 w-5" />
+          </a>
+          <a href="#discer" className="flex items-center gap-2 text-sm font-medium text-white">
+            Se Sortiment
+            <PlayIcon className="h-4 w-4" />
+          </a>
+        </motion.div>
       </div>
 
-      <div className="relative z-10 flex flex-wrap items-end justify-center gap-10 md:gap-16 mt-14 px-4">
+      <div className="relative z-10 flex flex-wrap items-end justify-center gap-10 md:gap-16 mt-12 px-4">
         {DISC_TYPES.map((d) => (
           <button
             key={d.id}
@@ -552,16 +781,31 @@ function FlightIntro() {
             className="flex flex-col items-center gap-4 outline-none bg-transparent border-none cursor-pointer"
             aria-label={`Vis informasjon om ${d.name}`}
           >
-            <motion.div
-              animate={{
-                scale: selected === d.id ? 1.15 : selected ? 0.88 : 1,
-                y: selected === d.id ? -10 : 0,
-                opacity: selected && selected !== d.id ? 0.45 : 1,
-              }}
-              transition={{ type: 'spring', stiffness: 200, damping: 18 }}
-            >
-              <DiscMesh size={150} rim={d.rim} glow={d.glow} face={d.face} numbers={d.numbers} />
-            </motion.div>
+            <div className="relative">
+              <AnimatePresence>
+                {selected === d.id && (
+                  <motion.span
+                    key="burst"
+                    className="absolute inset-0 rounded-full pointer-events-none"
+                    style={{ border: `2px solid ${d.rim[1]}`, boxShadow: `0 0 30px ${d.glow}` }}
+                    initial={{ opacity: 0.9, scale: 0.7 }}
+                    animate={{ opacity: 0, scale: 1.9 }}
+                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                  />
+                )}
+              </AnimatePresence>
+              <motion.div
+                animate={{
+                  rotateY: selected === d.id ? 360 : 0,
+                  scale: selected === d.id ? 1.15 : selected ? 0.88 : 1,
+                  y: selected === d.id ? -10 : 0,
+                  opacity: selected && selected !== d.id ? 0.45 : 1,
+                }}
+                transition={{ type: 'spring', stiffness: 120, damping: 16 }}
+              >
+                <DiscMesh size={150} rim={d.rim} glow={d.glow} face={d.face} brand={d.brand} model={d.model} numbers={d.numbers} />
+              </motion.div>
+            </div>
             <span
               className="liquid-glass rounded-full px-4 py-1.5 text-xs font-medium text-white font-body"
               style={selected === d.id ? { background: 'rgba(255,107,53,0.35)' } : undefined}
@@ -585,9 +829,14 @@ function FlightIntro() {
               className="liquid-glass-strong rounded-[1.5rem] p-6 md:p-8 max-w-2xl w-full self-start"
             >
               <div className="flex items-start justify-between gap-4">
-                <h3 className="font-heading italic text-white text-2xl md:text-3xl tracking-[-1px] leading-none">
-                  {active.name}
-                </h3>
+                <div className="text-left">
+                  <h3 className="font-heading italic text-white text-2xl md:text-3xl tracking-[-1px] leading-none">
+                    {active.name}
+                  </h3>
+                  <span className="inline-block mt-2 liquid-glass rounded-full px-3 py-1 text-[11px] text-white/80 font-body">
+                    {active.discClass}
+                  </span>
+                </div>
                 <span className="rounded-full px-4 py-1.5 text-sm font-semibold text-white shrink-0" style={{ background: '#FF6B35' }}>
                   {active.price}
                 </span>
@@ -600,8 +849,8 @@ function FlightIntro() {
                   </div>
                 ))}
               </div>
-              <p className="mt-5 text-sm text-white/85 font-body font-light leading-relaxed">{active.desc}</p>
-              <p className="mt-2 text-xs font-body font-medium uppercase tracking-wide text-signal">
+              <p className="mt-5 text-sm text-white/85 font-body font-light leading-relaxed text-left">{active.desc}</p>
+              <p className="mt-2 text-xs font-body font-medium uppercase tracking-wide text-signal text-left">
                 Perfekt til: {active.perfect}
               </p>
               <span className="mt-4 inline-block liquid-glass rounded-full px-3 py-1 text-[11px] text-white/80 font-body">
@@ -623,7 +872,7 @@ function FlightIntro() {
         </AnimatePresence>
       </div>
 
-      <div className="relative z-10 mt-auto pt-14 flex flex-col items-center px-4">
+      <div className="relative z-10 mt-auto pt-10 flex flex-col items-center px-4">
         <AnimatePresence mode="wait">
           <motion.p
             key={cap}
@@ -631,7 +880,7 @@ function FlightIntro() {
             animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
             exit={{ opacity: 0, filter: 'blur(8px)', y: -14 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="font-heading italic text-white text-2xl md:text-4xl tracking-[-1px] text-center"
+            className="font-heading italic text-white text-xl md:text-3xl tracking-[-1px] text-center"
           >
             {INTRO_CAPTIONS[cap]}
           </motion.p>
@@ -654,7 +903,6 @@ function FlightIntro() {
 function Navbar() {
   const links = [
     { label: 'Hjem', href: '#' },
-    { label: 'Opplev', href: '#opplev' },
     { label: 'Discer', href: '#discer' },
     { label: 'Tjenester', href: '#tjenester' },
     { label: 'Om Oss', href: '#om-oss' },
@@ -690,125 +938,6 @@ function Navbar() {
   );
 }
 
-// ---------- Hero ----------
-function Hero() {
-  return (
-    <section className="relative w-full h-screen overflow-hidden bg-black">
-      <div className="absolute inset-0 overflow-hidden z-0">
-        <img
-          src="https://images.pexels.com/photos/13189540/pexels-photo-13189540.jpeg?auto=compress&cs=tinysrgb&w=1920"
-          alt="Discgolfspiller kaster en disc utendørs i sollys"
-          className="kenburns w-full h-full object-cover object-top"
-          loading="eager"
-        />
-      </div>
-      <div className="brand-media-tint" />
-
-      <motion.div
-        className="hidden xl:block absolute right-[7%] top-[24%] z-10"
-        initial={{ opacity: 0, scale: 0.7 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.2, ease: 'easeOut', delay: 1.6 }}
-      >
-        <Disc3D />
-      </motion.div>
-
-      <div className="relative z-10 flex flex-col h-full">
-        <Navbar />
-
-        <div className="flex-1 flex flex-col items-center justify-center pt-24 px-4">
-          <motion.div
-            initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
-            animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
-            className="liquid-glass rounded-full flex items-center pr-3"
-          >
-            <span
-              className="rounded-full px-3 py-1 text-xs font-semibold text-white m-1.5"
-              style={{ background: '#FF6B35' }}
-            >
-              Nytt
-            </span>
-            <span className="text-sm text-white/90 font-body">Flightlab åpner snart i Norge</span>
-          </motion.div>
-
-          <h1 className="sr-only">Flightlab – discgolf-utstyr til Norge og Norden</h1>
-          <BlurText
-            text="Fra Første Kast Til Siste Putt"
-            className="text-6xl md:text-7xl lg:text-[5.5rem] font-heading italic text-white leading-[0.8] max-w-3xl justify-center tracking-[-2px] mt-6"
-          />
-
-          <motion.p
-            initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
-            animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.8 }}
-            className="mt-4 text-sm md:text-base text-white max-w-2xl text-center font-body font-light leading-tight"
-          >
-            Kvalitetsdiscer fra merkene du kjenner — 179 kr per disc, sendt fra Norden
-            på 1–3 dager. Ingen toll. Ingen overraskelser i kassen.
-          </motion.p>
-
-          <motion.div
-            initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
-            animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut', delay: 1.1 }}
-            className="flex items-center gap-6 mt-6"
-          >
-            <a
-              href="#interesse"
-              className="liquid-glass-strong rounded-full px-5 py-2.5 text-sm font-medium text-white flex items-center gap-2"
-              style={{ background: 'rgba(27,67,50,0.3)' }}
-            >
-              Få Tidlig Tilgang
-              <ArrowUpRight className="h-5 w-5" />
-            </a>
-            <a href="#discer" className="flex items-center gap-2 text-sm font-medium text-white">
-              Se Sortiment
-              <PlayIcon className="h-4 w-4" />
-            </a>
-          </motion.div>
-
-          <motion.div
-            initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
-            animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut', delay: 1.3 }}
-            className="flex items-stretch gap-4 mt-8"
-          >
-            <div className="liquid-glass p-5 w-[220px] rounded-[1.25rem]">
-              <ClockIcon className="h-7 w-7 text-white" />
-              <div className="font-heading italic text-white text-4xl tracking-[-1px] leading-none mt-4">179 kr</div>
-              <div className="text-xs text-white font-body font-light mt-2">Pris Per Disc</div>
-            </div>
-            <div className="liquid-glass p-5 w-[220px] rounded-[1.25rem]">
-              <GlobeIcon className="h-7 w-7 text-white" />
-              <div className="font-heading italic text-white text-4xl tracking-[-1px] leading-none mt-4">1–3 Dager</div>
-              <div className="text-xs text-white font-body font-light mt-2">Levering i Norden</div>
-            </div>
-          </motion.div>
-        </div>
-
-        <motion.div
-          initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
-          animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut', delay: 1.4 }}
-          className="flex flex-col items-center gap-4 pb-8"
-        >
-          <div className="liquid-glass rounded-full px-3.5 py-1 text-xs font-medium text-white">
-            Vi samarbeider med ledende discgolf-merker
-          </div>
-          <div className="flex items-center gap-12 md:gap-16 flex-wrap justify-center px-4">
-            {['Discmania', 'Kastaplast', 'Latitude 64', 'Westside', 'Dynamic Discs'].map((name) => (
-              <span key={name} className="font-heading italic text-white text-2xl md:text-3xl tracking-tight">
-                {name}
-              </span>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
 // ---------- USP strip (trust row right under hero) ----------
 const USPS = [
   '1–3 dagers levering',
@@ -828,6 +957,13 @@ function UspStrip() {
             </span>
           ))}
         </div>
+        <div className="flex items-center gap-10 md:gap-14 flex-wrap justify-center mt-7">
+          {['Discmania', 'Kastaplast', 'Latitude 64', 'Westside', 'Dynamic Discs'].map((name) => (
+            <span key={name} className="font-heading italic text-white/80 text-xl md:text-2xl tracking-tight">
+              {name}
+            </span>
+          ))}
+        </div>
       </Reveal>
     </div>
   );
@@ -838,22 +974,22 @@ const PRODUCTS = [
   {
     image: 'https://images.pexels.com/photos/11998664/pexels-photo-11998664.jpeg?auto=compress&cs=tinysrgb&w=800',
     alt: 'Flygende disc i luften',
-    name: 'Driver — Distance Pro',
-    tagline: 'For deg som vil lengre ut',
+    name: 'Latitude 64 Ballista Pro',
+    tagline: 'Distansedriver — for deg som vil lengre ut',
     price: '179 kr',
   },
   {
     image: 'https://images.pexels.com/photos/15749077/pexels-photo-15749077.jpeg?auto=compress&cs=tinysrgb&w=800',
     alt: 'Spiller kaster en disc utendørs',
-    name: 'Midrange — All-Terrain',
-    tagline: 'Kontroll i all slags vind',
+    name: 'Discmania MD3',
+    tagline: 'Midrange — kontroll i all slags vind',
     price: '179 kr',
   },
   {
     image: 'https://images.pexels.com/photos/10398350/pexels-photo-10398350.jpeg?auto=compress&cs=tinysrgb&w=800',
     alt: 'Person som holder en disc',
-    name: 'Putter — Precision',
-    tagline: 'Der rundene avgjøres',
+    name: 'Kastaplast Reko',
+    tagline: 'Putter — der rundene avgjøres',
     price: '179 kr',
   },
 ];
@@ -1340,11 +1476,23 @@ function Footer() {
 
 // ---------- App ----------
 function App() {
+  const [introDone, setIntroDone] = useState(false);
+
+  // Lås skrolling til introen er sett ferdig
+  useEffect(() => {
+    document.body.style.overflow = introDone ? '' : 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [introDone]);
+
   return (
     <div>
-      <Hero />
+      <AnimatePresence>
+        {!introDone && <IntroOverlay onDone={() => setIntroDone(true)} />}
+      </AnimatePresence>
+      <DiscHero />
       <UspStrip />
-      <FlightIntro />
       <Products />
       <Capabilities />
       <Services />
