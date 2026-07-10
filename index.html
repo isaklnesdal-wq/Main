@@ -1400,6 +1400,37 @@ const PRODUCTS = [
   },
 ];
 
+const ACCESSORIES = [
+  {
+    image: 'https://images.pexels.com/photos/5202030/pexels-photo-5202030.jpeg?auto=compress&cs=tinysrgb&w=800',
+    alt: 'Mørkegrønn sekk ved en trestamme i skogen',
+    name: 'Flightlab Coursebag',
+    tagline: 'Discgolf-sekk med plass til 18+ discer, stativ og drikkeflaske',
+    price: '699 kr',
+  },
+  {
+    image: 'https://images.pexels.com/photos/13189540/pexels-photo-13189540.jpeg?auto=compress&cs=tinysrgb&w=800',
+    alt: 'Spiller kaster disc på discgolfbane',
+    name: 'Startsett — 3 Discer',
+    tagline: 'Putter, midrange og driver — alt du trenger for første runde',
+    price: '349 kr',
+  },
+  {
+    image: 'https://images.pexels.com/photos/5038791/pexels-photo-5038791.jpeg?auto=compress&cs=tinysrgb&w=800',
+    alt: 'Person med håndkle utendørs',
+    name: 'Disc-Håndkle',
+    tagline: 'Tørt grep i regn og morgendugg — festes på baggen',
+    price: '149 kr',
+  },
+  {
+    image: 'https://images.pexels.com/photos/1325711/pexels-photo-1325711.jpeg?auto=compress&cs=tinysrgb&w=800',
+    alt: 'Person drikker av sportsflaske utendørs',
+    name: 'Flightlab Drikkeflaske',
+    tagline: '750 ml, holder drikken kald gjennom hele runden',
+    price: '129 kr',
+  },
+];
+
 function Products() {
   return (
     <section id="discer" className="relative w-full bg-black px-8 md:px-16 lg:px-20 py-24">
@@ -1419,13 +1450,44 @@ function Products() {
           <Reveal key={name} delay={i * 0.12}>
             <div className="liquid-glass rounded-[1.25rem] p-4 flex flex-col h-full">
               <div className="rounded-[0.9rem] overflow-hidden aspect-[4/3]">
-                <img src={image} alt={alt} className="w-full h-full object-cover" loading="lazy" />
+                <img src={image} alt={alt} className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.style.display = 'none'; }} />
               </div>
               <div className="flex items-center justify-between mt-4 px-1">
                 <h3 className="font-heading italic text-white text-xl tracking-[-0.5px]">{name}</h3>
                 <span className="text-white/90 font-body text-sm">{price}</span>
               </div>
               <p className="mt-1 px-1 text-xs text-white/60 font-body font-light">{tagline}</p>
+              <span className="mt-3 mx-1 self-start liquid-glass rounded-full px-3 py-1 text-[11px] text-white/80 font-body">
+                Snart i butikken
+              </span>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+
+      <Reveal className="mt-20">
+        <h3 className="font-heading italic text-white text-3xl md:text-4xl lg:text-5xl leading-[0.9] tracking-[-1.5px]">
+          Bager & Tilbehør
+        </h3>
+        <p className="mt-4 text-sm md:text-base text-white/70 font-body font-light max-w-xl leading-snug">
+          Alt rundt discen som gjør runden bedre — fra sekken som bærer utstyret
+          til håndkleet som redder grepet i regnvær.
+        </p>
+      </Reveal>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
+        {ACCESSORIES.map(({ image, alt, name, tagline, price }, i) => (
+          <Reveal key={name} delay={i * 0.1}>
+            <div className="liquid-glass rounded-[1.25rem] p-4 flex flex-col h-full">
+              <div className="rounded-[0.9rem] overflow-hidden aspect-square">
+                <img src={image} alt={alt} className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.style.display = 'none'; }} />
+              </div>
+              <div className="flex items-center justify-between mt-4 px-1 gap-2">
+                <h4 className="font-heading italic text-white text-lg tracking-[-0.5px] leading-tight">{name}</h4>
+                <span className="text-white/90 font-body text-sm shrink-0">{price}</span>
+              </div>
+              <p className="mt-1 px-1 text-xs text-white/60 font-body font-light leading-snug">{tagline}</p>
+              <div className="flex-1" />
               <span className="mt-3 mx-1 self-start liquid-glass rounded-full px-3 py-1 text-[11px] text-white/80 font-body">
                 Snart i butikken
               </span>
