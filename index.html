@@ -652,22 +652,14 @@ function mulberry32(a) {
   };
 }
 
-// ---------- ThreeIntro: ekte WebGL-skog i førsteperson ----------
+// ---------- ThreeIntro: kinematisk svevende kjempedisc (bobla-stil) ----------
 function ThreeIntro({ phase, onFail }) {
   const mountRef = useRef(null);
-  const phaseRef = useRef(phase);
-  const flyStartRef = useRef(0);
-  const impactStartRef = useRef(0);
-
-  useEffect(() => {
-    if (phase === 'flying' && !flyStartRef.current) flyStartRef.current = performance.now();
-    if (phase === 'impact' && !impactStartRef.current) impactStartRef.current = performance.now();
-    phaseRef.current = phase;
-  }, [phase]);
 
   useEffect(() => {
     let renderer = null;
     let onResize = null;
+    let onMouse = null;
     const el = mountRef.current;
     try {
       if (!window.THREE || !el) throw new Error('THREE unavailable');
@@ -675,195 +667,132 @@ function ThreeIntro({ phase, onFail }) {
       const rand = mulberry32(42);
 
       renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(el.clientWidth || window.innerWidth, el.clientHeight || window.innerHeight);
+      const W = el.clientWidth || window.innerWidth;
+      const H = el.clientHeight || window.innerHeight;
+      renderer.setSize(W, H);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       el.appendChild(renderer.domElement);
 
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x0a2015);
-      scene.fog = new THREE.FogExp2(0x0c2417, 0.026);
+      scene.background = new THREE.Color(0x040404);
 
-      const camera = new THREE.PerspectiveCamera(
-        72,
-        (el.clientWidth || window.innerWidth) / (el.clientHeight || window.innerHeight),
-        0.1,
-        500
-      );
-      camera.position.set(0, 1.7, 0);
+      const camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 200);
+      camera.position.set(0, 0.15, 3.4);
 
-      // Lys: lav kveldssol, kjølig himmel, varm glød
-      const sun = new THREE.DirectionalLight(0xffd9a0, 2.4);
-      sun.position.set(-25, 18, -70);
-      scene.add(sun);
-      scene.add(new THREE.AmbientLight(0x2a4d3a, 1.1));
-      scene.add(new THREE.HemisphereLight(0x9fd8b5, 0x081a10, 0.7));
+      // Prosedyralt miljøkart: mørkt studio med varme/kalde lysflekker —
+      // gir de blanke, oljeaktige refleksjonene fra referansebildet
+      const envCanvas = document.createElement('canvas');
+      envCanvas.width = 512;
+      envCanvas.height = 256;
+      const ctx = envCanvas.getContext('2d');
+      if (!ctx) throw new Error('2d context unavailable');
+      const baseG = ctx.createLinearGradient(0, 0, 0, 256);
+      baseG.addColorStop(0, '#1a1a22');
+      baseG.addColorStop(0.5, '#0a0a0e');
+      baseG.addColorStop(1, '#050505');
+      ctx.fillStyle = baseG;
+      ctx.fillRect(0, 0, 512, 256);
+      const blob = (x, y, r, c) => {
+        const rg = ctx.createRadialGradient(x, y, 0, x, y, r);
+        rg.addColorStop(0, c);
+        rg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = rg;
+        ctx.fillRect(x - r, y - r, r * 2, r * 2);
+      };
+      blob(90, 70, 85, 'rgba(255,190,120,0.95)');
+      blob(400, 55, 95, 'rgba(120,160,255,0.85)');
+      blob(256, 205, 130, 'rgba(60,120,90,0.55)');
+      blob(478, 165, 65, 'rgba(220,120,255,0.55)');
+      blob(30, 190, 70, 'rgba(255,120,80,0.4)');
+      const envTex = new THREE.CanvasTexture(envCanvas);
+      envTex.mapping = THREE.EquirectangularReflectionMapping;
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      scene.environment = pmrem.fromEquirectangular(envTex).texture;
+      envTex.dispose();
+      pmrem.dispose();
 
-      // Solskive langt bak kurven
-      const glow = new THREE.Mesh(
-        new THREE.SphereGeometry(7, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0xffc27a, fog: false, transparent: true, opacity: 0.85 })
-      );
-      glow.position.set(-16, 9, -140);
-      scene.add(glow);
-
-      // Bakke
-      const ground = new THREE.Mesh(
-        new THREE.PlaneGeometry(400, 400),
-        new THREE.MeshStandardMaterial({ color: 0x11301f, roughness: 1 })
-      );
-      ground.rotation.x = -Math.PI / 2;
-      scene.add(ground);
-
-      // Fairway-stripe (litt lysere gress der du kaster)
-      const fairway = new THREE.Mesh(
-        new THREE.PlaneGeometry(4.5, 90),
-        new THREE.MeshStandardMaterial({ color: 0x1a4229, roughness: 1 })
-      );
-      fairway.rotation.x = -Math.PI / 2;
-      fairway.position.set(0, 0.01, -42);
-      scene.add(fairway);
-
-      // 90 grantrær med stamme og tre kjegle-lag, spredt langs korridoren
-      const trunkMat = new THREE.MeshStandardMaterial({ color: 0x3a2a1a, roughness: 0.95 });
-      const leafA = new THREE.MeshStandardMaterial({ color: 0x14442a, roughness: 0.9 });
-      const leafB = new THREE.MeshStandardMaterial({ color: 0x1b5a36, roughness: 0.9 });
-      for (let i = 0; i < 90; i++) {
-        const z = -5 - rand() * 95;
-        const side = rand() < 0.5 ? -1 : 1;
-        const x = side * (2.8 + rand() * 13);
-        const h = 4 + rand() * 7;
-        const tree = new THREE.Group();
-        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.22, h * 0.35, 6), trunkMat);
-        trunk.position.y = h * 0.175;
-        tree.add(trunk);
-        for (let k = 0; k < 3; k++) {
-          const cone = new THREE.Mesh(
-            new THREE.ConeGeometry((1.7 - k * 0.45) * (0.8 + rand() * 0.4), h * 0.38, 7),
-            k % 2 ? leafA : leafB
-          );
-          cone.position.y = h * 0.32 + k * h * 0.2;
-          tree.add(cone);
-        }
-        tree.position.set(x, 0, z);
-        tree.rotation.y = rand() * Math.PI;
-        scene.add(tree);
+      // Stjernehimmel som punktsky
+      const starGeo = new THREE.BufferGeometry();
+      const N = 700;
+      const starPos = new Float32Array(N * 3);
+      for (let i = 0; i < N; i++) {
+        const r = 30 + rand() * 60;
+        const th = rand() * Math.PI * 2;
+        const ph = Math.acos(2 * rand() - 1);
+        starPos[i * 3] = r * Math.sin(ph) * Math.cos(th);
+        starPos[i * 3 + 1] = r * Math.cos(ph) * 0.6;
+        starPos[i * 3 + 2] = -Math.abs(r * Math.sin(ph) * Math.sin(th)) - 4;
       }
-
-      // Discgolf-kurv i metall ved z = -40
-      const metal = new THREE.MeshStandardMaterial({ color: 0xd8d8d8, metalness: 0.9, roughness: 0.35 });
-      const basket = new THREE.Group();
-      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.5, 10), metal);
-      pole.position.y = 0.75;
-      basket.add(pole);
-      const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.05, 12), metal);
-      hub.position.y = 1.48;
-      basket.add(hub);
-      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.02, 8, 24), metal);
-      rim.rotation.x = Math.PI / 2;
-      rim.position.y = 1.02;
-      basket.add(rim);
-      const tray = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.38, 0.32, 0.26, 20, 1, true),
-        new THREE.MeshStandardMaterial({ color: 0xb0b0b0, metalness: 0.85, roughness: 0.45, side: THREE.DoubleSide })
+      starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+      const stars = new THREE.Points(
+        starGeo,
+        new THREE.PointsMaterial({ color: 0xffffff, size: 0.09, transparent: true, opacity: 0.65, sizeAttenuation: true })
       );
-      tray.position.y = 0.88;
-      basket.add(tray);
-      const chains = [];
-      for (let i = 0; i < 12; i++) {
-        const th = (i / 12) * Math.PI * 2;
-        const g = new THREE.Group();
-        g.position.set(Math.cos(th) * 0.06, 1.46, Math.sin(th) * 0.06);
-        const link = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.46, 6), metal);
-        link.position.y = -0.23;
-        g.add(link);
-        g.rotation.z = -Math.cos(th) * 0.6;
-        g.rotation.x = Math.sin(th) * 0.6;
-        g.userData.bz = g.rotation.z;
-        g.userData.bx = g.rotation.x;
-        basket.add(g);
-        chains.push(g);
-      }
-      basket.position.set(0, 0, -40);
-      scene.add(basket);
+      scene.add(stars);
 
-      // Blitslys ved treff
-      const flash = new THREE.PointLight(0xffd34d, 0, 12);
-      flash.position.set(0, 1.3, -39.4);
-      scene.add(flash);
-
-      // Discen — oransje driver
-      const disc = new THREE.Group();
-      const discBody = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.145, 0.155, 0.022, 32),
-        new THREE.MeshStandardMaterial({ color: 0xff6b35, roughness: 0.35 })
-      );
-      disc.add(discBody);
-      const stamp = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.08, 0.08, 0.002, 24),
-        new THREE.MeshStandardMaterial({ color: 0x1b4332, roughness: 0.5 })
-      );
-      stamp.position.y = 0.013;
-      disc.add(stamp);
-      disc.visible = false;
+      // Kjempedisc: ekte discprofil dreid rundt aksen (lathe), høy oppløsning
+      const S = 1.5;
+      const P = (x, y) => new THREE.Vector2(x * S, y * S);
+      const profile = [
+        P(0.0, 0.045),
+        P(0.2, 0.044),
+        P(0.42, 0.04),
+        P(0.62, 0.032),
+        P(0.8, 0.018),
+        P(0.92, -0.006),
+        P(1.0, -0.05),
+        P(0.985, -0.085),
+        P(0.955, -0.07),
+        P(0.94, -0.045),
+      ];
+      const discGeo = new THREE.LatheGeometry(profile, 160);
+      discGeo.computeVertexNormals();
+      const discMat = new THREE.MeshPhysicalMaterial({
+        color: 0x11291d,
+        roughness: 0.13,
+        metalness: 0.0,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.06,
+        iridescence: 1.0,
+        iridescenceIOR: 1.35,
+        envMapIntensity: 1.7,
+      });
+      const disc = new THREE.Mesh(discGeo, discMat);
+      disc.rotation.x = 1.02;
       scene.add(disc);
 
-      const shakeRand = mulberry32(7);
+      // Lys som former discen i tillegg til miljøet
+      const rimL = new THREE.DirectionalLight(0xffc27a, 2.2);
+      rimL.position.set(-4, 3, -3);
+      scene.add(rimL);
+      const coolL = new THREE.DirectionalLight(0x88aaff, 1.2);
+      coolL.position.set(4, -2, 2);
+      scene.add(coolL);
+      scene.add(new THREE.AmbientLight(0x223328, 0.7));
+
+      // Musparallakse for dybdefølelse
+      const mouse = { x: 0, y: 0 };
+      onMouse = (ev) => {
+        mouse.x = (ev.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = (ev.clientY / window.innerHeight) * 2 - 1;
+      };
+      window.addEventListener('mousemove', onMouse);
+
+      const t0 = performance.now();
       const easeOutCubic = (p) => 1 - Math.pow(1 - p, 3);
 
       const loop = () => {
-        const now = performance.now();
-        const ph = phaseRef.current;
-        const flying = ph === 'flying';
-        const flyP = flying ? Math.min((now - flyStartRef.current) / 2600, 1) : ph === 'title' ? 0 : 1;
-        const e = easeOutCubic(flyP);
-
-        // Kamera: flyr fremover langs fairwayen, med gangbob
-        camera.position.z = -34.5 * e;
-        camera.position.y = 1.7 + Math.sin(now * 0.004) * 0.03 + (flying ? Math.sin(now * 0.013) * 0.09 : 0);
-        camera.position.x = flying ? Math.sin(now * 0.009) * 0.06 : 0;
-
-        // Kamerarist ved treff
-        if (impactStartRef.current) {
-          const sp = (now - impactStartRef.current) / 550;
-          if (sp < 1) {
-            const a = (1 - sp) * 0.12;
-            camera.position.x += (shakeRand() - 0.5) * a;
-            camera.position.y += (shakeRand() - 0.5) * a;
-          }
-        }
-        camera.lookAt(0, 1.25, camera.position.z - 9);
-
-        // Discen: slippes fra hånden, S-kurve inn i kjettingene
-        if (ph !== 'title') {
-          const hitDone = ph !== 'flying' && ph !== 'title';
-          disc.visible = !hitDone || flyP < 1 ? true : false;
-          if (flying) {
-            disc.visible = true;
-            const dz = -1.4 + (-39.6 + 1.4) * e;
-            disc.position.set(
-              (1 - flyP) * 0.35 + Math.sin(flyP * Math.PI) * 0.85,
-              1.45 + Math.sin(flyP * Math.PI) * 1.15 - flyP * 0.25,
-              dz
-            );
-            disc.rotation.y += 0.4;
-            disc.rotation.x = 0.1 + Math.sin(now * 0.02) * 0.06;
-            disc.rotation.z = Math.sin(flyP * Math.PI) * -0.22;
-          } else {
-            disc.visible = false;
-          }
-        }
-
-        // Kjettinger: rister i 0.9s etter treff
-        if (impactStartRef.current) {
-          const cp = (now - impactStartRef.current) / 900;
-          const decay = Math.max(0, 1 - cp);
-          chains.forEach((g, i) => {
-            g.rotation.z = g.userData.bz + Math.sin(now * 0.045 + i * 1.7) * 0.3 * decay;
-            g.rotation.x = g.userData.bx + Math.cos(now * 0.05 + i * 2.1) * 0.25 * decay;
-          });
-          flash.intensity = Math.max(0, 1 - (now - impactStartRef.current) / 450) * 26;
-        }
-
+        const t = performance.now() - t0;
+        const enter = easeOutCubic(Math.min(t / 2400, 1));
+        disc.position.y = -1.7 + enter * 1.32 + Math.sin(t * 0.0011) * 0.05;
+        disc.rotation.z = t * 0.00028;
+        disc.rotation.x = 1.02 + Math.sin(t * 0.0007) * 0.05;
+        const sc = 0.55 + enter * 0.45;
+        disc.scale.set(sc, sc, sc);
+        stars.rotation.y = t * 0.00002;
+        camera.position.x += (mouse.x * 0.22 - camera.position.x) * 0.04;
+        camera.position.y += (0.15 - mouse.y * 0.12 - camera.position.y) * 0.04;
+        camera.lookAt(0, -0.12, 0);
         renderer.render(scene, camera);
       };
       renderer.setAnimationLoop(loop);
@@ -885,6 +814,7 @@ function ThreeIntro({ phase, onFail }) {
     }
 
     return () => {
+      if (onMouse) window.removeEventListener('mousemove', onMouse);
       if (onResize) window.removeEventListener('resize', onResize);
       if (renderer) {
         renderer.setAnimationLoop(null);
