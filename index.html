@@ -169,6 +169,54 @@
     border-radius: 50%;
     border: 1px solid rgba(250,249,245,0.25);
   }
+
+  /* ---- FlightIntro: code-driven 3D intro scene (no video file to fail) ---- */
+  .intro-grid {
+    position: absolute;
+    left: -25%;
+    right: -25%;
+    bottom: -12%;
+    height: 60%;
+    background-image:
+      linear-gradient(rgba(46,107,79,0.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(46,107,79,0.25) 1px, transparent 1px);
+    background-size: 46px 46px;
+    transform: perspective(600px) rotateX(63deg);
+    transform-origin: center top;
+    -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 90%);
+    mask-image: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 90%);
+    animation: gridScroll 2.6s linear infinite;
+  }
+  @keyframes gridScroll {
+    from { background-position: 0 0, 0 0; }
+    to { background-position: 0 46px, 0 0; }
+  }
+  .intro-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(250,249,245,0.55);
+    animation: particleFloat 8s ease-in-out infinite;
+  }
+  @keyframes particleFloat {
+    0%, 100% { transform: translateY(0); opacity: 0.15; }
+    50% { transform: translateY(-34px); opacity: 0.7; }
+  }
+  .fly-disc {
+    position: absolute;
+    top: 30%;
+    left: 0;
+    animation: flyThrow 9s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes flyThrow {
+    0% { transform: translate3d(-18vw, 7vh, 0) scale(0.65); opacity: 0; }
+    12% { opacity: 0.9; }
+    50% { transform: translate3d(44vw, -7vh, 0) scale(1); }
+    88% { opacity: 0.9; }
+    100% { transform: translate3d(115vw, 3vh, 0) scale(0.7); opacity: 0; }
+  }
 </style>
 </head>
 <body class="bg-black">
@@ -176,7 +224,7 @@
 
 <script type="text/babel" data-presets="react">
 const { useEffect, useRef, useState } = React;
-const { motion } = window.Motion;
+const { motion, AnimatePresence } = window.Motion;
 
 // ---------- Icons ----------
 function ArrowUpRight({ className }) {
@@ -353,10 +401,260 @@ function Disc3D() {
   );
 }
 
+// ---------- DiscMesh (parametrisk 3D-disc, gjenbrukbar) ----------
+function DiscMesh({ size = 160, rim, glow, face, numbers }) {
+  const [n1, n2, n3, n4] = numbers;
+  return (
+    <div style={{ perspective: '900px' }} aria-hidden="true">
+      <div className="disc-3d" style={{ width: size, height: size }}>
+        <div
+          className="disc-layer"
+          style={{
+            background: `radial-gradient(circle at 35% 30%, ${rim[0]} 0%, ${rim[1]} 45%, ${rim[2]} 100%)`,
+            boxShadow: `0 0 ${Math.round(size * 0.3)}px ${glow}`,
+          }}
+        />
+        <div
+          className="disc-layer"
+          style={{
+            inset: '7%',
+            transform: 'translateZ(6px)',
+            background: `radial-gradient(circle at 40% 35%, ${face[0]} 0%, ${face[1]} 60%, ${face[2]} 100%)`,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1,
+          }}
+        >
+          <div className="disc-face-inner-ring" />
+          <span className="font-heading italic text-paper leading-none" style={{ fontSize: size * 0.16, letterSpacing: '-1px' }}>
+            {n1} | {n2}
+          </span>
+          <span className="font-heading italic text-paper leading-none" style={{ fontSize: size * 0.16, letterSpacing: '-1px' }}>
+            {n3} | {n4}
+          </span>
+          <span
+            className="font-body uppercase"
+            style={{ fontSize: Math.max(7, size * 0.05), letterSpacing: 2, color: 'rgba(250,249,245,0.6)', marginTop: 2 }}
+          >
+            Flightlab
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------- FlightIntro (3D-intro med klikkbare discer) ----------
+const DISC_TYPES = [
+  {
+    id: 'putter',
+    short: 'Putter',
+    name: 'Putter — Precision',
+    price: '179 kr',
+    numbers: [3, 3, 0, 1],
+    rim: ['#FFFFFF', '#E8E6DF', '#AEAB9F'],
+    glow: 'rgba(250,249,245,0.35)',
+    face: ['#2E6B4F', '#1B4332', '#0F2A1E'],
+    desc: 'Din mest presise disc. Rolig, stabil flukt som lander der du sikter — putteren er discen du kommer til å bruke mest.',
+    perfect: 'Putting og korte, presise kast',
+  },
+  {
+    id: 'midrange',
+    short: 'Midrange',
+    name: 'Midrange — All-Terrain',
+    price: '179 kr',
+    numbers: [5, 5, -1, 1],
+    rim: ['#3E8A66', '#1B4332', '#0F2A1E'],
+    glow: 'rgba(46,107,79,0.5)',
+    face: ['#153826', '#0F2A1E', '#0A1D15'],
+    desc: 'Allrounderen i bagen. Forutsigbar i vind og mellom trærne — discen som bygger teknikken din.',
+    perfect: 'Kontrollerte kast på 60–90 meter',
+  },
+  {
+    id: 'driver',
+    short: 'Driver',
+    name: 'Driver — Distance Pro',
+    price: '179 kr',
+    numbers: [12, 5, -1, 3],
+    rim: ['#FF8B5C', '#FF6B35', '#C94A1D'],
+    glow: 'rgba(255,107,53,0.4)',
+    face: ['#2E6B4F', '#1B4332', '#0F2A1E'],
+    desc: 'Maks lengde fra utkastfeltet. Krever fart i kastet — og belønner deg med meter du ikke visste du hadde.',
+    perfect: 'Lange drives på 90 meter og oppover',
+  },
+];
+
+const INTRO_CAPTIONS = [
+  'Norsk discgolf fortjener bedre utvalg.',
+  'Kvalitetsdiscer til 179 kr — uten toll og gebyrer.',
+  'Levert hjem i hele Norden på 1–3 dager.',
+  'Flightlab. Fra første kast til siste putt.',
+];
+
+function FlightIntro() {
+  const [selected, setSelected] = useState(null);
+  const [cap, setCap] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setCap((c) => (c + 1) % INTRO_CAPTIONS.length), 3200);
+    return () => clearInterval(t);
+  }, []);
+
+  const active = DISC_TYPES.find((d) => d.id === selected);
+
+  return (
+    <section id="opplev" className="relative w-full min-h-screen overflow-hidden bg-black py-24 flex flex-col">
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'radial-gradient(ellipse 70% 55% at 50% 0%, rgba(27,67,50,0.5) 0%, rgba(0,0,0,0) 65%)',
+          }}
+        />
+        <div className="intro-grid" />
+        {[...Array(14)].map((_, i) => (
+          <span
+            key={i}
+            className="intro-particle"
+            style={{
+              left: `${(i * 7 + 5) % 95}%`,
+              top: `${(i * 13 + 8) % 75}%`,
+              animationDelay: `${i * 0.7}s`,
+              animationDuration: `${6 + (i % 5)}s`,
+            }}
+          />
+        ))}
+        <div className="fly-disc">
+          <DiscMesh size={110} rim={DISC_TYPES[2].rim} glow={DISC_TYPES[2].glow} face={DISC_TYPES[2].face} numbers={DISC_TYPES[2].numbers} />
+        </div>
+      </div>
+
+      <div className="relative z-10 px-8 md:px-16 lg:px-20 text-center">
+        <Reveal>
+          <div className="text-sm font-body text-white/60 mb-6">// Intro</div>
+          <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-7xl leading-[0.9] tracking-[-2px]">
+            Opplev Flightlab i 3D
+          </h2>
+          <p className="mt-5 text-sm md:text-base text-white/70 font-body font-light max-w-xl leading-snug mx-auto">
+            Hele sortimentet vårt i tre klasser. Trykk på en disc og se hvordan den flyr.
+          </p>
+        </Reveal>
+      </div>
+
+      <div className="relative z-10 flex flex-wrap items-end justify-center gap-10 md:gap-16 mt-14 px-4">
+        {DISC_TYPES.map((d) => (
+          <button
+            key={d.id}
+            onClick={() => setSelected(selected === d.id ? null : d.id)}
+            className="flex flex-col items-center gap-4 outline-none bg-transparent border-none cursor-pointer"
+            aria-label={`Vis informasjon om ${d.name}`}
+          >
+            <motion.div
+              animate={{
+                scale: selected === d.id ? 1.15 : selected ? 0.88 : 1,
+                y: selected === d.id ? -10 : 0,
+                opacity: selected && selected !== d.id ? 0.45 : 1,
+              }}
+              transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+            >
+              <DiscMesh size={150} rim={d.rim} glow={d.glow} face={d.face} numbers={d.numbers} />
+            </motion.div>
+            <span
+              className="liquid-glass rounded-full px-4 py-1.5 text-xs font-medium text-white font-body"
+              style={selected === d.id ? { background: 'rgba(255,107,53,0.35)' } : undefined}
+            >
+              {d.short}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <div className="relative z-10 flex justify-center mt-10 min-h-[230px] px-4">
+        <AnimatePresence mode="wait">
+          {active ? (
+            <motion.div
+              key={active.id}
+              initial={{ opacity: 0, y: 30, rotateX: -28, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, y: 0, rotateX: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -18, rotateX: 22, filter: 'blur(10px)' }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              style={{ transformPerspective: 900 }}
+              className="liquid-glass-strong rounded-[1.5rem] p-6 md:p-8 max-w-2xl w-full self-start"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <h3 className="font-heading italic text-white text-2xl md:text-3xl tracking-[-1px] leading-none">
+                  {active.name}
+                </h3>
+                <span className="rounded-full px-4 py-1.5 text-sm font-semibold text-white shrink-0" style={{ background: '#FF6B35' }}>
+                  {active.price}
+                </span>
+              </div>
+              <div className="grid grid-cols-4 gap-3 mt-6">
+                {['Speed', 'Glide', 'Turn', 'Fade'].map((label, i) => (
+                  <div key={label} className="liquid-glass rounded-[1rem] p-3 text-center">
+                    <div className="font-heading italic text-white text-2xl md:text-3xl leading-none">{active.numbers[i]}</div>
+                    <div className="text-[10px] uppercase tracking-[1.5px] text-white/50 font-body mt-1.5">{label}</div>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-5 text-sm text-white/85 font-body font-light leading-relaxed">{active.desc}</p>
+              <p className="mt-2 text-xs font-body font-medium uppercase tracking-wide text-signal">
+                Perfekt til: {active.perfect}
+              </p>
+              <span className="mt-4 inline-block liquid-glass rounded-full px-3 py-1 text-[11px] text-white/80 font-body">
+                Snart i butikken
+              </span>
+            </motion.div>
+          ) : (
+            <motion.p
+              key="hint"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="text-sm text-white/50 font-body font-light self-start mt-2"
+            >
+              Trykk på en disc for å se flight-tall, pris og hva den passer til.
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <div className="relative z-10 mt-auto pt-14 flex flex-col items-center px-4">
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={cap}
+            initial={{ opacity: 0, filter: 'blur(8px)', y: 14 }}
+            animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+            exit={{ opacity: 0, filter: 'blur(8px)', y: -14 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="font-heading italic text-white text-2xl md:text-4xl tracking-[-1px] text-center"
+          >
+            {INTRO_CAPTIONS[cap]}
+          </motion.p>
+        </AnimatePresence>
+        <div className="mt-5 flex gap-1.5">
+          {INTRO_CAPTIONS.map((_, i) => (
+            <span
+              key={i}
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ background: i === cap ? '#FF6B35' : 'rgba(255,255,255,0.25)' }}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ---------- Navbar ----------
 function Navbar() {
   const links = [
     { label: 'Hjem', href: '#' },
+    { label: 'Opplev', href: '#opplev' },
     { label: 'Discer', href: '#discer' },
     { label: 'Tjenester', href: '#tjenester' },
     { label: 'Om Oss', href: '#om-oss' },
@@ -622,19 +920,13 @@ const CARDS = [
 function Capabilities() {
   return (
     <section id="fordeler" className="relative w-full min-h-screen overflow-hidden bg-black">
-      <video
-        className="absolute inset-0 w-full h-full object-cover z-0"
-        src="https://commons.wikimedia.org/wiki/Special:FilePath/Video_of_trees.webm"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 70% 60% at 80% 15%, rgba(27,67,50,0.55) 0%, transparent 65%), radial-gradient(ellipse 55% 45% at 12% 85%, rgba(255,107,53,0.12) 0%, transparent 60%)',
+        }}
       />
-      <div className="brand-media-tint" />
-      <div className="absolute bottom-2 right-3 z-10 text-[10px] text-white/40 font-body">
-        Video: Wikimedia Commons (CC BY-SA 4.0)
-      </div>
 
       <div className="relative z-10 px-8 md:px-16 lg:px-20 pt-24 pb-10 flex flex-col min-h-screen">
         <Reveal className="mb-auto">
@@ -1052,6 +1344,7 @@ function App() {
     <div>
       <Hero />
       <UspStrip />
+      <FlightIntro />
       <Products />
       <Capabilities />
       <Services />
