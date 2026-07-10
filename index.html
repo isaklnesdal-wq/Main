@@ -98,10 +98,9 @@
     pointer-events: none;
   }
 
-  /* Brand-green tint pass over the placeholder stock footage below — drop this
-     once real Flightlab/disc golf video is available, the FadingVideo
-     component itself needs no changes. */
-  .brand-video-tint {
+  /* Brand-green tint pass over the background photos, for text legibility and
+     brand cohesion. */
+  .brand-media-tint {
     position: absolute;
     inset: 0;
     z-index: 5;
@@ -224,82 +223,6 @@ function BlurText({ text, className }) {
   );
 }
 
-// ---------- FadingVideo ----------
-const FADE_MS = 500;
-const FADE_OUT_LEAD = 0.55;
-
-function FadingVideo({ src, className, style }) {
-  const videoRef = useRef(null);
-  const rafRef = useRef(null);
-  const fadingOutRef = useRef(false);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const fadeTo = (target, duration) => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      const start = parseFloat(video.style.opacity) || 0;
-      const startTime = performance.now();
-      const step = (now) => {
-        const t = Math.min((now - startTime) / duration, 1);
-        video.style.opacity = start + (target - start) * t;
-        if (t < 1) {
-          rafRef.current = requestAnimationFrame(step);
-        }
-      };
-      rafRef.current = requestAnimationFrame(step);
-    };
-
-    const onLoadedData = () => {
-      video.style.opacity = 0;
-      video.play().catch(() => {});
-      fadeTo(1, FADE_MS);
-    };
-
-    const onTimeUpdate = () => {
-      if (!fadingOutRef.current && video.duration - video.currentTime <= FADE_OUT_LEAD && video.duration - video.currentTime > 0) {
-        fadingOutRef.current = true;
-        fadeTo(0, FADE_MS);
-      }
-    };
-
-    const onEnded = () => {
-      video.style.opacity = 0;
-      setTimeout(() => {
-        video.currentTime = 0;
-        video.play().catch(() => {});
-        fadingOutRef.current = false;
-        fadeTo(1, FADE_MS);
-      }, 100);
-    };
-
-    video.addEventListener('loadeddata', onLoadedData);
-    video.addEventListener('timeupdate', onTimeUpdate);
-    video.addEventListener('ended', onEnded);
-
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      video.removeEventListener('loadeddata', onLoadedData);
-      video.removeEventListener('timeupdate', onTimeUpdate);
-      video.removeEventListener('ended', onEnded);
-    };
-  }, [src]);
-
-  return (
-    <video
-      ref={videoRef}
-      className={className}
-      style={{ opacity: 0, ...style }}
-      autoPlay
-      muted
-      playsInline
-      preload="auto"
-      src={src}
-    />
-  );
-}
-
 // ---------- Navbar ----------
 function Navbar() {
   const links = ['Hjem', 'Discer', 'Om Oss', 'Fordeler', 'Kontakt'];
@@ -337,12 +260,14 @@ function Navbar() {
 function Hero() {
   return (
     <section className="relative w-full h-screen overflow-hidden bg-black">
-      <FadingVideo
-        src="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+      <img
+        src="https://images.pexels.com/photos/13189540/pexels-photo-13189540.jpeg?auto=compress&cs=tinysrgb&w=1920"
+        alt="Discgolfspiller kaster en disc utendørs i sollys"
         className="absolute left-1/2 top-0 -translate-x-1/2 object-cover object-top z-0"
         style={{ width: '120%', height: '120%' }}
+        loading="eager"
       />
-      <div className="brand-video-tint" />
+      <div className="brand-media-tint" />
 
       <div className="relative z-10 flex flex-col h-full">
         <Navbar />
@@ -464,11 +389,13 @@ const CARDS = [
 function Capabilities() {
   return (
     <section id="fordeler" className="relative w-full min-h-screen overflow-hidden bg-black">
-      <FadingVideo
-        src="https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+      <img
+        src="https://images.pexels.com/photos/158251/pexels-photo-158251.jpeg?auto=compress&cs=tinysrgb&w=1920"
+        alt="Solfylt skog med lange skygger mellom trærne"
         className="absolute inset-0 w-full h-full object-cover z-0"
+        loading="lazy"
       />
-      <div className="brand-video-tint" />
+      <div className="brand-media-tint" />
 
       <div className="relative z-10 px-8 md:px-16 lg:px-20 pt-24 pb-10 flex flex-col min-h-screen">
         <div className="mb-auto">
