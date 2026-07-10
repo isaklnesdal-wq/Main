@@ -310,6 +310,36 @@
     0%, 100% { transform: rotate(2.5deg); }
     50% { transform: rotate(-2.5deg); }
   }
+
+  /* ---- Kinematisk mørk hero: iriserende glød + stjerner ---- */
+  .iridescent-blob {
+    position: absolute;
+    border-radius: 50%;
+    background:
+      radial-gradient(ellipse 60% 50% at 35% 40%, rgba(150,110,255,0.5) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 45% at 68% 55%, rgba(255,170,80,0.45) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 50% 70%, rgba(70,150,255,0.4) 0%, transparent 65%),
+      radial-gradient(ellipse 70% 60% at 50% 50%, rgba(27,67,50,0.6) 0%, transparent 70%);
+    filter: blur(70px) saturate(1.3);
+    animation: blobHue 16s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes blobHue {
+    0% { filter: blur(70px) saturate(1.3) hue-rotate(0deg); }
+    100% { filter: blur(70px) saturate(1.3) hue-rotate(360deg); }
+  }
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.75);
+    animation: starTwinkle 4.5s ease-in-out infinite;
+  }
+  @keyframes starTwinkle {
+    0%, 100% { opacity: 0.12; }
+    50% { opacity: 0.85; }
+  }
 </style>
 </head>
 <body class="bg-black">
@@ -608,6 +638,10 @@ const POV_TREES = [
   { x0: 54, d: 1.75, dur: 1.0, tx: '70vw', ts0: 0.10, w: 90, h: 155 },
 ];
 
+// Lim inn URL til en Higgsfield-generert introvideo her (mp4/webm, f.eks. disc
+// som flyr inn i kurven i gyllent lys). Tom streng = WebGL-scenen brukes.
+const INTRO_VIDEO_URL = '';
+
 // Deterministisk RNG så skogen ser lik ut hver gang
 function mulberry32(a) {
   return function () {
@@ -869,6 +903,8 @@ function IntroOverlay({ onDone }) {
   // Faser: title → flying → impact → landed → ready
   const [phase, setPhase] = useState('title');
   const [useWebGL, setUseWebGL] = useState(true);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const useIntroVideo = Boolean(INTRO_VIDEO_URL) && !videoFailed;
 
   useEffect(() => {
     const timers = [
@@ -905,7 +941,17 @@ function IntroOverlay({ onDone }) {
       exit={{ opacity: 0, scale: 1.06, filter: 'blur(10px)' }}
       transition={{ duration: 0.8, ease: 'easeInOut' }}
     >
-      {useWebGL ? (
+      {useIntroVideo ? (
+        <video
+          className="absolute inset-0 w-full h-full object-cover"
+          src={INTRO_VIDEO_URL}
+          autoPlay
+          muted
+          playsInline
+          preload="auto"
+          onError={() => setVideoFailed(true)}
+        />
+      ) : useWebGL ? (
         <ThreeIntro phase={phase} onFail={() => setUseWebGL(false)} />
       ) : (
       <div className={'absolute inset-0 ' + (flying ? 'cam-bob' : phase === 'impact' ? 'cam-shake' : '')}>
@@ -1092,29 +1138,26 @@ function DiscHero() {
 
   return (
     <section id="opplev" className="relative w-full min-h-screen overflow-hidden bg-black pt-28 pb-16 flex flex-col">
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <img
-          src="https://images.pexels.com/photos/158251/pexels-photo-158251.jpeg?auto=compress&cs=tinysrgb&w=1920"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-          loading="eager"
-          onError={(e) => { e.target.style.display = 'none'; }}
-        />
-        <div className="brand-media-tint" style={{ background: 'linear-gradient(180deg, rgba(4,12,8,0.82) 0%, rgba(10,26,18,0.72) 55%, rgba(3,9,6,0.9) 100%)' }} />
-        {[...Array(8)].map((_, i) => (
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 15%, #0f1a13 0%, #050807 55%, #020303 100%)' }}
+      >
+        {[...Array(24)].map((_, i) => (
           <span
             key={i}
-            className="intro-particle"
+            className="star"
             style={{
-              left: `${(i * 11 + 7) % 93}%`,
-              top: `${(i * 17 + 10) % 70}%`,
-              opacity: 0.5,
-              animationDelay: `${i * 0.9}s`,
-              animationDuration: `${7 + (i % 4)}s`,
-              zIndex: 6,
+              left: `${(i * 13 + 4) % 97}%`,
+              top: `${(i * 19 + 3) % 62}%`,
+              animationDelay: `${(i % 9) * 0.55}s`,
+              transform: i % 3 === 0 ? 'scale(1.5)' : undefined,
             }}
           />
         ))}
+        <div
+          className="iridescent-blob"
+          style={{ left: '50%', top: '44%', width: 'min(920px, 92vw)', height: 440, transform: 'translateX(-50%)' }}
+        />
       </div>
 
       <Navbar />
@@ -1392,8 +1435,8 @@ const PRODUCTS = [
     price: '179 kr',
   },
   {
-    image: 'https://images.pexels.com/photos/10398350/pexels-photo-10398350.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'Person som holder en disc',
+    image: 'https://images.pexels.com/photos/13189540/pexels-photo-13189540.jpeg?auto=compress&cs=tinysrgb&w=800',
+    alt: 'Spiller putter mot kurven på discgolfbane',
     name: 'Kastaplast Reko',
     tagline: 'Putter — der rundene avgjøres',
     price: '179 kr',
@@ -1409,8 +1452,8 @@ const ACCESSORIES = [
     price: '699 kr',
   },
   {
-    image: 'https://images.pexels.com/photos/13189540/pexels-photo-13189540.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'Spiller kaster disc på discgolfbane',
+    image: 'https://images.pexels.com/photos/12370410/pexels-photo-12370410.jpeg?auto=compress&cs=tinysrgb&w=800',
+    alt: 'Sportsutstyr med frisbee på gresset',
     name: 'Startsett — 3 Discer',
     tagline: 'Putter, midrange og driver — alt du trenger for første runde',
     price: '349 kr',
@@ -1532,13 +1575,16 @@ function Capabilities() {
         }}
       >
         <img
-          src="https://images.pexels.com/photos/1757363/pexels-photo-1757363.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          src="https://commons.wikimedia.org/wiki/Special:FilePath/Disc_golf_basket.jpg"
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
           loading="lazy"
           onError={(e) => { e.target.style.display = 'none'; }}
         />
-        <div className="brand-media-tint" style={{ background: 'linear-gradient(180deg, rgba(4,12,8,0.85) 0%, rgba(10,26,18,0.75) 55%, rgba(3,9,6,0.9) 100%)' }} />
+        <div className="brand-media-tint" style={{ background: 'linear-gradient(180deg, rgba(4,12,8,0.85) 0%, rgba(10,26,18,0.72) 55%, rgba(3,9,6,0.9) 100%)' }} />
+        <div className="absolute bottom-2 right-3 text-[10px] text-white/35 font-body">
+          Foto: Wikimedia Commons
+        </div>
       </div>
 
       <div className="relative z-10 px-8 md:px-16 lg:px-20 pt-24 pb-10 flex flex-col min-h-screen">
