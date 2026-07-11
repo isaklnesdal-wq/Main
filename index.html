@@ -340,6 +340,31 @@
     0%, 100% { opacity: 0.12; }
     50% { opacity: 0.85; }
   }
+
+  /* ---- UX-regler fra designsystemet: hover, fokus, redusert bevegelse ---- */
+  .lift-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .lift-card:hover {
+    transform: translateY(-6px);
+  }
+  a, button {
+    transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  }
+  :focus-visible {
+    outline: 2px solid #FF6B35;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .disc-3d, .iridescent-blob, .star, .intro-particle, .pov-tree, .speed-rays,
+    .cam-bob, .cam-shake, .disc-wobble, .basket-anim, .wall-grow, .basket-chain,
+    .lift-card {
+      animation: none !important;
+      transition: none !important;
+    }
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body class="bg-black">
@@ -1349,28 +1374,25 @@ function UspStrip() {
 }
 
 // ---------- Products ----------
-const PRODUCTS = [
-  {
-    image: 'https://images.pexels.com/photos/11998664/pexels-photo-11998664.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'Flygende disc i luften',
-    name: 'Latitude 64 Ballista Pro',
-    tagline: 'Distansedriver — for deg som vil lengre ut',
-    price: '179 kr',
-  },
-  {
-    image: 'https://images.pexels.com/photos/15749077/pexels-photo-15749077.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'Spiller kaster en disc utendørs',
-    name: 'Discmania MD3',
-    tagline: 'Midrange — kontroll i all slags vind',
-    price: '179 kr',
-  },
-  {
-    image: 'https://images.pexels.com/photos/13189540/pexels-photo-13189540.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'Spiller putter mot kurven på discgolfbane',
-    name: 'Kastaplast Reko',
-    tagline: 'Putter — der rundene avgjøres',
-    price: '179 kr',
-  },
+// Merkevarefarger for 3D-rendrede produktdiscer
+const BRAND_STYLE = {
+  'Kastaplast': { rim: ['#C8E05A', '#A9C93B', '#7C9A24'], glow: 'rgba(180,211,52,0.4)', face: ['#22301A', '#18220F', '#0E1408'] },
+  'Discmania': { rim: ['#4A6FD4', '#24439B', '#152A66'], glow: 'rgba(74,111,212,0.45)', face: ['#101B3E', '#0B1330', '#070D22'] },
+  'Latitude 64': { rim: ['#FFD34D', '#F2B705', '#B98603'], glow: 'rgba(242,183,5,0.35)', face: ['#2E2408', '#221A05', '#141003'] },
+  'Westside': { rim: ['#E06A5A', '#C9453B', '#8F2A24'], glow: 'rgba(224,106,90,0.4)', face: ['#301A17', '#220F0D', '#140807'] },
+  'Dynamic Discs': { rim: ['#5AC8E0', '#3BA9C9', '#247C9A'], glow: 'rgba(90,200,224,0.4)', face: ['#17282E', '#0F1B20', '#081013'] },
+};
+
+// Ekte modeller med korrekte flight-tall, fra leverandørlisten i forretningsplanen
+const DISC_CATALOG = [
+  { brand: 'Kastaplast', model: 'Reko', discClass: 'Putter', numbers: [3, 3, 0, 1], price: '179 kr' },
+  { brand: 'Dynamic Discs', model: 'Judge', discClass: 'Putter', numbers: [2, 4, 0, 1], price: '179 kr' },
+  { brand: 'Kastaplast', model: 'Berg', discClass: 'Approach', numbers: [1, 1, 0, 2], price: '179 kr' },
+  { brand: 'Westside', model: 'Harp', discClass: 'Approach', numbers: [4, 3, 0, 3], price: '179 kr' },
+  { brand: 'Discmania', model: 'MD3', discClass: 'Midrange', numbers: [5, 5, 0, 2], price: '179 kr' },
+  { brand: 'Latitude 64', model: 'River', discClass: 'Fairway Driver', numbers: [7, 7, -1, 1], price: '179 kr' },
+  { brand: 'Discmania', model: 'FD', discClass: 'Fairway Driver', numbers: [7, 6, -1, 1], price: '179 kr' },
+  { brand: 'Latitude 64', model: 'Ballista Pro', discClass: 'Distansedriver', numbers: [14, 4, 0, 3], price: '179 kr' },
 ];
 
 const ACCESSORIES = [
@@ -1413,29 +1435,50 @@ function Products() {
           Våre Discer
         </h2>
         <p className="mt-5 text-sm md:text-base text-white/70 font-body font-light max-w-xl leading-snug">
-          Puttere, midrange og drivere fra anerkjente produsenter — alle til samme faste
-          pris. Startsett for nybegynnere kommer fra 299 kr.
+          Åtte modeller fra fire merker — puttere, approach, midrange og drivere,
+          alle til samme faste pris. Startsett for nybegynnere fra 349 kr.
         </p>
       </Reveal>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
-        {PRODUCTS.map(({ image, alt, name, tagline, price }, i) => (
-          <Reveal key={name} delay={i * 0.12}>
-            <div className="liquid-glass rounded-[1.25rem] p-4 flex flex-col h-full">
-              <div className="rounded-[0.9rem] overflow-hidden aspect-[4/3]">
-                <img src={image} alt={alt} className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.style.display = 'none'; }} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-14">
+        {DISC_CATALOG.map(({ brand, model, discClass, numbers, price }, i) => {
+          const bs = BRAND_STYLE[brand];
+          return (
+            <Reveal key={brand + model} delay={i * 0.08}>
+              <div className="liquid-glass lift-card rounded-[1.25rem] p-5 flex flex-col items-center text-center h-full">
+                <div className="py-4">
+                  <DiscMesh size={115} rim={bs.rim} glow={bs.glow} face={bs.face} brand={brand} model={model} numbers={numbers} />
+                </div>
+                <span
+                  aria-hidden="true"
+                  style={{
+                    width: 78,
+                    height: 15,
+                    borderRadius: '50%',
+                    background: 'radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%)',
+                    marginTop: -12,
+                  }}
+                />
+                <h3 className="font-heading italic text-white text-lg md:text-xl tracking-[-0.5px] leading-tight mt-3">
+                  {brand} {model}
+                </h3>
+                <span className="mt-2 liquid-glass rounded-full px-3 py-1 text-[11px] text-white/75 font-body">
+                  {discClass}
+                </span>
+                <p className="mt-2 text-xs text-white/55 font-body" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  {numbers.join(' · ')}
+                </p>
+                <div className="flex-1" />
+                <div className="flex items-center justify-between w-full mt-4 px-1">
+                  <span className="text-white font-body text-sm font-medium">{price}</span>
+                  <span className="liquid-glass rounded-full px-3 py-1 text-[11px] text-white/80 font-body">
+                    Snart i butikken
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center justify-between mt-4 px-1">
-                <h3 className="font-heading italic text-white text-xl tracking-[-0.5px]">{name}</h3>
-                <span className="text-white/90 font-body text-sm">{price}</span>
-              </div>
-              <p className="mt-1 px-1 text-xs text-white/60 font-body font-light">{tagline}</p>
-              <span className="mt-3 mx-1 self-start liquid-glass rounded-full px-3 py-1 text-[11px] text-white/80 font-body">
-                Snart i butikken
-              </span>
-            </div>
-          </Reveal>
-        ))}
+            </Reveal>
+          );
+        })}
       </div>
 
       <Reveal className="mt-20">
