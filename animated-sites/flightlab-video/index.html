@@ -63,6 +63,7 @@ nav .lks a{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f
 /* video scroll hero */
 #hero{position:relative;height:420vh}
 #vwrap{position:sticky;top:0;height:100vh;overflow:hidden;background:#000}
+#fcanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;transform-origin:center center;background:radial-gradient(ellipse at 60% 55%,#12231a 0%,#060907 70%)}
 #vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transform-origin:center center;background:radial-gradient(ellipse at 60% 55%,#12231a 0%,#060907 70%)}
 .vtint{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(14,13,12,.35) 0%,transparent 30%,transparent 60%,rgba(14,13,12,.7) 100%)}
 .htext{position:fixed;z-index:10;left:6%;top:50%;transform:translateY(-50%) translateX(-18px);max-width:520px;opacity:0;filter:blur(6px);transition:opacity .7s,filter .7s,transform .7s;pointer-events:none}
@@ -193,7 +194,8 @@ footer .fl{font-size:10px;color:var(--concrete-dim);letter-spacing:.12em}
 
 <section id="hero">
   <div id="vwrap">
-    <video id="vid" muted autoplay loop playsinline preload="auto" webkit-playsinline="true"></video>
+    <canvas id="fcanvas"></canvas>
+    <video id="vid" muted playsinline preload="auto" webkit-playsinline="true" style="display:none"></video>
     <div class="vtint"></div>
   </div>
 
@@ -333,50 +335,102 @@ document.getElementById('agrid').innerHTML=ACC.map(a=>
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.15});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
-/* === Video hero: autoplay-loop (always visible) + scroll-driven story === */
+/* === Video-on-scroll hero ===
+   The real Higgsfield video is scrubbed frame-by-frame by scroll. To make
+   that smooth with a remote MP4, we PRE-EXTRACT its frames in the browser
+   at load (seek → capture to bitmap), then draw the scroll-mapped frame to
+   a canvas. If a browser blocks frame capture (CORS), we fall back to live
+   currentTime scrubbing of the <video>; if the video can't load at all we
+   still show captions. */
 const hero=document.getElementById('hero'),vid=document.getElementById('vid'),cue=document.getElementById('cue');
+const canvas=document.getElementById('fcanvas'),ctx=canvas.getContext('2d');
 const htexts=[...document.querySelectorAll('.htext')];
 const chapters=[...document.querySelectorAll('#chapters .ch')];
-
-function heroProgress(){const r=hero.getBoundingClientRect();return Math.max(0,Math.min(1,-r.top/(r.height-innerHeight)))}
-
 const lfill=document.getElementById('lfill'),lpct=document.getElementById('lpct');
 function setLoad(p){p=Math.round(p);lfill.style.width=p+'%';lpct.textContent=p+'%'}
+function heroProgress(){const r=hero.getBoundingClientRect();return Math.max(0,Math.min(1,-r.top/(r.height-innerHeight)))}
 
-// The video autoplays and loops so it is ALWAYS on screen. Scroll then
-// drives the overlay captions, chapter markers and a slow push-in — a
-// reliable scroll experience that never depends on remote frame-seeking.
-vid.setAttribute('loop','');vid.setAttribute('autoplay','');vid.setAttribute('muted','');vid.muted=true;
-vid.src=VIDEO_URL;
-vid.load();
+let MODE='video';            // 'frames' once extraction succeeds
+let frames=[];               // ImageBitmaps
+let FCOUNT=0, dur=5;
+let curFrame=0;              // smoothed frame index for canvas mode
+let curT=0;                  // smoothed time for video mode
 
-let progShown=0;
-const prog=setInterval(()=>{
-  const b=vid.buffered.length?vid.buffered.end(vid.buffered.length-1)/(vid.duration||5):0;
-  progShown=Math.max(progShown,Math.min(97,15+b*82));
-  setLoad(progShown);
-},150);
+function sizeCanvas(){const dpr=Math.min(devicePixelRatio||1,2);canvas.width=innerWidth*dpr;canvas.height=innerHeight*dpr;}
+sizeCanvas();addEventListener('resize',sizeCanvas);
+function drawCover(src,sw,sh){
+  const cw=canvas.width,ch=canvas.height,ir=sw/sh,cr=cw/ch;let dw,dh,dx,dy;
+  if(cr>ir){dw=cw;dh=cw/ir;dx=0;dy=(ch-dh)/2}else{dh=ch;dw=ch*ir;dy=0;dx=(cw-dw)/2}
+  ctx.drawImage(src,dx,dy,dw,dh);
+}
+function drawFrame(i){const f=frames[Math.max(0,Math.min(FCOUNT-1,i))];if(f)drawCover(f,f.width,f.height);}
 
-let started=false;
-function begin(){
-  if(started)return;started=true;
-  clearInterval(prog);setLoad(100);
-  vid.play().catch(()=>{});
+const seekTo=(v,t)=>new Promise((res,rej)=>{
+  const on=()=>{v.removeEventListener('seeked',on);res()};
+  v.addEventListener('seeked',on);
+  try{v.currentTime=t}catch(e){}
+  setTimeout(()=>{v.removeEventListener('seeked',on);rej('seek-timeout')},4000);
+});
+
+async function extractFrames(){
+  const v=document.createElement('video');
+  v.crossOrigin='anonymous';v.muted=true;v.playsInline=true;v.preload='auto';v.src=VIDEO_URL;
+  await new Promise((res,rej)=>{
+    v.addEventListener('loadedmetadata',res,{once:true});
+    v.addEventListener('error',()=>rej('load'),{once:true});
+    setTimeout(()=>rej('meta-timeout'),15000);
+  });
+  dur=v.duration||5;
+  FCOUNT=Math.max(48,Math.min(84,Math.round(dur*16)));
+  // prove capture is allowed before committing to the full loop
+  await seekTo(v,Math.min(0.05,dur*0.02));
+  const probe=await createImageBitmap(v);   // throws (SecurityError) if CORS-tainted
+  frames.push(probe);
+  for(let i=1;i<FCOUNT;i++){
+    await seekTo(v,(i/(FCOUNT-1))*(dur-0.03));
+    frames.push(await createImageBitmap(v));
+    setLoad(8+(i/FCOUNT)*88);
+  }
+  MODE='frames';
+}
+
+function initVideoFallback(){
+  // live currentTime scrub of the visible <video> (works cross-origin, no capture)
+  MODE='video';
+  canvas.style.display='none';
+  vid.style.display='block';
+  if(vid.src!==VIDEO_URL)vid.src=VIDEO_URL;
+  vid.load();
+  const to=setTimeout(finish,4000);
+  const go=()=>{clearTimeout(to);dur=vid.duration||5;finish()};
+  vid.addEventListener('loadeddata',go,{once:true});
+  vid.addEventListener('canplay',go,{once:true});
+  vid.addEventListener('error',finish,{once:true});
+  try{vid.pause()}catch(e){}
+}
+
+let finished=false;
+function finish(){
+  if(finished)return;finished=true;
+  setLoad(100);
+  if(MODE==='frames'&&frames.length)drawFrame(0);
   setTimeout(()=>document.getElementById('loader').classList.add('done'),250);
   requestAnimationFrame(loop);
 }
-vid.addEventListener('canplay',begin,{once:true});
-vid.addEventListener('loadeddata',begin,{once:true});
-vid.addEventListener('error',begin,{once:true});
-// hard fallback: never let the loader trap the user
-setTimeout(begin,4000);
 
 function loop(){
   const p=heroProgress();
-  // keep the loop playing even if a browser paused it on tab blur etc.
-  if(vid.paused && p<1){vid.play().catch(()=>{});}
-  // slow cinematic push-in as you scroll the hero
-  vid.style.transform='scale('+(1+p*0.14).toFixed(4)+')';
+  if(MODE==='frames'){
+    const target=p*(FCOUNT-1);
+    curFrame+=(target-curFrame)*0.18;
+    drawFrame(Math.round(curFrame));
+    canvas.style.transform='scale('+(1+p*0.12).toFixed(4)+')';
+  }else{
+    const target=p*(dur-0.05);
+    curT+=(target-curT)*0.14;
+    if(Math.abs(target-curT)>0.004){try{vid.currentTime=curT}catch(e){}}
+    vid.style.transform='scale('+(1+p*0.12).toFixed(4)+')';
+  }
   let active=-1;
   htexts.forEach((el,i)=>{const s=+el.dataset.show,h=+el.dataset.hide;const v=p>=s&&p<h;el.classList.toggle('vis',v);if(v)active=i});
   chapters.forEach((ch,i)=>{ch.classList.toggle('active',i===active);
@@ -385,8 +439,19 @@ function loop(){
   requestAnimationFrame(loop);
 }
 
-/* reduced motion: show first caption, video still loops quietly */
-if(REDUCED){htexts.forEach(el=>el.classList.add('vis'));}
+/* Boot */
+if(REDUCED){
+  /* reduced motion: no scrubbing — show captions, loop the video quietly */
+  vid.style.display='block';canvas.style.display='none';
+  vid.setAttribute('loop','');vid.setAttribute('autoplay','');vid.muted=true;
+  vid.src=VIDEO_URL;vid.play&&vid.play().catch(()=>{});
+  htexts.forEach(el=>el.classList.add('vis'));
+  document.getElementById('loader').classList.add('done');
+}else{
+  /* try smooth frame extraction, else fall back to live video scrub */
+  setLoad(6);
+  extractFrames().then(finish).catch((why)=>{console.warn('frame extraction unavailable ('+why+'), using live video scrub');initVideoFallback();});
+}
 
 /* === Form === */
 document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();
