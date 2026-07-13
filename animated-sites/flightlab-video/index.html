@@ -63,7 +63,7 @@ nav .lks a{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f
 /* video scroll hero */
 #hero{position:relative;height:420vh}
 #vwrap{position:sticky;top:0;height:100vh;overflow:hidden;background:#000}
-#vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+#vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transform-origin:center center;background:radial-gradient(ellipse at 60% 55%,#12231a 0%,#060907 70%)}
 .vtint{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(14,13,12,.35) 0%,transparent 30%,transparent 60%,rgba(14,13,12,.7) 100%)}
 .htext{position:fixed;z-index:10;left:6%;top:50%;transform:translateY(-50%) translateX(-18px);max-width:520px;opacity:0;filter:blur(6px);transition:opacity .7s,filter .7s,transform .7s;pointer-events:none}
 .htext.vis{opacity:1;filter:blur(0);transform:translateY(-50%) translateX(0)}
@@ -193,7 +193,7 @@ footer .fl{font-size:10px;color:var(--concrete-dim);letter-spacing:.12em}
 
 <section id="hero">
   <div id="vwrap">
-    <video id="vid" muted playsinline preload="auto" poster=""></video>
+    <video id="vid" muted autoplay loop playsinline preload="auto" webkit-playsinline="true"></video>
     <div class="vtint"></div>
   </div>
 
@@ -333,38 +333,50 @@ document.getElementById('agrid').innerHTML=ACC.map(a=>
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.15});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
-/* === Video scroll-scrub hero === */
+/* === Video hero: autoplay-loop (always visible) + scroll-driven story === */
 const hero=document.getElementById('hero'),vid=document.getElementById('vid'),cue=document.getElementById('cue');
 const htexts=[...document.querySelectorAll('.htext')];
 const chapters=[...document.querySelectorAll('#chapters .ch')];
-let videoReady=false,dur=0,targetT=0,curT=0;
 
 function heroProgress(){const r=hero.getBoundingClientRect();return Math.max(0,Math.min(1,-r.top/(r.height-innerHeight)))}
 
 const lfill=document.getElementById('lfill'),lpct=document.getElementById('lpct');
 function setLoad(p){p=Math.round(p);lfill.style.width=p+'%';lpct.textContent=p+'%'}
 
-function initVideo(){
-  vid.src=VIDEO_URL;
-  vid.load();
-  const fake=setInterval(()=>{const b=vid.buffered.length?vid.buffered.end(0)/(vid.duration||5):0;setLoad(Math.min(96,20+b*76))},200);
-  vid.addEventListener('loadedmetadata',()=>{dur=vid.duration||5});
-  vid.addEventListener('canplaythrough',()=>{clearInterval(fake);videoReady=true;setLoad(100);finishLoad()},{once:true});
-  // safety: don't hang forever if canplaythrough never fires
-  setTimeout(()=>{if(!videoReady){clearInterval(fake);videoReady=true;dur=vid.duration||5;setLoad(100);finishLoad()}},6000);
-  vid.addEventListener('error',()=>{clearInterval(fake);videoReady=true;setLoad(100);finishLoad()});
-}
-let loadFinished=false;
-function finishLoad(){if(loadFinished)return;loadFinished=true;
+// The video autoplays and loops so it is ALWAYS on screen. Scroll then
+// drives the overlay captions, chapter markers and a slow push-in — a
+// reliable scroll experience that never depends on remote frame-seeking.
+vid.setAttribute('loop','');vid.setAttribute('autoplay','');vid.setAttribute('muted','');vid.muted=true;
+vid.src=VIDEO_URL;
+vid.load();
+
+let progShown=0;
+const prog=setInterval(()=>{
+  const b=vid.buffered.length?vid.buffered.end(vid.buffered.length-1)/(vid.duration||5):0;
+  progShown=Math.max(progShown,Math.min(97,15+b*82));
+  setLoad(progShown);
+},150);
+
+let started=false;
+function begin(){
+  if(started)return;started=true;
+  clearInterval(prog);setLoad(100);
+  vid.play().catch(()=>{});
   setTimeout(()=>document.getElementById('loader').classList.add('done'),250);
-  try{vid.pause()}catch(e){}
   requestAnimationFrame(loop);
 }
+vid.addEventListener('canplay',begin,{once:true});
+vid.addEventListener('loadeddata',begin,{once:true});
+vid.addEventListener('error',begin,{once:true});
+// hard fallback: never let the loader trap the user
+setTimeout(begin,4000);
 
 function loop(){
   const p=heroProgress();
-  if(videoReady&&dur){targetT=p*(dur-0.05);curT+=(targetT-curT)*0.12;
-    if(Math.abs(targetT-curT)>0.005){try{vid.currentTime=curT}catch(e){}}}
+  // keep the loop playing even if a browser paused it on tab blur etc.
+  if(vid.paused && p<1){vid.play().catch(()=>{});}
+  // slow cinematic push-in as you scroll the hero
+  vid.style.transform='scale('+(1+p*0.14).toFixed(4)+')';
   let active=-1;
   htexts.forEach((el,i)=>{const s=+el.dataset.show,h=+el.dataset.hide;const v=p>=s&&p<h;el.classList.toggle('vis',v);if(v)active=i});
   chapters.forEach((ch,i)=>{ch.classList.toggle('active',i===active);
@@ -373,11 +385,8 @@ function loop(){
   requestAnimationFrame(loop);
 }
 
-/* reduced motion: just autoplay-loop the video, show all text */
-if(REDUCED){vid.src=VIDEO_URL;vid.loop=true;vid.autoplay=true;vid.play().catch(()=>{});
-  document.getElementById('loader').classList.add('done');
-  htexts.forEach(el=>el.classList.add('vis'));
-}else{initVideo()}
+/* reduced motion: show first caption, video still loops quietly */
+if(REDUCED){htexts.forEach(el=>el.classList.add('vis'));}
 
 /* === Form === */
 document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();
