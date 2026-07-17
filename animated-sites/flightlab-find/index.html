@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flightlab — Discgolf, redefinert for Norge</title>
+<meta name="description" content="Flightlab er norsk discgolfs nye hjem. Discer fra Kastaplast, Discmania og Latitude 64 til 179 kr, bager og tilbehør — levert på 1–3 dager. Fra første kast til siste putt." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper:#FAF9F5; --ink:#0E1A13; --forest:#1B4332; --forest-2:#2E6B4F;
+  --signal:#FF6B35; --gold:#F2B705; --mut:#6b7d72; --line:rgba(14,26,19,.12);
+  --h:'Space Grotesk',sans-serif; --b:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--b);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+section{position:relative}
+.wrap{max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.eyebrow{font-family:var(--b);font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--signal)}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;
+  padding:18px clamp(20px,5vw,64px);transition:background .4s,backdrop-filter .4s,box-shadow .4s,color .4s}
+nav.solid{background:rgba(250,249,245,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line)}
+nav .brand{font-family:var(--h);font-weight:700;letter-spacing:.02em;font-size:20px}
+nav .nl{display:flex;align-items:center;gap:28px}
+nav .nl a{font-size:13px;font-weight:500;color:inherit;opacity:.85}
+nav .cta{background:var(--forest);color:var(--paper);padding:10px 20px;border-radius:999px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:7px;transition:transform .25s,box-shadow .25s}
+nav .cta:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(27,67,50,.28)}
+nav.onhero{color:var(--paper)}
+@media(max-width:820px){nav .nl a:not(.cta){display:none}}
+
+/* hero */
+#hero{height:100vh;min-height:640px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#0b1712}
+#hero .bg{position:absolute;inset:0;z-index:0}
+#hero .bg img{width:100%;height:100%;object-fit:cover;transform:scale(1.05)}
+#hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,12,9,.45),rgba(6,12,9,.15) 35%,rgba(6,12,9,.55))}
+.logo3d-scene{position:relative;z-index:2;perspective:900px;text-align:center;padding-top:40px}
+.logo3d{display:inline-block;transform-style:preserve-3d;transition:transform .15s ease-out}
+.logo3d .word{font-family:var(--h);font-weight:700;color:var(--paper);
+  font-size:clamp(52px,13vw,168px);line-height:.9;letter-spacing:-.02em;
+  text-shadow:1px 1px 0 #cbb89a,2px 2px 0 #c3ac8b,3px 3px 0 #b39b78,4px 4px 0 #a68d6a,5px 5px 0 #8f7757,6px 6px 0 #6f5d43,8px 8px 18px rgba(0,0,0,.55)}
+.hero-tag{position:relative;z-index:2;margin-top:22px;text-align:center;color:var(--paper)}
+.hero-tag .t{font-family:var(--h);font-style:italic;font-weight:500;font-size:clamp(18px,2.4vw,30px);opacity:.95}
+.hero-tag p{margin:14px auto 0;max-width:44ch;font-size:14.5px;font-weight:300;line-height:1.7;opacity:.85}
+.hero-tag .btns{margin-top:26px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{border:none;cursor:pointer;font-family:var(--b);font-size:13px;font-weight:600;letter-spacing:.02em;padding:13px 26px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;transition:transform .25s,box-shadow .25s,background .25s,color .25s}
+.btn.p{background:var(--signal);color:#fff}.btn.p:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,107,53,.4)}
+.btn.g{background:rgba(250,249,245,.14);color:var(--paper);border:1px solid rgba(250,249,245,.4)}.btn.g:hover{background:rgba(250,249,245,.24)}
+.scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:2;color:var(--paper);font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.7}
+
+/* statement — "Discgolf, redefinert" (like Real Estate, Rewired) */
+#state{padding:clamp(90px,13vh,150px) 0;background:var(--paper)}
+#state h2{font-family:var(--h);font-weight:500;font-size:clamp(30px,5vw,62px);line-height:1.04;letter-spacing:-.02em;max-width:16ch}
+#state h2 em{font-style:italic;color:var(--forest)}
+#state .cols{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:54px}
+#state .cols h3{font-family:var(--h);font-weight:600;font-size:20px;display:flex;align-items:center;gap:10px}
+#state .cols h3 svg{width:20px;height:20px;stroke:var(--signal);fill:none;stroke-width:1.8}
+#state .cols p{margin-top:12px;font-size:14.5px;font-weight:300;line-height:1.75;color:var(--mut);max-width:46ch}
+@media(max-width:760px){#state .cols{grid-template-columns:1fr;gap:30px}}
+
+/* interactive category menu — like Buy / Sell / Rent */
+#help{background:var(--ink);color:var(--paper);padding:clamp(80px,12vh,140px) 0;overflow:hidden}
+#help .head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+#help h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,4.6vw,54px);line-height:1;letter-spacing:-.02em}
+#help h2 em{font-style:italic;color:var(--gold)}
+#help .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;margin-top:54px;align-items:center}
+#help .menu{display:flex;flex-direction:column}
+#help .mi{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px 6px;border-top:1px solid rgba(250,249,245,.14);cursor:pointer;transition:padding-left .35s,color .35s}
+#help .mi:last-child{border-bottom:1px solid rgba(250,249,245,.14)}
+#help .mi .n{font-family:var(--h);font-weight:600;font-size:clamp(30px,5vw,58px);line-height:1;color:rgba(250,249,245,.55);transition:color .35s,transform .35s}
+#help .mi .sub{font-size:12px;color:rgba(250,249,245,.45);margin-top:8px;transition:color .35s}
+#help .mi .arw{width:34px;height:34px;opacity:0;transform:translateX(-10px);transition:opacity .35s,transform .35s;stroke:var(--gold);fill:none;stroke-width:1.8}
+#help .mi.active{padding-left:18px}
+#help .mi.active .n{color:var(--paper);transform:translateX(0)}
+#help .mi.active .sub{color:rgba(250,249,245,.75)}
+#help .mi.active .arw{opacity:1;transform:translateX(0)}
+#help .preview{position:relative;height:440px;border-radius:22px;overflow:hidden;background:#0a130e}
+#help .preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity .6s,transform 1.2s}
+#help .preview img.show{opacity:1;transform:scale(1)}
+#help .preview::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(10,19,14,.6))}
+@media(max-width:860px){#help .layout{grid-template-columns:1fr}#help .preview{height:240px;order:-1}}
+
+/* catalog */
+#discer{padding:clamp(80px,12vh,140px) 0;background:var(--paper)}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:44px}
+.sec-head h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,4.6vw,52px);line-height:1;letter-spacing:-.02em}
+.sec-head h2 em{font-style:italic;color:var(--forest)}
+.sec-head p{font-size:14px;font-weight:300;color:var(--mut);max-width:44ch;margin-top:10px}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:1000px){.pgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.pgrid{grid-template-columns:1fr}}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;transition:transform .3s,box-shadow .3s}
+.pcard:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(14,26,19,.12)}
+.pcard .dw{height:132px;display:flex;align-items:center;justify-content:center}
+.pcard .shadow{width:76px;height:14px;border-radius:50%;background:radial-gradient(ellipse,rgba(14,26,19,.22),transparent 70%);margin-top:-6px}
+.pcard h3{font-family:var(--h);font-weight:600;font-size:17px;margin-top:14px;line-height:1.15}
+.pcard .cls{margin-top:8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);background:#f0efe9;border-radius:999px;padding:4px 11px}
+.pcard .fn{margin-top:9px;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.pcard .pr{margin-top:14px;font-size:15px;font-weight:600;color:var(--forest)}
+
+/* disc 3D */
+.disc-scene{perspective:800px}
+.disc3d{position:relative;transform-style:preserve-3d;animation:spin 15s linear infinite}
+@keyframes spin{from{transform:rotateX(58deg) rotateZ(0)}to{transform:rotateX(58deg) rotateZ(360deg)}}
+.dl{position:absolute;inset:0;border-radius:50%}
+.dface{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.dring{position:absolute;inset:12%;border-radius:50%;border:1px solid rgba(250,249,245,.22)}
+
+/* accessories */
+#tilbehor{padding:clamp(80px,12vh,140px) 0;background:#f1f0ea}
+.agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:1000px){.agrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.agrid{grid-template-columns:1fr}}
+.acard{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s}
+.acard:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(14,26,19,.12)}
+.acard .im{aspect-ratio:1;overflow:hidden;background:linear-gradient(135deg,#1B4332,#2E6B4F)}
+.acard .im img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.acard:hover .im img{transform:scale(1.05)}
+.acard .bd{padding:16px 16px 18px}
+.acard h4{font-family:var(--h);font-weight:600;font-size:16px}
+.acard .ad{font-size:11.5px;font-weight:300;color:var(--mut);margin-top:5px;line-height:1.5}
+.acard .ap{margin-top:10px;font-size:14px;font-weight:600;color:var(--forest)}
+
+/* video band */
+#film{position:relative;height:78vh;min-height:520px;overflow:hidden;background:#060c09;display:flex;align-items:center;justify-content:center}
+#film video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+#film .ov{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(6,12,9,.5),rgba(6,12,9,.2) 40%,rgba(6,12,9,.7))}
+#film .cap{position:relative;z-index:2;text-align:center;color:var(--paper);padding:0 20px}
+#film .cap .eyebrow{color:var(--gold)}
+#film .cap h2{font-family:var(--h);font-weight:500;font-size:clamp(30px,5vw,64px);line-height:1;letter-spacing:-.02em;margin-top:14px}
+#film .cap h2 em{font-style:italic}
+#film .badge{position:absolute;bottom:14px;right:16px;z-index:2;font-size:10px;color:rgba(250,249,245,.5)}
+
+/* blog / resources */
+#blogg{padding:clamp(80px,12vh,140px) 0;background:var(--paper)}
+.bgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+@media(max-width:900px){.bgrid{grid-template-columns:1fr}}
+.bcard{border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#fff;transition:transform .3s,box-shadow .3s}
+.bcard:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(14,26,19,.12)}
+.bcard .im{aspect-ratio:16/10;overflow:hidden;background:linear-gradient(135deg,#1B4332,#2E6B4F)}
+.bcard .im img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.bcard:hover .im img{transform:scale(1.05)}
+.bcard .bd{padding:20px}
+.bcard .tagr{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--signal);font-weight:600}
+.bcard h3{font-family:var(--h);font-weight:600;font-size:19px;margin-top:10px;line-height:1.2}
+.bcard p{font-size:13px;font-weight:300;color:var(--mut);margin-top:8px;line-height:1.6}
+.bcard .rd{margin-top:14px;font-size:12px;font-weight:600;color:var(--forest);display:inline-flex;align-items:center;gap:6px}
+
+/* newsletter footer — like FIND footer */
+footer{background:var(--ink);color:var(--paper);padding:clamp(70px,10vh,120px) 0 40px}
+.nlrow{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:end;padding-bottom:60px;border-bottom:1px solid rgba(250,249,245,.14)}
+.nlrow h2{font-family:var(--h);font-weight:500;font-size:clamp(26px,4vw,46px);line-height:1.02;letter-spacing:-.02em}
+.nlrow h2 em{font-style:italic;color:var(--gold)}
+.nlrow p{margin-top:14px;font-size:14px;font-weight:300;color:rgba(250,249,245,.7);max-width:42ch}
+.nlform{background:rgba(250,249,245,.06);border:1px solid rgba(250,249,245,.16);border-radius:999px;padding:6px;display:flex;gap:8px;max-width:460px;margin-left:auto}
+.nlform input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-family:var(--b);font-size:14px;padding:12px 18px;min-width:0}
+.nlform input::placeholder{color:rgba(250,249,245,.45)}
+.nlform button{border:none;cursor:pointer;background:var(--signal);color:#fff;border-radius:999px;padding:12px 24px;font-family:var(--b);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;transition:box-shadow .3s,transform .3s}
+.nlform button:hover{box-shadow:0 0 24px rgba(255,107,53,.4);transform:translateY(-1px)}
+.nlthanks{max-width:460px;margin-left:auto;padding:16px 24px;border-radius:999px;background:rgba(250,249,245,.06);border:1px solid rgba(250,249,245,.16);font-size:14px}
+.bigmark{font-family:var(--h);font-weight:700;font-size:clamp(64px,18vw,240px);line-height:.82;letter-spacing:-.03em;margin:50px 0 34px;color:var(--paper);opacity:.96}
+.fcols{display:flex;flex-wrap:wrap;gap:40px 64px;justify-content:space-between;align-items:flex-start}
+.fcols .grp h4{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,249,245,.5);margin-bottom:14px}
+.fcols .grp a{display:block;font-size:14px;color:rgba(250,249,245,.85);padding:5px 0}
+.fbottom{margin-top:40px;font-size:11px;color:rgba(250,249,245,.45);letter-spacing:.04em}
+@media(max-width:760px){.nlrow{grid-template-columns:1fr}.nlform,.nlthanks{margin-left:0}}
+
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.disc3d{animation:none}#hero .bg img{transform:none}}
+</style>
+</head>
+<body>
+
+<nav class="onhero" id="nav">
+  <a href="#" class="brand">FLIGHTLAB</a>
+  <div class="nl">
+    <a href="#discer">Discer</a>
+    <a href="#tilbehor">Tilbehør</a>
+    <a href="#blogg">Ressurser</a>
+    <a href="#nl" class="cta">Meld Interesse
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+    </a>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="bg">
+    <img src="https://images.pexels.com/photos/158251/pexels-photo-158251.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="" onerror="this.style.display='none'"/>
+  </div>
+  <div style="position:relative;z-index:2;width:100%">
+    <div class="logo3d-scene">
+      <div class="logo3d" id="logo3d"><div class="word">FLIGHTLAB</div></div>
+    </div>
+    <div class="hero-tag">
+      <div class="t">Fra første kast til siste putt.</div>
+      <p>Norsk discgolfs nye hjem. Ekte discer fra Kastaplast, Discmania og Latitude 64 — 179 kr per disc, levert på 1–3 dager. Ingen toll, ingen overraskelser.</p>
+      <div class="btns">
+        <a href="#discer" class="btn p">Se sortimentet
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+        <a href="#film" class="btn g">Se discen fly
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="scrollcue">Bla ↓</div>
+</section>
+
+<section id="state">
+  <div class="wrap">
+    <div class="eyebrow rv">// Discgolf, redefinert</div>
+    <h2 class="rv" style="margin-top:18px">Norsk discgolf fortjener en <em>bedre butikk.</em> Vi bygger den.</h2>
+    <div class="cols">
+      <div class="rv">
+        <h3><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.35-9.33-8.24A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.33 6.76C19 16.65 12 21 12 21Z"/></svg> Snakk med folk som spiller selv</h3>
+        <p>Vi er ikke et lager i utlandet. Vi er spillere som ville hatt en norsk butikk med ærlige anbefalinger — ikke et salgspitch. Du handler trygt hos noen som kjenner discene.</p>
+      </div>
+      <div class="rv">
+        <h3><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg> Full oversikt, én fast pris</h3>
+        <p>179 kr per disc — punktum. Ekte flight-tall fra produsent, nordisk lager uten toll, Vipps og kort, 30 dagers åpent kjøp. Prisen du ser er prisen du betaler.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="help">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <div class="eyebrow rv" style="color:var(--gold)">// Slik hjelper Flightlab deg</div>
+        <h2 class="rv" style="margin-top:16px">Finn discen som passer <em>ditt spill</em></h2>
+      </div>
+    </div>
+    <div class="layout">
+      <div class="menu" id="menu">
+        <div class="mi active" data-img="0" data-target="#discer">
+          <div><div class="n">Puttere</div><div class="sub">Presisjon og kontroll rundt kurven</div></div>
+          <svg class="arw" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </div>
+        <div class="mi" data-img="1" data-target="#discer">
+          <div><div class="n">Midrange</div><div class="sub">Trygg allrounder i all slags vind</div></div>
+          <svg class="arw" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </div>
+        <div class="mi" data-img="2" data-target="#discer">
+          <div><div class="n">Drivere</div><div class="sub">Maks lengde fra utkastfeltet</div></div>
+          <svg class="arw" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </div>
+        <div class="mi" data-img="3" data-target="#tilbehor">
+          <div><div class="n">Bager &amp; tilbehør</div><div class="sub">Alt rundt kastet — sekk, håndkle, flaske</div></div>
+          <svg class="arw" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+      <div class="preview" id="preview"></div>
+    </div>
+  </div>
+</section>
+
+<section id="discer">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow rv">// Sortimentet</div>
+        <h2 class="rv" style="margin-top:14px">Våre <em>Discer</em></h2>
+      </div>
+      <p class="rv">Åtte modeller fra fem merker — puttere, approach, midrange og drivere, alle til 179 kr.</p>
+    </div>
+    <div class="pgrid" id="pgrid"></div>
+  </div>
+</section>
+
+<section id="tilbehor">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow rv">// Bager &amp; Tilbehør</div>
+        <h2 class="rv" style="margin-top:14px">Alt rundt <em>kastet</em></h2>
+      </div>
+      <p class="rv">Fra sekken som bærer utstyret til håndkleet som redder grepet i regnvær.</p>
+    </div>
+    <div class="agrid" id="agrid"></div>
+  </div>
+</section>
+
+<section id="film">
+  <video id="filmvid" muted loop autoplay playsinline preload="auto" webkit-playsinline="true"></video>
+  <div class="ov"></div>
+  <div class="cap">
+    <div class="eyebrow">// Se discen fly</div>
+    <h2>FLIGHTLAB <em>i bevegelse</em></h2>
+  </div>
+  <div class="badge">AI-generert med Higgsfield</div>
+</section>
+
+<section id="blogg">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow rv">// Blogg &amp; Ressurser</div>
+        <h2 class="rv" style="margin-top:14px">Lær sporten <em>å kjenne</em></h2>
+      </div>
+      <p class="rv">Guider og tips for både nybegynnere og de som vil kaste lengre.</p>
+    </div>
+    <div class="bgrid" id="bgrid"></div>
+  </div>
+</section>
+
+<footer id="nl">
+  <div class="wrap">
+    <div class="nlrow">
+      <div class="rv">
+        <div class="eyebrow" style="color:var(--gold)">// Vi åpner snart</div>
+        <h2 style="margin-top:14px">Bli med <em>fra starten</em></h2>
+        <p>Meld deg på listen — få beskjed først når vi åpner, pluss rabatt på din første ordre.</p>
+      </div>
+      <form class="nlform rv" id="nlform">
+        <input type="email" required placeholder="din@epost.no" aria-label="E-post" />
+        <button type="submit">Meld Interesse</button>
+      </form>
+    </div>
+    <div class="bigmark">FLIGHTLAB</div>
+    <div class="fcols">
+      <div class="grp"><h4>Sortiment</h4><a href="#discer">Puttere</a><a href="#discer">Midrange</a><a href="#discer">Drivere</a><a href="#tilbehor">Bager &amp; tilbehør</a></div>
+      <div class="grp"><h4>Selskapet</h4><a href="#state">Om oss</a><a href="#help">Slik hjelper vi</a><a href="#blogg">Ressurser</a></div>
+      <div class="grp"><h4>Tjenester</h4><a href="#nl">Mystery Box</a><a href="#nl">Baneutstyr (B2B)</a><a href="#nl">Custom stamp</a></div>
+      <div class="grp"><h4>Merker</h4><a href="#discer">Kastaplast</a><a href="#discer">Discmania</a><a href="#discer">Latitude 64</a><a href="#discer">Westside · Dynamic Discs</a></div>
+    </div>
+    <div class="fbottom">Flightlab · Fra første kast til siste putt · Norge &amp; Norden · © 2026</div>
+  </div>
+</footer>
+
+<script>
+'use strict';
+const VIDEO_URL="https://d8j0ntlcm91z4.cloudfront.net/user_3GJfUXRls1zpsDSs55zAe3cdpRW/hf_20260713_134652_29d87195-e497-4b43-b8a4-b30f99a846e3.mp4";
+const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* nav solid on scroll */
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>{const s=scrollY>60;nav.classList.toggle('solid',s);nav.classList.toggle('onhero',!s)},{passive:true});
+
+/* reveal */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.14});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+/* 3D logo tilt on mouse + gentle idle sway */
+const logo=document.getElementById('logo3d');
+let tx=0,ty=0,ix=0,iy=0;
+addEventListener('mousemove',e=>{tx=(e.clientX/innerWidth-.5)*26;ty=(e.clientY/innerHeight-.5)*-16});
+(function sway(t){const s=Math.sin((t||0)/1400)*6;ix+=((tx+s)-ix)*.06;iy+=(ty-iy)*.06;
+  if(logo)logo.style.transform='rotateY('+ix.toFixed(2)+'deg) rotateX('+iy.toFixed(2)+'deg)';requestAnimationFrame(sway)})();
+
+/* interactive menu previews */
+const PREV=[
+  'https://images.pexels.com/photos/10398350/pexels-photo-10398350.jpeg?auto=compress&cs=tinysrgb&w=1000',
+  'https://images.pexels.com/photos/15749077/pexels-photo-15749077.jpeg?auto=compress&cs=tinysrgb&w=1000',
+  'https://images.pexels.com/photos/11998664/pexels-photo-11998664.jpeg?auto=compress&cs=tinysrgb&w=1000',
+  'https://images.pexels.com/photos/5202030/pexels-photo-5202030.jpeg?auto=compress&cs=tinysrgb&w=1000'
+];
+const preview=document.getElementById('preview');
+PREV.forEach((src,i)=>{const im=new Image();im.src=src;im.alt='';im.onerror=()=>{im.style.display='none'};if(i===0)im.classList.add('show');preview.appendChild(im)});
+const menuImgs=[...preview.querySelectorAll('img')];
+const items=[...document.querySelectorAll('#menu .mi')];
+items.forEach(mi=>{
+  const act=()=>{items.forEach(x=>x.classList.remove('active'));mi.classList.add('active');
+    const i=+mi.dataset.img;menuImgs.forEach((im,k)=>im.classList.toggle('show',k===i))};
+  mi.addEventListener('mouseenter',act);
+  mi.addEventListener('click',()=>{const t=mi.dataset.target;if(t)document.querySelector(t).scrollIntoView({behavior:'smooth'})});
+});
+
+/* catalog data */
+const BRAND={
+  'Kastaplast':{rim:['#C8E05A','#A9C93B','#7C9A24'],glow:'rgba(180,211,52,.4)',face:['#22301A','#18220F','#0E1408']},
+  'Discmania':{rim:['#4A6FD4','#24439B','#152A66'],glow:'rgba(74,111,212,.45)',face:['#101B3E','#0B1330','#070D22']},
+  'Latitude 64':{rim:['#FFD34D','#F2B705','#B98603'],glow:'rgba(242,183,5,.35)',face:['#2E2408','#221A05','#141003']},
+  'Westside':{rim:['#E06A5A','#C9453B','#8F2A24'],glow:'rgba(224,106,90,.4)',face:['#301A17','#220F0D','#140807']},
+  'Dynamic Discs':{rim:['#5AC8E0','#3BA9C9','#247C9A'],glow:'rgba(90,200,224,.4)',face:['#17282E','#0F1B20','#081013']}
+};
+const DISCS=[
+  {b:'Kastaplast',m:'Reko',c:'Putter',n:[3,3,0,1]},
+  {b:'Dynamic Discs',m:'Judge',c:'Putter',n:[2,4,0,1]},
+  {b:'Kastaplast',m:'Berg',c:'Approach',n:[1,1,0,2]},
+  {b:'Westside',m:'Harp',c:'Approach',n:[4,3,0,3]},
+  {b:'Discmania',m:'MD3',c:'Midrange',n:[5,5,0,2]},
+  {b:'Latitude 64',m:'River',c:'Fairway',n:[7,7,-1,1]},
+  {b:'Discmania',m:'FD',c:'Fairway',n:[7,6,-1,1]},
+  {b:'Latitude 64',m:'Ballista Pro',c:'Distanse',n:[14,4,0,3]}
+];
+function disc(b,m,n){const s=BRAND[b],S=108;
+  return '<div class="disc-scene"><div class="disc3d" style="width:'+S+'px;height:'+S+'px">'+
+   '<div class="dl" style="background:radial-gradient(circle at 35% 30%,'+s.rim[0]+' 0%,'+s.rim[1]+' 45%,'+s.rim[2]+' 100%);box-shadow:inset 0 2px 5px rgba(255,255,255,.35),inset 0 -4px 8px rgba(0,0,0,.5),0 0 26px '+s.glow+'"></div>'+
+   '<div class="dl dface" style="inset:7%;transform:translateZ(6px);background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,.035) 0 1.5px,rgba(0,0,0,.03) 1.5px 6px),radial-gradient(circle at 40% 35%,'+s.face[0]+' 0%,'+s.face[1]+' 60%,'+s.face[2]+' 100%);box-shadow:inset 0 2px 4px rgba(0,0,0,.55)">'+
+   '<div class="dring"></div>'+
+   '<span style="font-size:6px;letter-spacing:2px;color:rgba(250,249,245,.75);text-transform:uppercase;font-family:var(--b)">'+b+'</span>'+
+   '<span style="font-size:14px;color:#faf9f5;font-family:var(--h);font-style:italic;white-space:nowrap;margin-top:2px">'+m+'</span>'+
+   '<span style="font-size:7px;letter-spacing:1px;color:rgba(250,249,245,.55);font-family:var(--b);margin-top:3px">'+n.join(' · ')+'</span>'+
+   '</div>'+
+   '<div class="dl" style="transform:translateZ(7px);background:radial-gradient(ellipse 55% 35% at 30% 22%,rgba(255,255,255,.32) 0%,rgba(255,255,255,.06) 45%,transparent 65%)"></div>'+
+   '</div></div>';}
+document.getElementById('pgrid').innerHTML=DISCS.map(d=>
+  '<div class="pcard rv"><div class="dw">'+disc(d.b,d.m,d.n)+'</div><div class="shadow"></div>'+
+  '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span><span class="pr">179 kr</span></div>').join('');
+
+const ACC=[
+  {img:'https://images.pexels.com/photos/5202030/pexels-photo-5202030.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Coursebag',d:'18+ discer, stativ og drikkeflaske',p:'699 kr'},
+  {img:'https://images.pexels.com/photos/12370410/pexels-photo-12370410.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Startsett — 3 Discer',d:'Putter, midrange og driver i én pakke',p:'349 kr'},
+  {img:'https://images.pexels.com/photos/5038791/pexels-photo-5038791.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Disc-Håndkle',d:'Tørt grep i regn og morgendugg',p:'149 kr'},
+  {img:'https://images.pexels.com/photos/1325711/pexels-photo-1325711.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Drikkeflaske',d:'750 ml, kald drikke hele runden',p:'129 kr'}
+];
+document.getElementById('agrid').innerHTML=ACC.map(a=>
+  '<div class="acard rv"><div class="im"><img src="'+a.img+'" alt="'+a.n+'" loading="lazy" onerror="this.style.display=\'none\'"></div>'+
+  '<div class="bd"><h4>'+a.n+'</h4><div class="ad">'+a.d+'</div><div class="ap">'+a.p+'</div></div></div>').join('');
+
+const BLOG=[
+  {img:'https://images.pexels.com/photos/13189540/pexels-photo-13189540.jpeg?auto=compress&cs=tinysrgb&w=800',tag:'Nybegynner',t:'Din første disc: slik velger du riktig',p:'Start med en putter eller midrange — vi forklarer flight-tallene og hvorfor de betyr alt.'},
+  {img:'https://images.pexels.com/photos/158251/pexels-photo-158251.jpeg?auto=compress&cs=tinysrgb&w=800',tag:'Teknikk',t:'Slik får du mer lengde fra utkastet',p:'Fart, timing og riktig driver. En enkel guide til å legge på meterne uten å miste kontroll.'},
+  {img:'https://images.pexels.com/photos/1757363/pexels-photo-1757363.jpeg?auto=compress&cs=tinysrgb&w=800',tag:'Norge',t:'Discgolf i Norge 2026: sporten som vokser',p:'Nye baner, flere klubber og et voksende marked. Derfor satser vi norsk.'}
+];
+document.getElementById('bgrid').innerHTML=BLOG.map(b=>
+  '<a class="bcard rv" href="#nl"><div class="im"><img src="'+b.img+'" alt="'+b.t+'" loading="lazy" onerror="this.style.display=\'none\'"></div>'+
+  '<div class="bd"><div class="tagr">'+b.tag+'</div><h3>'+b.t+'</h3><p>'+b.p+'</p>'+
+  '<span class="rd">Les mer <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a>').join('');
+document.querySelectorAll('#bgrid .rv, #pgrid .rv, #agrid .rv').forEach(el=>io.observe(el));
+
+/* film video (autoplay loop, always visible) */
+const fv=document.getElementById('filmvid');
+fv.src=VIDEO_URL;fv.play&&fv.play().catch(()=>{});
+
+/* newsletter form */
+document.getElementById('nlform').addEventListener('submit',e=>{e.preventDefault();
+  const f=e.target;if(f.querySelector('input').value.trim()){
+    f.outerHTML='<div class="nlthanks">Takk! Vi sier ifra så fort dørene åpner. 🥏</div>'}});
+</script>
+</body>
+</html>
