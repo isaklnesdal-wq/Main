@@ -78,6 +78,10 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
 .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 @media(max-width:1000px){.pgrid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.pgrid{grid-template-columns:1fr}}
+.disc-group{margin-bottom:40px}
+.disc-group .gt{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.disc-group .gt h3{font-family:var(--h);font-weight:600;font-size:20px;letter-spacing:-.01em}
+.disc-group .gt span{font-size:12px;color:var(--mut)}
 .pcard{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;transition:transform .3s,box-shadow .3s}
 .pcard:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(14,26,19,.12)}
 .pcard .dw{height:132px;display:flex;align-items:center;justify-content:center}
@@ -87,7 +91,10 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
 .pcard .fn{margin-top:9px;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
 .pcard .pr{margin-top:14px;font-size:15px;font-weight:600;color:var(--forest)}
 .disc-scene{perspective:800px}
-.disc3d{position:relative;transform-style:preserve-3d;animation:spin 15s linear infinite}
+/* Discs hold still (rotateX tilt) and only spin while hovered — avoids
+   15+ continuous CSS animations compositing every frame. */
+.disc3d{position:relative;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(0);animation:spin 15s linear infinite;animation-play-state:paused}
+.pcard:hover .disc3d{animation-play-state:running}
 @keyframes spin{from{transform:rotateX(58deg) rotateZ(0)}to{transform:rotateX(58deg) rotateZ(360deg)}}
 .dl{position:absolute;inset:0;border-radius:50%}
 .dface{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
@@ -136,6 +143,7 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
   <a href="#" class="brand">FLIGHTLAB</a>
   <div class="nl">
     <a href="#discer">Discer</a>
+    <a href="#bager">Bager</a>
     <a href="#tilbehor">Tilbehør</a>
     <a href="#nl" class="cta">Kontakt</a>
   </div>
@@ -180,20 +188,31 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
 <section class="sec light" id="discer">
   <div class="wrap">
     <div class="sec-head">
-      <div><div class="eyebrow rv">// Sortimentet</div>
+      <div><div class="eyebrow rv">// Side 1 · Discer</div>
         <h2 class="rv" style="margin-top:12px">Våre <em>Discer</em></h2></div>
-      <p class="rv">Åtte modeller fra fem merker — puttere, approach, midrange og drivere, alle til 179 kr.</p>
+      <p class="rv">Femten modeller fra fem merker — putter, approach, midrange, fairway og distanse. Alle til én fast pris: 179 kr.</p>
     </div>
-    <div class="pgrid" id="pgrid"></div>
+    <div id="disc-groups"></div>
   </div>
 </section>
 
-<section class="sec" id="tilbehor" style="background:#f1f0ea;color:var(--ink)">
+<section class="sec" id="bager" style="background:#f1f0ea;color:var(--ink)">
   <div class="wrap">
     <div class="sec-head">
-      <div><div class="eyebrow rv">// Bager &amp; Tilbehør</div>
+      <div><div class="eyebrow rv">// Side 2 · Bager</div>
+        <h2 class="rv" style="margin-top:12px">Bær <em>utstyret</em></h2></div>
+      <p class="rv">Fra en lett sling for en rask runde til en full turbag med stativ — for hver spiller.</p>
+    </div>
+    <div class="agrid" id="bgrid"></div>
+  </div>
+</section>
+
+<section class="sec light" id="tilbehor">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><div class="eyebrow rv">// Side 2 · Tilbehør</div>
         <h2 class="rv" style="margin-top:12px">Alt rundt <em>kastet</em></h2></div>
-      <p class="rv">Fra sekken som bærer utstyret til håndkleet som redder grepet i regnvær.</p>
+      <p class="rv">Startsett, håndkle, flaske og småting som gjør runden bedre.</p>
     </div>
     <div class="agrid" id="agrid"></div>
   </div>
@@ -275,10 +294,14 @@ const seekTo=(v,t)=>new Promise((res,rej)=>{const on=()=>{v.removeEventListener(
 async function extract(){
   const v=document.createElement('video');v.crossOrigin='anonymous';v.muted=true;v.playsInline=true;v.preload='auto';v.src=VIDEO_URL;
   await new Promise((res,rej)=>{v.addEventListener('loadedmetadata',res,{once:true});v.addEventListener('error',()=>rej('load'),{once:true});setTimeout(()=>rej('meta'),15000)});
-  dur=v.duration||5;FCOUNT=Math.max(48,Math.min(84,Math.round(dur*16)));
+  dur=v.duration||5;
+  // Fewer frames + downscaled bitmaps keep memory low (was ~700MB at full res)
+  FCOUNT=Math.max(36,Math.min(56,Math.round(dur*11)));
+  const rw=Math.min(1280,v.videoWidth||1280), rh=Math.round(rw*(v.videoHeight||720)/(v.videoWidth||1280));
+  const cap=async()=>{try{return await createImageBitmap(v,{resizeWidth:rw,resizeHeight:rh,resizeQuality:'medium'})}catch(e){return await createImageBitmap(v)}};
   await seekTo(v,Math.min(0.05,dur*0.02));
-  frames.push(await createImageBitmap(v));  // throws if CORS-tainted → fallback
-  for(let i=1;i<FCOUNT;i++){await seekTo(v,(i/(FCOUNT-1))*(dur-0.03));frames.push(await createImageBitmap(v));setLoad(8+(i/FCOUNT)*88)}
+  frames.push(await cap());  // throws if CORS-tainted → fallback
+  for(let i=1;i<FCOUNT;i++){await seekTo(v,(i/(FCOUNT-1))*(dur-0.03));frames.push(await cap());setLoad(8+(i/FCOUNT)*88)}
   MODE='frames';
 }
 function fallbackVideo(){
@@ -295,13 +318,20 @@ function finish(){if(finished)return;finished=true;setLoad(100);
   const l=document.getElementById('loader');setTimeout(()=>l&&l.classList.add('done'),250);
   requestAnimationFrame(loop);
 }
+let lastDrawn=-1,lastCapKey='';
 function loop(){
   const p=heroP();
-  if(MODE==='frames'){const target=p*(FCOUNT-1);curFrame+=(target-curFrame)*0.18;drawFrame(Math.round(curFrame));canvas.style.transform='scale('+(1+p*0.10).toFixed(4)+')';}
-  else{const target=p*(dur-0.05);curT+=(target-curT)*0.14;if(Math.abs(target-curT)>0.004){try{hvid.currentTime=curT}catch(e){}}hvid.style.transform='scale('+(1+p*0.10).toFixed(4)+')';}
-  caps.forEach(c=>{const s=+c.dataset.show,h=+c.dataset.hide;c.classList.toggle('show',p>=s&&p<h)});
-  if(cue)cue.style.opacity=p>0.03?'0':'0.7';
-  if(prog)prog.style.width=(p*100).toFixed(1)+'%';
+  if(MODE==='frames'){const target=p*(FCOUNT-1);curFrame+=(target-curFrame)*0.18;
+    const idx=Math.round(curFrame);
+    if(idx!==lastDrawn){drawFrame(idx);lastDrawn=idx;}   // only redraw when the frame actually changes
+    canvas.style.transform='scale('+(1+p*0.10).toFixed(3)+')';}
+  else{const target=p*(dur-0.05);curT+=(target-curT)*0.14;if(Math.abs(target-curT)>0.01){try{hvid.currentTime=curT}catch(e){}}hvid.style.transform='scale('+(1+p*0.10).toFixed(3)+')';}
+  // captions / cue / progress only touched when their state changes
+  const capKey=p.toFixed(3);
+  if(capKey!==lastCapKey){lastCapKey=capKey;
+    caps.forEach(c=>{const s=+c.dataset.show,h=+c.dataset.hide;c.classList.toggle('show',p>=s&&p<h)});
+    if(cue)cue.style.opacity=p>0.03?'0':'0.7';
+    if(prog)prog.style.width=(p*100).toFixed(1)+'%';}
   requestAnimationFrame(loop);
 }
 if(REDUCED){
@@ -324,12 +354,25 @@ const BRAND={
   'Westside':{rim:['#E06A5A','#C9453B','#8F2A24'],glow:'rgba(224,106,90,.4)',face:['#301A17','#220F0D','#140807']},
   'Dynamic Discs':{rim:['#5AC8E0','#3BA9C9','#247C9A'],glow:'rgba(90,200,224,.4)',face:['#17282E','#0F1B20','#081013']}
 };
+// 15 discs across the 5 brands, grouped by flight class
 const DISCS=[
-  {b:'Kastaplast',m:'Reko',c:'Putter',n:[3,3,0,1]},{b:'Dynamic Discs',m:'Judge',c:'Putter',n:[2,4,0,1]},
-  {b:'Kastaplast',m:'Berg',c:'Approach',n:[1,1,0,2]},{b:'Westside',m:'Harp',c:'Approach',n:[4,3,0,3]},
-  {b:'Discmania',m:'MD3',c:'Midrange',n:[5,5,0,2]},{b:'Latitude 64',m:'River',c:'Fairway',n:[7,7,-1,1]},
-  {b:'Discmania',m:'FD',c:'Fairway',n:[7,6,-1,1]},{b:'Latitude 64',m:'Ballista Pro',c:'Distanse',n:[14,4,0,3]}
+  {b:'Kastaplast',m:'Reko',c:'Putter',n:[3,3,0,1]},
+  {b:'Dynamic Discs',m:'Judge',c:'Putter',n:[2,4,0,1]},
+  {b:'Discmania',m:'P2',c:'Putter',n:[2,3,0,2]},
+  {b:'Kastaplast',m:'Berg',c:'Approach',n:[1,1,0,2]},
+  {b:'Westside',m:'Harp',c:'Approach',n:[4,3,0,3]},
+  {b:'Discmania',m:'MD3',c:'Midrange',n:[5,5,0,2]},
+  {b:'Kastaplast',m:'Lots',c:'Midrange',n:[5,5,-0.5,1.5]},
+  {b:'Latitude 64',m:'Fuse',c:'Midrange',n:[6,6,-1,1]},
+  {b:'Latitude 64',m:'River',c:'Fairway',n:[7,7,-1,1]},
+  {b:'Discmania',m:'FD',c:'Fairway',n:[7,6,-1,1]},
+  {b:'Westside',m:'Underworld',c:'Fairway',n:[7,6,-3,1]},
+  {b:'Latitude 64',m:'Ballista Pro',c:'Distanse',n:[14,4,0,3]},
+  {b:'Discmania',m:'DD3',c:'Distanse',n:[13,5,-1,3]},
+  {b:'Dynamic Discs',m:'Trespass',c:'Distanse',n:[12,5,-0.5,3]},
+  {b:'Kastaplast',m:'Grym X',c:'Distanse',n:[12,5,-1,3]}
 ];
+const CLASS_ORDER=[['Putter','Puttere','Presisjon og kontroll rundt kurven'],['Approach','Approach','Trygge innspill mot kurven'],['Midrange','Midrange','Allrounderen i bagen'],['Fairway','Fairway-drivere','Kontrollert lengde'],['Distanse','Distansedrivere','Maks meter fra utkastet']];
 function disc3(b,m,n){const s=BRAND[b],S=108;
   return '<div class="disc-scene"><div class="disc3d" style="width:'+S+'px;height:'+S+'px">'+
    '<div class="dl" style="background:radial-gradient(circle at 35% 30%,'+s.rim[0]+' 0%,'+s.rim[1]+' 45%,'+s.rim[2]+' 100%);box-shadow:inset 0 2px 5px rgba(255,255,255,.35),inset 0 -4px 8px rgba(0,0,0,.5),0 0 26px '+s.glow+'"></div>'+
@@ -340,20 +383,37 @@ function disc3(b,m,n){const s=BRAND[b],S=108;
    '<span style="font-size:7px;letter-spacing:1px;color:rgba(250,249,245,.55);margin-top:3px">'+n.join(' · ')+'</span></div>'+
    '<div class="dl" style="transform:translateZ(7px);background:radial-gradient(ellipse 55% 35% at 30% 22%,rgba(255,255,255,.32),rgba(255,255,255,.06) 45%,transparent 65%)"></div>'+
    '</div></div>';}
-document.getElementById('pgrid').innerHTML=DISCS.map(d=>
-  '<div class="pcard rv"><div class="dw">'+disc3(d.b,d.m,d.n)+'</div><div class="shadow"></div>'+
-  '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span><span class="pr">179 kr</span></div>').join('');
+function card(d){return '<div class="pcard rv"><div class="dw">'+disc3(d.b,d.m,d.n)+'</div><div class="shadow"></div>'+
+  '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span><span class="pr">179 kr</span></div>';}
+document.getElementById('disc-groups').innerHTML=CLASS_ORDER.map(([key,title,sub])=>{
+  const items=DISCS.filter(d=>d.c===key);if(!items.length)return '';
+  return '<div class="disc-group"><div class="gt rv"><h3>'+title+'</h3><span>'+sub+' · '+items.length+' modeller</span></div>'+
+    '<div class="pgrid">'+items.map(card).join('')+'</div></div>';
+}).join('');
 
+// bags (dedicated section)
+const BAGS=[
+  {img:'https://images.pexels.com/photos/5202030/pexels-photo-5202030.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Sling',d:'6–8 discer · lett for en rask runde',p:'299 kr'},
+  {img:'https://images.pexels.com/photos/1178521/pexels-photo-1178521.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Starter Bag',d:'8–10 discer · flaskeholder',p:'349 kr'},
+  {img:'https://images.pexels.com/photos/2422461/pexels-photo-2422461.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Coursebag',d:'18+ discer, stativ og drikkeflaske',p:'699 kr'},
+  {img:'https://images.pexels.com/photos/1103829/pexels-photo-1103829.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Tour Backpack',d:'25+ discer · innebygd stativ · værsikker',p:'1 099 kr'}
+];
+// accessories
 const ACC=[
-  {img:'https://images.pexels.com/photos/5202030/pexels-photo-5202030.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Coursebag',d:'18+ discer, stativ og drikkeflaske',p:'699 kr'},
   {img:'https://images.pexels.com/photos/12370410/pexels-photo-12370410.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Startsett — 3 Discer',d:'Putter, midrange og driver i én pakke',p:'349 kr'},
   {img:'https://images.pexels.com/photos/5038791/pexels-photo-5038791.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Disc-Håndkle',d:'Tørt grep i regn og morgendugg',p:'149 kr'},
-  {img:'https://images.pexels.com/photos/1325711/pexels-photo-1325711.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Drikkeflaske',d:'750 ml, kald drikke hele runden',p:'129 kr'}
+  {img:'https://images.pexels.com/photos/1325711/pexels-photo-1325711.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Drikkeflaske',d:'750 ml, kald drikke hele runden',p:'129 kr'},
+  {img:'https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Caps',d:'Pustende caps med brodert logo',p:'199 kr'},
+  {img:'https://images.pexels.com/photos/9072316/pexels-photo-9072316.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Mini-markør',d:'Merk liet ditt — metall med logo',p:'49 kr'},
+  {img:'https://images.pexels.com/photos/4219654/pexels-photo-4219654.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Scorekort-holder',d:'Vær­sikker holder med blyant',p:'99 kr'},
+  {img:'https://images.pexels.com/photos/9072311/pexels-photo-9072311.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Hettegenser',d:'Myk collegegenser i skoggrønn',p:'549 kr'},
+  {img:'https://images.pexels.com/photos/6311392/pexels-photo-6311392.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Øvingskurv',d:'Bærbar kurv for putt-trening hjemme',p:'899 kr'}
 ];
-document.getElementById('agrid').innerHTML=ACC.map(a=>
-  '<div class="acard rv"><div class="im"><img src="'+a.img+'" alt="'+a.n+'" loading="lazy" onerror="this.style.display=\'none\'"></div>'+
-  '<div class="bd"><h4>'+a.n+'</h4><div class="ad">'+a.d+'</div><div class="ap">'+a.p+'</div></div></div>').join('');
-document.querySelectorAll('#pgrid .rv,#agrid .rv').forEach(el=>io.observe(el));
+const acard=a=>'<div class="acard rv"><div class="im"><img src="'+a.img+'" alt="'+a.n+'" loading="lazy" onerror="this.style.display=\'none\'"></div>'+
+  '<div class="bd"><h4>'+a.n+'</h4><div class="ad">'+a.d+'</div><div class="ap">'+a.p+'</div></div></div>';
+document.getElementById('bgrid').innerHTML=BAGS.map(acard).join('');
+document.getElementById('agrid').innerHTML=ACC.map(acard).join('');
+document.querySelectorAll('#disc-groups .rv,#bgrid .rv,#agrid .rv').forEach(el=>io.observe(el));
 
 document.getElementById('nlform').addEventListener('submit',e=>{e.preventDefault();
   const f=e.target;if(f.querySelector('input').value.trim()){f.outerHTML='<div class="nlthanks">Takk! Vi sier ifra så fort dørene åpner. 🥏</div>'}});
