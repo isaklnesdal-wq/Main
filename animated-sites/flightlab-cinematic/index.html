@@ -30,7 +30,7 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
 /* ===== SCROLL-ZOOM PORTALS (GPU transforms only — buttery, no lag) ===== */
 /* Hero: the real Higgsfield clip autoplays behind a giant disc; scroll
    zooms INTO the disc and hands off to the catalogue. */
-#journey{position:relative;height:300vh}
+#journey{position:relative;height:380vh}
 .scene{position:sticky;top:0;height:100vh;overflow:hidden;
   background:radial-gradient(125% 80% at 50% 6%,#33531f 0%,#1b3a1f 36%,#0c1e12 70%,#060c09 100%)}
 .scene::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
@@ -40,20 +40,39 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
   background:linear-gradient(180deg,transparent,#08140c)}
 .vtint{position:absolute;inset:0;z-index:1;pointer-events:none;
   background:linear-gradient(180deg,rgba(6,12,9,.42),rgba(6,12,9,.1) 34%,rgba(6,12,9,.1) 60%,rgba(6,12,9,.72))}
-/* the zoom target — a real 3D frisbee you scroll INTO */
+/* layered pine silhouettes + basket, built once by JS (static, cheap) */
+.scape{position:absolute;inset:0;z-index:0;pointer-events:none}
+.scape svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%;display:block}
+/* the zoom target — a realistic moulded frisbee, level with the camera.
+   It floats, glows and rocks gently back and forth; scrolling levels it
+   out and flies you THROUGH its pressed rings — no hard direct zoom. */
 .portal{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;will-change:transform,opacity}
-.hero-stage{perspective:1100px;width:min(54vmin,430px);height:min(54vmin,430px);display:flex;align-items:center;justify-content:center}
-.hero-disc{position:relative;width:100%;height:100%;transform-style:preserve-3d;transform:rotateX(52deg) rotateZ(0);animation:heroSpin 26s linear infinite}
-.hero-disc .layer{position:absolute;inset:0;border-radius:50%}
-.hd-rim{background:radial-gradient(circle at 38% 30%,#ffb27a,#ff6b35 46%,#c9451d 100%);
-  box-shadow:inset 0 10px 20px rgba(255,255,255,.42),inset 0 -16px 30px rgba(0,0,0,.55),0 0 120px rgba(255,107,53,.5)}
-.hd-face{inset:9%;transform:translateZ(15px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-  background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,.05) 0 2px,rgba(0,0,0,.05) 2px 9px),radial-gradient(circle at 42% 34%,#ff8a4d,#e8541f 60%,#c9451d)}
-.hd-face .ring{position:absolute;inset:12%;border-radius:50%;border:2px solid rgba(255,255,255,.28)}
-.hd-face b{font-family:var(--h);font-weight:700;font-size:min(7vmin,50px);color:#fff;letter-spacing:.02em;text-shadow:0 2px 8px rgba(0,0,0,.35)}
-.hd-face s{font-size:min(1.9vmin,13px);letter-spacing:.34em;color:rgba(255,255,255,.9);text-decoration:none}
-.hd-glare{transform:translateZ(17px);background:radial-gradient(ellipse 55% 34% at 30% 20%,rgba(255,255,255,.5),rgba(255,255,255,.08) 45%,transparent 66%)}
-@keyframes heroSpin{from{transform:rotateX(52deg) rotateZ(0)}to{transform:rotateX(52deg) rotateZ(360deg)}}
+.hero-stage{position:relative;width:min(60vmin,500px);height:min(60vmin,500px);perspective:1200px;animation:bob 6.5s ease-in-out infinite}
+.hero-stage .layer{position:absolute;inset:0;border-radius:50%}
+@keyframes bob{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}
+.disc-aura{position:absolute;inset:-26%;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,145,66,.4) 22%,rgba(255,107,53,.18) 46%,rgba(255,107,53,.05) 62%,transparent 74%);
+  animation:aura 4.5s ease-in-out infinite}
+@keyframes aura{0%,100%{transform:scale(.96)}50%{transform:scale(1.07)}}
+.tilt{position:absolute;inset:0;transform:rotateX(18deg);transform-style:preserve-3d;will-change:transform}
+.hero-disc{position:absolute;inset:0;border-radius:50%;animation:rock 7s ease-in-out infinite;
+  box-shadow:0 0 70px rgba(255,130,55,.55),0 0 180px rgba(255,107,53,.38),0 34px 90px rgba(0,0,0,.45)}
+@keyframes rock{0%,100%{transform:rotateZ(-11deg)}50%{transform:rotateZ(11deg)}}
+/* moulded plastic, lit flat from top-left: rim → shoulder → flight plate.
+   Flat linear shading (not a spherical hotspot) + crisp pressed rings. */
+.hd-rim{background:linear-gradient(135deg,#ff9a5c 0%,#f26322 48%,#c2440f 82%,#8e2c0a 100%);
+  box-shadow:inset 0 0 0 2px rgba(90,22,4,.45),inset 0 7px 12px rgba(255,255,255,.3),inset 0 -9px 18px rgba(0,0,0,.4)}
+.layer.hd-bevel{inset:7%;background:linear-gradient(135deg,#ff8a46,#e0521a 58%,#a83812 100%);
+  box-shadow:inset 0 0 0 2.5px rgba(105,26,6,.5),inset 0 5px 10px rgba(255,255,255,.24),inset 0 -8px 16px rgba(0,0,0,.32)}
+.layer.hd-face{inset:14%;background:linear-gradient(135deg,#ff8b48 0%,#ee5b1b 55%,#c8470f 100%);
+  box-shadow:inset 0 0 0 2px rgba(110,28,6,.45),inset 0 3px 7px rgba(255,255,255,.18),inset 0 -5px 11px rgba(0,0,0,.24)}
+.hd-face i{position:absolute;border-radius:50%;
+  box-shadow:inset 0 0 0 3px rgba(115,28,6,.55),inset 0 6px 9px rgba(255,255,255,.24),inset 0 -6px 10px rgba(0,0,0,.28)}
+.layer.hd-hub{inset:42.5%;background:linear-gradient(135deg,#ff9351,#e0521a 62%,#b23c10);
+  box-shadow:inset 0 0 0 2px rgba(110,28,6,.4),inset 0 3px 5px rgba(255,255,255,.28),inset 0 -3px 7px rgba(0,0,0,.3)}
+.hd-noise{opacity:.16;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hd-flash{position:absolute;top:5.4%;left:47.6%;width:4.8%;height:1.7%;border-radius:99px;background:rgba(115,28,6,.5)}
+.hd-glare{background:radial-gradient(ellipse 42% 18% at 32% 15%,rgba(255,255,255,.38),rgba(255,255,255,.07) 50%,transparent 70%)}
 .portalglow{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;
   background:radial-gradient(circle at 50% 50%,#ff6b35,#c9451d 40%,#0e1a13 72%)}
 .grain{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.05;
@@ -65,7 +84,8 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
 #loader .ln{width:56px;height:1px;background:rgba(255,255,255,.25)}
 /* bag zoom portal (between discs and bags) */
 #bagportal{position:relative;height:240vh;background:#f1f0ea}
-#bagportal .pin{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#0E1A13}
+#bagportal .pin{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(58% 46% at 50% 44%,#1a3d2b,#0E1A13 72%,#081209)}
 #bagportal .bagbig{width:min(52vmin,400px);height:min(66vmin,510px);position:relative;
   display:flex;align-items:center;justify-content:center;
   filter:drop-shadow(0 44px 90px rgba(0,0,0,.55));will-change:transform,opacity}
@@ -160,7 +180,7 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
 .fbottom{margin-top:38px;font-size:11px;color:rgba(250,249,245,.45)}
 @media(max-width:760px){.nlrow{grid-template-columns:1fr}.nlform,.nlthanks{margin-left:0}}
 :focus-visible{outline:2px solid var(--signal);outline-offset:3px}
-@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.disc3d,.hero-disc{animation:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.disc3d,.hero-disc,.hero-stage,.disc-aura{animation:none}
   #journey{height:100vh}.scene{position:relative}}
 </style>
 </head>
@@ -181,12 +201,22 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
 <!-- ===== Hero: real Higgsfield video autoplays; scroll ZOOMS INTO the disc ===== -->
 <section id="journey">
   <div class="scene">
+    <div class="scape" id="scape"></div>
     <div class="vtint"></div>
     <div class="portal" id="portal">
       <div class="hero-stage">
-        <div class="hero-disc">
-          <div class="layer hd-rim"></div>
-          <div class="layer hd-face"><div class="ring"></div><b>FLIGHTLAB</b><s>FRISBEEGOLF</s></div>
+        <div class="disc-aura"></div>
+        <div class="tilt" id="tilt">
+          <div class="hero-disc">
+            <div class="layer hd-rim"></div>
+            <div class="layer hd-bevel"></div>
+            <div class="layer hd-face">
+              <i style="inset:5%"></i><i style="inset:16%"></i><i style="inset:27%"></i><i style="inset:38%"></i><i style="inset:49%"></i>
+            </div>
+            <div class="layer hd-hub"></div>
+            <div class="layer hd-noise"></div>
+            <div class="hd-flash"></div>
+          </div>
           <div class="layer hd-glare"></div>
         </div>
       </div>
@@ -198,7 +228,7 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
     <div class="jcap show" data-show="0" data-hide="0.42" id="cap0">
       <div class="k">Norsk discgolf · Norge &amp; Norden</div>
       <h1>FLIGHTLAB</h1>
-      <p>Skroll inn i frisbeen for å se sortimentet.</p>
+      <p>Skroll gjennom frisbeen for å se sortimentet.</p>
     </div>
     <div class="jcap" data-show="0.5" data-hide="1.01">
       <div class="k">Latitude 64 · Kastaplast · Discmania</div>
@@ -228,43 +258,94 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
       <svg viewBox="0 0 360 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flightlab discgolf-bag">
         <defs>
           <linearGradient id="bgBody" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#2E6B4F"/><stop offset=".55" stop-color="#1B4332"/><stop offset="1" stop-color="#0E1A13"/>
+            <stop offset="0" stop-color="#3a7d5e"/><stop offset=".45" stop-color="#255742"/><stop offset="1" stop-color="#0f251a"/>
+          </linearGradient>
+          <linearGradient id="bgAO" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#000" stop-opacity=".38"/><stop offset=".16" stop-color="#000" stop-opacity="0"/>
+            <stop offset=".8" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".5"/>
           </linearGradient>
           <linearGradient id="bgPocket" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#245640"/><stop offset="1" stop-color="#112a1e"/>
+            <stop offset="0" stop-color="#2d6c50"/><stop offset="1" stop-color="#122f23"/>
           </linearGradient>
           <linearGradient id="bgStrap" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#173a2a"/><stop offset="1" stop-color="#0b1f16"/>
+            <stop offset="0" stop-color="#1d4634"/><stop offset="1" stop-color="#0a1d14"/>
           </linearGradient>
+          <linearGradient id="bgBottle" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ff9a60"/><stop offset=".5" stop-color="#f26322"/><stop offset="1" stop-color="#c44a13"/>
+          </linearGradient>
+          <radialGradient id="bgOpen" cx=".5" cy=".45" r=".75">
+            <stop offset="0" stop-color="#122a1c"/><stop offset="1" stop-color="#040c07"/>
+          </radialGradient>
+          <pattern id="bgMesh" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <path d="M0 0H6" stroke="rgba(250,249,245,.16)" stroke-width="1.3"/>
+          </pattern>
+          <filter id="bgFab" x="-4%" y="-4%" width="108%" height="108%">
+            <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" result="n"/>
+            <feColorMatrix in="n" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0" result="w"/>
+            <feComposite in="w" in2="SourceAlpha" operator="in" result="tex"/>
+            <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="tex"/></feMerge>
+          </filter>
         </defs>
-        <ellipse cx="180" cy="446" rx="122" ry="16" fill="#000" opacity=".38"/>
-        <!-- shoulder straps (behind the body) -->
-        <path d="M122 92 C70 160 70 330 122 412" fill="none" stroke="url(#bgStrap)" stroke-width="30" stroke-linecap="round"/>
-        <path d="M238 92 C290 160 290 330 238 412" fill="none" stroke="url(#bgStrap)" stroke-width="30" stroke-linecap="round"/>
-        <!-- discs peeking out of the top -->
-        <ellipse cx="180" cy="96" rx="88" ry="21" fill="#0a140d"/>
-        <ellipse cx="146" cy="82" rx="35" ry="13" fill="#F2B705"/>
-        <ellipse cx="186" cy="76" rx="35" ry="13" fill="#4A6FD4"/>
-        <ellipse cx="214" cy="85" rx="35" ry="13" fill="#C8E05A"/>
-        <!-- main body -->
-        <rect x="86" y="90" width="188" height="300" rx="44" fill="url(#bgBody)" stroke="#0b1a12" stroke-width="2"/>
-        <path d="M96 132 q0 -34 34 -38 h0 q-24 12 -24 60 v206 q0 30 24 42 q-34 -4 -34 -40 z" fill="#fff" opacity=".06"/>
-        <!-- top drawstring band -->
-        <rect x="94" y="124" width="172" height="30" rx="15" fill="#0e2418" opacity=".65"/>
-        <!-- front pocket -->
-        <rect x="112" y="212" width="136" height="152" rx="30" fill="url(#bgPocket)" stroke="#0b1a12" stroke-width="2"/>
-        <line x1="122" y1="236" x2="238" y2="236" stroke="#FF6B35" stroke-width="4" stroke-linecap="round"/>
-        <circle cx="238" cy="236" r="6.5" fill="#FF6B35"/>
-        <!-- logo -->
-        <circle cx="180" cy="292" r="15" fill="none" stroke="#FAF9F5" stroke-width="2.5" opacity=".85"/>
-        <circle cx="180" cy="292" r="4" fill="#FF6B35"/>
-        <text x="180" y="336" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="21" letter-spacing="2.5" fill="#FAF9F5">FLIGHTLAB</text>
-        <!-- side bottle pocket -->
-        <path d="M274 226 q30 4 30 42 v60 q0 26 -30 26 z" fill="#173a2a" stroke="#0b1a12" stroke-width="2"/>
-        <rect x="286" y="200" width="20" height="54" rx="10" fill="#FF6B35" opacity=".9"/>
+        <ellipse cx="180" cy="447" rx="128" ry="15" fill="#000" opacity=".45"/>
+        <ellipse cx="180" cy="447" rx="86" ry="9" fill="#000" opacity=".35"/>
+        <!-- shoulder straps (behind the body, padded with stitching) -->
+        <path d="M118 118 C64 190 66 336 120 408" fill="none" stroke="url(#bgStrap)" stroke-width="30" stroke-linecap="round"/>
+        <path d="M242 118 C296 190 294 336 240 408" fill="none" stroke="url(#bgStrap)" stroke-width="30" stroke-linecap="round"/>
+        <path d="M118 118 C64 190 66 336 120 408" fill="none" stroke="rgba(250,249,245,.16)" stroke-width="2" stroke-dasharray="6 6"/>
+        <path d="M242 118 C296 190 294 336 240 408" fill="none" stroke="rgba(250,249,245,.16)" stroke-width="2" stroke-dasharray="6 6"/>
+        <!-- haul handle -->
+        <path d="M152 92 Q180 66 208 92" fill="none" stroke="url(#bgStrap)" stroke-width="13" stroke-linecap="round"/>
+        <!-- discs sitting in the open top -->
+        <ellipse cx="180" cy="99" rx="88" ry="21" fill="url(#bgOpen)"/>
+        <g>
+          <ellipse cx="145" cy="88" rx="41" ry="15" fill="#b8880a"/>
+          <ellipse cx="145" cy="84" rx="41" ry="14" fill="#F2B705"/>
+          <path d="M112 80 a41 14 0 0 1 66 -6" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2.5" stroke-linecap="round"/>
+          <ellipse cx="188" cy="80" rx="40" ry="14" fill="#2d4a9e"/>
+          <ellipse cx="188" cy="76" rx="40" ry="13" fill="#4A6FD4"/>
+          <path d="M156 72 a40 13 0 0 1 64 -5" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2.5" stroke-linecap="round"/>
+          <ellipse cx="218" cy="87" rx="38" ry="14" fill="#96ab2c"/>
+          <ellipse cx="218" cy="83" rx="38" ry="13" fill="#C8E05A"/>
+          <path d="M188 79 a38 13 0 0 1 60 -5" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+        <!-- main body: tapered silhouette, fabric grain, side shading -->
+        <path d="M104 122 C104 100 132 92 180 92 C228 92 256 100 256 122 L266 366 C268 398 232 414 180 414 C128 414 92 398 94 366 Z" fill="url(#bgBody)" filter="url(#bgFab)"/>
+        <path d="M104 122 C104 100 132 92 180 92 C228 92 256 100 256 122 L266 366 C268 398 232 414 180 414 C128 414 92 398 94 366 Z" fill="url(#bgAO)"/>
+        <path d="M104 122 C104 100 132 92 180 92 C228 92 256 100 256 122 L266 366 C268 398 232 414 180 414 C128 414 92 398 94 366 Z" fill="none" stroke="#08150e" stroke-width="2"/>
+        <path d="M104 122 C104 100 132 92 180 92 C228 92 256 100 256 122" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="3"/>
+        <path d="M116 132 C110 210 112 330 122 392" fill="none" stroke="rgba(255,255,255,.13)" stroke-width="12" stroke-linecap="round"/>
+        <!-- drawcord collar -->
+        <path d="M104 128 Q180 156 256 128" fill="none" stroke="#0c2015" stroke-width="12"/>
+        <path d="M104 128 Q180 156 256 128" fill="none" stroke="rgba(250,249,245,.2)" stroke-width="2" stroke-dasharray="5 6"/>
+        <circle cx="180" cy="150" r="7" fill="#0a1911" stroke="#FF6B35" stroke-width="2"/>
+        <!-- seam stitching -->
+        <path d="M112 140 C108 220 110 320 118 386" fill="none" stroke="rgba(250,249,245,.22)" stroke-width="1.6" stroke-dasharray="5 5"/>
+        <path d="M248 140 C252 220 250 320 242 386" fill="none" stroke="rgba(250,249,245,.22)" stroke-width="1.6" stroke-dasharray="5 5"/>
+        <!-- front zip pocket (quilted) -->
+        <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="url(#bgPocket)" stroke="#0a1911" stroke-width="2" filter="url(#bgFab)"/>
+        <rect x="114" y="222" width="132" height="138" rx="14" fill="none" stroke="rgba(250,249,245,.18)" stroke-width="1.5" stroke-dasharray="5 5"/>
+        <path d="M146 250 C142 292 143 324 148 358" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+        <path d="M180 252 v106" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+        <path d="M214 250 C218 292 217 324 212 358" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+        <!-- zipper with teeth and pull -->
+        <rect x="116" y="230" width="128" height="14" rx="7" fill="#0d2117"/>
+        <line x1="122" y1="237" x2="238" y2="237" stroke="#c9c9c4" stroke-width="3" stroke-dasharray="2.5 2.5"/>
+        <rect x="228" y="231" width="10" height="12" rx="3" fill="#9aa39c"/>
+        <path d="M238 237 q14 8 10 20" fill="none" stroke="#FF6B35" stroke-width="4" stroke-linecap="round"/>
+        <!-- woven label patch -->
+        <rect x="142" y="314" width="90" height="24" rx="6" fill="#0d2117" stroke="rgba(250,249,245,.22)"/>
+        <circle cx="156" cy="326" r="6.5" fill="none" stroke="#FF6B35" stroke-width="2"/>
+        <circle cx="156" cy="326" r="2" fill="#FF6B35"/>
+        <text x="196" y="330" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="9.5" letter-spacing="1.2" fill="#FAF9F5">FLIGHTLAB</text>
+        <!-- mesh bottle pocket with bottle -->
+        <rect x="262" y="196" width="30" height="58" rx="12" fill="url(#bgBottle)"/>
+        <rect x="268" y="186" width="18" height="12" rx="4" fill="#8f3208"/>
+        <line x1="270" y1="208" x2="270" y2="240" stroke="rgba(255,255,255,.45)" stroke-width="3" stroke-linecap="round"/>
+        <path d="M254 244 C290 250 298 274 298 300 v40 c0 24 -20 34 -42 34 Z" fill="#16382a" stroke="#0a1911" stroke-width="2"/>
+        <path d="M254 244 C290 250 298 274 298 300 v40 c0 24 -20 34 -42 34 Z" fill="url(#bgMesh)"/>
         <!-- feet -->
-        <rect x="104" y="382" width="36" height="16" rx="8" fill="#0a140d"/>
-        <rect x="220" y="382" width="36" height="16" rx="8" fill="#0a140d"/>
+        <rect x="106" y="404" width="40" height="18" rx="9" fill="#08130c"/>
+        <rect x="214" y="404" width="40" height="18" rx="9" fill="#08130c"/>
       </svg>
     </div>
   </div>
@@ -343,12 +424,15 @@ if(window.Lenis && !REDUCED){
 }
 
 /* ===== Zoom-portal scroll (GPU transforms only → no lag) =====
-   A real 3D frisbee (CSS 3D — rim, stamped face, glare) slowly spins in the
-   hero. Scrolling zooms INTO the frisbee (scale + fade) and hands off to the
-   catalogue. A second portal later zooms INTO an illustrated disc-golf bag
-   before the bags grid. Only transform:scale and opacity are animated — both
-   are composited on the GPU with no repaint, so it stays buttery. */
+   A realistic moulded frisbee floats level in the hero, glowing and rocking
+   gently. Scrolling levels it out to face you and flies you THROUGH its
+   pressed rings (eased scale — slow approach, deep dive) before the bloom
+   hands off to the catalogue. A second portal later zooms INTO an
+   illustrated disc-golf bag before the bags grid. Only transform and
+   opacity are animated — composited on the GPU, no repaint. */
 const journey=document.getElementById('journey');
+const tilt=document.getElementById('tilt');
+const aura=document.querySelector('.disc-aura');
 const portal=document.getElementById('portal');
 const portalglow=document.getElementById('portalglow');
 const caps=[...document.querySelectorAll('#journey .jcap')];
@@ -363,16 +447,33 @@ function secP(el){const r=el.getBoundingClientRect();return clamp(0,1,-r.top/(r.
 
 const l=document.getElementById('loader');setTimeout(()=>l&&l.classList.add('done'),400);
 
+/* backdrop: layered pine ridges + a distant basket, drawn once (static) */
+(function(){const sc=document.getElementById('scape');if(!sc)return;
+  let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  function ridge(y0,h,col){let d='M0 500 L0 '+y0;let x=0;
+    while(x<1460){const w=16+rnd()*26,th=h*(0.55+rnd()*0.6);
+      d+=' L'+(x+w*0.5).toFixed(0)+' '+(y0-th).toFixed(0)+' L'+(x+w).toFixed(0)+' '+y0;x+=w*(0.55+rnd()*0.35);}
+    d+=' L1460 500 Z';return '<path d="'+d+'" fill="'+col+'"/>';}
+  const basket='<g fill="#04100a" opacity=".92">'+
+    '<rect x="1177" y="252" width="8" height="218" rx="4"/>'+
+    '<rect x="1151" y="256" width="62" height="10" rx="5"/>'+
+    '<path d="M1154 266 L1181 330 M1163 266 L1181 330 M1172 266 L1181 330 M1190 266 L1181 330 M1199 266 L1181 330 M1208 266 L1181 330" stroke="#04100a" stroke-width="2.5" fill="none"/>'+
+    '<rect x="1144" y="330" width="74" height="26" rx="8"/></g>';
+  sc.innerHTML='<svg viewBox="0 0 1440 500" preserveAspectRatio="xMidYMax slice">'+
+    ridge(420,150,'#0d2013')+basket+ridge(462,120,'#06130b')+'</svg>';
+})();
+
 let lastKey='';
 function loop(){
-  // Hero portal: zoom into the disc
+  // Hero: the frisbee levels out to face you, then you fly THROUGH its
+  // pressed rings (slow approach, deep dive) before the bloom hands off.
   const p=secP(journey);
   const e=smooth(p);
-  const discScale=(1+e*13).toFixed(3);
-  const discOpac=(1-smooth(clamp(0,1,(p-0.45)/0.4))).toFixed(3);
-  portal.style.transform='scale('+discScale+')';
-  portal.style.opacity=discOpac;
-  portalglow.style.opacity=(smooth(clamp(0,1,(p-0.55)/0.35))*0.9).toFixed(3);
+  portal.style.transform='scale('+(1+Math.pow(e,1.6)*33).toFixed(3)+')';
+  if(tilt)tilt.style.transform='rotateX('+((1-smooth(clamp(0,1,p/0.35)))*18).toFixed(2)+'deg)';
+  if(aura)aura.style.opacity=(1-smooth(clamp(0,1,p/0.22))).toFixed(3); // aura off once the dive starts
+  portal.style.opacity=(1-smooth(clamp(0,1,(p-0.62)/0.3))).toFixed(3);
+  portalglow.style.opacity=(smooth(clamp(0,1,(p-0.6)/0.34))*0.95).toFixed(3);
 
   // Bag portal: zoom into the bag
   if(bagportal){const bp=secP(bagportal),be=smooth(bp);
