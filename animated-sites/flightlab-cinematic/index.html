@@ -51,30 +51,35 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
 .hero-stage .layer{position:absolute;inset:0;border-radius:50%}
 @keyframes bob{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}
 .disc-aura{position:absolute;inset:-26%;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,145,66,.4) 22%,rgba(255,107,53,.18) 46%,rgba(255,107,53,.05) 62%,transparent 74%);
+  background:radial-gradient(circle,rgba(255,128,186,.4) 22%,rgba(255,105,170,.18) 46%,rgba(255,105,170,.05) 62%,transparent 74%);
   animation:aura 4.5s ease-in-out infinite}
 @keyframes aura{0%,100%{transform:scale(.96)}50%{transform:scale(1.07)}}
-.tilt{position:absolute;inset:0;transform:rotateX(18deg);transform-style:preserve-3d;will-change:transform}
+/* rest pose: standing upright, turned to the side and slanted; JS eases it
+   square to the camera as the dive toward the rings begins */
+.tilt{position:absolute;inset:0;transform:rotateY(36deg) rotateX(8deg);transform-style:preserve-3d;will-change:transform}
 .hero-disc{position:absolute;inset:0;border-radius:50%;animation:rock 7s ease-in-out infinite;
-  box-shadow:0 0 70px rgba(255,130,55,.55),0 0 180px rgba(255,107,53,.38),0 34px 90px rgba(0,0,0,.45)}
+  box-shadow:0 0 70px rgba(255,120,180,.55),0 0 180px rgba(255,100,165,.38),0 34px 90px rgba(0,0,0,.45)}
 @keyframes rock{0%,100%{transform:rotateZ(-11deg)}50%{transform:rotateZ(11deg)}}
 /* moulded plastic, lit flat from top-left: rim → shoulder → flight plate.
-   Flat linear shading (not a spherical hotspot) + crisp pressed rings. */
-.hd-rim{background:linear-gradient(135deg,#ff9a5c 0%,#f26322 48%,#c2440f 82%,#8e2c0a 100%);
-  box-shadow:inset 0 0 0 2px rgba(90,22,4,.45),inset 0 7px 12px rgba(255,255,255,.3),inset 0 -9px 18px rgba(0,0,0,.4)}
-.layer.hd-bevel{inset:7%;background:linear-gradient(135deg,#ff8a46,#e0521a 58%,#a83812 100%);
-  box-shadow:inset 0 0 0 2.5px rgba(105,26,6,.5),inset 0 5px 10px rgba(255,255,255,.24),inset 0 -8px 16px rgba(0,0,0,.32)}
-.layer.hd-face{inset:14%;background:linear-gradient(135deg,#ff8b48 0%,#ee5b1b 55%,#c8470f 100%);
-  box-shadow:inset 0 0 0 2px rgba(110,28,6,.45),inset 0 3px 7px rgba(255,255,255,.18),inset 0 -5px 11px rgba(0,0,0,.24)}
+   Pink colourway, soft pressed rings. */
+.hd-rim{background:linear-gradient(135deg,#ff9ecb 0%,#f2609f 48%,#c23a7a 82%,#8e2455 100%);
+  box-shadow:inset 0 0 0 2px rgba(96,14,52,.45),inset 0 7px 12px rgba(255,255,255,.3),inset 0 -9px 18px rgba(0,0,0,.4)}
+.layer.hd-bevel{inset:7%;background:linear-gradient(135deg,#ff8bbe,#e14b90 58%,#a82e6c 100%);
+  box-shadow:inset 0 0 0 2.5px rgba(108,18,58,.45),inset 0 5px 10px rgba(255,255,255,.24),inset 0 -8px 16px rgba(0,0,0,.3)}
+.layer.hd-face{inset:14%;background:linear-gradient(135deg,#ff89bd 0%,#ee5497 55%,#c93c7c 100%);
+  box-shadow:inset 0 0 0 2px rgba(112,20,60,.4),inset 0 3px 7px rgba(255,255,255,.18),inset 0 -5px 11px rgba(0,0,0,.22)}
 .hd-face i{position:absolute;border-radius:50%;
-  box-shadow:inset 0 0 0 3px rgba(115,28,6,.55),inset 0 6px 9px rgba(255,255,255,.24),inset 0 -6px 10px rgba(0,0,0,.28)}
-.layer.hd-hub{inset:42.5%;background:linear-gradient(135deg,#ff9351,#e0521a 62%,#b23c10);
-  box-shadow:inset 0 0 0 2px rgba(110,28,6,.4),inset 0 3px 5px rgba(255,255,255,.28),inset 0 -3px 7px rgba(0,0,0,.3)}
+  box-shadow:inset 0 0 0 2px rgba(118,22,62,.3),inset 0 4px 7px rgba(255,255,255,.13),inset 0 -4px 8px rgba(0,0,0,.15)}
+.layer.hd-hub{inset:42.5%;background:linear-gradient(135deg,#ff92c2,#e14b90 62%,#b23372);
+  box-shadow:inset 0 0 0 2px rgba(112,20,60,.35),inset 0 3px 5px rgba(255,255,255,.26),inset 0 -3px 7px rgba(0,0,0,.28)}
+.hd-name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--h);font-weight:700;font-size:min(5.6vmin,44px);letter-spacing:.1em;color:#fff;
+  text-shadow:0 0 10px rgba(255,255,255,.9),0 0 26px rgba(255,140,195,.95),0 0 52px rgba(255,90,165,.8),0 0 90px rgba(255,90,165,.5)}
 .hd-noise{opacity:.16;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
-.hd-flash{position:absolute;top:5.4%;left:47.6%;width:4.8%;height:1.7%;border-radius:99px;background:rgba(115,28,6,.5)}
+.hd-flash{position:absolute;top:5.4%;left:47.6%;width:4.8%;height:1.7%;border-radius:99px;background:rgba(118,20,62,.5)}
 .hd-glare{background:radial-gradient(ellipse 42% 18% at 32% 15%,rgba(255,255,255,.38),rgba(255,255,255,.07) 50%,transparent 70%)}
 .portalglow{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;
-  background:radial-gradient(circle at 50% 50%,#ff6b35,#c9451d 40%,#0e1a13 72%)}
+  background:radial-gradient(circle at 50% 50%,#ff6bab,#c2367c 40%,#0e1a13 72%)}
 .grain{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 /* branded intro loader */
@@ -87,7 +92,7 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
 #bagportal .pin{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(58% 46% at 50% 44%,#1a3d2b,#0E1A13 72%,#081209)}
 #bagportal .bagbig{width:min(52vmin,400px);height:min(66vmin,510px);position:relative;
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;transform-origin:50% 50.5%; /* the zipper */
   filter:drop-shadow(0 44px 90px rgba(0,0,0,.55));will-change:transform,opacity}
 #bagportal .bagbig svg{width:100%;height:100%;display:block}
 #bagportal .bpcap{position:absolute;z-index:3;top:12%;left:0;right:0;text-align:center;color:#fff;pointer-events:none;will-change:opacity}
@@ -216,6 +221,7 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
             <div class="layer hd-hub"></div>
             <div class="layer hd-noise"></div>
             <div class="hd-flash"></div>
+            <div class="hd-name">FLIGHTLAB</div>
           </div>
           <div class="layer hd-glare"></div>
         </div>
@@ -225,10 +231,9 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
     <div class="grain"></div>
     <div id="loader"><div class="ln"></div><div class="brand">FLIGHTLAB</div><div class="ln"></div></div>
 
-    <div class="jcap show" data-show="0" data-hide="0.42" id="cap0">
+    <div class="jcap show" data-show="0" data-hide="0.42" id="cap0" style="top:auto;bottom:8%;transform:none">
       <div class="k">Norsk discgolf · Norge &amp; Norden</div>
-      <h1>FLIGHTLAB</h1>
-      <p>Skroll gjennom frisbeen for å se sortimentet.</p>
+      <p style="margin-top:8px">Skroll gjennom frisbeen for å se sortimentet.</p>
     </div>
     <div class="jcap" data-show="0.5" data-hide="1.01">
       <div class="k">Latitude 64 · Kastaplast · Discmania</div>
@@ -321,22 +326,36 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
         <!-- seam stitching -->
         <path d="M112 140 C108 220 110 320 118 386" fill="none" stroke="rgba(250,249,245,.22)" stroke-width="1.6" stroke-dasharray="5 5"/>
         <path d="M248 140 C252 220 250 320 242 386" fill="none" stroke="rgba(250,249,245,.22)" stroke-width="1.6" stroke-dasharray="5 5"/>
-        <!-- front zip pocket (quilted) -->
-        <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="url(#bgPocket)" stroke="#0a1911" stroke-width="2" filter="url(#bgFab)"/>
-        <rect x="114" y="222" width="132" height="138" rx="14" fill="none" stroke="rgba(250,249,245,.18)" stroke-width="1.5" stroke-dasharray="5 5"/>
-        <path d="M146 250 C142 292 143 324 148 358" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
-        <path d="M180 252 v106" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
-        <path d="M214 250 C218 292 217 324 212 358" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
-        <!-- zipper with teeth and pull -->
+        <!-- front zip pocket: scroll unzips it and folds the flap open -->
+        <clipPath id="bgPockClip"><path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z"/></clipPath>
+        <g id="bagint" opacity="0">
+          <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="#07130c" stroke="#0a1911" stroke-width="2"/>
+          <g clip-path="url(#bgPockClip)">
+            <ellipse cx="158" cy="272" rx="34" ry="12" fill="#c73a7a"/>
+            <ellipse cx="158" cy="268" rx="34" ry="11" fill="#ee5497"/>
+            <ellipse cx="200" cy="290" rx="36" ry="13" fill="#b8880a"/>
+            <ellipse cx="200" cy="286" rx="36" ry="12" fill="#F2B705"/>
+            <path d="M106 214 h148 v30 h-148 Z" fill="#000" opacity=".4"/>
+          </g>
+        </g>
+        <g id="bagflap">
+          <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="url(#bgPocket)" stroke="#0a1911" stroke-width="2" filter="url(#bgFab)"/>
+          <rect x="114" y="222" width="132" height="138" rx="14" fill="none" stroke="rgba(250,249,245,.18)" stroke-width="1.5" stroke-dasharray="5 5"/>
+          <path d="M146 250 C142 292 143 324 148 358" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+          <path d="M180 252 v106" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+          <path d="M214 250 C218 292 217 324 212 358" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+          <rect x="142" y="314" width="90" height="24" rx="6" fill="#0d2117" stroke="rgba(250,249,245,.22)"/>
+          <circle cx="156" cy="326" r="6.5" fill="none" stroke="#FF6B35" stroke-width="2"/>
+          <circle cx="156" cy="326" r="2" fill="#FF6B35"/>
+          <text x="196" y="330" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="9.5" letter-spacing="1.2" fill="#FAF9F5">FLIGHTLAB</text>
+        </g>
+        <!-- zipper stays fixed to the bag; the slider runs open on scroll -->
         <rect x="116" y="230" width="128" height="14" rx="7" fill="#0d2117"/>
         <line x1="122" y1="237" x2="238" y2="237" stroke="#c9c9c4" stroke-width="3" stroke-dasharray="2.5 2.5"/>
-        <rect x="228" y="231" width="10" height="12" rx="3" fill="#9aa39c"/>
-        <path d="M238 237 q14 8 10 20" fill="none" stroke="#FF6B35" stroke-width="4" stroke-linecap="round"/>
-        <!-- woven label patch -->
-        <rect x="142" y="314" width="90" height="24" rx="6" fill="#0d2117" stroke="rgba(250,249,245,.22)"/>
-        <circle cx="156" cy="326" r="6.5" fill="none" stroke="#FF6B35" stroke-width="2"/>
-        <circle cx="156" cy="326" r="2" fill="#FF6B35"/>
-        <text x="196" y="330" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="9.5" letter-spacing="1.2" fill="#FAF9F5">FLIGHTLAB</text>
+        <g id="bagslider">
+          <rect x="228" y="231" width="10" height="12" rx="3" fill="#9aa39c"/>
+          <path d="M238 237 q14 8 10 20" fill="none" stroke="#FF6B35" stroke-width="4" stroke-linecap="round"/>
+        </g>
         <!-- mesh bottle pocket with bottle -->
         <rect x="262" y="196" width="30" height="58" rx="12" fill="url(#bgBottle)"/>
         <rect x="268" y="186" width="18" height="12" rx="4" fill="#8f3208"/>
@@ -441,6 +460,8 @@ const prog=document.getElementById('prog');
 const bagportal=document.getElementById('bagportal');
 const bagbig=document.getElementById('bagbig');
 const bpcap=document.getElementById('bpcap');
+const bagflap=document.getElementById('bagflap'),bagslider=document.getElementById('bagslider'),bagint=document.getElementById('bagint');
+let lastK='';
 const clamp=(a,b,v)=>Math.max(a,Math.min(b,v));
 const smooth=p=>p<=0?0:p>=1?1:p*p*(3-2*p);
 function secP(el){const r=el.getBoundingClientRect();return clamp(0,1,-r.top/(r.height-innerHeight))}
@@ -470,16 +491,25 @@ function loop(){
   const p=secP(journey);
   const e=smooth(p);
   portal.style.transform='scale('+(1+Math.pow(e,1.6)*33).toFixed(3)+')';
-  if(tilt)tilt.style.transform='rotateX('+((1-smooth(clamp(0,1,p/0.35)))*18).toFixed(2)+'deg)';
+  if(tilt){const a=1-smooth(clamp(0,1,p/0.35)); // side pose eases square to camera
+    tilt.style.transform='rotateY('+(a*36).toFixed(2)+'deg) rotateX('+(a*8).toFixed(2)+'deg)'}
   if(aura)aura.style.opacity=(1-smooth(clamp(0,1,p/0.22))).toFixed(3); // aura off once the dive starts
   portal.style.opacity=(1-smooth(clamp(0,1,(p-0.62)/0.3))).toFixed(3);
   portalglow.style.opacity=(smooth(clamp(0,1,(p-0.6)/0.34))*0.95).toFixed(3);
 
-  // Bag portal: zoom into the bag
+  // Bag portal: zoom toward the zipper while it runs open and the front
+  // pocket folds down to reveal the discs inside
   if(bagportal){const bp=secP(bagportal),be=smooth(bp);
     bagbig.style.transform='scale('+(0.9+be*9).toFixed(3)+')';
     bagbig.style.opacity=(1-smooth(clamp(0,1,(bp-0.5)/0.4))).toFixed(3);
     if(bpcap)bpcap.style.opacity=(1-smooth(clamp(0,1,(bp-0.35)/0.3))).toFixed(3);
+    const k=smooth(clamp(0,1,(bp-0.08)/0.3)),kq=k.toFixed(2);
+    if(kq!==lastK){lastK=kq; // quantized: only re-raster the SVG when it moves
+      if(bagslider)bagslider.setAttribute('transform','translate('+(-(k*104)).toFixed(1)+' 0)');
+      const fs=1-0.65*k;
+      if(bagflap)bagflap.setAttribute('transform','translate(0 '+(368*(1-fs)).toFixed(1)+') scale(1 '+fs.toFixed(3)+')');
+      if(bagint)bagint.setAttribute('opacity',Math.min(1,k*1.6).toFixed(3));
+    }
   }
 
   // captions / cue / progress only when scroll position meaningfully changes
