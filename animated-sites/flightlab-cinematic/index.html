@@ -62,22 +62,25 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
 @keyframes rock{0%,100%{transform:rotateZ(-11deg)}50%{transform:rotateZ(11deg)}}
 /* moulded plastic, lit flat from top-left: rim → shoulder → flight plate.
    Green colourway, soft pressed rings. */
-.hd-rim{background:linear-gradient(135deg,#8fe6ab 0%,#34b366 48%,#1c8a48 82%,#0d5730 100%);
-  box-shadow:inset 0 0 0 2px rgba(8,64,34,.45),inset 0 7px 12px rgba(255,255,255,.3),inset 0 -9px 18px rgba(0,0,0,.4)}
-.layer.hd-bevel{inset:7%;background:linear-gradient(135deg,#79dd9a,#2aa259 58%,#157a40 100%);
-  box-shadow:inset 0 0 0 2.5px rgba(10,66,36,.45),inset 0 5px 10px rgba(255,255,255,.24),inset 0 -8px 16px rgba(0,0,0,.3)}
-.layer.hd-face{inset:14%;background:linear-gradient(135deg,#74dd97 0%,#28a659 55%,#178045 100%);
-  box-shadow:inset 0 0 0 2px rgba(12,68,38,.4),inset 0 3px 7px rgba(255,255,255,.18),inset 0 -5px 11px rgba(0,0,0,.22)}
+.hd-rim{background:linear-gradient(135deg,#a4e8c0 0%,#2e9c5b 38%,#137043 72%,#06381f 100%);
+  box-shadow:inset 0 0 0 2px rgba(4,44,24,.5),inset 0 7px 14px rgba(255,255,255,.32),inset 0 -10px 20px rgba(0,0,0,.45)}
+.layer.hd-bevel{inset:7%;background:linear-gradient(135deg,#82d8a4,#23904f 55%,#0b562e 100%);
+  box-shadow:inset 0 0 0 2.5px rgba(6,48,26,.45),inset 0 5px 10px rgba(255,255,255,.26),inset 0 -9px 18px rgba(0,0,0,.34)}
+.layer.hd-face{inset:14%;background:linear-gradient(135deg,#79d49b 0%,#1e8b4b 52%,#0b5c30 100%);
+  box-shadow:inset 0 0 0 2px rgba(8,52,30,.42),inset 0 3px 7px rgba(255,255,255,.2),inset 0 -6px 13px rgba(0,0,0,.26)}
 .hd-face i{position:absolute;border-radius:50%;
-  box-shadow:inset 0 0 0 2px rgba(12,70,38,.3),inset 0 4px 7px rgba(255,255,255,.13),inset 0 -4px 8px rgba(0,0,0,.15)}
-.layer.hd-hub{inset:42.5%;background:linear-gradient(135deg,#78de9a,#2aa259 62%,#177a44);
-  box-shadow:inset 0 0 0 2px rgba(12,68,38,.35),inset 0 3px 5px rgba(255,255,255,.26),inset 0 -3px 7px rgba(0,0,0,.28)}
+  box-shadow:inset 0 0 0 2px rgba(6,50,28,.32),inset 0 4px 7px rgba(255,255,255,.14),inset 0 -4px 8px rgba(0,0,0,.17)}
+.layer.hd-hub{inset:42.5%;background:linear-gradient(135deg,#85dba6,#23904f 60%,#0f6236);
+  box-shadow:inset 0 0 0 2px rgba(8,52,30,.38),inset 0 3px 5px rgba(255,255,255,.28),inset 0 -3px 7px rgba(0,0,0,.3)}
+/* anisotropic plastic sheen — rotates with the rock, so light plays across
+   the plate as the disc moves */
+.layer.hd-sheen{background:conic-gradient(from 210deg,rgba(255,255,255,.10),transparent 70deg,rgba(0,0,0,.13) 150deg,transparent 215deg,rgba(255,255,255,.07) 300deg,transparent 360deg)}
 .hd-name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   font-family:var(--h);font-weight:700;font-size:min(5.6vmin,44px);letter-spacing:.1em;color:#fff;
   text-shadow:0 0 10px rgba(255,255,255,.9),0 0 26px rgba(150,240,180,.95),0 0 52px rgba(60,200,120,.8),0 0 90px rgba(52,190,118,.5)}
 .hd-noise{opacity:.16;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 .hd-flash{position:absolute;top:5.4%;left:47.6%;width:4.8%;height:1.7%;border-radius:99px;background:rgba(10,66,36,.5)}
-.hd-glare{background:radial-gradient(ellipse 42% 18% at 32% 15%,rgba(255,255,255,.38),rgba(255,255,255,.07) 50%,transparent 70%)}
+.hd-glare{background:radial-gradient(ellipse 36% 13% at 31% 13%,rgba(255,255,255,.5),rgba(255,255,255,.08) 48%,transparent 68%)}
 .portalglow{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;
   background:radial-gradient(circle at 50% 50%,#4ed37e,#1f8a48 40%,#0e1a13 72%)}
 .grain{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.05;
@@ -219,6 +222,7 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
               <i style="inset:5%"></i><i style="inset:16%"></i><i style="inset:27%"></i><i style="inset:38%"></i><i style="inset:49%"></i>
             </div>
             <div class="layer hd-hub"></div>
+            <div class="layer hd-sheen"></div>
             <div class="layer hd-noise"></div>
             <div class="hd-flash"></div>
             <div class="hd-name">FLIGHTLAB</div>
@@ -260,132 +264,191 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
   <div class="pin">
     <div class="bpcap" id="bpcap"><div class="k">Side 2 · Bager</div><h2>Inn i baggen</h2></div>
     <div class="bagbig" id="bagbig">
-      <svg viewBox="0 0 360 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flightlab discgolf-bag">
+      <svg viewBox="0 0 360 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flightlab discgolf-sekk">
         <defs>
-          <linearGradient id="bgBody" x1=".15" y1="0" x2=".85" y2="1">
-            <stop offset="0" stop-color="#4c9070"/><stop offset=".4" stop-color="#2c6349"/><stop offset=".75" stop-color="#1a4433"/><stop offset="1" stop-color="#0c2318"/>
+          <linearGradient id="bgBody" x1=".18" y1=".05" x2=".85" y2="1">
+            <stop offset="0" stop-color="#47876a"/><stop offset=".45" stop-color="#24523c"/><stop offset=".78" stop-color="#123024"/><stop offset="1" stop-color="#0a1c12"/>
           </linearGradient>
-          <radialGradient id="bgHi" cx=".33" cy=".2" r=".85">
-            <stop offset="0" stop-color="#c9eed8" stop-opacity=".55"/><stop offset=".42" stop-color="#c9eed8" stop-opacity="0"/>
-          </radialGradient>
-          <radialGradient id="bgShade" cx=".8" cy=".92" r=".95">
-            <stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset=".55" stop-color="#000" stop-opacity="0"/>
-          </radialGradient>
-          <linearGradient id="bgPocket" x1=".2" y1="0" x2=".8" y2="1">
-            <stop offset="0" stop-color="#367053"/><stop offset=".5" stop-color="#1d4835"/><stop offset="1" stop-color="#0e2a1e"/>
+          <linearGradient id="bgPocketG" x1=".2" y1="0" x2=".85" y2="1">
+            <stop offset="0" stop-color="#2f624a"/><stop offset=".55" stop-color="#173a2b"/><stop offset="1" stop-color="#0b2015"/>
           </linearGradient>
           <linearGradient id="bgStrap" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#123528"/><stop offset=".5" stop-color="#20543d"/><stop offset="1" stop-color="#0a1d14"/>
+            <stop offset="0" stop-color="#0e2419"/><stop offset=".5" stop-color="#1d4231"/><stop offset="1" stop-color="#081710"/>
+          </linearGradient>
+          <linearGradient id="bgMetal" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#d8dcd2"/><stop offset=".5" stop-color="#8f978d"/><stop offset="1" stop-color="#5d655c"/>
           </linearGradient>
           <linearGradient id="bgBottle" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#ffb184"/><stop offset=".5" stop-color="#f26322"/><stop offset="1" stop-color="#b8420f"/>
+            <stop offset="0" stop-color="#f0a878"/><stop offset=".45" stop-color="#d95b1e"/><stop offset="1" stop-color="#93390c"/>
           </linearGradient>
-          <radialGradient id="bgOpen" cx=".5" cy=".4" r=".8">
-            <stop offset="0" stop-color="#153020"/><stop offset="1" stop-color="#030a06"/>
+          <radialGradient id="bgOpen" cx=".5" cy=".42" r=".8">
+            <stop offset="0" stop-color="#10241a"/><stop offset="1" stop-color="#020704"/>
           </radialGradient>
-          <pattern id="bgMesh" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <path d="M0 0H6" stroke="rgba(250,249,245,.14)" stroke-width="1.2"/>
+          <radialGradient id="bgKey" cx=".3" cy=".1" r="1">
+            <stop offset="0" stop-color="#eafff2" stop-opacity=".36"/><stop offset=".5" stop-color="#eafff2" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="bgAmb" cx=".85" cy=".95" r="1.1">
+            <stop offset="0" stop-color="#000" stop-opacity=".6"/><stop offset=".55" stop-color="#000" stop-opacity="0"/>
+          </radialGradient>
+          <pattern id="bgMeshP" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <path d="M0 0H7M0 3.5H7" stroke="rgba(240,248,242,.13)" stroke-width="1"/>
+          </pattern>
+          <pattern id="bgWeave" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(96)">
+            <path d="M0 0H5" stroke="rgba(0,0,0,.28)" stroke-width="1.4"/>
           </pattern>
           <filter id="bgFab" x="-4%" y="-4%" width="108%" height="108%">
-            <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/>
-            <feColorMatrix in="n" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .06 0" result="w"/>
+            <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" result="n"/>
+            <feColorMatrix in="n" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0" result="w"/>
             <feComposite in="w" in2="SourceAlpha" operator="in" result="tex"/>
             <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="tex"/></feMerge>
           </filter>
-          <filter id="bgSoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
-          <filter id="bgSoft2" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="11"/></filter>
-          <clipPath id="bgBodyClip"><path d="M104 122 C104 100 132 92 180 92 C228 92 256 100 256 122 L266 366 C268 398 232 414 180 414 C128 414 92 398 94 366 Z"/></clipPath>
+          <filter id="bgSoft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+          <filter id="bgSoft2" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="12"/></filter>
+          <clipPath id="bgBodyClip"><path d="M106 118 C106 102 134 94 180 94 C226 94 254 102 254 118 L264 368 C264 400 230 412 180 412 C130 412 96 400 96 368 Z"/></clipPath>
           <clipPath id="bgPockClip"><path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z"/></clipPath>
         </defs>
-        <!-- ground contact shadow -->
-        <ellipse cx="182" cy="446" rx="120" ry="14" fill="#000" opacity=".5" filter="url(#bgSoft2)"/>
-        <!-- shoulder straps behind the body, soft-shadowed and padded -->
-        <path d="M118 118 C64 190 66 336 120 408" fill="none" stroke="#000" stroke-opacity=".4" stroke-width="34" stroke-linecap="round" filter="url(#bgSoft)"/>
-        <path d="M242 118 C296 190 294 336 240 408" fill="none" stroke="#000" stroke-opacity=".4" stroke-width="34" stroke-linecap="round" filter="url(#bgSoft)"/>
-        <path d="M118 118 C64 190 66 336 120 408" fill="none" stroke="url(#bgStrap)" stroke-width="30" stroke-linecap="round"/>
-        <path d="M242 118 C296 190 294 336 240 408" fill="none" stroke="url(#bgStrap)" stroke-width="30" stroke-linecap="round"/>
-        <path d="M116 120 C64 190 66 334 118 404" fill="none" stroke="rgba(255,255,255,.13)" stroke-width="3" stroke-linecap="round"/>
-        <path d="M118 118 C64 190 66 336 120 408" fill="none" stroke="rgba(250,249,245,.18)" stroke-width="1.6" stroke-dasharray="6 6"/>
-        <path d="M242 118 C296 190 294 336 240 408" fill="none" stroke="rgba(250,249,245,.18)" stroke-width="1.6" stroke-dasharray="6 6"/>
-        <!-- haul handle -->
-        <path d="M150 92 Q180 62 210 92" fill="none" stroke="#000" stroke-opacity=".35" stroke-width="16" stroke-linecap="round" filter="url(#bgSoft)"/>
-        <path d="M152 92 Q180 66 208 92" fill="none" stroke="url(#bgStrap)" stroke-width="13" stroke-linecap="round"/>
-        <path d="M152 92 Q180 66 208 92" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="2" stroke-linecap="round"/>
-        <!-- discs sitting in the open top (two-tone plastic with rim + sheen) -->
-        <ellipse cx="180" cy="99" rx="88" ry="21" fill="url(#bgOpen)"/>
+
+        <!-- ground shadow -->
+        <ellipse cx="182" cy="447" rx="118" ry="13" fill="#000" opacity=".55" filter="url(#bgSoft2)"/>
+        <ellipse cx="182" cy="446" rx="70" ry="8" fill="#000" opacity=".5" filter="url(#bgSoft)"/>
+
+        <!-- shoulder straps: webbing with weave texture, soft drop shadows -->
+        <path d="M118 120 C66 192 68 334 122 404" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="34" stroke-linecap="round" filter="url(#bgSoft)"/>
+        <path d="M242 120 C294 192 292 334 238 404" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="34" stroke-linecap="round" filter="url(#bgSoft)"/>
+        <path d="M118 120 C66 192 68 334 122 404" fill="none" stroke="url(#bgStrap)" stroke-width="27" stroke-linecap="round"/>
+        <path d="M242 120 C294 192 292 334 238 404" fill="none" stroke="url(#bgStrap)" stroke-width="27" stroke-linecap="round"/>
+        <path d="M118 120 C66 192 68 334 122 404" fill="none" stroke="url(#bgWeave)" stroke-width="27" stroke-linecap="round"/>
+        <path d="M242 120 C294 192 292 334 238 404" fill="none" stroke="url(#bgWeave)" stroke-width="27" stroke-linecap="round"/>
+        <path d="M116 122 C68 192 70 330 120 398" fill="none" stroke="rgba(220,255,235,.14)" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- ladder-lock buckles with hanging strap ends -->
+        <g transform="rotate(9 96 300)">
+          <rect x="84" y="292" width="26" height="20" rx="4" fill="#101511"/>
+          <rect x="88" y="299" width="18" height="5" rx="2" fill="#2a332c"/>
+          <path d="M92 312 q-4 34 4 52" stroke="#122a1e" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <path d="M92 312 q-4 34 4 52" stroke="url(#bgWeave)" stroke-width="12" fill="none" stroke-linecap="round"/>
+        </g>
+        <g transform="rotate(-9 264 300)">
+          <rect x="250" y="292" width="26" height="20" rx="4" fill="#101511"/>
+          <rect x="254" y="299" width="18" height="5" rx="2" fill="#2a332c"/>
+          <path d="M268 312 q4 34 -4 52" stroke="#122a1e" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <path d="M268 312 q4 34 -4 52" stroke="url(#bgWeave)" stroke-width="12" fill="none" stroke-linecap="round"/>
+        </g>
+
+        <!-- haul handle: wrapped webbing -->
+        <path d="M150 94 Q180 60 210 94" fill="none" stroke="#000" stroke-opacity=".4" stroke-width="17" stroke-linecap="round" filter="url(#bgSoft)"/>
+        <path d="M152 94 Q180 64 208 94" fill="none" stroke="url(#bgStrap)" stroke-width="13" stroke-linecap="round"/>
+        <path d="M152 94 Q180 64 208 94" fill="none" stroke="url(#bgWeave)" stroke-width="13" stroke-linecap="round"/>
+        <path d="M152 92 Q180 63 208 92" fill="none" stroke="rgba(220,255,235,.18)" stroke-width="2" stroke-linecap="round"/>
+        <rect x="172" y="70" width="16" height="9" rx="3" fill="#0c1810"/>
+
+        <!-- open top: discs stored EDGE-ON in a row, like a real disc golf bag -->
+        <ellipse cx="180" cy="100" rx="86" ry="19" fill="url(#bgOpen)"/>
         <g>
-          <ellipse cx="145" cy="88" rx="41" ry="15" fill="#0c5a4a"/>
-          <ellipse cx="145" cy="84" rx="41" ry="14" fill="#178a6e"/>
-          <ellipse cx="145" cy="82" rx="34" ry="10" fill="#33b394" opacity=".55"/>
-          <path d="M112 80 a41 14 0 0 1 66 -6" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="2" stroke-linecap="round"/>
-          <ellipse cx="188" cy="80" rx="40" ry="14" fill="#7a1f2e"/>
-          <ellipse cx="188" cy="76" rx="40" ry="13" fill="#c23a4e"/>
-          <ellipse cx="188" cy="74" rx="33" ry="9" fill="#e0687a" opacity=".5"/>
-          <path d="M156 72 a40 13 0 0 1 64 -5" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="2" stroke-linecap="round"/>
-          <ellipse cx="218" cy="87" rx="38" ry="14" fill="#b58c0a"/>
-          <ellipse cx="218" cy="83" rx="38" ry="13" fill="#e8c23e"/>
-          <ellipse cx="218" cy="81" rx="31" ry="9" fill="#f7dc7a" opacity=".5"/>
-          <path d="M188 79 a38 13 0 0 1 60 -5" fill="none" stroke="rgba(255,255,255,.48)" stroke-width="2" stroke-linecap="round"/>
+          <g transform="rotate(-4 118 96)"><rect x="110" y="72" width="17" height="34" rx="5" fill="#a8433a"/><rect x="110" y="72" width="17" height="34" rx="5" fill="url(#bgKey)"/><ellipse cx="118.5" cy="73.5" rx="8.5" ry="3" fill="#c96a5f"/><path d="M125 76 v26" stroke="rgba(0,0,0,.35)" stroke-width="2"/></g>
+          <g transform="rotate(2 140 92)"><rect x="132" y="66" width="17" height="40" rx="5" fill="#d9a62c"/><ellipse cx="140.5" cy="67.5" rx="8.5" ry="3" fill="#eec45e"/><path d="M147 70 v32" stroke="rgba(0,0,0,.3)" stroke-width="2"/></g>
+          <g transform="rotate(-2 162 90)"><rect x="154" y="70" width="17" height="36" rx="5" fill="#46789c"/><ellipse cx="162.5" cy="71.5" rx="8.5" ry="3" fill="#6d9cbd"/><path d="M169 74 v28" stroke="rgba(0,0,0,.35)" stroke-width="2"/></g>
+          <g transform="rotate(3 184 92)"><rect x="176" y="64" width="17" height="42" rx="5" fill="#ded8c4"/><ellipse cx="184.5" cy="65.5" rx="8.5" ry="3" fill="#f4efe0"/><path d="M191 68 v34" stroke="rgba(0,0,0,.25)" stroke-width="2"/></g>
+          <g transform="rotate(-3 206 92)"><rect x="198" y="69" width="17" height="37" rx="5" fill="#2f8f7a"/><ellipse cx="206.5" cy="70.5" rx="8.5" ry="3" fill="#54b09b"/><path d="M213 73 v29" stroke="rgba(0,0,0,.35)" stroke-width="2"/></g>
+          <g transform="rotate(4 228 96)"><rect x="220" y="74" width="17" height="32" rx="5" fill="#c46a2e"/><ellipse cx="228.5" cy="75.5" rx="8.5" ry="3" fill="#dd8f55"/><path d="M235 78 v24" stroke="rgba(0,0,0,.35)" stroke-width="2"/></g>
+          <path d="M96 100 a86 19 0 0 0 168 0 z" fill="#000" opacity=".38"/>
         </g>
-        <!-- main body: fabric grain + volume shading -->
-        <path d="M104 122 C104 100 132 92 180 92 C228 92 256 100 256 122 L266 366 C268 398 232 414 180 414 C128 414 92 398 94 366 Z" fill="url(#bgBody)" filter="url(#bgFab)"/>
+
+        <!-- main body: fabric, key light top-left, ambient shade bottom-right -->
+        <path d="M106 118 C106 102 134 94 180 94 C226 94 254 102 254 118 L264 368 C264 400 230 412 180 412 C130 412 96 400 96 368 Z" fill="url(#bgBody)" filter="url(#bgFab)"/>
         <g clip-path="url(#bgBodyClip)">
-          <rect x="80" y="84" width="204" height="340" fill="url(#bgHi)"/>
-          <rect x="80" y="84" width="204" height="340" fill="url(#bgShade)"/>
-          <ellipse cx="180" cy="252" rx="12" ry="150" fill="#000" opacity=".16" filter="url(#bgSoft)"/>
-          <path d="M124 120 C116 210 120 320 132 396" stroke="rgba(255,255,255,.17)" stroke-width="16" fill="none" filter="url(#bgSoft)"/>
+          <rect x="78" y="80" width="210" height="345" fill="url(#bgKey)"/>
+          <rect x="78" y="80" width="210" height="345" fill="url(#bgAmb)"/>
+          <ellipse cx="180" cy="260" rx="10" ry="140" fill="#000" opacity=".2" filter="url(#bgSoft)"/>
+          <path d="M126 118 C118 210 122 320 134 398" stroke="rgba(255,255,255,.15)" stroke-width="14" fill="none" filter="url(#bgSoft)"/>
+          <!-- lid seam with piping -->
+          <path d="M106 170 Q180 188 254 170" stroke="rgba(0,0,0,.45)" stroke-width="3.5" fill="none"/>
+          <path d="M106 173.5 Q180 191.5 254 173.5" stroke="rgba(230,255,240,.14)" stroke-width="1.5" fill="none"/>
+          <path d="M106 166 Q180 184 254 166" stroke="rgba(230,255,240,.1)" stroke-width="1.2" fill="none" stroke-dasharray="4 4"/>
+          <!-- vertical panel seams -->
+          <path d="M134 178 C128 250 130 330 138 404" stroke="rgba(0,0,0,.4)" stroke-width="2.5" fill="none"/>
+          <path d="M137 178 C131 250 133 330 141 404" stroke="rgba(230,255,240,.1)" stroke-width="1.2" fill="none"/>
+          <path d="M226 178 C232 250 230 330 222 404" stroke="rgba(0,0,0,.4)" stroke-width="2.5" fill="none"/>
+          <path d="M223 178 C229 250 227 330 219 404" stroke="rgba(230,255,240,.1)" stroke-width="1.2" fill="none"/>
+          <!-- rim lights against the dark backdrop -->
+          <path d="M254 118 L264 368 C264 398 232 412 182 412" stroke="rgba(190,255,215,.22)" stroke-width="3" fill="none" filter="url(#bgSoft)"/>
+          <path d="M106 118 L96 368" stroke="rgba(200,240,255,.1)" stroke-width="3" fill="none" filter="url(#bgSoft)"/>
         </g>
-        <path d="M104 122 C104 100 132 92 180 92 C228 92 256 100 256 122 L266 366 C268 398 232 414 180 414 C128 414 92 398 94 366 Z" fill="none" stroke="#0b2016" stroke-width="1.5"/>
-        <path d="M104 122 C104 100 132 92 180 92 C228 92 256 100 256 122" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2.5"/>
-        <!-- drawcord collar with soft AO -->
-        <path d="M104 128 Q180 158 256 128" fill="none" stroke="#000" stroke-opacity=".4" stroke-width="16" filter="url(#bgSoft)"/>
-        <path d="M104 128 Q180 156 256 128" fill="none" stroke="#0c2015" stroke-width="12"/>
-        <path d="M104 128 Q180 156 256 128" fill="none" stroke="rgba(250,249,245,.2)" stroke-width="2" stroke-dasharray="5 6"/>
-        <circle cx="180" cy="150" r="7" fill="#0a1911" stroke="#FF6B35" stroke-width="2"/>
-        <!-- seam stitching -->
-        <path d="M112 140 C108 220 110 320 118 386" fill="none" stroke="rgba(250,249,245,.2)" stroke-width="1.5" stroke-dasharray="5 5"/>
-        <path d="M248 140 C252 220 250 320 242 386" fill="none" stroke="rgba(250,249,245,.2)" stroke-width="1.5" stroke-dasharray="5 5"/>
-        <!-- front zip pocket: scroll unzips it and folds the flap open -->
-        <ellipse cx="180" cy="292" rx="72" ry="82" fill="#000" opacity=".33" filter="url(#bgSoft2)"/>
+        <path d="M106 118 C106 102 134 94 180 94 C226 94 254 102 254 118" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2.5"/>
+
+        <!-- drawcord collar -->
+        <path d="M106 126 Q180 154 254 126" fill="none" stroke="#000" stroke-opacity=".4" stroke-width="15" filter="url(#bgSoft)"/>
+        <path d="M106 126 Q180 152 254 126" fill="none" stroke="#0b1d13" stroke-width="10"/>
+        <path d="M106 126 Q180 152 254 126" fill="none" stroke="rgba(230,255,240,.15)" stroke-width="1.6" stroke-dasharray="4 5"/>
+        <circle cx="180" cy="146" r="6.5" fill="#0a120c"/>
+        <circle cx="180" cy="146" r="6.5" fill="none" stroke="#FF6B35" stroke-width="1.8"/>
+
+        <!-- front zip pocket: soft AO, then interior + molded flap -->
+        <ellipse cx="180" cy="292" rx="74" ry="84" fill="#000" opacity=".35" filter="url(#bgSoft2)"/>
         <g id="bagint" opacity="0">
-          <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="#05100a" stroke="#0a1911" stroke-width="2"/>
+          <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="#040d08"/>
           <g clip-path="url(#bgPockClip)">
-            <ellipse cx="158" cy="272" rx="34" ry="12" fill="#0c4a3c"/>
-            <ellipse cx="158" cy="268" rx="34" ry="11" fill="#178a6e"/>
-            <ellipse cx="200" cy="290" rx="36" ry="13" fill="#b58c0a"/>
-            <ellipse cx="200" cy="286" rx="36" ry="12" fill="#e8c23e"/>
-            <path d="M106 214 h148 v34 h-148 Z" fill="#000" opacity=".45"/>
+            <g transform="rotate(-5 152 285)"><rect x="142" y="252" width="19" height="66" rx="6" fill="#2f8f7a"/><ellipse cx="151.5" cy="254" rx="9.5" ry="3.5" fill="#54b09b"/></g>
+            <g transform="rotate(4 196 288)"><rect x="186" y="258" width="19" height="62" rx="6" fill="#d9a62c"/><ellipse cx="195.5" cy="260" rx="9.5" ry="3.5" fill="#eec45e"/></g>
+            <path d="M106 214 h148 v40 h-148 Z" fill="#000" opacity=".5"/>
+            <path d="M106 330 h148 v38 h-148 Z" fill="#000" opacity=".35"/>
           </g>
         </g>
         <g id="bagflap">
-          <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="url(#bgPocket)" stroke="#0a1911" stroke-width="2" filter="url(#bgFab)"/>
-          <path d="M124 214 h112 a18 18 0 0 1 18 18 v40 h-148 v-40 a18 18 0 0 1 18 -18 Z" fill="#fff" opacity=".06"/>
-          <rect x="114" y="222" width="132" height="138" rx="14" fill="none" stroke="rgba(250,249,245,.18)" stroke-width="1.5" stroke-dasharray="5 5"/>
-          <path d="M146 250 C142 292 143 324 148 358" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="2"/>
-          <path d="M180 252 v106" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="2"/>
-          <path d="M214 250 C218 292 217 324 212 358" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="2"/>
-          <rect x="142" y="314" width="90" height="24" rx="6" fill="#0d2117" stroke="rgba(250,249,245,.22)"/>
-          <circle cx="156" cy="326" r="6.5" fill="none" stroke="#FF6B35" stroke-width="2"/>
-          <circle cx="156" cy="326" r="2" fill="#FF6B35"/>
-          <text x="196" y="330" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="9.5" letter-spacing="1.2" fill="#FAF9F5">FLIGHTLAB</text>
+          <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="url(#bgPocketG)" filter="url(#bgFab)"/>
+          <g clip-path="url(#bgPockClip)">
+            <rect x="100" y="208" width="160" height="60" fill="#fff" opacity=".06"/>
+            <path d="M152 250 C148 292 149 326 154 360" stroke="rgba(0,0,0,.4)" stroke-width="5" fill="none" filter="url(#bgSoft)"/>
+            <path d="M157 250 C153 292 154 326 159 360" stroke="rgba(230,255,240,.1)" stroke-width="2" fill="none"/>
+            <path d="M208 250 C212 292 211 326 206 360" stroke="rgba(0,0,0,.4)" stroke-width="5" fill="none" filter="url(#bgSoft)"/>
+            <path d="M203 250 C199 292 200 326 205 360" stroke="rgba(230,255,240,.1)" stroke-width="2" fill="none"/>
+            <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="none" stroke="#000" stroke-opacity=".4" stroke-width="7" filter="url(#bgSoft)"/>
+            <!-- webbing daisy chain along the bottom -->
+            <g fill="#0d1d13">
+              <rect x="132" y="348" width="16" height="12" rx="3"/><rect x="160" y="348" width="16" height="12" rx="3"/>
+              <rect x="188" y="348" width="16" height="12" rx="3"/><rect x="216" y="348" width="16" height="12" rx="3"/>
+            </g>
+            <g stroke="rgba(230,255,240,.12)" stroke-width="1.4">
+              <path d="M132 350 h16"/><path d="M160 350 h16"/><path d="M188 350 h16"/><path d="M216 350 h16"/>
+            </g>
+          </g>
+          <rect x="114" y="222" width="132" height="138" rx="14" fill="none" stroke="rgba(250,249,245,.14)" stroke-width="1.4" stroke-dasharray="5 5"/>
+          <!-- embroidered label patch -->
+          <rect x="142" y="312" width="90" height="24" rx="5" fill="#0c1a11"/>
+          <rect x="144.5" y="314.5" width="85" height="19" rx="4" fill="none" stroke="rgba(250,249,245,.25)" stroke-width="1" stroke-dasharray="2.5 2.5"/>
+          <circle cx="157" cy="324" r="6" fill="none" stroke="#FF6B35" stroke-width="1.8"/>
+          <circle cx="157" cy="324" r="1.8" fill="#FF6B35"/>
+          <text x="197" y="328" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="9.5" letter-spacing="1.2" fill="#FAF9F5">FLIGHTLAB</text>
         </g>
-        <!-- zipper stays fixed to the bag; the slider runs open on scroll -->
-        <rect x="116" y="230" width="128" height="14" rx="7" fill="#0d2117"/>
-        <line x1="122" y1="237" x2="238" y2="237" stroke="#b7b7b1" stroke-width="3" stroke-dasharray="2.5 2.5"/>
+
+        <!-- zipper: track, interlocking teeth, bartacks, metal slider + paracord pull -->
+        <rect x="116" y="230" width="128" height="14" rx="7" fill="#0d1712"/>
+        <line x1="122" y1="235.8" x2="238" y2="235.8" stroke="#d7dacf" stroke-width="2.2" stroke-dasharray="2 2.2"/>
+        <line x1="123" y1="238.4" x2="238" y2="238.4" stroke="#9ba095" stroke-width="2.2" stroke-dasharray="2 2.2"/>
+        <rect x="117" y="232" width="4" height="10" rx="1.5" fill="#c2561f"/>
+        <rect x="239" y="232" width="4" height="10" rx="1.5" fill="#c2561f"/>
         <g id="bagslider">
-          <rect x="228" y="231" width="10" height="12" rx="3" fill="#9aa39c"/>
-          <path d="M238 237 q14 8 10 20" fill="none" stroke="#FF6B35" stroke-width="4" stroke-linecap="round"/>
+          <rect x="228" y="230.5" width="11" height="13" rx="3.5" fill="url(#bgMetal)"/>
+          <rect x="231" y="233" width="5" height="8" rx="2" fill="#6b7268"/>
+          <path d="M239 237 q13 9 9 21" fill="none" stroke="#b7541f" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M239 237 q13 9 9 21" fill="none" stroke="#ff8a4d" stroke-width="1.8" stroke-linecap="round"/>
         </g>
-        <!-- mesh bottle pocket with bottle + soft AO -->
-        <path d="M254 244 C290 250 298 274 298 300 v40 c0 24 -20 34 -42 34 Z" fill="#000" opacity=".3" filter="url(#bgSoft)"/>
-        <rect x="262" y="196" width="30" height="58" rx="12" fill="url(#bgBottle)"/>
-        <rect x="268" y="186" width="18" height="12" rx="4" fill="#8f3208"/>
-        <line x1="270" y1="208" x2="270" y2="240" stroke="rgba(255,255,255,.45)" stroke-width="3" stroke-linecap="round"/>
-        <path d="M254 244 C290 250 298 274 298 300 v40 c0 24 -20 34 -42 34 Z" fill="#16382a" stroke="#0a1911" stroke-width="2"/>
-        <path d="M254 244 C290 250 298 274 298 300 v40 c0 24 -20 34 -42 34 Z" fill="url(#bgMesh)"/>
-        <!-- feet -->
+
+        <!-- side: mesh bottle pocket with elastic collar + matte bottle -->
+        <path d="M254 244 C290 250 298 274 298 300 v40 c0 24 -20 34 -42 34 Z" fill="#000" opacity=".35" filter="url(#bgSoft)"/>
+        <rect x="263" y="194" width="28" height="60" rx="11" fill="url(#bgBottle)"/>
+        <line x1="270" y1="204" x2="270" y2="240" stroke="rgba(255,255,255,.4)" stroke-width="3" stroke-linecap="round"/>
+        <rect x="269" y="184" width="16" height="12" rx="4" fill="#5f2408"/>
+        <path d="M254 244 C290 250 298 274 298 300 v40 c0 24 -20 34 -42 34 Z" fill="#10281c"/>
+        <path d="M254 244 C290 250 298 274 298 300 v40 c0 24 -20 34 -42 34 Z" fill="url(#bgMeshP)"/>
+        <path d="M254 246 C282 251 294 266 297 284" stroke="#0b1a11" stroke-width="7" fill="none"/>
+        <path d="M254 246 C282 251 294 266 297 284" stroke="rgba(230,255,240,.12)" stroke-width="1.4" fill="none" stroke-dasharray="3 4"/>
+        <path d="M296 290 C297 320 295 350 268 372" stroke="rgba(190,255,215,.16)" stroke-width="2" fill="none" filter="url(#bgSoft)"/>
+
+        <!-- molded rubber feet -->
         <rect x="106" y="404" width="40" height="18" rx="9" fill="#08130c"/>
         <rect x="214" y="404" width="40" height="18" rx="9" fill="#08130c"/>
+        <path d="M110 407 h32" stroke="rgba(230,255,240,.1)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M218 407 h32" stroke="rgba(230,255,240,.1)" stroke-width="2" stroke-linecap="round"/>
       </svg>
     </div>
   </div>
@@ -473,6 +536,8 @@ if(window.Lenis && !REDUCED){
 const journey=document.getElementById('journey');
 const tilt=document.getElementById('tilt');
 const aura=document.querySelector('.disc-aura');
+const stageEl=document.querySelector('.hero-stage');
+let stW=420;function msz(){if(stageEl)stW=stageEl.offsetWidth||420}msz();addEventListener('resize',msz);
 const portal=document.getElementById('portal');
 const portalglow=document.getElementById('portalglow');
 const caps=[...document.querySelectorAll('#journey .jcap')];
@@ -511,7 +576,13 @@ function loop(){
   // pressed rings (slow approach, deep dive) before the bloom hands off.
   const p=secP(journey);
   const e=smooth(p);
-  portal.style.transform='scale('+(1+Math.pow(e,1.6)*33).toFixed(3)+')';
+  // Dive INTO the groove band (upper-left of the plate), not the bullseye:
+  // the focal point drifts off-centre as the zoom deepens, so the rings
+  // sweep past asymmetrically, with a slow spiral for a cinematic feel.
+  const s=1+Math.pow(e,1.6)*33;
+  const e2=smooth(clamp(0,1,(p-0.04)/0.3));
+  const dx=((s-1)*e2*stW*0.21).toFixed(1), dy=((s-1)*e2*stW*0.115).toFixed(1);
+  portal.style.transform='translate3d('+dx+'px,'+dy+'px,0) rotate('+(-e*9).toFixed(2)+'deg) scale('+s.toFixed(3)+')';
   if(tilt){const a=1-smooth(clamp(0,1,p/0.35)); // side pose eases square to camera
     tilt.style.transform='rotateY('+(a*36).toFixed(2)+'deg) rotateX('+(a*8).toFixed(2)+'deg)'}
   if(aura)aura.style.opacity=(1-smooth(clamp(0,1,p/0.22))).toFixed(3); // aura off once the dive starts
