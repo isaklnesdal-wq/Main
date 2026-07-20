@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ page_title }} — Flightlab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#FAF9F5;--ink:#0E1A13;--forest:#1B4332;--signal:#FF6B35;--gold:#F2B705;--mut:#6b7d72;--line:rgba(14,26,19,.12);--h:'Space Grotesk',sans-serif;--b:'Inter',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f4f3ee;color:var(--ink);font-family:var(--b);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+.shell{max-width:1100px;margin:0 auto;padding:0 clamp(18px,4vw,48px);width:100%}
+header.site{background:var(--ink);color:var(--paper)}
+header.site .shell{display:flex;align-items:center;justify-content:space-between;padding-top:16px;padding-bottom:16px}
+.brand{font-family:var(--h);font-weight:700;font-size:20px;letter-spacing:.02em}
+nav.site a{font-size:13.5px;font-weight:500;margin-left:22px;opacity:.9}
+nav.site a:hover{opacity:1;color:var(--gold)}
+main{flex:1;padding:clamp(28px,6vh,64px) 0}
+.btn{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:var(--b);font-size:14px;font-weight:600;padding:14px 28px;border-radius:999px;background:var(--signal);color:#fff;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,107,53,.35)}
+.btn.ghost{background:transparent;border:1.5px solid var(--ink);color:var(--ink)}
+footer.site{background:var(--ink);color:rgba(250,249,245,.75);font-size:12.5px}
+footer.site .shell{padding-top:26px;padding-bottom:26px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+h1,h2,h3{font-family:var(--h)}
+</style>
+{{ content_for_header }}
+</head>
+<body>
+<header class="site"><div class="shell">
+  <a class="brand" href="/">FLIGHTLAB</a>
+  <nav class="site">
+    <a href="/#discer">Discer</a>
+    <a href="/#bager">Bager</a>
+    <a href="/#tilbehor">Tilbehør</a>
+    <a href="/cart">Handlekurv{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</a>
+  </nav>
+</div></header>
+<main><div class="shell">
+{{ content_for_layout }}
+</div></main>
+<footer class="site"><div class="shell">
+  <span>Flightlab · Fra første kast til siste putt</span><span>Norge &amp; Norden · © 2026</span>
+</div></footer>
+</body>
+</html>

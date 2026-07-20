@@ -1,0 +1,9 @@
+<h1 style="font-weight:600;font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;margin-bottom:24px">Kolleksjoner</h1>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">
+{% for collection in collections %}
+  <a href="{{ collection.url }}" style="background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;display:block">
+    <div style="font-family:var(--h);font-weight:600;font-size:17px">{{ collection.title }}</div>
+    <div style="font-size:12.5px;color:var(--mut);margin-top:5px">{{ collection.products_count }} produkter</div>
+  </a>
+{% endfor %}
+</div>
