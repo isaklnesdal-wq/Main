@@ -11,8 +11,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
 :root{
-  --paper:#FAF9F5; --ink:#0E1A13; --forest:#1B4332; --signal:#FF6B35; --gold:#F2B705;
-  --mut:#6b7d72; --line:rgba(14,26,19,.12);
+  --paper:#FAF9F5; --ink:#0A1614; --forest:#123F39; --signal:#FF6B35; --gold:#F2B705;
+  --teal:#33C6B4; --mut:#6b7d72; --line:rgba(10,22,20,.12);
   --h:'Space Grotesk',sans-serif; --b:'Inter',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -33,10 +33,10 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
    zooms INTO the disc and hands off to the catalogue. */
 #journey{position:relative;height:380vh}
 .scene{position:sticky;top:0;height:100vh;overflow:hidden;
-  background:radial-gradient(125% 80% at 50% 6%,#33531f 0%,#1b3a1f 36%,#0c1e12 70%,#060c09 100%)}
+  background:radial-gradient(125% 80% at 50% 6%,#1c5049 0%,#123a37 36%,#0a201e 70%,#050c0b 100%)}
 .scene::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(42% 24% at 50% 16%,rgba(242,183,5,.4),transparent 70%),
-    radial-gradient(90% 32% at 50% 102%,rgba(27,67,50,.7),transparent)}
+  background:radial-gradient(42% 24% at 50% 16%,rgba(80,220,205,.28),transparent 70%),
+    radial-gradient(90% 32% at 50% 102%,rgba(18,63,57,.7),transparent)}
 .scene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;z-index:0;pointer-events:none;
   background:linear-gradient(180deg,transparent,#08140c)}
 .vtint{position:absolute;inset:0;z-index:1;pointer-events:none;
@@ -52,14 +52,14 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
 .hero-stage .layer{position:absolute;inset:0;border-radius:50%}
 @keyframes bob{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}
 .disc-aura{position:absolute;inset:-26%;border-radius:50%;
-  background:radial-gradient(circle,rgba(74,224,140,.4) 22%,rgba(52,196,120,.18) 46%,rgba(52,196,120,.05) 62%,transparent 74%);
+  background:radial-gradient(circle,rgba(64,220,205,.42) 22%,rgba(48,190,178,.18) 46%,rgba(48,190,178,.05) 62%,transparent 74%);
   animation:aura 4.5s ease-in-out infinite}
 @keyframes aura{0%,100%{transform:scale(.96)}50%{transform:scale(1.07)}}
 /* rest pose: standing upright, turned to the side and slanted; JS eases it
    square to the camera as the dive toward the rings begins */
 .tilt{position:absolute;inset:0;transform:rotateY(36deg) rotateX(8deg);transform-style:preserve-3d;will-change:transform}
 .hero-disc{position:absolute;inset:0;border-radius:50%;animation:rock 7s ease-in-out infinite;
-  box-shadow:0 0 70px rgba(70,214,132,.55),0 0 180px rgba(52,190,118,.38),0 34px 90px rgba(0,0,0,.45)}
+  box-shadow:0 0 70px rgba(60,216,204,.55),0 0 180px rgba(46,190,178,.38),0 34px 90px rgba(0,0,0,.45)}
 @keyframes rock{0%,100%{transform:rotateZ(-11deg)}50%{transform:rotateZ(11deg)}}
 /* real product photo variant */
 .hero-disc.photo{overflow:hidden;background:#0b1b12}
@@ -86,7 +86,7 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
 .hd-flash{position:absolute;top:5.4%;left:47.6%;width:4.8%;height:1.7%;border-radius:99px;background:rgba(10,66,36,.5)}
 .hd-glare{background:radial-gradient(ellipse 44% 17% at 30% 11%,rgba(255,255,255,.72),rgba(255,255,255,.12) 46%,transparent 66%)}
 .portalglow{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;
-  background:radial-gradient(circle at 50% 50%,#4ed37e,#1f8a48 40%,#0e1a13 72%)}
+  background:radial-gradient(circle at 50% 50%,#3fd0c2,#1f8a80 40%,#0a1614 72%)}
 .grain{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 /* branded intro loader */
@@ -98,11 +98,12 @@ nav .nl a{font-size:13px;font-weight:500;color:#fff}
 #bagportal{position:relative;height:240vh;background:#f1f0ea}
 #bagportal .pin{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(58% 46% at 50% 44%,#1a3d2b,#0E1A13 72%,#081209)}
-#bagportal .bagbig{width:min(56vmin,440px);height:min(72vmin,560px);position:relative;overflow:hidden;border-radius:22px;background:#0b120d;
+#bagportal .bagbig{width:min(60vmin,470px);height:min(74vmin,580px);position:relative;
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 44px 90px rgba(0,0,0,.55);will-change:transform,opacity}
+  filter:drop-shadow(0 26px 54px rgba(0,0,0,.6)) drop-shadow(0 0 30px rgba(60,210,198,.3));
+  will-change:transform,opacity}
 #bagportal .bagbig svg{width:100%;height:100%;display:block}
-#bagportal .bagbig img{width:100%;height:100%;object-fit:cover;transform:scale(1.04);display:block}
+#bagportal .bagbig img{width:100%;height:100%;object-fit:contain;filter:url(#bagko);display:block}
 #bagportal .bpcap{position:absolute;z-index:3;top:12%;left:0;right:0;text-align:center;color:#fff;pointer-events:none;will-change:opacity}
 #bagportal .bpcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
 #bagportal .bpcap h2{font-family:var(--h);font-weight:500;font-size:clamp(24px,4vw,44px)}
@@ -198,6 +199,8 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(60px,9vh,110px) 0 
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="bagko" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -0.85 -0.85 -0.85 0 2.05"/></filter></svg>
+
 
 <div class="prog" id="prog"></div>
 
