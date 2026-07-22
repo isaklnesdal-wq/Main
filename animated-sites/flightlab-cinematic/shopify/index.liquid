@@ -20,6 +20,15 @@ body{background:var(--paper);color:var(--ink);font-family:var(--b);overflow-x:hi
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
 .eyebrow{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--signal)}
+/* search */
+.searchwrap{max-width:720px;margin:0 auto}
+.searchbar{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 7px 7px 20px;box-shadow:0 10px 30px rgba(14,26,19,.07)}
+.searchbar svg{flex:none;color:var(--mut)}
+.searchbar input{flex:1;border:none;outline:none;background:transparent;font-family:var(--b);font-size:15px;color:var(--ink);min-width:0}
+.searchbar input::placeholder{color:var(--mut)}
+.searchbar input::-webkit-search-cancel-button{-webkit-appearance:none}
+.searchhint{text-align:center;margin-top:14px;font-size:13px;color:var(--mut);min-height:18px}
+.searchhint a{color:var(--signal);font-weight:600}
 
 /* nav */
 nav{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,5vw,64px);mix-blend-mode:difference}
@@ -242,6 +251,20 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
       <p>Premium discer, bager og tilbehør for spillere som krever mer.</p>
     </div>
     <div class="scrollcue" id="cue">Bla ↓</div>
+  </div>
+</section>
+
+<!-- ===== Search / live catalogue filter ===== -->
+<section class="sec light" id="search-sec" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="searchwrap rv">
+      <form class="searchbar" id="searchform" role="search" action="/search" method="get">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="search" name="q" id="q" placeholder="Søk etter disc, merke, bag eller tilbehør…" autocomplete="off" aria-label="Søk i sortimentet" />
+        <button type="submit" class="btn">Søk</button>
+      </form>
+      <div class="searchhint" id="searchhint"></div>
+    </div>
   </div>
 </section>
 
@@ -639,6 +662,30 @@ document.querySelectorAll('#disc-groups .rv,#bgrid .rv,#agrid .rv').forEach(el=>
 
 document.getElementById('nlform').addEventListener('submit',e=>{e.preventDefault();
   const f=e.target;if(f.querySelector('input').value.trim()){f.outerHTML='<div class="nlthanks">Takk! Vi sier ifra så fort dørene åpner. 🥏</div>'}});
+
+/* ===== catalogue search: live filter here, full-store search on submit ===== */
+(function(){
+  const q=document.getElementById('q'),hint=document.getElementById('searchhint');
+  if(!q)return;
+  const secs=['discer','bager','tilbehor'].map(id=>document.getElementById(id)).filter(Boolean);
+  const bp=document.getElementById('bagportal');
+  function run(){
+    const term=q.value.trim().toLowerCase();
+    const cards=document.querySelectorAll('#disc-groups .pcard,#bgrid .acard,#agrid .acard');
+    let shown=0;
+    cards.forEach(c=>{const hit=!term||c.textContent.toLowerCase().includes(term);c.style.display=hit?'':'none';if(hit&&term)shown++;});
+    document.querySelectorAll('#disc-groups .disc-group').forEach(g=>{
+      g.style.display=[...g.querySelectorAll('.pcard')].some(c=>c.style.display!=='none')?'':'none';});
+    if(term){
+      secs.forEach(s=>{const any=[...s.querySelectorAll('.pcard,.acard')].some(c=>c.style.display!=='none');s.style.display=any?'':'none';});
+      if(bp)bp.style.display='none';
+      hint.innerHTML=shown+' treff i sortimentet · <a href="/search?q='+encodeURIComponent(q.value)+'">Søk i hele butikken →</a>';
+    }else{
+      secs.forEach(s=>s.style.display='');if(bp)bp.style.display='';hint.textContent='';
+    }
+  }
+  q.addEventListener('input',run);
+})();
 </script>
 </body>
 </html>
