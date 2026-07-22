@@ -22,6 +22,8 @@ main{flex:1;padding:clamp(28px,6vh,64px) 0}
 .btn{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:var(--b);font-size:14px;font-weight:600;padding:14px 28px;border-radius:999px;background:var(--signal);color:#fff;-webkit-tap-highlight-color:transparent;transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,107,53,.35)}
 .btn:active{transform:scale(.93)}
+.btn.pressing,nav.site a.pressing,.brand.pressing{display:inline-block;transform:scale(.92)!important;transition:transform .1s ease-out!important}
+.pc.pressing,.acard.pressing{transform:scale(.97)!important;transition:transform .11s ease-out!important}
 .btn.ghost{background:transparent;border:1.5px solid var(--ink);color:var(--ink)}
 footer.site{background:#eef4f1;color:var(--mut);border-top:1px solid var(--line);font-size:12.5px}
 footer.site .shell{padding-top:26px;padding-bottom:26px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
@@ -45,5 +47,11 @@ h1,h2,h3{font-family:var(--h)}
 <footer class="site"><div class="shell">
   <span>Flightlab · Fra første kast til siste putt</span><span>Norge &amp; Norden · © 2026</span>
 </div></footer>
+<script>
+(function(){var SEL='.btn,.pc,.acard,nav.site a,.brand';
+addEventListener('pointerdown',function(e){var t=e.target.closest(SEL);if(t)t.classList.add('pressing');},{passive:true});
+function c(){document.querySelectorAll('.pressing').forEach(function(el){el.classList.remove('pressing');});}
+['pointerup','pointercancel','scroll'].forEach(function(ev){addEventListener(ev,c,{passive:true});});})();
+</script>
 </body>
 </html>

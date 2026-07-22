@@ -13,8 +13,8 @@
 :root{
   --paper:#FAF9F5; --ink:#0A1614; --forest:#123F39; --signal:#FF6B35; --gold:#F2B705;
   --teal:#33C6B4; --mut:#6b7d72; --line:rgba(10,22,20,.12);
-  --glass:rgba(255,255,255,.42); --glass2:rgba(255,255,255,.66); --glassbrd:rgba(255,255,255,.7);
-  --blur:blur(20px) saturate(180%);
+  --glass:rgba(255,255,255,.24); --glass2:rgba(255,255,255,.46); --glassbrd:rgba(255,255,255,.6);
+  --blur:blur(24px) saturate(190%);
   --h:'Space Grotesk',sans-serif; --b:'Inter',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -133,9 +133,12 @@ nav .nl a:hover{color:var(--signal)}
 .jcap h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,5vw,60px);letter-spacing:-.02em;color:#fff;text-shadow:0 8px 30px rgba(0,0,0,.6)}
 .jcap p{margin:16px auto 0;max-width:40ch;font-size:14.5px;font-weight:300;line-height:1.7;color:rgba(255,255,255,.9)}
 .jcap .btns{margin-top:26px;display:flex;gap:14px;justify-content:center;pointer-events:auto}
-.btn{border:none;cursor:pointer;font-family:var(--b);font-size:13px;font-weight:600;padding:13px 26px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .25s,background .25s}
+.btn{border:none;cursor:pointer;font-family:var(--b);font-size:13px;font-weight:600;padding:13px 26px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;transition:transform .4s cubic-bezier(.34,1.5,.5,1),box-shadow .25s,background .25s}
 .btn.p{background:var(--signal);color:#fff}.btn.p:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,107,53,.4)}
-.btn:active{transform:scale(.93)}
+/* Apple-style pointer press (iOS ignores :active without a handler) */
+.pcard.pressing,.acard.pressing{transform:translateY(-3px) scale(.965)!important;transition:transform .11s ease-out!important}
+.btn.pressing{transform:scale(.9)!important;transition:transform .1s ease-out!important}
+nav .nl a.pressing,.brand.pressing{display:inline-block;transform:scale(.88)!important;transition:transform .1s ease-out!important}
 .btn.g{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.45);backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%)}
 .scrollcue{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:6;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#fff;opacity:.7;transition:opacity .4s}
 /* impact flash at the end */
@@ -163,9 +166,9 @@ nav .nl a:hover{color:var(--signal)}
 .disc-group .gt{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;border-bottom:1px solid var(--line);padding-bottom:12px}
 .disc-group .gt h3{font-family:var(--h);font-weight:600;font-size:20px;letter-spacing:-.01em}
 .disc-group .gt span{font-size:12px;color:var(--mut)}
-.pcard{background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,.6));border:1px solid rgba(255,255,255,.85);border-radius:20px;padding:24px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;-webkit-tap-highlight-color:transparent;backdrop-filter:blur(9px) saturate(150%);-webkit-backdrop-filter:blur(9px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 8px 24px rgba(14,26,19,.06);transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.pcard{background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.38));border:1px solid rgba(255,255,255,.75);border-radius:20px;padding:24px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;-webkit-tap-highlight-color:transparent;backdrop-filter:blur(16px) saturate(170%);-webkit-backdrop-filter:blur(16px) saturate(170%);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 24px rgba(14,26,19,.06);transition:transform .42s cubic-bezier(.34,1.4,.5,1),box-shadow .3s}
 .pcard:hover{transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 20px 44px rgba(14,26,19,.14)}
-.pcard:active{transform:scale(.98)}
+
 .pcard .dw{height:132px;display:flex;align-items:center;justify-content:center}
 .pcard .shadow{width:76px;height:14px;border-radius:50%;background:radial-gradient(ellipse,rgba(14,26,19,.22),transparent 70%);margin-top:-6px}
 .pcard h3{font-family:var(--h);font-weight:600;font-size:17px;margin-top:14px}
@@ -184,9 +187,9 @@ nav .nl a:hover{color:var(--signal)}
 .agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 @media(max-width:1000px){.agrid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.agrid{grid-template-columns:1fr}}
-.acard{background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,.6));border:1px solid rgba(255,255,255,.85);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 8px 24px rgba(14,26,19,.06);transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.acard{background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.38));border:1px solid rgba(255,255,255,.75);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent;backdrop-filter:blur(16px) saturate(170%);-webkit-backdrop-filter:blur(16px) saturate(170%);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 24px rgba(14,26,19,.06);transition:transform .42s cubic-bezier(.34,1.4,.5,1),box-shadow .3s}
 .acard:hover{transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 20px 44px rgba(14,26,19,.14)}
-.acard:active{transform:scale(.98)}
+
 .acard .im{aspect-ratio:1;overflow:hidden;background:linear-gradient(135deg,#1B4332,#2E6B4F)}
 .acard .im img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .acard:hover .im img{transform:scale(1.05)}
@@ -690,6 +693,14 @@ document.getElementById('nlform').addEventListener('submit',e=>{e.preventDefault
     }
   }
   q.addEventListener('input',run);
+})();
+
+/* ===== Apple-style press feedback (pointer-based so iOS Safari honours it) ===== */
+(function(){
+  const SEL='.pcard,.acard,.btn,nav .nl a,.brand';
+  addEventListener('pointerdown',e=>{const t=e.target.closest(SEL);if(t)t.classList.add('pressing');},{passive:true});
+  const clear=()=>document.querySelectorAll('.pressing').forEach(el=>el.classList.remove('pressing'));
+  ['pointerup','pointercancel','pointerleave','dragstart','scroll'].forEach(ev=>addEventListener(ev,clear,{passive:true}));
 })();
 </script>
 </body>
