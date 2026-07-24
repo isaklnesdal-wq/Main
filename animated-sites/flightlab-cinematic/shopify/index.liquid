@@ -209,6 +209,9 @@ nav .nl a.pressing,.brand.pressing{display:inline-block;transform:scale(.88)!imp
   .navsearch{background:rgba(255,255,255,.94);backdrop-filter:none;-webkit-backdrop-filter:none}
   .searchhint{background:rgba(255,255,255,.97);backdrop-filter:none;-webkit-backdrop-filter:none}
   .btn.g{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(20,42,62,.86)}
+  /* drop-shadow on scaled elements re-rasters every frame on mobile — drop it */
+  #bagportal .bagbig{filter:none}
+  .hd-stamp svg{filter:none}
 }
 .acard:hover{transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 20px 44px rgba(14,26,19,.14)}
 
@@ -515,6 +518,15 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
 <script>
 'use strict';
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TOUCH=matchMedia('(pointer:coarse)').matches;
+
+/* On mobile, transforming a filtered SVG re-rasterises the whole filter
+   region every scroll frame — the #1 cause of the bag-zoom jank. Strip the
+   turbulence/blur filters on touch so the bag is flat vector = composited,
+   no per-frame re-raster. Desktop keeps the full texture + soft shadows. */
+if(TOUCH){
+  document.querySelectorAll('#bagbig [filter]').forEach(el=>el.removeAttribute('filter'));
+}
 
 /* ---- smooth momentum scroll ---- */
 let lenis=null;
