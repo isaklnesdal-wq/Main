@@ -276,7 +276,7 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
         <div class="disc-aura"></div>
         <div class="tilt" id="tilt">
           <div class="hero-disc photo">
-            <img src="https://www.fjellsport.no/assets/blobs/FL3-13769-TQ-073913aa93.jpeg?preset=medium&dpr=2" alt="Latitude 64 Opto Diamond" loading="eager">
+            <img id="herodisc" src="https://www.fjellsport.no/assets/blobs/FL3-13769-TQ-073913aa93.jpeg?preset=medium&dpr=2" alt="Latitude 64 Opto Diamond" loading="eager">
             <div class="layer hd-glare"></div>
           </div>
         </div>
@@ -692,8 +692,15 @@ const ACC=[
   {img:'https://images.pexels.com/photos/9072311/pexels-photo-9072311.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Hettegenser',d:'Myk collegegenser i skoggrønn',p:'549 kr',h:'flightlab-hettegenser'},
   {img:'https://images.pexels.com/photos/6311392/pexels-photo-6311392.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Øvingskurv',d:'Bærbar kurv for putt-trening hjemme',p:'899 kr',h:'ovingskurv'}
 ];
-const acard=a=>'<a class="acard rv" href="/products/'+a.h+'"><div class="im"><img src="'+a.img+'" alt="'+a.n+'" loading="lazy" onerror="this.style.display=\'none\'"></div>'+
+/* Image source, in priority order:
+   1. window.FL_IMG[handle] — set by Shopify (theme setting, else product photo)
+   2. the built-in placeholder below
+   Lets the shop owner swap any card image from Theme settings without code. */
+const FLIMG=(typeof window!=='undefined'&&window.FL_IMG)||{};
+const imgFor=a=>FLIMG[a.h]||a.img;
+const acard=a=>'<a class="acard rv" href="/products/'+a.h+'"><div class="im"><img src="'+imgFor(a)+'" alt="'+a.n+'" loading="lazy" onerror="this.style.display=\'none\'"></div>'+
   '<div class="bd"><h4>'+a.n+'</h4><div class="ad">'+a.d+'</div><div class="ap">'+a.p+'</div></div></a>';
+if(window.FL_HERO){const hd=document.getElementById('herodisc');if(hd)hd.src=window.FL_HERO;}
 document.getElementById('bgrid').innerHTML=BAGS.map(acard).join('');
 document.getElementById('agrid').innerHTML=ACC.map(acard).join('');
 document.querySelectorAll('#disc-groups .rv,#bgrid .rv,#agrid .rv').forEach(el=>io.observe(el));

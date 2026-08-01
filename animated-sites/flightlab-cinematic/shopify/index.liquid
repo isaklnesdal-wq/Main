@@ -245,6 +245,42 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.disc3d,.hero-disc,.hero-stage,.disc-aura{animation:none}
   #journey{height:100vh}.scene{position:relative}}
 </style>
+{% endraw %}
+{%- comment -%}
+  Forsidebilder, styrt fra temainnstillingene.
+
+  For hvert kort velges bildet slik (se snippets/fl-img.liquid):
+    1. Temainnstilling  — Tilpass → Temainnstillinger → «Bilder — …»
+    2. ellers produktets hovedbilde i Shopify
+    3. ellers standardbildet som allerede ligger i forsidekoden
+
+  Resultatet legges på window.FL_IMG, som forsidekoden leser. Dermed kan
+  bildene byttes uten å redigere kode.
+
+  Skal du legge til et nytt kort: legg inn en image_picker i
+  config/settings_schema.json og en ny render-linje under, med samme
+  handle som produktet har i Shopify.
+{%- endcomment -%}
+<script>
+window.FL_IMG={
+{%- render 'fl-img', h: 'flightlab-sling',          s: settings.img_flightlab_sling -%}
+{%- render 'fl-img', h: 'flightlab-starter-bag',    s: settings.img_flightlab_starter_bag -%}
+{%- render 'fl-img', h: 'flightlab-coursebag',      s: settings.img_flightlab_coursebag -%}
+{%- render 'fl-img', h: 'flightlab-tour-backpack',  s: settings.img_flightlab_tour_backpack -%}
+{%- render 'fl-img', h: 'startsett-3-discer',       s: settings.img_startsett_3_discer -%}
+{%- render 'fl-img', h: 'disc-handkle',             s: settings.img_disc_handkle -%}
+{%- render 'fl-img', h: 'flightlab-drikkeflaske',   s: settings.img_flightlab_drikkeflaske -%}
+{%- render 'fl-img', h: 'flightlab-caps',           s: settings.img_flightlab_caps -%}
+{%- render 'fl-img', h: 'mini-markor',              s: settings.img_mini_markor -%}
+{%- render 'fl-img', h: 'scorekort-holder',         s: settings.img_scorekort_holder -%}
+{%- render 'fl-img', h: 'flightlab-hettegenser',    s: settings.img_flightlab_hettegenser -%}
+{%- render 'fl-img', h: 'ovingskurv',               s: settings.img_ovingskurv, last: true -%}
+};
+{%- if settings.img_hero_disc != blank %}
+window.FL_HERO={{ settings.img_hero_disc | image_url: width: 900 | json }};
+{%- endif %}
+</script>
+{% raw %}
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="bagko" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -2 -2 -2 0 5.4" result="m"/><feComponentTransfer in="m"><feFuncA type="discrete" tableValues="0 0 1 1"/></feComponentTransfer></filter></svg>
@@ -277,7 +313,7 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
         <div class="disc-aura"></div>
         <div class="tilt" id="tilt">
           <div class="hero-disc photo">
-            <img src="https://www.fjellsport.no/assets/blobs/FL3-13769-TQ-073913aa93.jpeg?preset=medium&dpr=2" alt="Latitude 64 Opto Diamond" loading="eager">
+            <img id="herodisc" src="https://www.fjellsport.no/assets/blobs/FL3-13769-TQ-073913aa93.jpeg?preset=medium&dpr=2" alt="Latitude 64 Opto Diamond" loading="eager">
             <div class="layer hd-glare"></div>
           </div>
         </div>
@@ -693,8 +729,15 @@ const ACC=[
   {img:'https://images.pexels.com/photos/9072311/pexels-photo-9072311.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Hettegenser',d:'Myk collegegenser i skoggrønn',p:'549 kr',h:'flightlab-hettegenser'},
   {img:'https://images.pexels.com/photos/6311392/pexels-photo-6311392.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Øvingskurv',d:'Bærbar kurv for putt-trening hjemme',p:'899 kr',h:'ovingskurv'}
 ];
-const acard=a=>'<a class="acard rv" href="/products/'+a.h+'"><div class="im"><img src="'+a.img+'" alt="'+a.n+'" loading="lazy" onerror="this.style.display=\'none\'"></div>'+
+/* Image source, in priority order:
+   1. window.FL_IMG[handle] — set by Shopify (theme setting, else product photo)
+   2. the built-in placeholder below
+   Lets the shop owner swap any card image from Theme settings without code. */
+const FLIMG=(typeof window!=='undefined'&&window.FL_IMG)||{};
+const imgFor=a=>FLIMG[a.h]||a.img;
+const acard=a=>'<a class="acard rv" href="/products/'+a.h+'"><div class="im"><img src="'+imgFor(a)+'" alt="'+a.n+'" loading="lazy" onerror="this.style.display=\'none\'"></div>'+
   '<div class="bd"><h4>'+a.n+'</h4><div class="ad">'+a.d+'</div><div class="ap">'+a.p+'</div></div></a>';
+if(window.FL_HERO){const hd=document.getElementById('herodisc');if(hd)hd.src=window.FL_HERO;}
 document.getElementById('bgrid').innerHTML=BAGS.map(acard).join('');
 document.getElementById('agrid').innerHTML=ACC.map(acard).join('');
 document.querySelectorAll('#disc-groups .rv,#bgrid .rv,#agrid .rv').forEach(el=>io.observe(el));
