@@ -51,18 +51,29 @@ nav .nl a:hover{color:var(--signal)}
 /* Hero: the real Higgsfield clip autoplays behind a giant disc; scroll
    zooms INTO the disc and hands off to the catalogue. */
 #journey{position:relative;height:380vh}
+/* Bright, hazy morning sky with a low sun. Kept in CSS rather than the SVG
+   so it scales with the viewport instead of being cropped on narrow phones. */
 .scene{position:sticky;top:0;height:100vh;overflow:hidden;
-  background:radial-gradient(125% 80% at 50% 6%,#63a99a 0%,#43897b 32%,#2b675b 60%,#164039 100%)}
+  background:
+    radial-gradient(circle 34px at 68% 25%,rgba(255,253,245,.98),rgba(255,247,225,.88) 58%,rgba(255,240,208,0) 100%),
+    radial-gradient(circle 150px at 68% 25%,rgba(255,240,203,.5),rgba(255,236,190,0) 100%),
+    radial-gradient(circle 420px at 68% 25%,rgba(255,228,168,.3),rgba(255,226,166,0) 100%),
+    radial-gradient(130% 60% at 60% 58%,rgba(255,243,219,.55),rgba(255,243,219,0) 66%),
+    linear-gradient(180deg,#79b6ce 0%,#a3d0da 24%,#c8e2dd 46%,#e2ede1 68%,#edf2e6 100%)}
+/* soft atmospheric lift right around the floating disc */
 .scene::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(42% 24% at 50% 16%,rgba(80,220,205,.28),transparent 70%),
-    radial-gradient(90% 32% at 50% 102%,rgba(18,63,57,.7),transparent)}
-.scene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;z-index:0;pointer-events:none;
-  background:linear-gradient(180deg,transparent,#08140c)}
+  background:radial-gradient(44% 26% at 50% 42%,rgba(255,255,255,.32),transparent 74%)}
+/* gentle ground shade — nothing like the old near-black wash */
+.scene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:28%;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(26,52,35,.4))}
+/* light vignette only; the caption gets its own scrim so white text stays
+   readable without having to darken the whole sky */
 .vtint{position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(6,12,9,.42),rgba(6,12,9,.1) 34%,rgba(6,12,9,.1) 60%,rgba(6,12,9,.72))}
-/* layered pine silhouettes + basket, built once by JS (static, cheap) */
+  background:radial-gradient(92% 74% at 50% 44%,transparent 46%,rgba(12,30,20,.3) 100%),
+    linear-gradient(180deg,rgba(12,30,20,.2),transparent 22%,transparent 64%,rgba(12,30,20,.34))}
+/* layered forest + fairway + basket, built once by JS (static, cheap) */
 .scape{position:absolute;inset:0;z-index:0;pointer-events:none}
-.scape svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%;display:block}
+.scape svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:62%;display:block}
 /* the zoom target — a realistic moulded frisbee, level with the camera.
    It floats, glows and rocks gently back and forth; scrolling levels it
    out and flies you THROUGH its pressed rings — no hard direct zoom. */
@@ -70,8 +81,10 @@ nav .nl a:hover{color:var(--signal)}
 .hero-stage{position:relative;width:min(60vmin,500px);height:min(60vmin,500px);perspective:1200px;animation:bob 6.5s ease-in-out infinite}
 .hero-stage .layer{position:absolute;inset:0;border-radius:50%}
 @keyframes bob{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}
-.disc-aura{position:absolute;inset:-26%;border-radius:50%;
-  background:radial-gradient(circle,rgba(64,220,205,.42) 22%,rgba(48,190,178,.18) 46%,rgba(48,190,178,.05) 62%,transparent 74%);
+/* Softer than it was: the daylight backdrop does the work now, so the aura
+   only needs to lift the disc off the treeline, not tint the whole sky. */
+.disc-aura{position:absolute;inset:-22%;border-radius:50%;
+  background:radial-gradient(circle,rgba(120,240,225,.26) 20%,rgba(90,215,200,.11) 44%,rgba(90,215,200,.03) 60%,transparent 72%);
   animation:aura 4.5s ease-in-out infinite}
 @keyframes aura{0%,100%{transform:scale(.96)}50%{transform:scale(1.07)}}
 /* rest pose: standing upright, turned to the side and slanted; JS eases it
@@ -128,9 +141,14 @@ nav .nl a:hover{color:var(--signal)}
 /* journey captions */
 .jcap{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);z-index:6;text-align:center;padding:0 24px;pointer-events:none;opacity:0;transition:opacity .5s}
 .jcap.show{opacity:1}
-.jcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
-.jcap h1{font-family:var(--h);font-weight:700;font-size:clamp(46px,11vw,140px);line-height:.9;letter-spacing:-.03em;color:#fff;text-shadow:0 10px 40px rgba(0,0,0,.6)}
-.jcap h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,5vw,60px);letter-spacing:-.02em;color:#fff;text-shadow:0 8px 30px rgba(0,0,0,.6)}
+/* local scrim: keeps the white headline legible against the bright sky
+   without dimming the scenery behind it */
+.jcap::before{content:"";position:absolute;left:50%;top:50%;width:150%;height:260%;transform:translate(-50%,-50%);
+  z-index:-1;pointer-events:none;
+  background:radial-gradient(46% 38% at 50% 50%,rgba(8,22,15,.52),rgba(8,22,15,.22) 55%,rgba(8,22,15,0) 78%)}
+.jcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+.jcap h1{font-family:var(--h);font-weight:700;font-size:clamp(46px,11vw,140px);line-height:.9;letter-spacing:-.03em;color:#fff;text-shadow:0 4px 18px rgba(6,18,12,.75),0 10px 46px rgba(6,18,12,.55)}
+.jcap h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,5vw,60px);letter-spacing:-.02em;color:#fff;text-shadow:0 4px 16px rgba(6,18,12,.75),0 8px 34px rgba(6,18,12,.5)}
 .jcap p{margin:16px auto 0;max-width:40ch;font-size:14.5px;font-weight:300;line-height:1.7;color:rgba(255,255,255,.9)}
 .jcap .btns{margin-top:26px;display:flex;gap:14px;justify-content:center;pointer-events:auto}
 .btn{border:none;cursor:pointer;font-family:var(--b);font-size:13px;font-weight:600;padding:13px 26px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;transition:transform .4s cubic-bezier(.34,1.5,.5,1),box-shadow .25s,background .25s}
@@ -565,20 +583,193 @@ function secP(el){const r=el.getBoundingClientRect();return clamp(0,1,-r.top/(r.
 
 const l=document.getElementById('loader');setTimeout(()=>l&&l.classList.add('done'),400);
 
-/* backdrop: layered pine ridges + a distant basket, drawn once (static) */
-(function(){const sc=document.getElementById('scape');if(!sc)return;
-  let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
-  function ridge(y0,h,col){let d='M0 500 L0 '+y0;let x=0;
-    while(x<1460){const w=16+rnd()*26,th=h*(0.55+rnd()*0.6);
-      d+=' L'+(x+w*0.5).toFixed(0)+' '+(y0-th).toFixed(0)+' L'+(x+w).toFixed(0)+' '+y0;x+=w*(0.55+rnd()*0.35);}
-    d+=' L1460 500 Z';return '<path d="'+d+'" fill="'+col+'"/>';}
-  const basket='<g fill="#04100a" opacity=".92">'+
-    '<rect x="1177" y="252" width="8" height="218" rx="4"/>'+
-    '<rect x="1151" y="256" width="62" height="10" rx="5"/>'+
-    '<path d="M1154 266 L1181 330 M1163 266 L1181 330 M1172 266 L1181 330 M1190 266 L1181 330 M1199 266 L1181 330 M1208 266 L1181 330" stroke="#04100a" stroke-width="2.5" fill="none"/>'+
-    '<rect x="1144" y="330" width="74" height="26" rx="8"/></g>';
-  sc.innerHTML='<svg viewBox="0 0 1440 500" preserveAspectRatio="xMidYMax slice">'+
-    ridge(420,150,'#0d2013')+basket+ridge(462,120,'#06130b')+'</svg>';
+/* Backdrop: a hazy forest fairway with a low sun and a disc-golf basket
+   standing under the disc. Built once as static SVG — it is never
+   transformed while scrolling, so the whole scene costs a single paint.
+   The realism comes from atmospheric perspective rather than detail:
+   distant layers are pale and low-contrast, near layers darker and
+   coarser, with mist banding between them. */
+(function(){
+  const sc=document.getElementById('scape');if(!sc)return;
+  const W=1440,H=620;
+  let seed=23;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const R=(a,b)=>a+rnd()*(b-a);
+  /* whole viewBox units: the scape renders at roughly 0.9 px per unit, so
+     sub-pixel precision only inflates the markup */
+  const f=n=>n.toFixed(0);
+
+  /* A spruce built from tiered, drooping branches with per-tier jitter,
+     so the silhouette breaks up the way a real conifer does instead of
+     reading as the plain triangle this used to draw. */
+  function spruce(x,base,h,w,lean){
+    const tiers=Math.round(R(9,14)),top=base-h;
+    let right='',left='';
+    for(let i=1;i<=tiers;i++){
+      const t=i/tiers;
+      const y=top+h*Math.pow(t,0.94);
+      const hw=w*Math.pow(t,0.8)*R(0.84,1.14);
+      const cx=x+lean*Math.pow(1-t,2)*h*0.1;
+      const droop=h*0.024*R(0.5,1.4);
+      const notch=R(0.42,0.62),step=h*0.042;
+      right+=' L'+f(cx+hw)+' '+f(y+droop)+' L'+f(cx+hw*notch)+' '+f(y+step);
+      left=' L'+f(cx-hw*notch)+' '+f(y+step)+' L'+f(cx-hw)+' '+f(y+droop)+left;
+    }
+    const tw=Math.max(1.2,w*0.1);
+    return 'M'+f(x)+' '+f(top)+right+' L'+f(x+tw)+' '+f(base)+' L'+f(x-tw)+' '+f(base)+left+' Z';
+  }
+
+  /* A broadleaf — lumpy canopy on a short trunk, mixed in for variety so
+     the treeline isn't uniformly coniferous. */
+  function broadleaf(x,base,h,w){
+    const n=11,cy=base-h*0.6,rx=w*0.5,ry=h*0.44,pts=[];
+    for(let i=0;i<n;i++){
+      const a=Math.PI*2*i/n,k=R(0.9,1.09);
+      pts.push([x+Math.cos(a)*rx*k,cy+Math.sin(a)*ry*k]);
+    }
+    /* round each span outwards into a lobe, so the canopy reads as foliage
+       instead of the angular boulder a straight-edged polygon gives */
+    let d='M'+f(pts[0][0])+' '+f(pts[0][1]);
+    for(let i=1;i<=n;i++){
+      const p=pts[i%n],q=pts[i-1];
+      const mx=(q[0]+p[0])*0.5,my=(q[1]+p[1])*0.5;
+      d+=' Q'+f(x+(mx-x)*1.3)+' '+f(cy+(my-cy)*1.3)+' '+f(p[0])+' '+f(p[1]);
+    }
+    const tw=Math.max(1.4,w*0.045),ty=cy+ry*0.55;
+    return d+' Z M'+f(x-tw)+' '+f(base)+' L'+f(x-tw*0.5)+' '+f(ty)+
+      ' L'+f(x+tw*0.5)+' '+f(ty)+' L'+f(x+tw)+' '+f(base)+' Z';
+  }
+
+  /* One band of forest. Trees are split across three sub-paths drawn at
+     different opacities: individual trees then sit at slightly different
+     depths in the haze instead of forming one flat cut-out wall. Still
+     only three paths per band, so it stays cheap. */
+  function band(baseY,hMin,hMax,wRatio,count,broadChance){
+    const tone=['','',''];
+    for(let i=0;i<count;i++){
+      /* clustered rather than evenly spaced — real treelines clump */
+      const x=-50+(W+100)*(i+R(-0.55,0.55))/count;
+      const h=R(hMin,hMax)*(rnd()<0.22?R(1.15,1.4):1);   // occasional tall one
+      const b=baseY+R(-5,5);
+      const t=rnd()<0.5?0:(rnd()<0.5?1:2);
+      tone[t]+=(broadChance&&rnd()<broadChance)
+        ? broadleaf(x,b,h*0.74,h*wRatio*1.7)
+        : spruce(x,b,h,h*wRatio,R(-1,1));
+    }
+    return tone;
+  }
+  const layer=(t,fill)=>'<path d="'+t[0]+'" fill="'+fill+'"/>'+
+    '<path d="'+t[1]+'" fill="'+fill+'" opacity=".82"/>'+
+    '<path d="'+t[2]+'" fill="'+fill+'" opacity=".66"/>';
+
+  /* Low scrub along a treeline base, so the trees don't meet the grass on
+     a ruler-straight line. */
+  function scrub(baseY,h,count){
+    let d='';
+    for(let i=0;i<count;i++){
+      const x=-40+(W+80)*(i+R(-0.5,0.5))/count;
+      const hh=h*R(0.55,1.5),w=hh*R(1.7,3.2);
+      d+='M'+f(x-w*0.5)+' '+f(baseY);
+      for(let j=0;j<=7;j++){
+        const a=Math.PI*(1-j/7);
+        d+=' L'+f(x+Math.cos(a)*w*0.5*R(0.9,1.06))+' '+f(baseY-Math.sin(a)*hh*R(0.68,1.18));
+      }
+      d+=' Z';
+    }
+    return d;
+  }
+
+  /* Scattered grass tufts on the fairway. */
+  function tufts(y0,y1,count){
+    let d='';
+    for(let i=0;i<count;i++){
+      const x=R(-20,W+20),y=R(y0,y1),s=R(2.5,6)*(0.6+(y-y0)/(y1-y0));
+      d+='M'+f(x)+' '+f(y)+' L'+f(x+s*0.35)+' '+f(y-s*1.9)+' L'+f(x+s*0.9)+' '+f(y)+' Z';
+    }
+    return d;
+  }
+
+  /* Smooth rolling hills far behind the trees. */
+  function hill(y0,amp,fr,ph){
+    let d='M0 '+H+' L0 '+f(y0);
+    for(let x=0;x<=W;x+=40){
+      const u=x/W*Math.PI;
+      d+=' L'+f(x)+' '+f(y0-amp*(0.5+0.5*Math.sin(u*fr+ph))-amp*0.26*Math.sin(u*fr*2.7+ph*1.7));
+    }
+    return d+' L'+W+' '+H+' Z';
+  }
+
+  /* The basket, drawn in local coordinates with the ground contact at
+     (0,0) and everything else above it, then placed under the disc. */
+  function basket(){
+    let chains='',slats='';
+    for(let i=0;i<16;i++){
+      const a=Math.PI*2*i/16,front=Math.sin(a)>0;
+      const x0=Math.cos(a)*52,y0=-168+Math.sin(a)*8;
+      const x1=Math.cos(a)*30,y1=-68+Math.sin(a)*4;
+      chains+='<path d="M'+f(x0)+' '+f(y0)+' Q'+f((x0+x1)*0.5*1.08)+' '+f((y0+y1)*0.5)+' '+f(x1)+' '+f(y1)+'"'+
+        ' stroke="'+(front?'#eef3ea':'#9fb3a5')+'" stroke-width="'+(front?1.5:1)+'" fill="none"'+
+        ' opacity="'+(front?0.88:0.45)+'"/>';
+    }
+    for(let i=0;i<=12;i++){
+      const a=Math.PI*i/12;
+      slats+='<path d="M'+f(-58*Math.cos(a))+' -58 L'+f(-45*Math.cos(a))+' -16"'+
+        ' stroke="#22392a" stroke-width="1.5" opacity=".75"/>';
+    }
+    return '<g transform="translate(720 566) scale(.9)">'+
+      '<ellipse cx="-16" cy="5" rx="66" ry="11" fill="#2c5133" opacity=".32"/>'+
+      '<rect x="-5" y="-176" width="10" height="170" rx="3" fill="url(#gPole)"/>'+
+      '<path d="M-58 -58 L-45 -16 A45 7 0 0 0 45 -16 L58 -58 Z" fill="url(#gCage)"/>'+
+      '<g fill="none">'+slats+'</g>'+
+      '<ellipse cx="0" cy="-16" rx="45" ry="7" fill="none" stroke="#1d3325" stroke-width="2.4"/>'+
+      '<ellipse cx="0" cy="-58" rx="58" ry="9" fill="none" stroke="#2c4835" stroke-width="5"/>'+
+      '<ellipse cx="0" cy="-59.5" rx="58" ry="9" fill="none" stroke="#c3d6c6" stroke-width="1.5" opacity=".65"/>'+
+      chains+
+      '<ellipse cx="0" cy="-168" rx="52" ry="8" fill="none" stroke="#2c4835" stroke-width="4.5"/>'+
+      '<ellipse cx="0" cy="-169.5" rx="52" ry="8" fill="none" stroke="#c3d6c6" stroke-width="1.4" opacity=".6"/>'+
+      '<path d="M-21 -170 L0 -191 L21 -170 Z" fill="#2a4433"/>'+
+      '</g>';
+  }
+
+  const defs='<defs>'+
+    '<linearGradient id="gHill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dbe8de"/><stop offset="1" stop-color="#c1d6ca"/></linearGradient>'+
+    '<linearGradient id="gFar" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#cadfd1"/><stop offset="1" stop-color="#a9c7b8"/></linearGradient>'+
+    '<linearGradient id="gMid" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#93b797"/><stop offset="1" stop-color="#628a6e"/></linearGradient>'+
+    '<linearGradient id="gNear" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#578266"/><stop offset="1" stop-color="#32543e"/></linearGradient>'+
+    '<linearGradient id="gFore" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e4b37"/><stop offset="1" stop-color="#1b3123"/></linearGradient>'+
+    '<linearGradient id="gGround" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3c583"/><stop offset=".45" stop-color="#83ac6b"/><stop offset="1" stop-color="#5b8350"/></linearGradient>'+
+    '<linearGradient id="gPole" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#22382a"/><stop offset=".42" stop-color="#54705b"/><stop offset="1" stop-color="#1b2f22"/></linearGradient>'+
+    '<linearGradient id="gCage" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#294331"/><stop offset=".46" stop-color="#3f6048"/><stop offset="1" stop-color="#1f3527"/></linearGradient>'+
+    '<linearGradient id="gMist" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#f4faf6" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'+
+    '</defs>';
+
+  sc.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMax slice">'+defs+
+    /* distant hills, hazed almost into the sky */
+    '<path d="'+hill(276,40,1.7,0.6)+'" fill="url(#gHill)" opacity=".78"/>'+
+    '<path d="'+hill(304,28,2.4,2.1)+'" fill="#bfd5c8" opacity=".82"/>'+
+    '<rect x="0" y="252" width="'+W+'" height="86" fill="url(#gMist)" opacity=".9"/>'+
+    /* far treeline */
+    layer(band(336,58,98,0.19,52,0.18),'url(#gFar)')+
+    '<path d="'+scrub(340,11,60)+'" fill="url(#gFar)" opacity=".8"/>'+
+    '<rect x="0" y="300" width="'+W+'" height="74" fill="url(#gMist)" opacity=".68"/>'+
+    /* mid treeline */
+    layer(band(396,92,152,0.2,36,0.2),'url(#gMid)')+
+    '<path d="'+scrub(400,16,46)+'" fill="url(#gMid)" opacity=".85"/>'+
+    '<rect x="0" y="360" width="'+W+'" height="64" fill="url(#gMist)" opacity=".45"/>'+
+    /* near treeline */
+    layer(band(450,132,214,0.21,25,0.22),'url(#gNear)')+
+    '<path d="'+scrub(452,24,34)+'" fill="url(#gNear)"/>'+
+    /* sunlit fairway */
+    '<path d="M0 444 Q360 432 720 440 Q1080 448 1440 436 L'+W+' '+H+' L0 '+H+' Z" fill="url(#gGround)"/>'+
+    '<ellipse cx="700" cy="470" rx="520" ry="26" fill="#b3d191" opacity=".3"/>'+
+    '<ellipse cx="760" cy="522" rx="600" ry="34" fill="#9cc07d" opacity=".26"/>'+
+    '<ellipse cx="300" cy="500" rx="420" ry="22" fill="#6f9a5c" opacity=".22"/>'+
+    '<ellipse cx="1150" cy="560" rx="480" ry="30" fill="#6f9a5c" opacity=".2"/>'+
+    '<path d="'+tufts(452,H,190)+'" fill="#4f7a45" opacity=".4"/>'+
+    basket()+
+    /* foreground framing trees, cropped by the edges of the frame */
+    '<path d="'+spruce(46,700,430,74,0.4)+spruce(-26,700,360,62,-0.3)+
+      spruce(1396,700,450,78,-0.4)+spruce(1466,700,380,66,0.3)+'" fill="url(#gFore)"/>'+
+    '</svg>';
 })();
 
 let lastKey='';
