@@ -33,9 +33,19 @@ window.FL_HERO={{ settings.img_hero_disc | image_url: width: 900 | json }};
 {%- endif %}
 {%- assign bg = settings.img_hero_bg -%}
 {%- if bg != blank -%}
+{%- comment -%}
+  Only advertise widths the file actually has: Shopify never upscales, so
+  asking for 2000 from a 1229px original returns 1229 and the browser
+  would pick a smaller image than the descriptor promised.
+{%- endcomment -%}
+{%- assign bgw = bg.width -%}
 {%- capture bg_srcset -%}
-{{ bg | image_url: width: 900 }} 900w, {{ bg | image_url: width: 1400 }} 1400w, {{ bg | image_url: width: 2000 }} 2000w
+{%- assign steps = '600,900,1400,2000' | split: ',' -%}
+{%- for s in steps -%}{%- assign sw = s | times: 1 -%}
+{%- if sw < bgw %}{{ bg | image_url: width: sw }} {{ sw }}w, {% endif -%}
+{%- endfor -%}
+{{ bg | image_url: width: bgw }} {{ bgw }}w
 {%- endcapture %}
-window.FL_SCENE_BG={src:{{ bg | image_url: width: 2000 | json }},srcset:{{ bg_srcset | strip | json }}};
+window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_srcset | strip | json }}};
 {%- endif %}
 </script>

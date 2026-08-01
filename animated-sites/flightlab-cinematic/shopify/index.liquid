@@ -84,6 +84,10 @@ nav .nl a:hover{color:var(--signal)}
 .scene.has-photo .scenephoto{opacity:1}
 .scene.has-photo .scape{display:none}
 .scenephoto img{width:100%;height:100%;object-fit:cover;object-position:50% 58%;display:block}
+/* A phone crops away most of the width. Centring the photo would leave a
+   basket sliced in half at the frame edge, so pan to a clean stretch of
+   forest instead — the disc fills the middle of a phone screen anyway. */
+@media(max-width:560px){.scenephoto img{object-position:74% 60%}}
 /* layered forest + fairway + basket, built once by JS (static, cheap) */
 .scape{position:absolute;inset:0;z-index:0;pointer-events:none}
 .scape svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:62%;display:block}
@@ -311,10 +315,20 @@ window.FL_HERO={{ settings.img_hero_disc | image_url: width: 900 | json }};
 {%- endif %}
 {%- assign bg = settings.img_hero_bg -%}
 {%- if bg != blank -%}
+{%- comment -%}
+  Only advertise widths the file actually has: Shopify never upscales, so
+  asking for 2000 from a 1229px original returns 1229 and the browser
+  would pick a smaller image than the descriptor promised.
+{%- endcomment -%}
+{%- assign bgw = bg.width -%}
 {%- capture bg_srcset -%}
-{{ bg | image_url: width: 900 }} 900w, {{ bg | image_url: width: 1400 }} 1400w, {{ bg | image_url: width: 2000 }} 2000w
+{%- assign steps = '600,900,1400,2000' | split: ',' -%}
+{%- for s in steps -%}{%- assign sw = s | times: 1 -%}
+{%- if sw < bgw %}{{ bg | image_url: width: sw }} {{ sw }}w, {% endif -%}
+{%- endfor -%}
+{{ bg | image_url: width: bgw }} {{ bgw }}w
 {%- endcapture %}
-window.FL_SCENE_BG={src:{{ bg | image_url: width: 2000 | json }},srcset:{{ bg_srcset | strip | json }}};
+window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_srcset | strip | json }}};
 {%- endif %}
 </script>
 {% raw %}
