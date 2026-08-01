@@ -47,6 +47,12 @@
     "settings": [
       {
         "type": "image_picker",
+        "id": "img_hero_bg",
+        "label": "Bakgrunnsbilde bak discen",
+        "info": "Landskapet bak discen som svever øverst. Last opp et liggende foto (helst 2000 px bredt eller mer) — f.eks. en discgolfkurv i skogen med sol gjennom trærne. Lar du feltet stå tomt, brukes den tegnede skogen. Bildet beskjæres til skjermformat, og midten av bildet prioriteres — på mobil vises bare en smal midtstripe, så pass på at motivet står midt i bildet."
+      },
+      {
+        "type": "image_picker",
         "id": "img_hero_disc",
         "label": "Disc øverst på forsiden",
         "info": "Discen som svever i toppen og zoomes gjennom. Bruk et kvadratisk bilde tatt rett ovenfra — det beskjæres til en sirkel."

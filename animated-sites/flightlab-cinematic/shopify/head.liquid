@@ -31,4 +31,11 @@ window.FL_IMG={
 {%- if settings.img_hero_disc != blank %}
 window.FL_HERO={{ settings.img_hero_disc | image_url: width: 900 | json }};
 {%- endif %}
+{%- assign bg = settings.img_hero_bg -%}
+{%- if bg != blank -%}
+{%- capture bg_srcset -%}
+{{ bg | image_url: width: 900 }} 900w, {{ bg | image_url: width: 1400 }} 1400w, {{ bg | image_url: width: 2000 }} 2000w
+{%- endcapture %}
+window.FL_SCENE_BG={src:{{ bg | image_url: width: 2000 | json }},srcset:{{ bg_srcset | strip | json }}};
+{%- endif %}
 </script>

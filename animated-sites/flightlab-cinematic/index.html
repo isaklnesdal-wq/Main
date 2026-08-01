@@ -71,6 +71,18 @@ nav .nl a:hover{color:var(--signal)}
 .vtint{position:absolute;inset:0;z-index:1;pointer-events:none;
   background:radial-gradient(92% 74% at 50% 44%,transparent 46%,rgba(12,30,20,.3) 100%),
     linear-gradient(180deg,rgba(12,30,20,.2),transparent 22%,transparent 64%,rgba(12,30,20,.34))}
+/* a photograph is far busier than the drawn scenery, so it needs a
+   stronger scrim to keep the white headline legible */
+.scene.has-photo .vtint{
+  background:radial-gradient(94% 76% at 50% 44%,rgba(8,18,12,.1) 38%,rgba(8,18,12,.52) 100%),
+    linear-gradient(180deg,rgba(8,18,12,.44),rgba(8,18,12,.1) 26%,rgba(8,18,12,.16) 58%,rgba(8,18,12,.6))}
+/* Optional real backdrop photo (Theme settings → Bakgrunnsbilde). Only
+   shown once it has actually decoded, so a slow or missing image leaves
+   the drawn scenery in place rather than flashing an empty scene. */
+.scenephoto{position:absolute;inset:0;z-index:0;overflow:hidden;opacity:0;transition:opacity .6s ease}
+.scene.has-photo .scenephoto{opacity:1}
+.scene.has-photo .scape{display:none}
+.scenephoto img{width:100%;height:100%;object-fit:cover;object-position:50% 58%;display:block}
 /* layered forest + fairway + basket, built once by JS (static, cheap) */
 .scape{position:absolute;inset:0;z-index:0;pointer-events:none}
 .scape svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:62%;display:block}
@@ -286,7 +298,10 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
 
 <!-- ===== Hero: real Higgsfield video autoplays; scroll ZOOMS INTO the disc ===== -->
 <section id="journey">
-  <div class="scene">
+  <div class="scene" id="scene">
+    <!-- Real photo when one is set in Theme settings; the drawn scenery
+         below is the fallback and is hidden as soon as a photo loads. -->
+    <div class="scenephoto"><img id="scenebg" alt="" decoding="async"></div>
     <div class="scape" id="scape"></div>
     <div class="vtint"></div>
     <div class="portal" id="portal">
@@ -582,6 +597,20 @@ const smooth=p=>p<=0?0:p>=1?1:p*p*(3-2*p);
 function secP(el){const r=el.getBoundingClientRect();return clamp(0,1,-r.top/(r.height-innerHeight))}
 
 const l=document.getElementById('loader');setTimeout(()=>l&&l.classList.add('done'),400);
+
+/* Real backdrop photo, if one is set in Theme settings. window.FL_SCENE_BG
+   is emitted by Shopify as {src, srcset}. The drawn scenery below stays
+   put until the photo has decoded, so a slow connection or a broken URL
+   degrades to the illustration instead of an empty scene. */
+(function(){
+  const bg=window.FL_SCENE_BG,img=document.getElementById('scenebg'),scene=document.getElementById('scene');
+  if(!bg||!bg.src||!img||!scene)return;
+  img.onload=()=>scene.classList.add('has-photo');
+  img.onerror=()=>{img.removeAttribute('src');img.removeAttribute('srcset')};
+  if(bg.srcset){img.srcset=bg.srcset;img.sizes='100vw'}
+  img.src=bg.src;
+  if(img.complete&&img.naturalWidth)scene.classList.add('has-photo');
+})();
 
 /* Backdrop: a hazy forest fairway with a low sun and a disc-golf basket
    standing under the disc. Built once as static SVG — it is never
