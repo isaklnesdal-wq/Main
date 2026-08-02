@@ -38,7 +38,7 @@ HOLE = (275, 200, 615, 770)   # painted out; larger than the basket on purpose
 FILL = (0, 200, 315, 770)     # clean sunlit floor to its left
 BOX = (300, 235, 590, 740)    # basket plus a margin of forest
 FEATHER_HOLE, FEATHER_BASKET = 35, 34
-SCALE = 0.72                  # 28% smaller => further away
+SCALE = 0.62                  # 38% smaller => further away
 GROUND_Y = 718                # where the pole meets the moss
 BASKET_CX = 445               # basket centre in the original
 DX, DY = -180, -70            # left, and up the ground plane

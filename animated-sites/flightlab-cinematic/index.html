@@ -221,6 +221,41 @@ nav .nl a.pressing,.brand.pressing{display:inline-block;transform:scale(.88)!imp
   .disc-group{margin-bottom:26px}
   .disc-group .gt h3{font-size:16px}}
 .disc-group{margin-bottom:40px}
+/* ---- catalogue filter ---- */
+.filterbtn{display:inline-flex;align-items:center;gap:7px;vertical-align:middle;margin-left:14px;
+  font-family:var(--b);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;
+  padding:8px 15px;border-radius:999px;border:1px solid var(--glassbrd);background:var(--glass2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 3px 12px rgba(10,22,20,.07);
+  -webkit-tap-highlight-color:transparent;transition:border-color .2s,box-shadow .2s}
+.filterbtn:hover{border-color:rgba(255,107,53,.5)}
+.filterbtn[aria-expanded="true"]{border-color:var(--signal);color:var(--signal)}
+.filterbtn.pressing{transform:scale(.93)!important;transition:transform .1s ease-out!important}
+.fcount{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;
+  border-radius:999px;background:var(--signal);color:#fff;font-size:11px;font-weight:700}
+.filterpanel{margin:0 0 26px;padding:18px 20px;border:1px solid var(--line);border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.45));
+  display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.filterpanel[hidden]{display:none}
+.fgroup h4{font-family:var(--h);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mut);margin-bottom:10px}
+.fchips{display:flex;flex-wrap:wrap;gap:7px}
+.fchip{font-family:var(--b);font-size:12.5px;font-weight:500;color:var(--ink);cursor:pointer;
+  padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.7);
+  -webkit-tap-highlight-color:transparent;transition:background .18s,border-color .18s,color .18s}
+.fchip:hover{border-color:rgba(255,107,53,.45)}
+.fchip[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:#fff}
+.fchip.pressing{transform:scale(.92)!important;transition:transform .1s ease-out!important}
+.frow{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border-top:1px solid var(--line);padding-top:13px}
+.fres{font-size:12.5px;color:var(--mut)}
+.fclear,.flink{font-family:var(--b);font-size:12.5px;font-weight:600;color:var(--signal);cursor:pointer;
+  background:none;border:none;padding:4px 2px;-webkit-tap-highlight-color:transparent}
+.fempty{text-align:center;color:var(--mut);font-size:14px;padding:34px 0}
+.fempty[hidden]{display:none}
+@media(max-width:560px){
+  .filterbtn{margin-left:10px;font-size:12px;padding:7px 13px}
+  .filterpanel{padding:15px 15px;gap:14px;grid-template-columns:1fr}
+}
 .disc-group .gt{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;border-bottom:1px solid var(--line);padding-bottom:12px}
 .disc-group .gt h3{font-family:var(--h);font-weight:600;font-size:20px;letter-spacing:-.01em}
 .disc-group .gt span{font-size:12px;color:var(--mut)}
@@ -354,10 +389,21 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
   <div class="wrap">
     <div class="sec-head">
       <div><div class="eyebrow rv">// Side 1 · Discer</div>
-        <h2 class="rv" style="margin-top:12px">Våre <em>Discer</em></h2></div>
+        <h2 class="rv" style="margin-top:12px">Våre <em>Discer</em>
+          <button class="filterbtn" id="filterbtn" type="button" aria-expanded="false" aria-controls="filterpanel">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+            Filter<span class="fcount" id="fcount" hidden></span>
+          </button></h2></div>
       <p class="rv">Femten modeller fra fem merker — putter, approach, midrange, fairway og distanse. Alle til én fast pris: 179 kr.</p>
     </div>
+    <div class="filterpanel" id="filterpanel" hidden>
+      <div class="fgroup"><h4>Merke</h4><div class="fchips" id="fbrand"></div></div>
+      <div class="fgroup"><h4>Type</h4><div class="fchips" id="ftype"></div></div>
+      <div class="fgroup"><h4>Pris</h4><div class="fchips" id="fprice"></div></div>
+      <div class="frow"><span class="fres" id="fres"></span><button class="fclear" id="fclear" type="button">Nullstill</button></div>
+    </div>
     <div id="disc-groups"></div>
+    <p class="fempty" id="fempty" hidden>Ingen discer passer filteret. <button class="flink" type="button" data-clear>Nullstill</button></p>
   </div>
 </section>
 
@@ -904,13 +950,83 @@ function disc3(b,m,n){const s=BRAND[b],S=108;
    '<span style="font-size:7px;letter-spacing:1px;color:rgba(250,249,245,.55);margin-top:3px">'+n.join(' · ')+'</span></div>'+
    '<div class="dl" style="transform:translateZ(7px);background:radial-gradient(ellipse 55% 35% at 30% 22%,rgba(255,255,255,.32),rgba(255,255,255,.06) 45%,transparent 65%)"></div>'+
    '</div></div>';}
+/* Prices come from Shopify as window.FL_PRICE, keyed by product handle.
+   The flat 179 kr is only a fallback for viewing this file on its own. */
+const FLPRICE=(typeof window!=='undefined'&&window.FL_PRICE)||{};
+const priceOf=d=>{const p=FLPRICE[d.h];return p&&isFinite(p.amount)?+p.amount:179};
+const priceText=d=>{const p=FLPRICE[d.h];return p&&p.text?p.text:'179 kr'};
+
 function card(d){return '<a class="pcard rv" href="/products/'+d.h+'"><div class="dw">'+disc3(d.b,d.m,d.n)+'</div><div class="shadow"></div>'+
-  '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span><span class="pr">179 kr</span></a>';}
-document.getElementById('disc-groups').innerHTML=CLASS_ORDER.map(([key,title,sub])=>{
-  const items=DISCS.filter(d=>d.c===key);if(!items.length)return '';
-  return '<div class="disc-group"><div class="gt rv"><h3>'+title+'</h3><span>'+sub+' · '+items.length+' modeller</span></div>'+
-    '<div class="pgrid">'+items.map(card).join('')+'</div></div>';
-}).join('');
+  '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span><span class="pr">'+priceText(d)+'</span></a>';}
+
+/* ---- catalogue filter: brand, type, price ---- */
+const F={brand:new Set(),type:new Set(),sort:''};
+const groupsEl=document.getElementById('disc-groups');
+
+function renderDiscs(first){
+  let items=DISCS.filter(d=>(!F.brand.size||F.brand.has(d.b))&&(!F.type.size||F.type.has(d.c)));
+  if(F.sort){
+    /* A price sort is global, so the per-class grouping is dropped while
+       it is active — otherwise you would only be sorting within a class. */
+    items=items.slice().sort((a,b)=>F.sort==='asc'?priceOf(a)-priceOf(b):priceOf(b)-priceOf(a));
+    groupsEl.innerHTML=items.length?'<div class="disc-group"><div class="pgrid">'+items.map(card).join('')+'</div></div>':'';
+  }else{
+    groupsEl.innerHTML=CLASS_ORDER.map(([key,title,sub])=>{
+      const g=items.filter(d=>d.c===key);if(!g.length)return '';
+      return '<div class="disc-group"><div class="gt rv"><h3>'+title+'</h3><span>'+sub+' · '+g.length+' modeller</span></div>'+
+        '<div class="pgrid">'+g.map(card).join('')+'</div></div>';
+    }).join('');
+  }
+  const empty=document.getElementById('fempty');if(empty)empty.hidden=items.length>0;
+  const n=F.brand.size+F.type.size+(F.sort?1:0);
+  const c=document.getElementById('fcount');if(c){c.hidden=!n;c.textContent=n||''}
+  const res=document.getElementById('fres');
+  if(res)res.textContent=items.length===DISCS.length?'Viser alle '+DISCS.length+' discer'
+    :items.length+' av '+DISCS.length+' discer';
+  /* First paint keeps the scroll reveal; later re-renders show at once, so
+     filtering does not look like a blank grid. */
+  if(first)groupsEl.querySelectorAll('.rv').forEach(el=>io.observe(el));
+  else groupsEl.querySelectorAll('.rv').forEach(el=>el.classList.add('in'));
+}
+
+(function(){
+  const btn=document.getElementById('filterbtn'),panel=document.getElementById('filterpanel');
+  if(!btn||!panel){renderDiscs(true);return}
+  const chip=(label,v)=>'<button class="fchip" type="button" role="switch" aria-pressed="false" data-v="'+v+'">'+label+'</button>';
+  const brands=[...new Set(DISCS.map(d=>d.b))].sort((a,b)=>a.localeCompare(b,'no'));
+  document.getElementById('fbrand').innerHTML=brands.map(b=>chip(b,b)).join('');
+  document.getElementById('ftype').innerHTML=CLASS_ORDER
+    .filter(([k])=>DISCS.some(d=>d.c===k)).map(([k,title])=>chip(title,k)).join('');
+  document.getElementById('fprice').innerHTML=chip('Lav til høy','asc')+chip('Høy til lav','desc');
+
+  btn.addEventListener('click',()=>{
+    const open=btn.getAttribute('aria-expanded')==='true';
+    btn.setAttribute('aria-expanded',String(!open));panel.hidden=open;
+  });
+  panel.addEventListener('click',e=>{
+    const t=e.target.closest('.fchip');
+    if(t){
+      const v=t.dataset.v,grp=t.parentElement.id;
+      if(grp==='fprice'){                       // price is a single choice
+        const on=F.sort===v;F.sort=on?'':v;
+        [...t.parentElement.children].forEach(c=>c.setAttribute('aria-pressed',String(!on&&c===t)));
+      }else{
+        const set=grp==='fbrand'?F.brand:F.type;
+        if(set.has(v)){set.delete(v);t.setAttribute('aria-pressed','false')}
+        else{set.add(v);t.setAttribute('aria-pressed','true')}
+      }
+      renderDiscs(false);return;
+    }
+    if(e.target.closest('#fclear'))clearAll();
+  });
+  document.addEventListener('click',e=>{if(e.target.closest('[data-clear]'))clearAll()});
+  function clearAll(){
+    F.brand.clear();F.type.clear();F.sort='';
+    panel.querySelectorAll('.fchip').forEach(c=>c.setAttribute('aria-pressed','false'));
+    renderDiscs(false);
+  }
+  renderDiscs(true);
+})();
 
 // bags (dedicated section)
 const BAGS=[
@@ -973,7 +1089,7 @@ document.getElementById('nlform').addEventListener('submit',e=>{e.preventDefault
 
 /* ===== Apple-style press feedback (pointer-based so iOS Safari honours it) ===== */
 (function(){
-  const SEL='.pcard,.acard,.btn,nav .nl a,.brand';
+  const SEL='.pcard,.acard,.btn,nav .nl a,.brand,.filterbtn,.fchip';
   addEventListener('pointerdown',e=>{const t=e.target.closest(SEL);if(t)t.classList.add('pressing');},{passive:true});
   const clear=()=>document.querySelectorAll('.pressing').forEach(el=>el.classList.remove('pressing'));
   ['pointerup','pointercancel','pointerleave','dragstart','scroll'].forEach(ev=>addEventListener(ev,clear,{passive:true}));

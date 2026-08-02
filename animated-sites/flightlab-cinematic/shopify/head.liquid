@@ -31,6 +31,22 @@ window.FL_IMG={
 {%- if settings.img_hero_disc != blank %}
 window.FL_HERO={{ settings.img_hero_disc | image_url: width: 900 | json }};
 {%- endif %}
+{%- comment -%}
+  Real disc prices for the catalogue filter, read from the Discer
+  collection. A collection loop is used rather than all_products because
+  that object is capped at 20 lookups per template and the card images
+  already spend 12 of them.
+{%- endcomment -%}
+{%- assign disc_col = collections['discer-1'] -%}
+{%- if disc_col == blank -%}{%- assign disc_col = collections['discer'] -%}{%- endif -%}
+{%- if disc_col.products_count > 0 %}
+window.FL_PRICE={
+{%- for p in disc_col.products limit: 60 -%}
+{{ p.handle | json }}:{amount:{{ p.price | divided_by: 100.0 }},text:{{ p.price | money_without_trailing_zeros | strip_html | json }}}
+{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+};
+{%- endif %}
 {%- assign bg = settings.img_hero_bg -%}
 {%- if bg != blank -%}
 {%- comment -%}
