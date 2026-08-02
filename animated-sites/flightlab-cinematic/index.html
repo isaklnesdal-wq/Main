@@ -867,6 +867,10 @@ const l=document.getElementById('loader');setTimeout(()=>l&&l.classList.add('don
     '</svg>';
 })();
 
+/* Rasterising the bag SVG is the heaviest thing on this page, and the cost
+   grows with how far it is scaled up — vector art is re-rastered at each
+   new scale, unlike the hero photo. Cap the zoom lower on phones. */
+const ZBAG=TOUCH?5.5:9.9, ZHERO=TOUCH?13:19;
 let lastKey='';
 function loop(){
   // Only touch the hero when its section is actually on screen — avoids
@@ -875,7 +879,7 @@ function loop(){
   if(jr.bottom>0 && jr.top<innerHeight){
     const p=clamp(0,1,-jr.top/(jr.height-innerHeight));
     const e=smooth(p);
-    const s=1+Math.pow(e,1.6)*19;
+    const s=1+Math.pow(e,1.6)*ZHERO;
     const e2=smooth(clamp(0,1,(p-0.04)/0.3));
     const dx=((s-1)*e2*stW*0.21).toFixed(1), dy=((s-1)*e2*stW*0.115).toFixed(1);
     portal.style.transform='translate3d('+dx+'px,'+dy+'px,0) rotate('+(-e*9).toFixed(2)+'deg) scale('+s.toFixed(3)+')';
@@ -892,16 +896,24 @@ function loop(){
   // Bag portal — same, only while it's in view
   if(bagportal){const br=bagportal.getBoundingClientRect();
     if(br.bottom>0 && br.top<innerHeight){
-      const bp=clamp(0,1,-br.top/(br.height-innerHeight)),be=smooth(bp);
-      bagbig.style.transform='scale('+(0.9+be*9).toFixed(3)+')';
-      bagbig.style.opacity=(1-smooth(clamp(0,1,(bp-0.5)/0.4))).toFixed(3);
-      if(bpcap)bpcap.style.opacity=(1-smooth(clamp(0,1,(bp-0.35)/0.3))).toFixed(3);
-      const k=smooth(clamp(0,1,(bp-0.08)/0.3)),kq=k.toFixed(2);
+      const bp=clamp(0,1,-br.top/(br.height-innerHeight));
+      /* The zipper is the point of this section, so it gets the long middle
+         of the scroll to itself: the bag barely moves while it opens, and
+         only once it is fully open does the camera dive in. Previously the
+         zipper ran from 8% to 38% while the bag was already zooming and
+         fading, which made it read as a fast cut rather than an opening. */
+      const k=smooth(clamp(0,1,(bp-0.05)/0.57));      // opens 5% -> 62%
+      const dive=smooth(clamp(0,1,(bp-0.62)/0.38));
+      const z=0.9+smooth(clamp(0,1,bp/0.62))*0.28+Math.pow(dive,1.5)*(ZBAG-1.18);
+      bagbig.style.transform='scale('+z.toFixed(3)+')';
+      bagbig.style.opacity=(1-smooth(clamp(0,1,(bp-0.8)/0.2))).toFixed(3);
+      if(bpcap)bpcap.style.opacity=(1-smooth(clamp(0,1,(bp-0.3)/0.25))).toFixed(3);
+      const kq=k.toFixed(3);                          // finer than the old 2dp
       if(kq!==lastK){lastK=kq;
         if(bagslider)bagslider.setAttribute('transform','translate('+(-(k*104)).toFixed(1)+' 0)');
-        const fs=1-0.65*k;
+        const fs=1-0.62*k;
         if(bagflap)bagflap.setAttribute('transform','translate(0 '+(368*(1-fs)).toFixed(1)+') scale(1 '+fs.toFixed(3)+')');
-        if(bagint)bagint.setAttribute('opacity',Math.min(1,k*1.6).toFixed(3));
+        if(bagint)bagint.setAttribute('opacity',clamp(0,1,(k-0.1)/0.5).toFixed(3));
       }
     }
   }
