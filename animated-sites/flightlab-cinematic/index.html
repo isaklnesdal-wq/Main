@@ -157,15 +157,17 @@ nav .nl a:hover{color:var(--signal)}
 #loader .brand{font-family:var(--h);font-weight:700;letter-spacing:.4em;text-indent:.4em;font-size:24px;color:#fff}
 #loader .ln{width:56px;height:1px;background:rgba(255,255,255,.25)}
 /* bag zoom portal (between discs and bags) */
-#bagportal{position:relative;height:240vh;background:#f1f0ea}
+/* Same paper background as the rest of the site, so this reads as the bag
+   standing on the page rather than a dark panel dropped into it. */
+#bagportal{position:relative;height:240vh;background:var(--paper)}
 #bagportal .pin{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;
-  background:radial-gradient(58% 46% at 50% 44%,#1a3d2b,#0E1A13 72%,#081209)}
+  background:radial-gradient(62% 50% at 50% 44%,#fff,var(--paper) 58%,#eef1e8)}
 #bagportal .bagbig{width:min(52vmin,400px);height:min(66vmin,510px);position:relative;
   display:flex;align-items:center;justify-content:center;transform-origin:50% 50.5%; /* the zipper */
-  filter:drop-shadow(0 44px 90px rgba(0,0,0,.55));will-change:transform,opacity}
+  filter:drop-shadow(0 26px 54px rgba(14,26,19,.26));will-change:transform,opacity}
 #bagportal .bagbig svg{width:100%;height:100%;display:block}
-#bagportal .bpcap{position:absolute;z-index:3;top:12%;left:0;right:0;text-align:center;color:#fff;pointer-events:none;will-change:opacity}
-#bagportal .bpcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+#bagportal .bpcap{position:absolute;z-index:3;top:12%;left:0;right:0;text-align:center;color:var(--ink);pointer-events:none;will-change:opacity}
+#bagportal .bpcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--signal);margin-bottom:10px}
 #bagportal .bpcap h2{font-family:var(--h);font-weight:500;font-size:clamp(24px,4vw,44px)}
 
 /* journey captions */
