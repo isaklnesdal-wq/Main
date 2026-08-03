@@ -494,22 +494,23 @@ nav .brand,nav .nl a{color:var(--ink)}
    thing every frame. */
 .fl-glass{position:relative;display:inline-block;z-index:1;
   color:rgba(226,244,255,.045);
-  -webkit-text-stroke:1.5px rgba(255,255,255,.82);
+  -webkit-text-stroke:1.15px rgba(255,255,255,.72);
   /* the extrusion, stepped back and down, plus the chromatic fringe that
      makes it read as a solid rather than an outline */
-  /* Just enough body to read as a solid: a short run of steps that fade out
-     fast, near-neutral so it stays glass rather than becoming a block, and
-     the faintest colour split at the vertical edges. */
+  /* Rounded, blown-glass edges rather than a cut one: the hard rim is
+     backed by a soft light along the top and a soft shade underneath, and
+     that gradient across the edge is what the eye reads as a curve. The
+     extrusion is short — just enough body to sit in space. */
   text-shadow:
-     1.4px 0 0 rgba(120,225,255,.20),
-    -1.4px 0 0 rgba(255,130,220,.16),
-     1px 1.5px 0 rgba(206,232,250,.30),
-     2px 3px 0 rgba(176,208,236,.21),
-     3.5px 5px 0 rgba(146,182,214,.14),
-     5px 7.5px 0 rgba(116,152,188,.09),
-     7px 10px 0 rgba(90,124,160,.055),
-     9px 13px 0 rgba(68,98,132,.03),
-     10px 20px 34px rgba(0,0,0,.5)}
+     0 -1.5px 2.5px rgba(255,255,255,.55),
+     0 1.5px 3px rgba(14,26,44,.45),
+     1.2px 0 0 rgba(120,225,255,.16),
+    -1.2px 0 0 rgba(255,135,220,.13),
+     0.8px 1.2px 0 rgba(206,232,250,.22),
+     1.6px 2.4px 0 rgba(176,208,236,.15),
+     2.6px 3.8px 0 rgba(146,182,214,.09),
+     3.6px 5.2px 0 rgba(112,148,184,.05),
+     6px 13px 24px rgba(0,0,0,.45)}
 .fl-glass::before,.fl-glass::after{content:attr(data-text);position:absolute;left:0;top:0;
   white-space:nowrap;-webkit-background-clip:text;background-clip:text;color:transparent;
   -webkit-text-stroke:0;pointer-events:none}
@@ -519,8 +520,8 @@ nav .brand,nav .nl a{color:var(--ink)}
 /* offset a touch and given a dark contour, this layer becomes the inner wall
    seen through the front face — the bright outer rim plus this dark inner
    line is what reads as a hollow glass form */
-.fl-glass::before{transform:translate(1.4px,1.4px);
-  -webkit-text-stroke:1.3px rgba(12,24,40,.20);
+.fl-glass::before{transform:translate(0.9px,0.9px);
+  -webkit-text-stroke:1px rgba(12,24,40,.16);
   background-image:linear-gradient(176deg,
   rgba(255,255,255,.80) 0%,rgba(226,246,255,.34) 8%,rgba(176,214,238,.10) 24%,
   rgba(150,190,220,.02) 44%,rgba(150,190,220,.02) 60%,rgba(186,224,244,.11) 78%,
