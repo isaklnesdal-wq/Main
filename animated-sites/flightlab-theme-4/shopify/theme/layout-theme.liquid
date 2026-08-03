@@ -30,7 +30,19 @@ footer.site{background:transparent;border-top:1px solid rgba(255,255,255,.08);co
 footer.site .shell{padding-top:26px;padding-bottom:26px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 h1,h2,h3{font-family:var(--h)}
 </style>
-{%- if template.name == "index" -%}{{ 'fl-home.css' | asset_url | stylesheet_tag }}{%- endif -%}
+{%- if template.name == "index" -%}
+  {{ 'fl-home.css' | asset_url | stylesheet_tag }}
+{%- else -%}
+  {%- comment -%}
+    Product, collection, cart and search still render from this theme's
+    own sections, so they still need this theme's stylesheets. The
+    homepage does not — it ships its styles in fl-home.css.
+  {%- endcomment -%}
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+  {{ 'sections.css' | asset_url | stylesheet_tag }}
+  {{ 'commerce.css' | asset_url | stylesheet_tag }}
+  {{ 'premium-dark.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
 {{ content_for_header }}
 </head>
 <body class="template-{{ template.name | handle }}">
@@ -62,5 +74,6 @@ addEventListener('pointerdown',function(e){var t=e.target.closest(SEL);if(t)t.cl
 function c(){document.querySelectorAll('.pressing').forEach(function(el){el.classList.remove('pressing');});}
 ['pointerup','pointercancel','scroll'].forEach(function(ev){addEventListener(ev,c,{passive:true});});})();
 </script>
+{%- unless template.name == "index" -%}<script src="{{ 'global.js' | asset_url }}" defer></script>{%- endunless -%}
 </body>
 </html>
