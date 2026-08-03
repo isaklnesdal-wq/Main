@@ -393,7 +393,7 @@ const PERSP=1100;
    the letters are wider than the viewport, so any grid gives slabs rather
    than fragments; the pieces then stream past the camera, which is what
    carries the sense of flying through. */
-const FRACTURE=0.30, GONE=0.88;
+const FRACTURE=0.30, HANDOVER=0.40, GONE=0.88;
 let shardsBuilt=false, frozenZ=0, flMoving=false;
 
 /* Rasterise the wordmark once. Painting the CSS glass into 72 live text
@@ -414,13 +414,15 @@ function buildShards(){
   g.font='800 '+fs+'px Inter, sans-serif';
   g.textBaseline='middle';g.textAlign='center';
   const grad=g.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,'rgba(255,255,255,.92)');
-  grad.addColorStop(.22,'rgba(214,248,233,.5)');
-  grad.addColorStop(.52,'rgba(140,195,175,.20)');
-  grad.addColorStop(.8,'rgba(168,222,198,.34)');
-  grad.addColorStop(1,'rgba(238,255,248,.74)');
+  grad.addColorStop(0,'rgba(255,255,255,.88)');
+  grad.addColorStop(.10,'rgba(232,255,246,.32)');
+  grad.addColorStop(.28,'rgba(170,220,200,.10)');
+  grad.addColorStop(.55,'rgba(140,190,175,.05)');
+  grad.addColorStop(.82,'rgba(178,232,208,.14)');
+  grad.addColorStop(.96,'rgba(244,255,250,.60)');
+  grad.addColorStop(1,'rgba(255,255,255,.85)');
   g.fillStyle=grad;g.fillText('FLIGHTLAB',W/2,H/2);
-  g.lineWidth=1.1;g.strokeStyle='rgba(198,247,224,.5)';
+  g.lineWidth=1.25;g.strokeStyle='rgba(208,252,234,.62)';
   g.strokeText('FLIGHTLAB',W/2,H/2);
   const url=cv.toDataURL('image/png');
 
@@ -711,20 +713,35 @@ function loop(){
         flmark.style.visibility='visible';
         if(flshards&&flshards.classList.contains('on'))flshards.classList.remove('on');
       }else{
-        /* Broken: hand over to the shard field, frozen at the scale the word
-           had when the camera reached it, so the swap is invisible. */
         if(!shardsBuilt)buildShards();   /* normally already built on idle */
-        flmark.style.visibility='hidden';
         if(flshards){
-          if(!flshards.classList.contains('on')){
-            const sf=1+Math.pow(smooth(FRACTURE),1.45)*ZHERO;
-            frozenZ=PERSP*(1-1/sf);
+          if(!flshards.classList.contains('on'))flshards.classList.add('on');
+
+          /* Cross-fade rather than swap. Through the hand-over the word and
+             the shard field carry the same transform, so they stay in
+             register and one simply becomes the other; the hard switch is
+             what read as a jump before. */
+          const cf=smooth(clamp(0,1,(p-FRACTURE)/(HANDOVER-FRACTURE)));
+          if(p<HANDOVER){
+            flmark.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
+            flmark.style.opacity=(1-cf).toFixed(3);
+            flmark.style.visibility='visible';
+            flshards.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
+            frozenZ=z;
+          }else{
+            flmark.style.visibility='hidden';
+            /* Past the hand-over the field is parked at the depth it reached:
+               letting the parent keep rescaling would re-rasterise every
+               piece on every frame. */
             flshards.style.transform='translate3d(0,0,'+frozenZ.toFixed(2)+'px)';
-            flshards.classList.add('on');
           }
-          const k=clamp(0,1,(p-FRACTURE)/(GONE-FRACTURE));
-          flshards.style.setProperty('--k',k.toFixed(4));
-          if(k>=1)flshards.classList.remove('on');   /* no trace left */
+          flshards.style.opacity=cf.toFixed(3);
+
+          /* Eased in, so the pieces still form the word while it fades and
+             only then break away. */
+          const raw=clamp(0,1,(p-FRACTURE)/(GONE-FRACTURE));
+          flshards.style.setProperty('--k',Math.pow(raw,1.75).toFixed(4));
+          if(raw>=1)flshards.classList.remove('on');   /* no trace left */
         }
       }
     }
