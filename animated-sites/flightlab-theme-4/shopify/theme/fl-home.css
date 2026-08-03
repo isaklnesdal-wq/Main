@@ -330,17 +330,17 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
   --signal:#3ECF8E; --forest:#3ECF8E; --teal:#3ECF8E; --gold:rgba(232,237,244,.5);
   --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.07);
   --glassbrd:rgba(255,255,255,.12); --blur:blur(22px) saturate(150%);
-  --surf2:#111827; --surf3:#151A22; --surf4:#181C24;
+  --surf2:#151E2B; --surf3:#181C24; --surf4:#1B2130;
   --on-signal:#06140D;
 }
 
 /* One continuous canvas: the page owns the gradient, sections are glass-clear,
    so nothing ever cuts from one background colour to another. */
-body{background:#0D1117;color:var(--ink)}
+body{background:#111827;color:var(--ink)}
 body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:
     radial-gradient(80% 34% at 50% 0%,rgba(62,207,142,.05),transparent 60%),
-    linear-gradient(180deg,#0D1117 0%,#111827 30%,#0D1117 55%,#151A22 80%,#0D1117 100%)}
+    linear-gradient(180deg,#111827 0%,#151E2B 28%,#121A26 52%,#181C24 78%,#111827 100%)}
 .sec{position:relative;z-index:1}
 .sec.light,.sec.dark{background:transparent;color:var(--ink)}
 .sec + .sec::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;
@@ -349,8 +349,8 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
 
 /* Cards become raised glass instead of white paper */
 .pcard,.acard{
-  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
-  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.032));
+  border:1px solid rgba(255,255,255,.13);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 30px rgba(0,0,0,.4)}
 @media(hover:hover) and (pointer:fine){
   .pcard,.acard{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
@@ -369,7 +369,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
 footer{background:transparent;border-top:1px solid rgba(255,255,255,.08);color:var(--ink);position:relative;z-index:1}
 .bigmark{color:rgba(232,237,244,.10)}
 #bagportal{background:transparent;position:relative;z-index:1}
-#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,#161C26,#0D1117 62%,#0B0E14)}
+#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,#1B2230,#131A26 62%,#111827)}
 #bagportal .bpcap{color:var(--ink)}
 #bagportal .bpcap .k{color:var(--signal)}
 #bagportal .bagbig{filter:drop-shadow(0 26px 54px rgba(0,0,0,.6))}
@@ -408,56 +408,98 @@ nav .brand,nav .nl a{color:var(--ink)}
    every section and tie them together. Transform only, and they sit under
    the content layer so they can never cross text or buttons. */
 .fl-discs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+/* Three depth layers, each on its own figure-eight. The paths cross at their
+   centre, so nothing ever tracks in a straight line and the drift reads as
+   floating rather than sliding. Transform only — these never touch layout. */
 .fl-disc{position:absolute;width:var(--d);height:var(--d);border-radius:50%;
-  opacity:var(--o,.05);filter:blur(var(--bl,4px));will-change:transform;
-  background:radial-gradient(circle at 34% 28%,rgba(176,212,238,.9),rgba(78,120,152,.55) 44%,rgba(22,34,46,.2) 70%,transparent 76%)}
-.fl-disc.a{--d:38vmin;--o:.055;--bl:3px;left:-6vw;top:14vh;animation:fl-a 150s linear infinite}
-.fl-disc.b{--d:26vmin;--o:.04;--bl:6px;right:-4vw;top:52vh;animation:fl-b 190s linear infinite}
-.fl-disc.c{--d:52vmin;--o:.03;--bl:10px;left:24vw;top:118vh;animation:fl-c 220s linear infinite}
-.fl-disc.d{--d:20vmin;--o:.05;--bl:2px;right:16vw;top:186vh;animation:fl-b 170s linear infinite}
-.fl-disc.e{--d:34vmin;--o:.035;--bl:7px;left:8vw;top:250vh;animation:fl-a 205s linear infinite}
-@keyframes fl-a{0%{transform:translate3d(0,0,0) rotateX(66deg) rotateZ(0deg)}
-  100%{transform:translate3d(6vw,-14vh,0) rotateX(66deg) rotateZ(360deg)}}
-@keyframes fl-b{0%{transform:translate3d(0,0,0) rotateX(62deg) rotateZ(360deg)}
-  100%{transform:translate3d(-5vw,12vh,0) rotateX(62deg) rotateZ(0deg)}}
-@keyframes fl-c{0%{transform:translate3d(0,0,0) rotateX(70deg) rotateZ(0deg)}
-  100%{transform:translate3d(9vw,-9vh,0) rotateX(70deg) rotateZ(-360deg)}}
-@media(max-width:560px){.fl-disc.c,.fl-disc.e{display:none}}
+  opacity:var(--o);filter:blur(var(--bl));will-change:transform;
+  background:radial-gradient(circle at 34% 28%,rgba(186,224,248,.92),rgba(84,128,160,.55) 44%,rgba(22,34,46,.2) 70%,transparent 76%)}
+/* Layer 1 — far: large, very blurred, very slow */
+.fl-disc.l1{--o:.05;--bl:14px}
+.fl-disc.l1.a{--d:46vmin;left:-8vw;top:12vh;animation:fl8-far 240s ease-in-out infinite}
+.fl-disc.l1.b{--d:38vmin;right:-6vw;top:128vh;animation:fl8-far 300s ease-in-out infinite reverse}
+.fl-disc.l1.c{--d:52vmin;left:14vw;top:262vh;animation:fl8-far 270s ease-in-out infinite}
+/* Layer 2 — mid: sharp, medium */
+.fl-disc.l2{--o:.075;--bl:0px}
+.fl-disc.l2.a{--d:22vmin;right:12vw;top:56vh;animation:fl8-mid 170s ease-in-out infinite}
+.fl-disc.l2.b{--d:18vmin;left:6vw;top:176vh;animation:fl8-mid 195s ease-in-out infinite reverse}
+.fl-disc.l2.c{--d:24vmin;right:20vw;top:300vh;animation:fl8-mid 182s ease-in-out infinite}
+/* Layer 3 — near: small, slow rotation */
+.fl-disc.l3{--o:.10;--bl:1px}
+.fl-disc.l3.a{--d:9vmin;left:28vw;top:88vh;animation:fl8-near 140s ease-in-out infinite}
+.fl-disc.l3.b{--d:7vmin;right:32vw;top:214vh;animation:fl8-near 158s ease-in-out infinite reverse}
+.fl-disc.l3.c{--d:11vmin;left:44vw;top:340vh;animation:fl8-near 150s ease-in-out infinite}
+@keyframes fl8-far{0%{transform:translate3d(7.00vw,0.00vh,0) rotateX(68deg) rotateZ(0deg)}12.5%{transform:translate3d(4.95vw,4.50vh,0) rotateX(68deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(68deg) rotateZ(90deg)}37.5%{transform:translate3d(-4.95vw,-4.50vh,0) rotateX(68deg) rotateZ(135deg)}50%{transform:translate3d(-7.00vw,0.00vh,0) rotateX(68deg) rotateZ(180deg)}62.5%{transform:translate3d(-4.95vw,4.50vh,0) rotateX(68deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(68deg) rotateZ(270deg)}87.5%{transform:translate3d(4.95vw,-4.50vh,0) rotateX(68deg) rotateZ(315deg)}100%{transform:translate3d(7.00vw,0.00vh,0) rotateX(68deg) rotateZ(360deg)}}
+@keyframes fl8-mid{0%{transform:translate3d(5.00vw,0.00vh,0) rotateX(62deg) rotateZ(0deg)}12.5%{transform:translate3d(3.53vw,3.00vh,0) rotateX(62deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(62deg) rotateZ(90deg)}37.5%{transform:translate3d(-3.53vw,-3.00vh,0) rotateX(62deg) rotateZ(135deg)}50%{transform:translate3d(-5.00vw,0.00vh,0) rotateX(62deg) rotateZ(180deg)}62.5%{transform:translate3d(-3.53vw,3.00vh,0) rotateX(62deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(62deg) rotateZ(270deg)}87.5%{transform:translate3d(3.53vw,-3.00vh,0) rotateX(62deg) rotateZ(315deg)}100%{transform:translate3d(5.00vw,0.00vh,0) rotateX(62deg) rotateZ(360deg)}}
+@keyframes fl8-near{0%{transform:translate3d(3.50vw,0.00vh,0) rotateX(58deg) rotateZ(0deg)}12.5%{transform:translate3d(2.47vw,2.25vh,0) rotateX(58deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(58deg) rotateZ(90deg)}37.5%{transform:translate3d(-2.47vw,-2.25vh,0) rotateX(58deg) rotateZ(135deg)}50%{transform:translate3d(-3.50vw,0.00vh,0) rotateX(58deg) rotateZ(180deg)}62.5%{transform:translate3d(-2.47vw,2.25vh,0) rotateX(58deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(58deg) rotateZ(270deg)}87.5%{transform:translate3d(2.47vw,-2.25vh,0) rotateX(58deg) rotateZ(315deg)}100%{transform:translate3d(3.50vw,0.00vh,0) rotateX(58deg) rotateZ(360deg)}}
+@media(max-width:560px){.fl-disc.l1.c,.fl-disc.l2.c,.fl-disc.l3.c{display:none}}
 @media(prefers-reduced-motion:reduce){.fl-disc{animation:none}}
 
 /* ---------- Typography intro ----------
    The camera dollies toward the word: apparent size comes from translateZ
    under a perspective, not from scale(), so the letters gain real depth and
    stay text rather than a stretched bitmap. */
-.scene{background:#0D1117;perspective:1100px;perspective-origin:50% 46%}
+.scene{perspective:1100px;perspective-origin:50% 46%;
+  background:radial-gradient(70% 55% at 50% 42%,#19212F 0%,#141B27 45%,#111827 72%,#0D1117 100%)}
 .fl-ambient{position:absolute;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(44% 36% at 50% 46%,rgba(142,182,216,.11),transparent 72%),
-    radial-gradient(120% 92% at 50% 50%,transparent 38%,rgba(4,6,10,.82) 100%)}
+    radial-gradient(42% 34% at 50% 44%,rgba(120,225,180,.10),transparent 70%),
+    radial-gradient(52% 44% at 50% 46%,rgba(170,205,235,.10),transparent 74%),
+    radial-gradient(120% 92% at 50% 50%,transparent 46%,rgba(6,9,14,.62) 100%)}
+.fl-bloom{position:absolute;left:50%;top:50%;width:86vw;height:34vh;z-index:1;
+  transform:translate(-50%,-50%);pointer-events:none;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(146,235,196,.16),rgba(150,195,230,.07) 42%,transparent 72%)}
 .fl-stage{position:absolute;inset:0;z-index:2;display:grid;place-items:center;
   transform-style:preserve-3d;pointer-events:none}
 .fl-mark{margin:0;font-family:var(--b);font-weight:800;font-size:14.3vw;
   letter-spacing:-.045em;line-height:1;white-space:nowrap;
   transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
-  filter:drop-shadow(0 0 60px rgba(150,195,230,.10))}
+  /* No filter here on purpose: a drop-shadow on an element that is being
+     transformed forces a re-raster of the whole thing every frame. The bloom
+     is a separate, static layer behind the word instead. */}
 
 /* Liquid glass: the fill is almost nothing, a lit top and bottom edge give
    it body, and the sheen is what actually reveals the letterforms. */
-.fl-glass{position:relative;display:inline-block;color:rgba(255,255,255,.055);
-  -webkit-text-stroke:1px rgba(206,228,248,.15)}
+/* Bright translucent glass, not white and not dark: a lit body you can read
+   immediately, with a faint green cast and a hard edge highlight. */
+.fl-glass{position:relative;display:inline-block;color:rgba(214,248,232,.20);
+  -webkit-text-stroke:1.1px rgba(198,247,224,.46)}
 .fl-glass::before,.fl-glass::after{content:attr(data-text);position:absolute;left:0;top:0;
   white-space:nowrap;-webkit-background-clip:text;background-clip:text;color:transparent;
   -webkit-text-stroke:0;pointer-events:none}
 /* background-image, not the background shorthand: the shorthand resets
    background-clip back to border-box and the text clip is lost. */
-.fl-glass::before{background-image:linear-gradient(178deg,
-  rgba(255,255,255,.30) 0%,rgba(255,255,255,.05) 24%,rgba(255,255,255,0) 50%,
-  rgba(178,206,232,.06) 76%,rgba(226,240,252,.20) 100%)}
-.fl-glass::after{background-image:linear-gradient(102deg,transparent 40%,
-  rgba(255,255,255,.07) 46%,rgba(255,255,255,.38) 50%,rgba(255,255,255,.07) 54%,transparent 60%);
-  background-size:300% 100%;animation:fl-sheen 17s linear infinite}
+.fl-glass::before{background-image:linear-gradient(176deg,
+  rgba(255,255,255,.92) 0%,rgba(214,248,233,.46) 17%,rgba(150,205,182,.16) 38%,
+  rgba(120,170,155,.10) 54%,rgba(168,222,198,.30) 78%,rgba(238,255,248,.72) 100%)}
+/* Internal refraction: a bright core sweep with a green fringe either side,
+   which is what sells it as glass rather than a shine. */
+.fl-glass::after{background-image:linear-gradient(102deg,transparent 36%,
+  rgba(120,235,185,.16) 43%,rgba(255,255,255,.30) 47%,rgba(255,255,255,.80) 50%,
+  rgba(255,255,255,.30) 53%,rgba(120,235,185,.16) 57%,transparent 64%);
+  background-size:300% 100%;animation:fl-sheen 15s linear infinite}
+.fl-moving .fl-glass::after{animation-play-state:paused}
 @keyframes fl-sheen{0%{background-position:190% 0}100%{background-position:-90% 0}}
 @media(prefers-reduced-motion:reduce){.fl-glass::after{animation:none}}
 
-#loader{background:#0D1117}
+
+/* ---------- Glass fracture ----------
+   The word does not fade; it breaks. Every shard shares one rasterised
+   bitmap of the wordmark as its background and differs only by clip-path,
+   so the browser decodes the type once and each shard is a plain composited
+   layer after that. The whole field is driven by a single custom property,
+   which means one style write per frame rather than one per shard. */
+.fl-shards{position:absolute;left:50%;top:50%;z-index:3;pointer-events:none;
+  transform-style:preserve-3d;visibility:hidden;--k:0}
+.fl-shards.on{visibility:visible}
+.fl-shard{position:absolute;left:0;top:0;
+  background-repeat:no-repeat;background-size:100% 100%;
+  background-color:rgba(198,240,222,.06);
+  backface-visibility:hidden;
+  transform:translate3d(calc(var(--dx) * var(--k)),calc(var(--dy) * var(--k)),calc(var(--dz) * var(--k)))
+            rotate(calc(var(--ra) * var(--k)))
+            scale(calc(1 - var(--k) * 0.78));
+  opacity:calc(1 - var(--k) * var(--k))}
+@media(prefers-reduced-motion:reduce){.fl-shard{transition:none}}
+#loader{background:#111827}
 .grain{opacity:.035}

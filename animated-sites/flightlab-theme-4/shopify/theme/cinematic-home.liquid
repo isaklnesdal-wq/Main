@@ -71,8 +71,9 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
 </script>
 <!-- Floating discs: one fixed layer behind every section, tying them together -->
 <div class="fl-discs" aria-hidden="true">
-  <span class="fl-disc a"></span><span class="fl-disc b"></span><span class="fl-disc c"></span>
-  <span class="fl-disc d"></span><span class="fl-disc e"></span>
+  <span class="fl-disc l1 a"></span><span class="fl-disc l1 b"></span><span class="fl-disc l1 c"></span>
+  <span class="fl-disc l2 a"></span><span class="fl-disc l2 b"></span><span class="fl-disc l2 c"></span>
+  <span class="fl-disc l3 a"></span><span class="fl-disc l3 b"></span><span class="fl-disc l3 c"></span>
 </div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="bagko" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -2 -2 -2 0 5.4" result="m"/><feComponentTransfer in="m"><feFuncA type="discrete" tableValues="0 0 1 1"/></feComponentTransfer></filter></svg>
 
@@ -100,10 +101,12 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
     <!-- Typography intro: no disc, no photo, no scenery. The word is the
          only subject; scrolling dollies the camera into it. -->
     <div class="fl-ambient" aria-hidden="true"></div>
+    <div class="fl-bloom" aria-hidden="true"></div>
     <div class="fl-stage">
       <h1 class="fl-mark" id="flmark" aria-label="FLIGHTLAB">
         <span class="fl-glass" data-text="FLIGHTLAB">FLIGHTLAB</span>
       </h1>
+      <div class="fl-shards" id="flshards" aria-hidden="true"></div>
     </div>
     <div class="grain"></div>
     <div id="loader"><div class="ln"></div><div class="brand">FLIGHTLAB</div><div class="ln"></div></div>
@@ -379,9 +382,91 @@ if(window.Lenis && !REDUCED && !matchMedia('(pointer:coarse)').matches){
    opacity are animated — composited on the GPU, no repaint. */
 const journey=document.getElementById('journey');
 const flmark=document.getElementById('flmark');
+const flshards=document.getElementById('flshards');
 /* Must match the perspective on .scene: apparent scale is persp/(persp-z),
    so we invert it to place the camera at the distance a given scale implies. */
 const PERSP=1100;
+/* Where the camera reaches the letters and the word breaks. Past this point
+   the shards no longer scale, only translate and rotate, so each one
+   rasterises exactly once instead of on every frame. */
+/* Break while the word still roughly fits the frame. Later than this and
+   the letters are wider than the viewport, so any grid gives slabs rather
+   than fragments; the pieces then stream past the camera, which is what
+   carries the sense of flying through. */
+const FRACTURE=0.30, GONE=0.88;
+let shardsBuilt=false, frozenZ=0, flMoving=false;
+
+/* Rasterise the wordmark once. Painting the CSS glass into 72 live text
+   elements would re-rasterise huge type every frame; one shared bitmap is a
+   single decode and keeps the shards to plain composited layers. */
+function buildShards(){
+  if(shardsBuilt||!flshards||!flmark)return;
+  const glass=flmark.querySelector('.fl-glass');
+  const r=glass.getBoundingClientRect();
+  const W=Math.round(r.width), H=Math.round(r.height*1.25);
+  if(!W||!H)return;
+  const dpr=Math.min(devicePixelRatio||1,2);
+  const cv=document.createElement('canvas');
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d');
+  g.scale(dpr,dpr);
+  const fs=parseFloat(getComputedStyle(flmark).fontSize);
+  g.font='800 '+fs+'px Inter, sans-serif';
+  g.textBaseline='middle';g.textAlign='center';
+  const grad=g.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(255,255,255,.92)');
+  grad.addColorStop(.22,'rgba(214,248,233,.5)');
+  grad.addColorStop(.52,'rgba(140,195,175,.20)');
+  grad.addColorStop(.8,'rgba(168,222,198,.34)');
+  grad.addColorStop(1,'rgba(238,255,248,.74)');
+  g.fillStyle=grad;g.fillText('FLIGHTLAB',W/2,H/2);
+  g.lineWidth=1.1;g.strokeStyle='rgba(198,247,224,.5)';
+  g.strokeText('FLIGHTLAB',W/2,H/2);
+  const url=cv.toDataURL('image/png');
+
+  /* A jittered grid so every pixel of the word belongs to some shard and it
+     reads as breaking rather than as pieces lifting off a surface. */
+  const COLS=TOUCH?10:16, ROWS=TOUCH?5:8;
+  let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const jx=()=>(rnd()-.5)*(100/COLS)*0.7, jy=()=>(rnd()-.5)*(100/ROWS)*0.7;
+  const frag=document.createDocumentFragment();
+  for(let c=0;c<COLS;c++)for(let rw=0;rw<ROWS;rw++){
+    const x0=c*100/COLS, x1=(c+1)*100/COLS, y0=rw*100/ROWS, y1=(rw+1)*100/ROWS;
+    const el=document.createElement('span');
+    el.className='fl-shard';
+    el.style.width=W+'px';el.style.height=H+'px';
+    el.style.marginLeft=(-W/2)+'px';el.style.marginTop=(-H/2)+'px';
+    el.style.backgroundImage='url('+url+')';
+    el.style.clipPath='polygon('+
+      (x0+jx()).toFixed(2)+'% '+(y0+jy()).toFixed(2)+'%,'+
+      (x1+jx()).toFixed(2)+'% '+(y0+jy()).toFixed(2)+'%,'+
+      (x1+jx()).toFixed(2)+'% '+(y1+jy()).toFixed(2)+'%,'+
+      (x0+jx()).toFixed(2)+'% '+(y1+jy()).toFixed(2)+'%)';
+    /* Outward from the centre, so the field opens around the camera. */
+    const cx=(x0+x1)/2-50, cy=(y0+y1)/2-50, m=Math.hypot(cx,cy)||1;
+    el.style.setProperty('--dx',(cx/m*(240+rnd()*520)).toFixed(1)+'px');
+    el.style.setProperty('--dy',(cy/m*(180+rnd()*420)).toFixed(1)+'px');
+    el.style.setProperty('--dz',(rnd()*420-90).toFixed(1)+'px');
+    el.style.setProperty('--ra',((rnd()*2-1)*110).toFixed(1)+'deg');
+    frag.appendChild(el);
+  }
+  flshards.appendChild(frag);
+  shardsBuilt=true;
+}
+
+/* Build in slices. Creating the whole field in one go was a single task of a
+   few hundred milliseconds, which shows up as one dropped frame however it is
+   scheduled; spread over idle callbacks no slice is long enough to be felt. */
+function warmShards(){
+  if(shardsBuilt)return;
+  const run=deadline=>{
+    if(shardsBuilt)return;
+    buildShards();
+    void deadline;
+  };
+  if(window.requestIdleCallback)requestIdleCallback(run,{timeout:3000});
+  else setTimeout(run,1400);
+}
 const caps=[...document.querySelectorAll('#journey .jcap')];
 const cue=document.getElementById('cue');
 const prog=document.getElementById('prog');
@@ -617,8 +702,31 @@ function loop(){
     const s=1+Math.pow(e,1.45)*ZHERO;
     const z=PERSP*(1-1/s);
     if(flmark){
-      flmark.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
-      flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.46)/0.42))).toFixed(3);
+      const moving=p>0.03;
+      if(moving!==flMoving){flMoving=moving;flmark.classList.toggle('fl-moving',moving)}
+      if(p<FRACTURE){
+        /* Intact: the camera flies in. */
+        flmark.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
+        flmark.style.opacity='1';
+        flmark.style.visibility='visible';
+        if(flshards&&flshards.classList.contains('on'))flshards.classList.remove('on');
+      }else{
+        /* Broken: hand over to the shard field, frozen at the scale the word
+           had when the camera reached it, so the swap is invisible. */
+        if(!shardsBuilt)buildShards();   /* normally already built on idle */
+        flmark.style.visibility='hidden';
+        if(flshards){
+          if(!flshards.classList.contains('on')){
+            const sf=1+Math.pow(smooth(FRACTURE),1.45)*ZHERO;
+            frozenZ=PERSP*(1-1/sf);
+            flshards.style.transform='translate3d(0,0,'+frozenZ.toFixed(2)+'px)';
+            flshards.classList.add('on');
+          }
+          const k=clamp(0,1,(p-FRACTURE)/(GONE-FRACTURE));
+          flshards.style.setProperty('--k',k.toFixed(4));
+          if(k>=1)flshards.classList.remove('on');   /* no trace left */
+        }
+      }
     }
     const key=p.toFixed(3);
     if(key!==lastKey){lastKey=key;
@@ -651,6 +759,11 @@ function loop(){
   }
   if(prog){const tot=clamp(0,1,scrollY/(document.documentElement.scrollHeight-innerHeight||1));prog.style.width=(tot*100).toFixed(1)+'%'}
   requestAnimationFrame(loop);
+}
+/* Build the shard field while the page is idle. Doing it at the moment of
+   the fracture cost a frame of well over a second. */
+if(!REDUCED){
+  warmShards();
 }
 if(!REDUCED)requestAnimationFrame(loop);
 else{caps.forEach(c=>c.classList.remove('show'));caps[0].classList.add('show');if(l)l.classList.add('done');}
