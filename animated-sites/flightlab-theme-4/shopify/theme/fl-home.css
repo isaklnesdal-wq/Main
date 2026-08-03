@@ -1,0 +1,463 @@
+:root{
+  --paper:#FAF9F5; --ink:#0A1614; --forest:#123F39; --signal:#FF6B35; --gold:#F2B705;
+  --teal:#33C6B4; --mut:#6b7d72; --line:rgba(10,22,20,.12);
+  --glass:rgba(255,255,255,.24); --glass2:rgba(255,255,255,.46); --glassbrd:rgba(255,255,255,.6);
+  --blur:blur(24px) saturate(190%);
+  --h:'Space Grotesk',sans-serif; --b:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--b);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--signal)}
+/* ===== liquid-glass sticky nav with always-on search ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;gap:clamp(10px,2vw,22px);padding:10px clamp(14px,3.5vw,36px);
+  background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border-bottom:1px solid rgba(255,255,255,.5);box-shadow:0 6px 26px rgba(10,22,20,.08)}
+nav .brand{font-family:var(--h);font-weight:700;font-size:20px;color:var(--ink);flex:none}
+.navsearch{position:relative;flex:1;max-width:520px;margin:0 auto;display:flex;align-items:center;gap:9px;
+  background:var(--glass2);border:1px solid var(--glassbrd);border-radius:999px;padding:8px 15px;
+  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 4px 16px rgba(10,22,20,.07);transition:box-shadow .25s,border-color .25s}
+.navsearch:focus-within{border-color:rgba(255,107,53,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 6px 22px rgba(255,107,53,.16)}
+.navsearch svg{flex:none;color:var(--mut)}
+.navsearch input{flex:1;border:none;outline:none;background:transparent;font-family:var(--b);font-size:14px;color:var(--ink);min-width:0}
+.navsearch input::placeholder{color:var(--mut)}
+.navsearch input::-webkit-search-cancel-button{-webkit-appearance:none}
+.searchhint{position:absolute;top:calc(100% + 9px);left:0;right:0;display:none;padding:11px 16px;font-size:13px;color:var(--mut);
+  background:var(--glass2);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border:1px solid var(--glassbrd);border-radius:16px;box-shadow:0 14px 40px rgba(10,22,20,.16)}
+.searchhint.on{display:block}
+.searchhint a{color:var(--signal);font-weight:600}
+nav .nl{display:flex;gap:22px;align-items:center;flex:none}
+nav .nl a{font-size:13px;font-weight:500;color:var(--ink);transition:color .2s}
+nav .nl a:hover{color:var(--signal)}
+@media(max-width:860px){nav .nl a:not(.cta){display:none}}
+/* Phones keep the full menu — Discer / Bager / Tilbehør / Kontakt — with the
+   search field shrunk to make room for it. */
+@media(max-width:640px){
+  nav{gap:8px;padding:9px 18px 9px 14px}
+  nav .brand{font-size:15px;letter-spacing:0}
+  .navsearch{max-width:none;flex:1 1 60px;min-width:0;padding:6px 10px;gap:6px}
+  .navsearch svg{width:15px;height:15px}
+  .navsearch input{font-size:12.5px}
+  nav .nl{gap:11px}
+  nav .nl a:not(.cta){display:inline}
+  nav .nl a{font-size:11.5px}
+}
+@media(max-width:520px){nav .brand{display:none}}
+
+/* ===== SCROLL-ZOOM PORTALS (GPU transforms only — buttery, no lag) ===== */
+/* Hero: the real Higgsfield clip autoplays behind a giant disc; scroll
+   zooms INTO the disc and hands off to the catalogue. */
+#journey{position:relative;height:380vh}
+/* Bright, hazy morning sky with a low sun. Kept in CSS rather than the SVG
+   so it scales with the viewport instead of being cropped on narrow phones. */
+.scene{position:sticky;top:0;height:100vh;overflow:hidden;
+  background:
+    radial-gradient(circle 34px at 68% 25%,rgba(255,253,245,.98),rgba(255,247,225,.88) 58%,rgba(255,240,208,0) 100%),
+    radial-gradient(circle 150px at 68% 25%,rgba(255,240,203,.5),rgba(255,236,190,0) 100%),
+    radial-gradient(circle 420px at 68% 25%,rgba(255,228,168,.3),rgba(255,226,166,0) 100%),
+    radial-gradient(130% 60% at 60% 58%,rgba(255,243,219,.55),rgba(255,243,219,0) 66%),
+    linear-gradient(180deg,#79b6ce 0%,#a3d0da 24%,#c8e2dd 46%,#e2ede1 68%,#edf2e6 100%)}
+/* soft atmospheric lift right around the floating disc */
+.scene::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(44% 26% at 50% 42%,rgba(255,255,255,.32),transparent 74%)}
+/* gentle ground shade — nothing like the old near-black wash */
+.scene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:28%;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(26,52,35,.4))}
+/* light vignette only; the caption gets its own scrim so white text stays
+   readable without having to darken the whole sky */
+.vtint{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(92% 74% at 50% 44%,transparent 46%,rgba(12,30,20,.3) 100%),
+    linear-gradient(180deg,rgba(12,30,20,.2),transparent 22%,transparent 64%,rgba(12,30,20,.34))}
+/* a photograph is far busier than the drawn scenery, so it needs a
+   stronger scrim to keep the white headline legible */
+.scene.has-photo .vtint{
+  background:radial-gradient(94% 76% at 50% 44%,rgba(8,18,12,.1) 38%,rgba(8,18,12,.52) 100%),
+    linear-gradient(180deg,rgba(8,18,12,.44),rgba(8,18,12,.1) 26%,rgba(8,18,12,.16) 58%,rgba(8,18,12,.6))}
+/* Optional real backdrop photo (Theme settings → Bakgrunnsbilde). Only
+   shown once it has actually decoded, so a slow or missing image leaves
+   the drawn scenery in place rather than flashing an empty scene. */
+.scenephoto{position:absolute;inset:0;z-index:0;overflow:hidden;opacity:0;transition:opacity .6s ease}
+.scene.has-photo .scenephoto{opacity:1}
+.scene.has-photo .scape{display:none}
+/* The basket was moved left inside the photo itself, so desktop needs no
+   panning — at 16:10 the photo is width-limited anyway and X has no effect. */
+.scenephoto img{width:100%;height:100%;object-fit:cover;object-position:50% 55%;display:block}
+/* A phone crops away most of the width. Centring would leave a basket
+   sliced in half at the frame edge, so pan to a clean stretch of forest —
+   the disc fills the middle of a phone screen anyway. */
+@media(max-width:560px){.scenephoto img{object-position:60% 55%}}
+/* layered forest + fairway + basket, built once by JS (static, cheap) */
+.scape{position:absolute;inset:0;z-index:0;pointer-events:none}
+.scape svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:62%;display:block}
+/* the zoom target — a realistic moulded frisbee, level with the camera.
+   It floats, glows and rocks gently back and forth; scrolling levels it
+   out and flies you THROUGH its pressed rings — no hard direct zoom. */
+.portal{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;will-change:transform,opacity}
+.hero-stage{position:relative;width:min(60vmin,500px);height:min(60vmin,500px);perspective:1200px;animation:bob 6.5s ease-in-out infinite}
+.hero-stage .layer{position:absolute;inset:0;border-radius:50%}
+@keyframes bob{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}
+/* Softer than it was: the daylight backdrop does the work now, so the aura
+   only needs to lift the disc off the treeline, not tint the whole sky. */
+.disc-aura{position:absolute;inset:-22%;border-radius:50%;
+  background:radial-gradient(circle,rgba(120,240,225,.26) 20%,rgba(90,215,200,.11) 44%,rgba(90,215,200,.03) 60%,transparent 72%);
+  animation:aura 4.5s ease-in-out infinite}
+@keyframes aura{0%,100%{transform:scale(.96)}50%{transform:scale(1.07)}}
+/* rest pose: standing upright, turned to the side and slanted; JS eases it
+   square to the camera as the dive toward the rings begins */
+.tilt{position:absolute;inset:0;transform:rotateY(36deg) rotateX(8deg);transform-style:preserve-3d;will-change:transform}
+.hero-disc{position:absolute;inset:0;border-radius:50%;animation:rock 7s ease-in-out infinite;
+  box-shadow:0 0 70px rgba(60,216,204,.55),0 0 180px rgba(46,190,178,.38),0 34px 90px rgba(0,0,0,.45)}
+@keyframes rock{0%,100%{transform:rotateZ(-11deg)}50%{transform:rotateZ(11deg)}}
+/* real product photo variant */
+.hero-disc.photo{overflow:hidden;background:#0b1b12}
+.hero-disc.photo img{width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.16);display:block}
+/* moulded plastic, lit flat from top-left: rim → shoulder → flight plate.
+   Green colourway, soft pressed rings. */
+.hd-rim{background:linear-gradient(135deg,#a4e8c0 0%,#2e9c5b 38%,#137043 72%,#06381f 100%);
+  box-shadow:inset 0 0 0 2px rgba(4,44,24,.5),inset 0 7px 14px rgba(255,255,255,.32),inset 0 -10px 20px rgba(0,0,0,.45)}
+.layer.hd-bevel{inset:7%;background:linear-gradient(135deg,#82d8a4,#23904f 55%,#0b562e 100%);
+  box-shadow:inset 0 0 0 2.5px rgba(6,48,26,.45),inset 0 5px 10px rgba(255,255,255,.26),inset 0 -9px 18px rgba(0,0,0,.34)}
+.layer.hd-face{inset:14%;background:linear-gradient(135deg,#79d49b 0%,#1e8b4b 52%,#0b5c30 100%);
+  box-shadow:inset 0 0 0 2px rgba(8,52,30,.42),inset 0 3px 7px rgba(255,255,255,.2),inset 0 -6px 13px rgba(0,0,0,.26)}
+.hd-face i{position:absolute;border-radius:50%;
+  box-shadow:inset 0 0 0 2px rgba(6,50,28,.32),inset 0 4px 7px rgba(255,255,255,.14),inset 0 -4px 8px rgba(0,0,0,.17)}
+.layer.hd-hub{inset:42.5%;background:linear-gradient(135deg,#85dba6,#23904f 60%,#0f6236);
+  box-shadow:inset 0 0 0 2px rgba(8,52,30,.38),inset 0 3px 5px rgba(255,255,255,.28),inset 0 -3px 7px rgba(0,0,0,.3)}
+/* anisotropic plastic sheen — rotates with the rock, so light plays across
+   the plate as the disc moves */
+.layer.hd-sheen{background:conic-gradient(from 210deg,rgba(255,255,255,.10),transparent 70deg,rgba(0,0,0,.13) 150deg,transparent 215deg,rgba(255,255,255,.07) 300deg,transparent 360deg)}
+/* printed stamp on the flight plate (tonal ink, subtle emboss) */
+.hd-stamp{position:absolute;inset:17%;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:.9}
+.hd-stamp svg{width:100%;height:100%;filter:drop-shadow(0 1px 0 rgba(0,0,0,.3))}
+.hd-noise{opacity:.16;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hd-flash{position:absolute;top:5.4%;left:47.6%;width:4.8%;height:1.7%;border-radius:99px;background:rgba(10,66,36,.5)}
+.hd-glare{background:radial-gradient(ellipse 44% 17% at 30% 11%,rgba(255,255,255,.72),rgba(255,255,255,.12) 46%,transparent 66%)}
+.portalglow{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 50%,#3fd0c2,#1f8a80 40%,#0a1614 72%)}
+.grain{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* branded intro loader */
+#loader{position:absolute;inset:0;z-index:8;background:#060c09;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .7s,filter .7s}
+#loader.done{opacity:0;filter:blur(8px);pointer-events:none}
+#loader .brand{font-family:var(--h);font-weight:700;letter-spacing:.4em;text-indent:.4em;font-size:24px;color:#fff}
+#loader .ln{width:56px;height:1px;background:rgba(255,255,255,.25)}
+/* bag zoom portal (between discs and bags) */
+/* Same paper background as the rest of the site, so this reads as the bag
+   standing on the page rather than a dark panel dropped into it. */
+#bagportal{position:relative;height:240vh;background:var(--paper)}
+#bagportal .pin{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(62% 50% at 50% 44%,#fff,var(--paper) 58%,#eef1e8)}
+#bagportal .bagbig{width:min(52vmin,400px);height:min(66vmin,510px);position:relative;
+  display:flex;align-items:center;justify-content:center;transform-origin:50% 50.5%; /* the zipper */
+  filter:drop-shadow(0 26px 54px rgba(14,26,19,.26));will-change:transform,opacity}
+#bagportal .bagbig svg{width:100%;height:100%;display:block}
+#bagportal .bpcap{position:absolute;z-index:3;top:12%;left:0;right:0;text-align:center;color:var(--ink);pointer-events:none;will-change:opacity}
+#bagportal .bpcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--signal);margin-bottom:10px}
+#bagportal .bpcap h2{font-family:var(--h);font-weight:500;font-size:clamp(24px,4vw,44px)}
+
+/* journey captions */
+.jcap{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);z-index:6;text-align:center;padding:0 24px;pointer-events:none;opacity:0;transition:opacity .5s}
+.jcap.show{opacity:1}
+/* local scrim: keeps the white headline legible against the bright sky
+   without dimming the scenery behind it */
+.jcap::before{content:"";position:absolute;left:50%;top:50%;width:150%;height:260%;transform:translate(-50%,-50%);
+  z-index:-1;pointer-events:none;
+  background:radial-gradient(46% 38% at 50% 50%,rgba(8,22,15,.52),rgba(8,22,15,.22) 55%,rgba(8,22,15,0) 78%)}
+.jcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+.jcap h1{font-family:var(--h);font-weight:700;font-size:clamp(46px,11vw,140px);line-height:.9;letter-spacing:-.03em;color:#fff;text-shadow:0 4px 18px rgba(6,18,12,.75),0 10px 46px rgba(6,18,12,.55)}
+.jcap h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,5vw,60px);letter-spacing:-.02em;color:#fff;text-shadow:0 4px 16px rgba(6,18,12,.75),0 8px 34px rgba(6,18,12,.5)}
+.jcap p{margin:16px auto 0;max-width:40ch;font-size:14.5px;font-weight:300;line-height:1.7;color:rgba(255,255,255,.9)}
+.jcap .btns{margin-top:26px;display:flex;gap:14px;justify-content:center;pointer-events:auto}
+.btn{border:none;cursor:pointer;font-family:var(--b);font-size:13px;font-weight:600;padding:13px 26px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;transition:transform .4s cubic-bezier(.34,1.5,.5,1),box-shadow .25s,background .25s}
+.btn.p{background:var(--signal);color:#fff}.btn.p:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,107,53,.4)}
+/* Apple-style pointer press (iOS ignores :active without a handler) */
+.pcard.pressing,.acard.pressing{transform:translateY(-3px) scale(.965)!important;transition:transform .11s ease-out!important}
+.btn.pressing{transform:scale(.9)!important;transition:transform .1s ease-out!important}
+nav .nl a.pressing,.brand.pressing{display:inline-block;transform:scale(.88)!important;transition:transform .1s ease-out!important}
+.btn.g{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.45);backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%)}
+.scrollcue{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:6;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#fff;opacity:.7;transition:opacity .4s}
+/* impact flash at the end */
+.flash{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 46%,rgba(255,213,77,.9),transparent 42%);mix-blend-mode:screen}
+
+/* progress bar */
+.prog{position:fixed;left:0;top:0;height:3px;width:0;background:linear-gradient(90deg,var(--signal),var(--gold));z-index:90}
+
+/* ===== content sections ===== */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+.sec{padding:clamp(80px,12vh,140px) 0}
+.sec.light{background:var(--paper);color:var(--ink)}
+.sec.dark{background:#e8f2ee;color:var(--ink)}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:44px}
+.sec-head h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,4.6vw,52px);line-height:1;letter-spacing:-.02em}
+.sec-head h2 em{font-style:italic;color:var(--forest)}
+.sec.dark .sec-head h2 em{color:var(--forest)}
+.sec-head p{font-size:14px;font-weight:300;color:var(--mut);max-width:44ch;margin-top:10px}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:1000px){.pgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.pgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .pcard{padding:12px 6px;border-radius:14px}
+  .pcard .dw{height:74px}
+  .pcard .disc-scene{zoom:.6}
+  .pcard .shadow{width:48px;height:9px;margin-top:-4px}
+  .pcard h3{font-size:11px;margin-top:6px;line-height:1.15}
+  .pcard .cls{margin-top:6px;font-size:8px;letter-spacing:.06em;padding:3px 6px}
+  .pcard .fn{display:none}
+  .pcard .pr{margin-top:auto;padding-top:8px;font-size:12.5px}
+  .disc-group{margin-bottom:26px}
+  .disc-group .gt h3{font-size:16px}}
+.disc-group{margin-bottom:40px}
+/* ---- catalogue filter ---- */
+.filterbtn{display:inline-flex;align-items:center;gap:7px;vertical-align:middle;margin-left:14px;
+  font-family:var(--b);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;
+  padding:8px 15px;border-radius:999px;border:1px solid var(--glassbrd);background:var(--glass2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 3px 12px rgba(10,22,20,.07);
+  -webkit-tap-highlight-color:transparent;transition:border-color .2s,box-shadow .2s}
+.filterbtn:hover{border-color:rgba(255,107,53,.5)}
+.filterbtn[aria-expanded="true"]{border-color:var(--signal);color:var(--signal)}
+.filterbtn.pressing{transform:scale(.93)!important;transition:transform .1s ease-out!important}
+.fcount{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;
+  border-radius:999px;background:var(--signal);color:#fff;font-size:11px;font-weight:700}
+.filterpanel{margin:0 0 26px;padding:18px 20px;border:1px solid var(--line);border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.45));
+  display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.filterpanel[hidden]{display:none}
+.fgroup h4{font-family:var(--h);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mut);margin-bottom:10px}
+.fchips{display:flex;flex-wrap:wrap;gap:7px}
+.fchip{font-family:var(--b);font-size:12.5px;font-weight:500;color:var(--ink);cursor:pointer;
+  padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.7);
+  -webkit-tap-highlight-color:transparent;transition:background .18s,border-color .18s,color .18s}
+.fchip:hover{border-color:rgba(255,107,53,.45)}
+.fchip[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:#fff}
+.fchip.pressing{transform:scale(.92)!important;transition:transform .1s ease-out!important}
+.frow{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border-top:1px solid var(--line);padding-top:13px}
+.fres{font-size:12.5px;color:var(--mut)}
+.fclear,.flink{font-family:var(--b);font-size:12.5px;font-weight:600;color:var(--signal);cursor:pointer;
+  background:none;border:none;padding:4px 2px;-webkit-tap-highlight-color:transparent}
+.fempty{text-align:center;color:var(--mut);font-size:14px;padding:34px 0}
+.fempty[hidden]{display:none}
+@media(max-width:560px){
+  .filterbtn{margin-left:10px;font-size:12px;padding:7px 13px}
+  .filterpanel{padding:15px 15px;gap:14px;grid-template-columns:1fr}
+}
+.disc-group .gt{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.disc-group .gt h3{font-family:var(--h);font-weight:600;font-size:20px;letter-spacing:-.01em}
+.disc-group .gt span{font-size:12px;color:var(--mut)}
+.pcard{background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.56));border:1px solid rgba(255,255,255,.8);border-radius:20px;padding:24px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;-webkit-tap-highlight-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 24px rgba(14,26,19,.06);transition:transform .42s cubic-bezier(.34,1.4,.5,1),box-shadow .3s}
+.pcard:hover{transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 20px 44px rgba(14,26,19,.14)}
+
+.pcard .dw{height:132px;display:flex;align-items:center;justify-content:center}
+.pcard .shadow{width:76px;height:14px;border-radius:50%;background:radial-gradient(ellipse,rgba(14,26,19,.22),transparent 70%);margin-top:-6px}
+.pcard h3{font-family:var(--h);font-weight:600;font-size:17px;margin-top:14px}
+.pcard .cls{margin-top:8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);background:#f0efe9;border-radius:999px;padding:4px 11px}
+.pcard .fn{margin-top:9px;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.pcard .pr{margin-top:auto;padding-top:14px;font-size:15px;font-weight:600;color:var(--forest)}
+.disc-scene{perspective:800px}
+/* Discs hold still (rotateX tilt) and only spin while hovered — avoids
+   15+ continuous CSS animations compositing every frame. */
+.disc3d{position:relative;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(0);animation:spin 15s linear infinite;animation-play-state:paused}
+.pcard:hover .disc3d{animation-play-state:running}
+@keyframes spin{from{transform:rotateX(58deg) rotateZ(0)}to{transform:rotateX(58deg) rotateZ(360deg)}}
+.dl{position:absolute;inset:0;border-radius:50%}
+.dface{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.dring{position:absolute;inset:12%;border-radius:50%;border:1px solid rgba(250,249,245,.22)}
+.agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:1000px){.agrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.agrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .acard .bd{padding:12px 12px 14px}.acard h4{font-size:14px}.acard .ad{font-size:11px}}
+.acard{background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.56));border:1px solid rgba(255,255,255,.8);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 24px rgba(14,26,19,.06);transition:transform .42s cubic-bezier(.34,1.4,.5,1),box-shadow .3s}
+/* frosted glass only on desktop pointers (backdrop-filter is too heavy on mobile GPUs) */
+@media(hover:hover) and (pointer:fine){
+  .pcard,.acard{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.36));backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%)}
+}
+@media(hover:none){
+  nav{background:rgba(247,249,246,.92);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .navsearch{background:rgba(255,255,255,.94);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .searchhint{background:rgba(255,255,255,.97);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .btn.g{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(20,42,62,.86)}
+  /* drop-shadow on scaled elements re-rasters every frame on mobile — drop it */
+  #bagportal .bagbig{filter:none}
+  .hd-stamp svg{filter:none}
+}
+.acard:hover{transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 20px 44px rgba(14,26,19,.14)}
+
+.acard .im{aspect-ratio:1;overflow:hidden;background:linear-gradient(135deg,#1B4332,#2E6B4F)}
+.acard .im img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.acard:hover .im img{transform:scale(1.05)}
+.acard .bd{padding:16px 16px 18px;flex:1;display:flex;flex-direction:column}
+.acard h4{font-family:var(--h);font-weight:600;font-size:16px}
+.acard .ad{font-size:11.5px;font-weight:300;color:var(--mut);margin-top:5px;line-height:1.5}
+.acard .ap{margin-top:auto;padding-top:10px;font-size:14px;font-weight:600;color:var(--forest)}
+.brandrow{display:flex;flex-wrap:wrap;gap:clamp(18px,4vw,54px);align-items:center;justify-content:center;margin-top:8px}
+.brandrow span{font-family:var(--h);font-style:italic;font-size:clamp(18px,2.4vw,30px);color:var(--mut)}
+/* footer */
+footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
+.nlrow{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:end;padding-bottom:56px;border-bottom:1px solid rgba(14,26,19,.12)}
+.nlrow h2{font-family:var(--h);font-weight:500;font-size:clamp(26px,4vw,46px);line-height:1.02;letter-spacing:-.02em}
+.nlrow h2 em{font-style:italic;color:var(--forest)}
+.nlrow p{margin-top:14px;font-size:14px;font-weight:300;color:var(--mut);max-width:42ch}
+.nlform{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px;display:flex;gap:8px;max-width:460px;margin-left:auto}
+.nlform input{flex:1;background:transparent;border:none;outline:none;color:var(--ink);font-family:var(--b);font-size:14px;padding:12px 18px;min-width:0}
+.nlform input::placeholder{color:var(--mut)}
+.nlform button{border:none;cursor:pointer;background:var(--signal);color:#fff;border-radius:999px;padding:12px 24px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.nlthanks{max-width:460px;margin-left:auto;padding:16px 24px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:14px}
+.bigmark{font-family:var(--h);font-weight:700;font-size:clamp(64px,18vw,240px);line-height:.82;letter-spacing:-.03em;margin:48px 0 32px;color:#152a5e}
+.fcols{display:flex;flex-wrap:wrap;gap:40px 64px;justify-content:space-between}
+.fcols .grp h4{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+.fcols .grp a{display:block;font-size:14px;color:#2b3a33;padding:5px 0}
+.fbottom{margin-top:38px;font-size:11px;color:var(--mut)}
+@media(max-width:760px){.nlrow{grid-template-columns:1fr}.nlform,.nlthanks{margin-left:0;width:100%;max-width:100%;min-width:0}}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.disc3d,.hero-disc,.hero-stage,.disc-aura{animation:none}
+  #journey{height:100vh}.scene{position:relative}}
+/* ==========================================================================
+   THEME 4 — dark canvas + typography intro
+   Appended last, so every rule above survives untouched and this only
+   re-tones. Layout, spacing, grids, breakpoints and component markup are
+   exactly as in flightlab-cinematic.
+   ========================================================================== */
+
+:root{
+  --paper:#0D1117; --ink:#E8EDF4; --mut:rgba(232,237,244,.56);
+  --line:rgba(255,255,255,.09);
+  --signal:#3ECF8E; --forest:#3ECF8E; --teal:#3ECF8E; --gold:rgba(232,237,244,.5);
+  --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.07);
+  --glassbrd:rgba(255,255,255,.12); --blur:blur(22px) saturate(150%);
+  --surf2:#111827; --surf3:#151A22; --surf4:#181C24;
+  --on-signal:#06140D;
+}
+
+/* One continuous canvas: the page owns the gradient, sections are glass-clear,
+   so nothing ever cuts from one background colour to another. */
+body{background:#0D1117;color:var(--ink)}
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(80% 34% at 50% 0%,rgba(62,207,142,.05),transparent 60%),
+    linear-gradient(180deg,#0D1117 0%,#111827 30%,#0D1117 55%,#151A22 80%,#0D1117 100%)}
+.sec{position:relative;z-index:1}
+.sec.light,.sec.dark{background:transparent;color:var(--ink)}
+.sec + .sec::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08) 22%,rgba(255,255,255,.08) 78%,transparent)}
+.sec.dark .sec-head h2 em{color:var(--signal)}
+
+/* Cards become raised glass instead of white paper */
+.pcard,.acard{
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 30px rgba(0,0,0,.4)}
+@media(hover:hover) and (pointer:fine){
+  .pcard,.acard{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
+    backdrop-filter:none;-webkit-backdrop-filter:none}
+  .pcard:hover,.acard:hover{background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.035));
+    border-color:rgba(62,207,142,.3)}
+}
+.acard .im{background:linear-gradient(135deg,#1A2230,#0D1117)}
+.disc-group .gt{border-bottom-color:rgba(255,255,255,.09)}
+
+/* Newsletter, footer, bag portal — the last white surfaces */
+.nlform,.nlthanks{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:var(--ink)}
+.nlform input{color:var(--ink)}
+.nlform input::placeholder{color:rgba(232,237,244,.38)}
+.nlform button{background:var(--signal);color:var(--on-signal)}
+footer{background:transparent;border-top:1px solid rgba(255,255,255,.08);color:var(--ink);position:relative;z-index:1}
+.bigmark{color:rgba(232,237,244,.10)}
+#bagportal{background:transparent;position:relative;z-index:1}
+#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,#161C26,#0D1117 62%,#0B0E14)}
+#bagportal .bpcap{color:var(--ink)}
+#bagportal .bpcap .k{color:var(--signal)}
+#bagportal .bagbig{filter:drop-shadow(0 26px 54px rgba(0,0,0,.6))}
+
+/* Glass kept to the few chrome surfaces the brief allows */
+nav{background:rgba(13,17,23,.62);border-bottom:1px solid rgba(255,255,255,.10)}
+nav .brand,nav .nl a{color:var(--ink)}
+.navsearch{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 4px 16px rgba(0,0,0,.3)}
+.navsearch input{color:var(--ink)}
+.navsearch input::placeholder{color:rgba(232,237,244,.38)}
+.searchhint{background:rgba(21,26,34,.96);border-color:rgba(255,255,255,.12);color:var(--mut)}
+@media(hover:none){
+  nav{background:rgba(13,17,23,.95)}
+  .navsearch{background:rgba(255,255,255,.06)}
+  .searchhint{background:#151A22}
+}
+
+/* Green stays scarce: buttons, active states, highlights */
+.btn.p{background:var(--signal);color:var(--on-signal)}
+.btn.p:hover{box-shadow:0 10px 28px rgba(62,207,142,.24)}
+.btn.g{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:var(--ink)}
+.fchip{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);color:var(--ink)}
+.pcard .cls{background:rgba(255,255,255,.07);color:var(--mut)}
+.pcard .pr{color:var(--signal)}
+.pcard h3,.acard h4{color:var(--ink)}
+.acard .ad{color:var(--mut)}.acard .ap{color:var(--signal)}
+.fchip[aria-pressed="true"]{background:var(--signal);border-color:var(--signal);color:var(--on-signal)}
+.filterbtn{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--ink)}
+.filterpanel{background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.10)}
+.fcount{background:var(--signal);color:var(--on-signal)}
+.eyebrow,.sec-head .k{color:rgba(232,237,244,.42)}
+
+/* ---------- Floating discs ----------
+   One fixed layer behind everything, so the same few discs carry across
+   every section and tie them together. Transform only, and they sit under
+   the content layer so they can never cross text or buttons. */
+.fl-discs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.fl-disc{position:absolute;width:var(--d);height:var(--d);border-radius:50%;
+  opacity:var(--o,.05);filter:blur(var(--bl,4px));will-change:transform;
+  background:radial-gradient(circle at 34% 28%,rgba(176,212,238,.9),rgba(78,120,152,.55) 44%,rgba(22,34,46,.2) 70%,transparent 76%)}
+.fl-disc.a{--d:38vmin;--o:.055;--bl:3px;left:-6vw;top:14vh;animation:fl-a 150s linear infinite}
+.fl-disc.b{--d:26vmin;--o:.04;--bl:6px;right:-4vw;top:52vh;animation:fl-b 190s linear infinite}
+.fl-disc.c{--d:52vmin;--o:.03;--bl:10px;left:24vw;top:118vh;animation:fl-c 220s linear infinite}
+.fl-disc.d{--d:20vmin;--o:.05;--bl:2px;right:16vw;top:186vh;animation:fl-b 170s linear infinite}
+.fl-disc.e{--d:34vmin;--o:.035;--bl:7px;left:8vw;top:250vh;animation:fl-a 205s linear infinite}
+@keyframes fl-a{0%{transform:translate3d(0,0,0) rotateX(66deg) rotateZ(0deg)}
+  100%{transform:translate3d(6vw,-14vh,0) rotateX(66deg) rotateZ(360deg)}}
+@keyframes fl-b{0%{transform:translate3d(0,0,0) rotateX(62deg) rotateZ(360deg)}
+  100%{transform:translate3d(-5vw,12vh,0) rotateX(62deg) rotateZ(0deg)}}
+@keyframes fl-c{0%{transform:translate3d(0,0,0) rotateX(70deg) rotateZ(0deg)}
+  100%{transform:translate3d(9vw,-9vh,0) rotateX(70deg) rotateZ(-360deg)}}
+@media(max-width:560px){.fl-disc.c,.fl-disc.e{display:none}}
+@media(prefers-reduced-motion:reduce){.fl-disc{animation:none}}
+
+/* ---------- Typography intro ----------
+   The camera dollies toward the word: apparent size comes from translateZ
+   under a perspective, not from scale(), so the letters gain real depth and
+   stay text rather than a stretched bitmap. */
+.scene{background:#0D1117;perspective:1100px;perspective-origin:50% 46%}
+.fl-ambient{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(44% 36% at 50% 46%,rgba(142,182,216,.11),transparent 72%),
+    radial-gradient(120% 92% at 50% 50%,transparent 38%,rgba(4,6,10,.82) 100%)}
+.fl-stage{position:absolute;inset:0;z-index:2;display:grid;place-items:center;
+  transform-style:preserve-3d;pointer-events:none}
+.fl-mark{margin:0;font-family:var(--b);font-weight:800;font-size:14.3vw;
+  letter-spacing:-.045em;line-height:1;white-space:nowrap;
+  transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
+  filter:drop-shadow(0 0 60px rgba(150,195,230,.10))}
+
+/* Liquid glass: the fill is almost nothing, a lit top and bottom edge give
+   it body, and the sheen is what actually reveals the letterforms. */
+.fl-glass{position:relative;display:inline-block;color:rgba(255,255,255,.055);
+  -webkit-text-stroke:1px rgba(206,228,248,.15)}
+.fl-glass::before,.fl-glass::after{content:attr(data-text);position:absolute;left:0;top:0;
+  white-space:nowrap;-webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:0;pointer-events:none}
+/* background-image, not the background shorthand: the shorthand resets
+   background-clip back to border-box and the text clip is lost. */
+.fl-glass::before{background-image:linear-gradient(178deg,
+  rgba(255,255,255,.30) 0%,rgba(255,255,255,.05) 24%,rgba(255,255,255,0) 50%,
+  rgba(178,206,232,.06) 76%,rgba(226,240,252,.20) 100%)}
+.fl-glass::after{background-image:linear-gradient(102deg,transparent 40%,
+  rgba(255,255,255,.07) 46%,rgba(255,255,255,.38) 50%,rgba(255,255,255,.07) 54%,transparent 60%);
+  background-size:300% 100%;animation:fl-sheen 17s linear infinite}
+@keyframes fl-sheen{0%{background-position:190% 0}100%{background-position:-90% 0}}
+@media(prefers-reduced-motion:reduce){.fl-glass::after{animation:none}}
+
+#loader{background:#0D1117}
+.grain{opacity:.035}

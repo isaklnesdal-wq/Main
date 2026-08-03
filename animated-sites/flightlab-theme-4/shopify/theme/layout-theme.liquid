@@ -6,7 +6,7 @@
 <title>{{ page_title }} — Flightlab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--paper:#0D1117;--ink:#E8EDF4;--forest:#3ECF8E;--signal:#3ECF8E;--gold:rgba(232,237,244,.5);--mut:rgba(232,237,244,.56);--line:rgba(255,255,255,.09);--h:'Space Grotesk',sans-serif;--b:'Inter',sans-serif}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -19,6 +19,7 @@ header.site .shell{display:flex;align-items:center;justify-content:space-between
 nav.site a{font-size:13.5px;font-weight:500;margin-left:22px;opacity:.85}
 nav.site a:hover{opacity:1;color:var(--signal)}
 main{flex:1;padding:clamp(28px,6vh,64px) 0}
+body.template-index main{padding:0}
 .btn{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:var(--b);font-size:14px;font-weight:600;padding:14px 28px;border-radius:999px;background:var(--signal);color:#06140D;-webkit-tap-highlight-color:transparent;transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,107,53,.35)}
 .btn:active{transform:scale(.93)}
@@ -29,9 +30,11 @@ footer.site{background:transparent;border-top:1px solid rgba(255,255,255,.08);co
 footer.site .shell{padding-top:26px;padding-bottom:26px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 h1,h2,h3{font-family:var(--h)}
 </style>
+{%- if template.name == "index" -%}{{ 'fl-home.css' | asset_url | stylesheet_tag }}{%- endif -%}
 {{ content_for_header }}
 </head>
-<body>
+<body class="template-{{ template.name | handle }}">
+{%- unless template.name == "index" -%}
 <header class="site"><div class="shell">
   <a class="brand" href="/">FLIGHTLAB</a>
   <nav class="site">
@@ -41,12 +44,18 @@ h1,h2,h3{font-family:var(--h)}
     <a href="/cart">Handlekurv{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</a>
   </nav>
 </div></header>
-<main><div class="shell">
-{{ content_for_layout }}
-</div></main>
+{%- endunless -%}
+{%- if template.name == "index" -%}
+  {%- comment -%} The homepage is full-bleed and brings its own chrome. {%- endcomment -%}
+  <main>{{ content_for_layout }}</main>
+{%- else -%}
+  <main><div class="shell">{{ content_for_layout }}</div></main>
+{%- endif -%}
+{%- unless template.name == "index" -%}
 <footer class="site"><div class="shell">
   <span>Flightlab · Fra første kast til siste putt</span><span>Norge &amp; Norden · © 2026</span>
 </div></footer>
+{%- endunless -%}
 <script>
 (function(){var SEL='.btn,.pc,.acard,nav.site a,.brand';
 addEventListener('pointerdown',function(e){var t=e.target.closest(SEL);if(t)t.classList.add('pressing');},{passive:true});
