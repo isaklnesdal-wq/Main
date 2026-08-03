@@ -1,0 +1,16 @@
+<h1 style="font-weight:600;font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;margin-bottom:18px">Søk</h1>
+<form action="/search" method="get" style="display:flex;gap:10px;max-width:480px;margin-bottom:30px">
+  <input type="text" name="q" value="{{ search.terms | escape }}" placeholder="Søk i butikken…" style="flex:1;padding:13px 18px;border-radius:999px;border:1.5px solid var(--line);font-family:var(--b);font-size:14px">
+  <button type="submit" class="btn">Søk</button>
+</form>
+{% if search.performed %}
+  {% if search.results_count == 0 %}<p style="color:var(--mut);font-weight:300">Ingen treff på «{{ search.terms | escape }}».</p>{% endif %}
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px">
+  {% for item in search.results %}
+    <a href="{{ item.url }}" style="background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;display:block">
+      <div style="font-family:var(--h);font-weight:600;font-size:15px">{{ item.title }}</div>
+      {% if item.price %}<div style="margin-top:8px;font-family:var(--h);font-weight:600;color:var(--forest)">{{ item.price | money }}</div>{% endif %}
+    </a>
+  {% endfor %}
+  </div>
+{% endif %}

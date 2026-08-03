@@ -1,0 +1,62 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Flightlab Cinematic",
+    "theme_version": "1.2.0",
+    "theme_author": "Flightlab",
+    "theme_documentation_url": "https://flightlab.no",
+    "theme_support_url": "https://flightlab.no"
+  },
+  {
+    "name": "Forsidebilder — slik virker det",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Her bytter du bildene på forsiden uten å røre kode. Last opp ditt eget bilde i feltet du vil endre, og trykk Lagre. Lar du et felt stå tomt, henter forsiden automatisk hovedbildet fra selve produktet i Shopify — så du kan også bare bytte produktbildet under Produkter, og forsiden følger etter."
+      },
+      {
+        "type": "paragraph",
+        "content": "Tips: bruk kvadratiske bilder (f.eks. 800×800) — kortene på forsiden er kvadratiske og beskjærer bildet fra midten."
+      }
+    ]
+  },
+  {
+    "name": "Bilder — Sekker",
+    "settings": [
+      { "type": "image_picker", "id": "img_flightlab_sling", "label": "Flightlab Sling", "info": "299 kr · 6–8 discer" },
+      { "type": "image_picker", "id": "img_flightlab_starter_bag", "label": "Flightlab Starter Bag", "info": "349 kr · 8–10 discer" },
+      { "type": "image_picker", "id": "img_flightlab_coursebag", "label": "Flightlab Coursebag", "info": "699 kr · 18+ discer" },
+      { "type": "image_picker", "id": "img_flightlab_tour_backpack", "label": "Flightlab Tour Backpack", "info": "1 099 kr · 25+ discer" }
+    ]
+  },
+  {
+    "name": "Bilder — Startpakker og utstyr",
+    "settings": [
+      { "type": "image_picker", "id": "img_startsett_3_discer", "label": "Startsett — 3 Discer", "info": "349 kr" },
+      { "type": "image_picker", "id": "img_disc_handkle", "label": "Disc-Håndkle", "info": "149 kr" },
+      { "type": "image_picker", "id": "img_flightlab_drikkeflaske", "label": "Flightlab Drikkeflaske", "info": "129 kr" },
+      { "type": "image_picker", "id": "img_flightlab_caps", "label": "Flightlab Caps", "info": "199 kr" },
+      { "type": "image_picker", "id": "img_mini_markor", "label": "Mini-markør", "info": "49 kr" },
+      { "type": "image_picker", "id": "img_scorekort_holder", "label": "Scorekort-holder", "info": "99 kr" },
+      { "type": "image_picker", "id": "img_flightlab_hettegenser", "label": "Flightlab Hettegenser", "info": "549 kr" },
+      { "type": "image_picker", "id": "img_ovingskurv", "label": "Øvingskurv", "info": "899 kr" }
+    ]
+  },
+  {
+    "name": "Bilder — Toppbilde",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "img_hero_bg",
+        "label": "Bakgrunnsbilde bak discen",
+        "info": "Landskapet bak discen som svever øverst. Last opp et liggende foto (helst 2000 px bredt eller mer) — f.eks. en discgolfkurv i skogen med sol gjennom trærne. Lar du feltet stå tomt, brukes den tegnede skogen. Bildet beskjæres til skjermformat, og midten av bildet prioriteres — på mobil vises bare en smal midtstripe, så pass på at motivet står midt i bildet."
+      },
+      {
+        "type": "image_picker",
+        "id": "img_hero_disc",
+        "label": "Disc øverst på forsiden",
+        "info": "Discen som svever i toppen og zoomes gjennom. Bruk et kvadratisk bilde tatt rett ovenfra — det beskjæres til en sirkel."
+      }
+    ]
+  }
+]

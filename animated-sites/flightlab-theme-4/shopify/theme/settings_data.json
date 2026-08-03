@@ -9,13 +9,6 @@
  */
 {
   "current": {
-    "color_paper": "#0D1117",
-    "color_forest": "#151A22",
-    "color_forest_deep": "#0D1117",
-    "color_signal": "#3ECF8E",
-    "logo_width": 140,
-    "shipping_note": "Fri frakt over 999 kr",
-    "delivery_note": "Levering 1–3 virkedager",
-    "returns_note": "30 dagers åpent kjøp"
+    "img_hero_bg": "shopify://shop_images/flightlab-hero-skog-v3.webp"
   }
 }

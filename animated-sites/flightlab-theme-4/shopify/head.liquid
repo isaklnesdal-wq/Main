@@ -1,0 +1,67 @@
+{%- comment -%}
+  Forsidebilder, styrt fra temainnstillingene.
+
+  For hvert kort velges bildet slik (se snippets/fl-img.liquid):
+    1. Temainnstilling  — Tilpass → Temainnstillinger → «Bilder — …»
+    2. ellers produktets hovedbilde i Shopify
+    3. ellers standardbildet som allerede ligger i forsidekoden
+
+  Resultatet legges på window.FL_IMG, som forsidekoden leser. Dermed kan
+  bildene byttes uten å redigere kode.
+
+  Skal du legge til et nytt kort: legg inn en image_picker i
+  config/settings_schema.json og en ny render-linje under, med samme
+  handle som produktet har i Shopify.
+{%- endcomment -%}
+<script>
+window.FL_IMG={
+{%- render 'fl-img', h: 'flightlab-sling',          s: settings.img_flightlab_sling -%}
+{%- render 'fl-img', h: 'flightlab-starter-bag',    s: settings.img_flightlab_starter_bag -%}
+{%- render 'fl-img', h: 'flightlab-coursebag',      s: settings.img_flightlab_coursebag -%}
+{%- render 'fl-img', h: 'flightlab-tour-backpack',  s: settings.img_flightlab_tour_backpack -%}
+{%- render 'fl-img', h: 'startsett-3-discer',       s: settings.img_startsett_3_discer -%}
+{%- render 'fl-img', h: 'disc-handkle',             s: settings.img_disc_handkle -%}
+{%- render 'fl-img', h: 'flightlab-drikkeflaske',   s: settings.img_flightlab_drikkeflaske -%}
+{%- render 'fl-img', h: 'flightlab-caps',           s: settings.img_flightlab_caps -%}
+{%- render 'fl-img', h: 'mini-markor',              s: settings.img_mini_markor -%}
+{%- render 'fl-img', h: 'scorekort-holder',         s: settings.img_scorekort_holder -%}
+{%- render 'fl-img', h: 'flightlab-hettegenser',    s: settings.img_flightlab_hettegenser -%}
+{%- render 'fl-img', h: 'ovingskurv',               s: settings.img_ovingskurv, last: true -%}
+};
+{%- if settings.img_hero_disc != blank %}
+window.FL_HERO={{ settings.img_hero_disc | image_url: width: 900 | json }};
+{%- endif %}
+{%- comment -%}
+  Real disc prices for the catalogue filter, read from the Discer
+  collection. A collection loop is used rather than all_products because
+  that object is capped at 20 lookups per template and the card images
+  already spend 12 of them.
+{%- endcomment -%}
+{%- assign disc_col = collections['discer-1'] -%}
+{%- if disc_col == blank -%}{%- assign disc_col = collections['discer'] -%}{%- endif -%}
+{%- if disc_col.products_count > 0 %}
+window.FL_PRICE={
+{%- for p in disc_col.products limit: 60 -%}
+{{ p.handle | json }}:{amount:{{ p.price | divided_by: 100.0 }},text:{{ p.price | money_without_trailing_zeros | strip_html | json }}}
+{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+};
+{%- endif %}
+{%- assign bg = settings.img_hero_bg -%}
+{%- if bg != blank -%}
+{%- comment -%}
+  Only advertise widths the file actually has: Shopify never upscales, so
+  asking for 2000 from a 1229px original returns 1229 and the browser
+  would pick a smaller image than the descriptor promised.
+{%- endcomment -%}
+{%- assign bgw = bg.width -%}
+{%- capture bg_srcset -%}
+{%- assign steps = '600,900,1400,2000' | split: ',' -%}
+{%- for s in steps -%}{%- assign sw = s | times: 1 -%}
+{%- if sw < bgw %}{{ bg | image_url: width: sw }} {{ sw }}w, {% endif -%}
+{%- endfor -%}
+{{ bg | image_url: width: bgw }} {{ bgw }}w
+{%- endcapture %}
+window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_srcset | strip | json }}};
+{%- endif %}
+</script>

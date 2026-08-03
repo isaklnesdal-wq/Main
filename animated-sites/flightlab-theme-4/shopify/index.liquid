@@ -1,0 +1,1319 @@
+{% layout none %}{% raw %}
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flightlab — Fly gjennom banen</title>
+<meta name="description" content="Flightlab — norsk discgolfs nye hjem. Fly gjennom skogen i 3D og land i kurven. Discer fra Kastaplast, Discmania og Latitude 64 til 179 kr." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper:#FAF9F5; --ink:#0A1614; --forest:#123F39; --signal:#FF6B35; --gold:#F2B705;
+  --teal:#33C6B4; --mut:#6b7d72; --line:rgba(10,22,20,.12);
+  --glass:rgba(255,255,255,.24); --glass2:rgba(255,255,255,.46); --glassbrd:rgba(255,255,255,.6);
+  --blur:blur(24px) saturate(190%);
+  --h:'Space Grotesk',sans-serif; --b:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--b);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--signal)}
+/* ===== liquid-glass sticky nav with always-on search ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;gap:clamp(10px,2vw,22px);padding:10px clamp(14px,3.5vw,36px);
+  background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border-bottom:1px solid rgba(255,255,255,.5);box-shadow:0 6px 26px rgba(10,22,20,.08)}
+nav .brand{font-family:var(--h);font-weight:700;font-size:20px;color:var(--ink);flex:none}
+.navsearch{position:relative;flex:1;max-width:520px;margin:0 auto;display:flex;align-items:center;gap:9px;
+  background:var(--glass2);border:1px solid var(--glassbrd);border-radius:999px;padding:8px 15px;
+  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 4px 16px rgba(10,22,20,.07);transition:box-shadow .25s,border-color .25s}
+.navsearch:focus-within{border-color:rgba(255,107,53,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 6px 22px rgba(255,107,53,.16)}
+.navsearch svg{flex:none;color:var(--mut)}
+.navsearch input{flex:1;border:none;outline:none;background:transparent;font-family:var(--b);font-size:14px;color:var(--ink);min-width:0}
+.navsearch input::placeholder{color:var(--mut)}
+.navsearch input::-webkit-search-cancel-button{-webkit-appearance:none}
+.searchhint{position:absolute;top:calc(100% + 9px);left:0;right:0;display:none;padding:11px 16px;font-size:13px;color:var(--mut);
+  background:var(--glass2);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border:1px solid var(--glassbrd);border-radius:16px;box-shadow:0 14px 40px rgba(10,22,20,.16)}
+.searchhint.on{display:block}
+.searchhint a{color:var(--signal);font-weight:600}
+nav .nl{display:flex;gap:22px;align-items:center;flex:none}
+nav .nl a{font-size:13px;font-weight:500;color:var(--ink);transition:color .2s}
+nav .nl a:hover{color:var(--signal)}
+@media(max-width:860px){nav .nl a:not(.cta){display:none}}
+/* Phones keep the full menu — Discer / Bager / Tilbehør / Kontakt — with the
+   search field shrunk to make room for it. */
+@media(max-width:640px){
+  nav{gap:8px;padding:9px 18px 9px 14px}
+  nav .brand{font-size:15px;letter-spacing:0}
+  .navsearch{max-width:none;flex:1 1 60px;min-width:0;padding:6px 10px;gap:6px}
+  .navsearch svg{width:15px;height:15px}
+  .navsearch input{font-size:12.5px}
+  nav .nl{gap:11px}
+  nav .nl a:not(.cta){display:inline}
+  nav .nl a{font-size:11.5px}
+}
+@media(max-width:520px){nav .brand{display:none}}
+
+/* ===== SCROLL-ZOOM PORTALS (GPU transforms only — buttery, no lag) ===== */
+/* Hero: the real Higgsfield clip autoplays behind a giant disc; scroll
+   zooms INTO the disc and hands off to the catalogue. */
+#journey{position:relative;height:380vh}
+/* Bright, hazy morning sky with a low sun. Kept in CSS rather than the SVG
+   so it scales with the viewport instead of being cropped on narrow phones. */
+.scene{position:sticky;top:0;height:100vh;overflow:hidden;
+  background:
+    radial-gradient(circle 34px at 68% 25%,rgba(255,253,245,.98),rgba(255,247,225,.88) 58%,rgba(255,240,208,0) 100%),
+    radial-gradient(circle 150px at 68% 25%,rgba(255,240,203,.5),rgba(255,236,190,0) 100%),
+    radial-gradient(circle 420px at 68% 25%,rgba(255,228,168,.3),rgba(255,226,166,0) 100%),
+    radial-gradient(130% 60% at 60% 58%,rgba(255,243,219,.55),rgba(255,243,219,0) 66%),
+    linear-gradient(180deg,#79b6ce 0%,#a3d0da 24%,#c8e2dd 46%,#e2ede1 68%,#edf2e6 100%)}
+/* soft atmospheric lift right around the floating disc */
+.scene::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(44% 26% at 50% 42%,rgba(255,255,255,.32),transparent 74%)}
+/* gentle ground shade — nothing like the old near-black wash */
+.scene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:28%;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(26,52,35,.4))}
+/* light vignette only; the caption gets its own scrim so white text stays
+   readable without having to darken the whole sky */
+.vtint{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(92% 74% at 50% 44%,transparent 46%,rgba(12,30,20,.3) 100%),
+    linear-gradient(180deg,rgba(12,30,20,.2),transparent 22%,transparent 64%,rgba(12,30,20,.34))}
+/* a photograph is far busier than the drawn scenery, so it needs a
+   stronger scrim to keep the white headline legible */
+.scene.has-photo .vtint{
+  background:radial-gradient(94% 76% at 50% 44%,rgba(8,18,12,.1) 38%,rgba(8,18,12,.52) 100%),
+    linear-gradient(180deg,rgba(8,18,12,.44),rgba(8,18,12,.1) 26%,rgba(8,18,12,.16) 58%,rgba(8,18,12,.6))}
+/* Optional real backdrop photo (Theme settings → Bakgrunnsbilde). Only
+   shown once it has actually decoded, so a slow or missing image leaves
+   the drawn scenery in place rather than flashing an empty scene. */
+.scenephoto{position:absolute;inset:0;z-index:0;overflow:hidden;opacity:0;transition:opacity .6s ease}
+.scene.has-photo .scenephoto{opacity:1}
+.scene.has-photo .scape{display:none}
+/* The basket was moved left inside the photo itself, so desktop needs no
+   panning — at 16:10 the photo is width-limited anyway and X has no effect. */
+.scenephoto img{width:100%;height:100%;object-fit:cover;object-position:50% 55%;display:block}
+/* A phone crops away most of the width. Centring would leave a basket
+   sliced in half at the frame edge, so pan to a clean stretch of forest —
+   the disc fills the middle of a phone screen anyway. */
+@media(max-width:560px){.scenephoto img{object-position:60% 55%}}
+/* layered forest + fairway + basket, built once by JS (static, cheap) */
+.scape{position:absolute;inset:0;z-index:0;pointer-events:none}
+.scape svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:62%;display:block}
+/* the zoom target — a realistic moulded frisbee, level with the camera.
+   It floats, glows and rocks gently back and forth; scrolling levels it
+   out and flies you THROUGH its pressed rings — no hard direct zoom. */
+.portal{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;will-change:transform,opacity}
+.hero-stage{position:relative;width:min(60vmin,500px);height:min(60vmin,500px);perspective:1200px;animation:bob 6.5s ease-in-out infinite}
+.hero-stage .layer{position:absolute;inset:0;border-radius:50%}
+@keyframes bob{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}
+/* Softer than it was: the daylight backdrop does the work now, so the aura
+   only needs to lift the disc off the treeline, not tint the whole sky. */
+.disc-aura{position:absolute;inset:-22%;border-radius:50%;
+  background:radial-gradient(circle,rgba(120,240,225,.26) 20%,rgba(90,215,200,.11) 44%,rgba(90,215,200,.03) 60%,transparent 72%);
+  animation:aura 4.5s ease-in-out infinite}
+@keyframes aura{0%,100%{transform:scale(.96)}50%{transform:scale(1.07)}}
+/* rest pose: standing upright, turned to the side and slanted; JS eases it
+   square to the camera as the dive toward the rings begins */
+.tilt{position:absolute;inset:0;transform:rotateY(36deg) rotateX(8deg);transform-style:preserve-3d;will-change:transform}
+.hero-disc{position:absolute;inset:0;border-radius:50%;animation:rock 7s ease-in-out infinite;
+  box-shadow:0 0 70px rgba(60,216,204,.55),0 0 180px rgba(46,190,178,.38),0 34px 90px rgba(0,0,0,.45)}
+@keyframes rock{0%,100%{transform:rotateZ(-11deg)}50%{transform:rotateZ(11deg)}}
+/* real product photo variant */
+.hero-disc.photo{overflow:hidden;background:#0b1b12}
+.hero-disc.photo img{width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.16);display:block}
+/* moulded plastic, lit flat from top-left: rim → shoulder → flight plate.
+   Green colourway, soft pressed rings. */
+.hd-rim{background:linear-gradient(135deg,#a4e8c0 0%,#2e9c5b 38%,#137043 72%,#06381f 100%);
+  box-shadow:inset 0 0 0 2px rgba(4,44,24,.5),inset 0 7px 14px rgba(255,255,255,.32),inset 0 -10px 20px rgba(0,0,0,.45)}
+.layer.hd-bevel{inset:7%;background:linear-gradient(135deg,#82d8a4,#23904f 55%,#0b562e 100%);
+  box-shadow:inset 0 0 0 2.5px rgba(6,48,26,.45),inset 0 5px 10px rgba(255,255,255,.26),inset 0 -9px 18px rgba(0,0,0,.34)}
+.layer.hd-face{inset:14%;background:linear-gradient(135deg,#79d49b 0%,#1e8b4b 52%,#0b5c30 100%);
+  box-shadow:inset 0 0 0 2px rgba(8,52,30,.42),inset 0 3px 7px rgba(255,255,255,.2),inset 0 -6px 13px rgba(0,0,0,.26)}
+.hd-face i{position:absolute;border-radius:50%;
+  box-shadow:inset 0 0 0 2px rgba(6,50,28,.32),inset 0 4px 7px rgba(255,255,255,.14),inset 0 -4px 8px rgba(0,0,0,.17)}
+.layer.hd-hub{inset:42.5%;background:linear-gradient(135deg,#85dba6,#23904f 60%,#0f6236);
+  box-shadow:inset 0 0 0 2px rgba(8,52,30,.38),inset 0 3px 5px rgba(255,255,255,.28),inset 0 -3px 7px rgba(0,0,0,.3)}
+/* anisotropic plastic sheen — rotates with the rock, so light plays across
+   the plate as the disc moves */
+.layer.hd-sheen{background:conic-gradient(from 210deg,rgba(255,255,255,.10),transparent 70deg,rgba(0,0,0,.13) 150deg,transparent 215deg,rgba(255,255,255,.07) 300deg,transparent 360deg)}
+/* printed stamp on the flight plate (tonal ink, subtle emboss) */
+.hd-stamp{position:absolute;inset:17%;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:.9}
+.hd-stamp svg{width:100%;height:100%;filter:drop-shadow(0 1px 0 rgba(0,0,0,.3))}
+.hd-noise{opacity:.16;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hd-flash{position:absolute;top:5.4%;left:47.6%;width:4.8%;height:1.7%;border-radius:99px;background:rgba(10,66,36,.5)}
+.hd-glare{background:radial-gradient(ellipse 44% 17% at 30% 11%,rgba(255,255,255,.72),rgba(255,255,255,.12) 46%,transparent 66%)}
+.portalglow{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 50%,#3fd0c2,#1f8a80 40%,#0a1614 72%)}
+.grain{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* branded intro loader */
+#loader{position:absolute;inset:0;z-index:8;background:#060c09;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .7s,filter .7s}
+#loader.done{opacity:0;filter:blur(8px);pointer-events:none}
+#loader .brand{font-family:var(--h);font-weight:700;letter-spacing:.4em;text-indent:.4em;font-size:24px;color:#fff}
+#loader .ln{width:56px;height:1px;background:rgba(255,255,255,.25)}
+/* bag zoom portal (between discs and bags) */
+/* Same paper background as the rest of the site, so this reads as the bag
+   standing on the page rather than a dark panel dropped into it. */
+#bagportal{position:relative;height:240vh;background:var(--paper)}
+#bagportal .pin{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(62% 50% at 50% 44%,#fff,var(--paper) 58%,#eef1e8)}
+#bagportal .bagbig{width:min(52vmin,400px);height:min(66vmin,510px);position:relative;
+  display:flex;align-items:center;justify-content:center;transform-origin:50% 50.5%; /* the zipper */
+  filter:drop-shadow(0 26px 54px rgba(14,26,19,.26));will-change:transform,opacity}
+#bagportal .bagbig svg{width:100%;height:100%;display:block}
+#bagportal .bpcap{position:absolute;z-index:3;top:12%;left:0;right:0;text-align:center;color:var(--ink);pointer-events:none;will-change:opacity}
+#bagportal .bpcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--signal);margin-bottom:10px}
+#bagportal .bpcap h2{font-family:var(--h);font-weight:500;font-size:clamp(24px,4vw,44px)}
+
+/* journey captions */
+.jcap{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);z-index:6;text-align:center;padding:0 24px;pointer-events:none;opacity:0;transition:opacity .5s}
+.jcap.show{opacity:1}
+/* local scrim: keeps the white headline legible against the bright sky
+   without dimming the scenery behind it */
+.jcap::before{content:"";position:absolute;left:50%;top:50%;width:150%;height:260%;transform:translate(-50%,-50%);
+  z-index:-1;pointer-events:none;
+  background:radial-gradient(46% 38% at 50% 50%,rgba(8,22,15,.52),rgba(8,22,15,.22) 55%,rgba(8,22,15,0) 78%)}
+.jcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+.jcap h1{font-family:var(--h);font-weight:700;font-size:clamp(46px,11vw,140px);line-height:.9;letter-spacing:-.03em;color:#fff;text-shadow:0 4px 18px rgba(6,18,12,.75),0 10px 46px rgba(6,18,12,.55)}
+.jcap h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,5vw,60px);letter-spacing:-.02em;color:#fff;text-shadow:0 4px 16px rgba(6,18,12,.75),0 8px 34px rgba(6,18,12,.5)}
+.jcap p{margin:16px auto 0;max-width:40ch;font-size:14.5px;font-weight:300;line-height:1.7;color:rgba(255,255,255,.9)}
+.jcap .btns{margin-top:26px;display:flex;gap:14px;justify-content:center;pointer-events:auto}
+.btn{border:none;cursor:pointer;font-family:var(--b);font-size:13px;font-weight:600;padding:13px 26px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;transition:transform .4s cubic-bezier(.34,1.5,.5,1),box-shadow .25s,background .25s}
+.btn.p{background:var(--signal);color:#fff}.btn.p:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,107,53,.4)}
+/* Apple-style pointer press (iOS ignores :active without a handler) */
+.pcard.pressing,.acard.pressing{transform:translateY(-3px) scale(.965)!important;transition:transform .11s ease-out!important}
+.btn.pressing{transform:scale(.9)!important;transition:transform .1s ease-out!important}
+nav .nl a.pressing,.brand.pressing{display:inline-block;transform:scale(.88)!important;transition:transform .1s ease-out!important}
+.btn.g{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.45);backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%)}
+.scrollcue{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:6;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#fff;opacity:.7;transition:opacity .4s}
+/* impact flash at the end */
+.flash{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 46%,rgba(255,213,77,.9),transparent 42%);mix-blend-mode:screen}
+
+/* progress bar */
+.prog{position:fixed;left:0;top:0;height:3px;width:0;background:linear-gradient(90deg,var(--signal),var(--gold));z-index:90}
+
+/* ===== content sections ===== */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+.sec{padding:clamp(80px,12vh,140px) 0}
+.sec.light{background:var(--paper);color:var(--ink)}
+.sec.dark{background:#e8f2ee;color:var(--ink)}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:44px}
+.sec-head h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,4.6vw,52px);line-height:1;letter-spacing:-.02em}
+.sec-head h2 em{font-style:italic;color:var(--forest)}
+.sec.dark .sec-head h2 em{color:var(--forest)}
+.sec-head p{font-size:14px;font-weight:300;color:var(--mut);max-width:44ch;margin-top:10px}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:1000px){.pgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.pgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .pcard{padding:12px 6px;border-radius:14px}
+  .pcard .dw{height:74px}
+  .pcard .disc-scene{zoom:.6}
+  .pcard .shadow{width:48px;height:9px;margin-top:-4px}
+  .pcard h3{font-size:11px;margin-top:6px;line-height:1.15}
+  .pcard .cls{margin-top:6px;font-size:8px;letter-spacing:.06em;padding:3px 6px}
+  .pcard .fn{display:none}
+  .pcard .pr{margin-top:auto;padding-top:8px;font-size:12.5px}
+  .disc-group{margin-bottom:26px}
+  .disc-group .gt h3{font-size:16px}}
+.disc-group{margin-bottom:40px}
+/* ---- catalogue filter ---- */
+.filterbtn{display:inline-flex;align-items:center;gap:7px;vertical-align:middle;margin-left:14px;
+  font-family:var(--b);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;
+  padding:8px 15px;border-radius:999px;border:1px solid var(--glassbrd);background:var(--glass2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 3px 12px rgba(10,22,20,.07);
+  -webkit-tap-highlight-color:transparent;transition:border-color .2s,box-shadow .2s}
+.filterbtn:hover{border-color:rgba(255,107,53,.5)}
+.filterbtn[aria-expanded="true"]{border-color:var(--signal);color:var(--signal)}
+.filterbtn.pressing{transform:scale(.93)!important;transition:transform .1s ease-out!important}
+.fcount{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;
+  border-radius:999px;background:var(--signal);color:#fff;font-size:11px;font-weight:700}
+.filterpanel{margin:0 0 26px;padding:18px 20px;border:1px solid var(--line);border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.45));
+  display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.filterpanel[hidden]{display:none}
+.fgroup h4{font-family:var(--h);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mut);margin-bottom:10px}
+.fchips{display:flex;flex-wrap:wrap;gap:7px}
+.fchip{font-family:var(--b);font-size:12.5px;font-weight:500;color:var(--ink);cursor:pointer;
+  padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.7);
+  -webkit-tap-highlight-color:transparent;transition:background .18s,border-color .18s,color .18s}
+.fchip:hover{border-color:rgba(255,107,53,.45)}
+.fchip[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:#fff}
+.fchip.pressing{transform:scale(.92)!important;transition:transform .1s ease-out!important}
+.frow{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border-top:1px solid var(--line);padding-top:13px}
+.fres{font-size:12.5px;color:var(--mut)}
+.fclear,.flink{font-family:var(--b);font-size:12.5px;font-weight:600;color:var(--signal);cursor:pointer;
+  background:none;border:none;padding:4px 2px;-webkit-tap-highlight-color:transparent}
+.fempty{text-align:center;color:var(--mut);font-size:14px;padding:34px 0}
+.fempty[hidden]{display:none}
+@media(max-width:560px){
+  .filterbtn{margin-left:10px;font-size:12px;padding:7px 13px}
+  .filterpanel{padding:15px 15px;gap:14px;grid-template-columns:1fr}
+}
+.disc-group .gt{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.disc-group .gt h3{font-family:var(--h);font-weight:600;font-size:20px;letter-spacing:-.01em}
+.disc-group .gt span{font-size:12px;color:var(--mut)}
+.pcard{background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.56));border:1px solid rgba(255,255,255,.8);border-radius:20px;padding:24px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;-webkit-tap-highlight-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 24px rgba(14,26,19,.06);transition:transform .42s cubic-bezier(.34,1.4,.5,1),box-shadow .3s}
+.pcard:hover{transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 20px 44px rgba(14,26,19,.14)}
+
+.pcard .dw{height:132px;display:flex;align-items:center;justify-content:center}
+.pcard .shadow{width:76px;height:14px;border-radius:50%;background:radial-gradient(ellipse,rgba(14,26,19,.22),transparent 70%);margin-top:-6px}
+.pcard h3{font-family:var(--h);font-weight:600;font-size:17px;margin-top:14px}
+.pcard .cls{margin-top:8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);background:#f0efe9;border-radius:999px;padding:4px 11px}
+.pcard .fn{margin-top:9px;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.pcard .pr{margin-top:auto;padding-top:14px;font-size:15px;font-weight:600;color:var(--forest)}
+.disc-scene{perspective:800px}
+/* Discs hold still (rotateX tilt) and only spin while hovered — avoids
+   15+ continuous CSS animations compositing every frame. */
+.disc3d{position:relative;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(0);animation:spin 15s linear infinite;animation-play-state:paused}
+.pcard:hover .disc3d{animation-play-state:running}
+@keyframes spin{from{transform:rotateX(58deg) rotateZ(0)}to{transform:rotateX(58deg) rotateZ(360deg)}}
+.dl{position:absolute;inset:0;border-radius:50%}
+.dface{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.dring{position:absolute;inset:12%;border-radius:50%;border:1px solid rgba(250,249,245,.22)}
+.agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:1000px){.agrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.agrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .acard .bd{padding:12px 12px 14px}.acard h4{font-size:14px}.acard .ad{font-size:11px}}
+.acard{background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.56));border:1px solid rgba(255,255,255,.8);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 24px rgba(14,26,19,.06);transition:transform .42s cubic-bezier(.34,1.4,.5,1),box-shadow .3s}
+/* frosted glass only on desktop pointers (backdrop-filter is too heavy on mobile GPUs) */
+@media(hover:hover) and (pointer:fine){
+  .pcard,.acard{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.36));backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%)}
+}
+@media(hover:none){
+  nav{background:rgba(247,249,246,.92);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .navsearch{background:rgba(255,255,255,.94);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .searchhint{background:rgba(255,255,255,.97);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .btn.g{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(20,42,62,.86)}
+  /* drop-shadow on scaled elements re-rasters every frame on mobile — drop it */
+  #bagportal .bagbig{filter:none}
+  .hd-stamp svg{filter:none}
+}
+.acard:hover{transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 20px 44px rgba(14,26,19,.14)}
+
+.acard .im{aspect-ratio:1;overflow:hidden;background:linear-gradient(135deg,#1B4332,#2E6B4F)}
+.acard .im img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.acard:hover .im img{transform:scale(1.05)}
+.acard .bd{padding:16px 16px 18px;flex:1;display:flex;flex-direction:column}
+.acard h4{font-family:var(--h);font-weight:600;font-size:16px}
+.acard .ad{font-size:11.5px;font-weight:300;color:var(--mut);margin-top:5px;line-height:1.5}
+.acard .ap{margin-top:auto;padding-top:10px;font-size:14px;font-weight:600;color:var(--forest)}
+.brandrow{display:flex;flex-wrap:wrap;gap:clamp(18px,4vw,54px);align-items:center;justify-content:center;margin-top:8px}
+.brandrow span{font-family:var(--h);font-style:italic;font-size:clamp(18px,2.4vw,30px);color:var(--mut)}
+/* footer */
+footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
+.nlrow{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:end;padding-bottom:56px;border-bottom:1px solid rgba(14,26,19,.12)}
+.nlrow h2{font-family:var(--h);font-weight:500;font-size:clamp(26px,4vw,46px);line-height:1.02;letter-spacing:-.02em}
+.nlrow h2 em{font-style:italic;color:var(--forest)}
+.nlrow p{margin-top:14px;font-size:14px;font-weight:300;color:var(--mut);max-width:42ch}
+.nlform{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px;display:flex;gap:8px;max-width:460px;margin-left:auto}
+.nlform input{flex:1;background:transparent;border:none;outline:none;color:var(--ink);font-family:var(--b);font-size:14px;padding:12px 18px;min-width:0}
+.nlform input::placeholder{color:var(--mut)}
+.nlform button{border:none;cursor:pointer;background:var(--signal);color:#fff;border-radius:999px;padding:12px 24px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.nlthanks{max-width:460px;margin-left:auto;padding:16px 24px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:14px}
+.bigmark{font-family:var(--h);font-weight:700;font-size:clamp(64px,18vw,240px);line-height:.82;letter-spacing:-.03em;margin:48px 0 32px;color:#152a5e}
+.fcols{display:flex;flex-wrap:wrap;gap:40px 64px;justify-content:space-between}
+.fcols .grp h4{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+.fcols .grp a{display:block;font-size:14px;color:#2b3a33;padding:5px 0}
+.fbottom{margin-top:38px;font-size:11px;color:var(--mut)}
+@media(max-width:760px){.nlrow{grid-template-columns:1fr}.nlform,.nlthanks{margin-left:0;width:100%;max-width:100%;min-width:0}}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.disc3d,.hero-disc,.hero-stage,.disc-aura{animation:none}
+  #journey{height:100vh}.scene{position:relative}}
+/* ==========================================================================
+   THEME 4 — dark canvas + typography intro
+   Appended last, so every rule above survives untouched and this only
+   re-tones. Layout, spacing, grids, breakpoints and component markup are
+   exactly as in flightlab-cinematic.
+   ========================================================================== */
+
+:root{
+  --paper:#0D1117; --ink:#E8EDF4; --mut:rgba(232,237,244,.56);
+  --line:rgba(255,255,255,.09);
+  --signal:#3ECF8E; --forest:#3ECF8E; --teal:#3ECF8E; --gold:rgba(232,237,244,.5);
+  --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.07);
+  --glassbrd:rgba(255,255,255,.12); --blur:blur(22px) saturate(150%);
+  --surf2:#111827; --surf3:#151A22; --surf4:#181C24;
+  --on-signal:#06140D;
+}
+
+/* One continuous canvas: the page owns the gradient, sections are glass-clear,
+   so nothing ever cuts from one background colour to another. */
+body{background:#0D1117;color:var(--ink)}
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(80% 34% at 50% 0%,rgba(62,207,142,.05),transparent 60%),
+    linear-gradient(180deg,#0D1117 0%,#111827 30%,#0D1117 55%,#151A22 80%,#0D1117 100%)}
+.sec{position:relative;z-index:1}
+.sec.light,.sec.dark{background:transparent;color:var(--ink)}
+.sec + .sec::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08) 22%,rgba(255,255,255,.08) 78%,transparent)}
+.sec.dark .sec-head h2 em{color:var(--signal)}
+
+/* Cards become raised glass instead of white paper */
+.pcard,.acard{
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 30px rgba(0,0,0,.4)}
+@media(hover:hover) and (pointer:fine){
+  .pcard,.acard{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
+    backdrop-filter:none;-webkit-backdrop-filter:none}
+  .pcard:hover,.acard:hover{background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.035));
+    border-color:rgba(62,207,142,.3)}
+}
+.acard .im{background:linear-gradient(135deg,#1A2230,#0D1117)}
+.disc-group .gt{border-bottom-color:rgba(255,255,255,.09)}
+
+/* Newsletter, footer, bag portal — the last white surfaces */
+.nlform,.nlthanks{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:var(--ink)}
+.nlform input{color:var(--ink)}
+.nlform input::placeholder{color:rgba(232,237,244,.38)}
+.nlform button{background:var(--signal);color:var(--on-signal)}
+footer{background:transparent;border-top:1px solid rgba(255,255,255,.08);color:var(--ink);position:relative;z-index:1}
+.bigmark{color:rgba(232,237,244,.10)}
+#bagportal{background:transparent;position:relative;z-index:1}
+#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,#161C26,#0D1117 62%,#0B0E14)}
+#bagportal .bpcap{color:var(--ink)}
+#bagportal .bpcap .k{color:var(--signal)}
+#bagportal .bagbig{filter:drop-shadow(0 26px 54px rgba(0,0,0,.6))}
+
+/* Glass kept to the few chrome surfaces the brief allows */
+nav{background:rgba(13,17,23,.62);border-bottom:1px solid rgba(255,255,255,.10)}
+nav .brand,nav .nl a{color:var(--ink)}
+.navsearch{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 4px 16px rgba(0,0,0,.3)}
+.navsearch input{color:var(--ink)}
+.navsearch input::placeholder{color:rgba(232,237,244,.38)}
+.searchhint{background:rgba(21,26,34,.96);border-color:rgba(255,255,255,.12);color:var(--mut)}
+@media(hover:none){
+  nav{background:rgba(13,17,23,.95)}
+  .navsearch{background:rgba(255,255,255,.06)}
+  .searchhint{background:#151A22}
+}
+
+/* Green stays scarce: buttons, active states, highlights */
+.btn.p{background:var(--signal);color:var(--on-signal)}
+.btn.p:hover{box-shadow:0 10px 28px rgba(62,207,142,.24)}
+.btn.g{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:var(--ink)}
+.fchip{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);color:var(--ink)}
+.fchip[aria-pressed="true"]{background:var(--signal);border-color:var(--signal);color:var(--on-signal)}
+.filterbtn{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--ink)}
+.filterpanel{background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.10)}
+.fcount{background:var(--signal);color:var(--on-signal)}
+.eyebrow,.sec-head .k{color:rgba(232,237,244,.42)}
+
+/* ---------- Floating discs ----------
+   One fixed layer behind everything, so the same few discs carry across
+   every section and tie them together. Transform only, and they sit under
+   the content layer so they can never cross text or buttons. */
+.fl-discs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.fl-disc{position:absolute;width:var(--d);height:var(--d);border-radius:50%;
+  opacity:var(--o,.05);filter:blur(var(--bl,4px));will-change:transform;
+  background:radial-gradient(circle at 34% 28%,rgba(176,212,238,.9),rgba(78,120,152,.55) 44%,rgba(22,34,46,.2) 70%,transparent 76%)}
+.fl-disc.a{--d:38vmin;--o:.055;--bl:3px;left:-6vw;top:14vh;animation:fl-a 150s linear infinite}
+.fl-disc.b{--d:26vmin;--o:.04;--bl:6px;right:-4vw;top:52vh;animation:fl-b 190s linear infinite}
+.fl-disc.c{--d:52vmin;--o:.03;--bl:10px;left:24vw;top:118vh;animation:fl-c 220s linear infinite}
+.fl-disc.d{--d:20vmin;--o:.05;--bl:2px;right:16vw;top:186vh;animation:fl-b 170s linear infinite}
+.fl-disc.e{--d:34vmin;--o:.035;--bl:7px;left:8vw;top:250vh;animation:fl-a 205s linear infinite}
+@keyframes fl-a{0%{transform:translate3d(0,0,0) rotateX(66deg) rotateZ(0deg)}
+  100%{transform:translate3d(6vw,-14vh,0) rotateX(66deg) rotateZ(360deg)}}
+@keyframes fl-b{0%{transform:translate3d(0,0,0) rotateX(62deg) rotateZ(360deg)}
+  100%{transform:translate3d(-5vw,12vh,0) rotateX(62deg) rotateZ(0deg)}}
+@keyframes fl-c{0%{transform:translate3d(0,0,0) rotateX(70deg) rotateZ(0deg)}
+  100%{transform:translate3d(9vw,-9vh,0) rotateX(70deg) rotateZ(-360deg)}}
+@media(max-width:560px){.fl-disc.c,.fl-disc.e{display:none}}
+@media(prefers-reduced-motion:reduce){.fl-disc{animation:none}}
+
+/* ---------- Typography intro ----------
+   The camera dollies toward the word: apparent size comes from translateZ
+   under a perspective, not from scale(), so the letters gain real depth and
+   stay text rather than a stretched bitmap. */
+.scene{background:#0D1117;perspective:1100px;perspective-origin:50% 46%}
+.fl-ambient{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(44% 36% at 50% 46%,rgba(142,182,216,.11),transparent 72%),
+    radial-gradient(120% 92% at 50% 50%,transparent 38%,rgba(4,6,10,.82) 100%)}
+.fl-stage{position:absolute;inset:0;z-index:2;display:grid;place-items:center;
+  transform-style:preserve-3d;pointer-events:none}
+.fl-mark{margin:0;font-family:var(--b);font-weight:800;font-size:14.3vw;
+  letter-spacing:-.045em;line-height:1;white-space:nowrap;
+  transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
+  filter:drop-shadow(0 0 60px rgba(150,195,230,.10))}
+
+/* Liquid glass: the fill is almost nothing, a lit top and bottom edge give
+   it body, and the sheen is what actually reveals the letterforms. */
+.fl-glass{position:relative;display:inline-block;color:rgba(255,255,255,.055);
+  -webkit-text-stroke:1px rgba(206,228,248,.15)}
+.fl-glass::before,.fl-glass::after{content:attr(data-text);position:absolute;left:0;top:0;
+  white-space:nowrap;-webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:0;pointer-events:none}
+/* background-image, not the background shorthand: the shorthand resets
+   background-clip back to border-box and the text clip is lost. */
+.fl-glass::before{background-image:linear-gradient(178deg,
+  rgba(255,255,255,.30) 0%,rgba(255,255,255,.05) 24%,rgba(255,255,255,0) 50%,
+  rgba(178,206,232,.06) 76%,rgba(226,240,252,.20) 100%)}
+.fl-glass::after{background-image:linear-gradient(102deg,transparent 40%,
+  rgba(255,255,255,.07) 46%,rgba(255,255,255,.38) 50%,rgba(255,255,255,.07) 54%,transparent 60%);
+  background-size:300% 100%;animation:fl-sheen 17s linear infinite}
+@keyframes fl-sheen{0%{background-position:190% 0}100%{background-position:-90% 0}}
+@media(prefers-reduced-motion:reduce){.fl-glass::after{animation:none}}
+
+#loader{background:#0D1117}
+.grain{opacity:.035}
+</style>
+{% endraw %}
+{%- comment -%}
+  Forsidebilder, styrt fra temainnstillingene.
+
+  For hvert kort velges bildet slik (se snippets/fl-img.liquid):
+    1. Temainnstilling  — Tilpass → Temainnstillinger → «Bilder — …»
+    2. ellers produktets hovedbilde i Shopify
+    3. ellers standardbildet som allerede ligger i forsidekoden
+
+  Resultatet legges på window.FL_IMG, som forsidekoden leser. Dermed kan
+  bildene byttes uten å redigere kode.
+
+  Skal du legge til et nytt kort: legg inn en image_picker i
+  config/settings_schema.json og en ny render-linje under, med samme
+  handle som produktet har i Shopify.
+{%- endcomment -%}
+<script>
+window.FL_IMG={
+{%- render 'fl-img', h: 'flightlab-sling',          s: settings.img_flightlab_sling -%}
+{%- render 'fl-img', h: 'flightlab-starter-bag',    s: settings.img_flightlab_starter_bag -%}
+{%- render 'fl-img', h: 'flightlab-coursebag',      s: settings.img_flightlab_coursebag -%}
+{%- render 'fl-img', h: 'flightlab-tour-backpack',  s: settings.img_flightlab_tour_backpack -%}
+{%- render 'fl-img', h: 'startsett-3-discer',       s: settings.img_startsett_3_discer -%}
+{%- render 'fl-img', h: 'disc-handkle',             s: settings.img_disc_handkle -%}
+{%- render 'fl-img', h: 'flightlab-drikkeflaske',   s: settings.img_flightlab_drikkeflaske -%}
+{%- render 'fl-img', h: 'flightlab-caps',           s: settings.img_flightlab_caps -%}
+{%- render 'fl-img', h: 'mini-markor',              s: settings.img_mini_markor -%}
+{%- render 'fl-img', h: 'scorekort-holder',         s: settings.img_scorekort_holder -%}
+{%- render 'fl-img', h: 'flightlab-hettegenser',    s: settings.img_flightlab_hettegenser -%}
+{%- render 'fl-img', h: 'ovingskurv',               s: settings.img_ovingskurv, last: true -%}
+};
+{%- if settings.img_hero_disc != blank %}
+window.FL_HERO={{ settings.img_hero_disc | image_url: width: 900 | json }};
+{%- endif %}
+{%- comment -%}
+  Real disc prices for the catalogue filter, read from the Discer
+  collection. A collection loop is used rather than all_products because
+  that object is capped at 20 lookups per template and the card images
+  already spend 12 of them.
+{%- endcomment -%}
+{%- assign disc_col = collections['discer-1'] -%}
+{%- if disc_col == blank -%}{%- assign disc_col = collections['discer'] -%}{%- endif -%}
+{%- if disc_col.products_count > 0 %}
+window.FL_PRICE={
+{%- for p in disc_col.products limit: 60 -%}
+{{ p.handle | json }}:{amount:{{ p.price | divided_by: 100.0 }},text:{{ p.price | money_without_trailing_zeros | strip_html | json }}}
+{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+};
+{%- endif %}
+{%- assign bg = settings.img_hero_bg -%}
+{%- if bg != blank -%}
+{%- comment -%}
+  Only advertise widths the file actually has: Shopify never upscales, so
+  asking for 2000 from a 1229px original returns 1229 and the browser
+  would pick a smaller image than the descriptor promised.
+{%- endcomment -%}
+{%- assign bgw = bg.width -%}
+{%- capture bg_srcset -%}
+{%- assign steps = '600,900,1400,2000' | split: ',' -%}
+{%- for s in steps -%}{%- assign sw = s | times: 1 -%}
+{%- if sw < bgw %}{{ bg | image_url: width: sw }} {{ sw }}w, {% endif -%}
+{%- endfor -%}
+{{ bg | image_url: width: bgw }} {{ bgw }}w
+{%- endcapture %}
+window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_srcset | strip | json }}};
+{%- endif %}
+</script>
+{% raw %}
+</head>
+<body>
+<!-- Floating discs: one fixed layer behind every section, tying them together -->
+<div class="fl-discs" aria-hidden="true">
+  <span class="fl-disc a"></span><span class="fl-disc b"></span><span class="fl-disc c"></span>
+  <span class="fl-disc d"></span><span class="fl-disc e"></span>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="bagko" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -2 -2 -2 0 5.4" result="m"/><feComponentTransfer in="m"><feFuncA type="discrete" tableValues="0 0 1 1"/></feComponentTransfer></filter></svg>
+
+
+<div class="prog" id="prog"></div>
+
+<nav>
+  <a href="#" class="brand">FLIGHTLAB</a>
+  <form class="navsearch" id="searchform" role="search" action="/search" method="get">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input type="search" name="q" id="q" placeholder="Søk varer…" autocomplete="off" aria-label="Søk" />
+    <div class="searchhint" id="searchhint"></div>
+  </form>
+  <div class="nl">
+    <a href="#discer">Discer</a>
+    <a href="#bager">Bager</a>
+    <a href="#tilbehor">Tilbehør</a>
+    <a href="#nl" class="cta">Kontakt</a>
+  </div>
+</nav>
+
+<!-- ===== Hero: real Higgsfield video autoplays; scroll ZOOMS INTO the disc ===== -->
+<section id="journey">
+  <div class="scene" id="scene">
+    <!-- Typography intro: no disc, no photo, no scenery. The word is the
+         only subject; scrolling dollies the camera into it. -->
+    <div class="fl-ambient" aria-hidden="true"></div>
+    <div class="fl-stage">
+      <h1 class="fl-mark" id="flmark" aria-label="FLIGHTLAB">
+        <span class="fl-glass" data-text="FLIGHTLAB">FLIGHTLAB</span>
+      </h1>
+    </div>
+    <div class="grain"></div>
+    <div id="loader"><div class="ln"></div><div class="brand">FLIGHTLAB</div><div class="ln"></div></div>
+
+    <div class="jcap show" data-show="0" data-hide="0.42" id="cap0" style="top:auto;bottom:8%;transform:none">
+      <div class="k">Norsk discgolf · Norge &amp; Norden</div>
+      <p style="margin-top:8px">Skroll for å gå inn i Flightlab.</p>
+    </div>
+    <div class="jcap" data-show="0.5" data-hide="1.01">
+      <div class="k">Latitude 64 · Kastaplast · Discmania</div>
+      <h2>Fra første kast til siste putt</h2>
+      <p>Premium discer, bager og tilbehør for spillere som krever mer.</p>
+    </div>
+    <div class="scrollcue" id="cue">Bla ↓</div>
+  </div>
+</section>
+
+<section class="sec light" id="discer">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><div class="eyebrow rv">// Side 1 · Discer</div>
+        <h2 class="rv" style="margin-top:12px">Våre <em>Discer</em>
+          <button class="filterbtn" id="filterbtn" type="button" aria-expanded="false" aria-controls="filterpanel">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+            Filter<span class="fcount" id="fcount" hidden></span>
+          </button></h2></div>
+      <p class="rv">Femten modeller fra fem merker — putter, approach, midrange, fairway og distanse. Alle til én fast pris: 179 kr.</p>
+    </div>
+    <div class="filterpanel" id="filterpanel" hidden>
+      <div class="fgroup"><h4>Merke</h4><div class="fchips" id="fbrand"></div></div>
+      <div class="fgroup"><h4>Type</h4><div class="fchips" id="ftype"></div></div>
+      <div class="fgroup"><h4>Pris</h4><div class="fchips" id="fprice"></div></div>
+      <div class="frow"><span class="fres" id="fres"></span><button class="fclear" id="fclear" type="button">Nullstill</button></div>
+    </div>
+    <div id="disc-groups"></div>
+    <p class="fempty" id="fempty" hidden>Ingen discer passer filteret. <button class="flink" type="button" data-clear>Nullstill</button></p>
+  </div>
+</section>
+
+<!-- ===== Bag zoom portal: scroll ZOOMS INTO a bag → the bags section ===== -->
+<section id="bagportal">
+  <div class="pin">
+    <div class="bpcap" id="bpcap"><div class="k">Side 2 · Bager</div><h2>Inn i baggen</h2></div>
+    <div class="bagbig" id="bagbig">
+      <svg viewBox="0 0 360 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flightlab discgolf-sekk (Core Pro-stil)">
+        <defs>
+          <linearGradient id="bgShell" x1=".2" y1="0" x2=".85" y2="1">
+            <stop offset="0" stop-color="#34362f"/><stop offset=".5" stop-color="#1c1e19"/><stop offset="1" stop-color="#0a0b09"/>
+          </linearGradient>
+          <linearGradient id="bgShellSide" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#2a2c25"/><stop offset="1" stop-color="#0c0d0b"/>
+          </linearGradient>
+          <linearGradient id="bgTan" x1=".2" y1="0" x2=".8" y2="1">
+            <stop offset="0" stop-color="#45483f"/><stop offset=".5" stop-color="#26281f"/><stop offset="1" stop-color="#0e100c"/>
+          </linearGradient>
+          <linearGradient id="bgTanTop" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#4e5147"/><stop offset="1" stop-color="#22241c"/>
+          </linearGradient>
+          <linearGradient id="bgBottle" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#fbfbf6"/><stop offset=".55" stop-color="#dedfd6"/><stop offset="1" stop-color="#b0b2a7"/>
+          </linearGradient>
+          <linearGradient id="bgMetal" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#d8dcd2"/><stop offset=".5" stop-color="#8f978d"/><stop offset="1" stop-color="#5d655c"/>
+          </linearGradient>
+          <radialGradient id="bgOpen" cx=".5" cy=".4" r=".85">
+            <stop offset="0" stop-color="#20211c"/><stop offset="1" stop-color="#040503"/>
+          </radialGradient>
+          <linearGradient id="bgDisc" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#cbc4b0"/><stop offset=".5" stop-color="#efe9d8"/><stop offset="1" stop-color="#b7b09a"/>
+          </linearGradient>
+          <linearGradient id="d1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0f8f82"/><stop offset=".5" stop-color="#4fd8c8"/><stop offset="1" stop-color="#0c6f66"/></linearGradient>
+          <linearGradient id="d2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a83368"/><stop offset=".5" stop-color="#f06fa3"/><stop offset="1" stop-color="#8a2954"/></linearGradient>
+          <linearGradient id="d3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b8481a"/><stop offset=".5" stop-color="#ff8a4d"/><stop offset="1" stop-color="#963a12"/></linearGradient>
+          <linearGradient id="d4" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b8900f"/><stop offset=".5" stop-color="#f7d95a"/><stop offset="1" stop-color="#8f6f0a"/></linearGradient>
+          <linearGradient id="d5" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2450a0"/><stop offset=".5" stop-color="#5f92e0"/><stop offset="1" stop-color="#1c3f80"/></linearGradient>
+          <linearGradient id="d6" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a7c30"/><stop offset=".5" stop-color="#62c26a"/><stop offset="1" stop-color="#215f26"/></linearGradient>
+          <linearGradient id="d7" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a82828"/><stop offset=".5" stop-color="#f06a6a"/><stop offset="1" stop-color="#872020"/></linearGradient>
+          <radialGradient id="bgKey" cx=".3" cy=".08" r="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></radialGradient>
+          <radialGradient id="bgAmb" cx=".85" cy=".95" r="1.1"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></radialGradient>
+          <pattern id="bgRip" width="9" height="9" patternUnits="userSpaceOnUse"><path d="M0 0H9M0 0V9" stroke="rgba(225,245,235,.06)" stroke-width="1"/></pattern>
+          <filter id="bgFab" x="-4%" y="-4%" width="108%" height="108%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .04 0" result="w"/><feComposite in="w" in2="SourceAlpha" operator="in" result="tex"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="tex"/></feMerge></filter>
+          <filter id="bgSoft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+          <filter id="bgSoft2" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="12"/></filter>
+          <clipPath id="bgBodyClip"><path d="M96 116 C96 98 128 88 180 88 C232 88 264 98 264 116 L272 372 C272 404 232 418 180 418 C128 418 88 404 88 372 Z"/></clipPath>
+          <clipPath id="bgPockClip"><path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z"/></clipPath>
+          <clipPath id="bgLeftPk"><path d="M100 208 C74 212 66 236 66 268 L66 330 C66 356 82 368 102 368 L102 208 Z"/></clipPath>
+          <clipPath id="bgRightPk"><path d="M260 208 C286 212 294 236 294 268 L294 330 C294 356 278 368 258 368 L258 208 Z"/></clipPath>
+        </defs>
+
+        <!-- ground shadow -->
+        <ellipse cx="182" cy="450" rx="120" ry="13" fill="#000" opacity=".55" filter="url(#bgSoft2)"/>
+        <ellipse cx="182" cy="449" rx="72" ry="8" fill="#000" opacity=".5" filter="url(#bgSoft)"/>
+
+        <!-- shoulder straps (black, behind) -->
+        <path d="M120 118 C74 190 76 330 126 402" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="30" stroke-linecap="round" filter="url(#bgSoft)"/>
+        <path d="M240 118 C286 190 284 330 234 402" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="30" stroke-linecap="round" filter="url(#bgSoft)"/>
+        <path d="M120 118 C74 190 76 330 126 402" fill="none" stroke="#191b17" stroke-width="24" stroke-linecap="round"/>
+        <path d="M240 118 C286 190 284 330 234 402" fill="none" stroke="#191b17" stroke-width="24" stroke-linecap="round"/>
+
+        <!-- carry handle -->
+        <path d="M150 90 Q180 56 210 90" fill="none" stroke="#000" stroke-opacity=".4" stroke-width="16" stroke-linecap="round" filter="url(#bgSoft)"/>
+        <path d="M152 90 Q180 60 208 90" fill="none" stroke="#22251f" stroke-width="12" stroke-linecap="round"/>
+        <path d="M152 88 Q180 59 208 88" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="2" stroke-linecap="round"/>
+
+        <!-- cream disc edges peeking from the top putter pocket -->
+        <rect x="150" y="72" width="60" height="26" rx="10" fill="url(#d1)"/>
+        <path d="M154 80 h52 M154 86 h52" stroke="rgba(0,0,0,.12)" stroke-width="1.5"/>
+        <rect x="150" y="72" width="60" height="26" rx="10" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="1"/>
+
+        <!-- black shell body -->
+        <path d="M96 116 C96 98 128 88 180 88 C232 88 264 98 264 116 L272 372 C272 404 232 418 180 418 C128 418 88 404 88 372 Z" fill="url(#bgShell)" filter="url(#bgFab)"/>
+        <g clip-path="url(#bgBodyClip)">
+          <rect x="80" y="80" width="200" height="345" fill="url(#bgKey)"/>
+          <rect x="80" y="80" width="200" height="345" fill="url(#bgAmb)"/>
+          <path d="M96 150 Q180 168 264 150" stroke="rgba(0,0,0,.5)" stroke-width="3" fill="none"/>
+          <path d="M96 153 Q180 171 264 153" stroke="rgba(255,255,255,.08)" stroke-width="1.4" fill="none"/>
+          <path d="M264 116 L272 372 C272 400 236 416 186 416" stroke="rgba(210,230,255,.14)" stroke-width="3" fill="none" filter="url(#bgSoft)"/>
+        </g>
+
+        <!-- LEFT side pocket + white bottle -->
+        <path d="M100 208 C74 212 66 236 66 268 L66 330 C66 356 82 368 102 368 L102 208 Z" fill="#000" opacity=".4" filter="url(#bgSoft)"/>
+        <rect x="74" y="176" width="26" height="70" rx="10" fill="url(#bgBottle)"/>
+        <rect x="79" y="166" width="16" height="14" rx="4" fill="#20221d"/>
+        <line x1="80" y1="190" x2="80" y2="236" stroke="rgba(255,255,255,.5)" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M100 208 C74 212 66 236 66 268 L66 330 C66 356 82 368 102 368 L102 208 Z" fill="url(#bgShellSide)"/>
+        <g clip-path="url(#bgLeftPk)"><rect x="60" y="200" width="46" height="180" fill="url(#bgAmb)"/></g>
+        <path d="M100 210 C78 214 70 236 70 266" stroke="rgba(255,255,255,.12)" stroke-width="2" fill="none"/>
+        <path d="M70 300 q16 6 32 0" stroke="#0c0d0b" stroke-width="4" fill="none"/>
+        <circle cx="72" cy="304" r="4" fill="#111" stroke="#FF6B35" stroke-width="1.4"/>
+
+        <!-- RIGHT side pocket with disc edge -->
+        <path d="M260 208 C286 212 294 236 294 268 L294 330 C294 356 278 368 258 368 L258 208 Z" fill="#000" opacity=".4" filter="url(#bgSoft)"/>
+        <path d="M260 208 C286 212 294 236 294 268 L294 330 C294 356 278 368 258 368 L258 208 Z" fill="url(#bgShellSide)"/>
+        <g clip-path="url(#bgRightPk)"><rect x="256" y="200" width="46" height="180" fill="url(#bgAmb)"/>
+          <rect x="270" y="216" width="18" height="54" rx="7" fill="url(#d3)"/><path d="M279 218 v50" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/>
+        </g>
+        <path d="M260 210 C282 214 290 236 290 266" stroke="rgba(255,255,255,.1)" stroke-width="2" fill="none"/>
+
+        <!-- MAIN compartment interior (revealed when the tan flap folds down) -->
+        <ellipse cx="180" cy="292" rx="76" ry="86" fill="#000" opacity=".4" filter="url(#bgSoft2)"/>
+        <g id="bagint" opacity="0">
+          <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="url(#bgOpen)"/>
+          <g clip-path="url(#bgPockClip)">
+            <rect x="120" y="238" width="15" height="104" rx="6" fill="url(#d1)"/><rect x="137" y="238" width="15" height="104" rx="6" fill="url(#d2)"/><rect x="154" y="238" width="15" height="104" rx="6" fill="url(#d3)"/><rect x="171" y="238" width="15" height="104" rx="6" fill="url(#d4)"/><rect x="188" y="238" width="15" height="104" rx="6" fill="url(#d5)"/><rect x="205" y="238" width="15" height="104" rx="6" fill="url(#d6)"/><rect x="222" y="238" width="15" height="104" rx="6" fill="url(#d7)"/>
+            <g stroke="rgba(0,0,0,.22)" stroke-width="1.5"><path d="M135 240 v100"/><path d="M152 240 v100"/><path d="M169 240 v100"/><path d="M186 240 v100"/><path d="M203 240 v100"/><path d="M220 240 v100"/></g>
+            <rect x="106" y="214" width="148" height="30" fill="#000" opacity=".45"/>
+          </g>
+        </g>
+
+        <!-- TAN front flap (folds down on scroll) -->
+        <g id="bagflap">
+          <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="url(#bgTan)" filter="url(#bgFab)"/>
+          <g clip-path="url(#bgPockClip)">
+            <rect x="106" y="214" width="148" height="154" fill="url(#bgRip)"/>
+            <rect x="106" y="214" width="148" height="44" fill="url(#bgTanTop)" opacity=".5"/>
+            <rect x="106" y="214" width="148" height="40" fill="url(#bgKey)"/>
+            <rect x="106" y="300" width="148" height="80" fill="url(#bgAmb)" opacity=".5"/>
+            <rect x="116" y="224" width="128" height="130" rx="12" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="1.4" stroke-dasharray="5 5"/>
+            <circle cx="127" cy="335" r="7" fill="none" stroke="#edeedd" stroke-width="2"/>
+            <circle cx="127" cy="335" r="2.2" fill="#FF6B35"/>
+            <text x="141" y="340" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="13" letter-spacing="1" textLength="103" lengthAdjust="spacingAndGlyphs" fill="#f0efe1">FLIGHTLAB</text>
+            <rect x="106" y="214" width="148" height="14" fill="#000" opacity=".22"/>
+          </g>
+          <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="none" stroke="#050605" stroke-width="1.5" opacity=".5"/>
+        </g>
+
+        <!-- top zipper across the tan panel; slider runs open on scroll -->
+        <rect x="112" y="216" width="136" height="12" rx="6" fill="#1a1712"/>
+        <line x1="118" y1="221.5" x2="242" y2="221.5" stroke="#cdba8f" stroke-width="2" stroke-dasharray="2 2.2"/>
+        <rect x="113" y="217.5" width="4" height="9" rx="1.5" fill="#d9481f"/>
+        <rect x="243" y="217.5" width="4" height="9" rx="1.5" fill="#d9481f"/>
+        <g id="bagslider">
+          <rect x="230" y="216.5" width="11" height="12" rx="3.5" fill="url(#bgMetal)"/>
+          <path d="M241 222 q13 9 9 20" fill="none" stroke="#b5401a" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M241 222 q13 9 9 20" fill="none" stroke="#ff7a45" stroke-width="1.8" stroke-linecap="round"/>
+        </g>
+
+        <!-- feet -->
+        <rect x="112" y="406" width="42" height="16" rx="8" fill="#050605"/>
+        <rect x="206" y="406" width="42" height="16" rx="8" fill="#050605"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="bager">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><div class="eyebrow rv">// Side 2 · Bager</div>
+        <h2 class="rv" style="margin-top:12px">Bær <em>utstyret</em></h2></div>
+      <p class="rv">Fra en lett sling for en rask runde til en full turbag med stativ — for hver spiller.</p>
+    </div>
+    <div class="agrid" id="bgrid"></div>
+  </div>
+</section>
+
+<section class="sec light" id="tilbehor">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><div class="eyebrow rv">// Side 2 · Tilbehør</div>
+        <h2 class="rv" style="margin-top:12px">Alt rundt <em>kastet</em></h2></div>
+      <p class="rv">Startsett, håndkle, flaske og småting som gjør runden bedre.</p>
+    </div>
+    <div class="agrid" id="agrid"></div>
+  </div>
+</section>
+
+<section class="sec dark">
+  <div class="wrap" style="text-align:center">
+    <div class="eyebrow rv" style="color:var(--signal)">// Vi fører</div>
+    <h2 class="rv" style="font-family:var(--h);font-weight:500;font-size:clamp(26px,4vw,46px);margin:12px 0 26px">Ledende discgolf-merker</h2>
+    <div class="brandrow rv">
+      <span>Kastaplast</span><span>Discmania</span><span>Latitude 64</span><span>Westside</span><span>Dynamic Discs</span>
+    </div>
+  </div>
+</section>
+
+<footer id="nl">
+  <div class="wrap">
+    <div class="nlrow">
+      <div class="rv">
+        <div class="eyebrow" style="color:var(--signal)">// Vi åpner snart</div>
+        <h2 style="margin-top:12px">Bli med <em>fra starten</em></h2>
+        <p>Meld deg på listen — få beskjed først når vi åpner, pluss rabatt på din første ordre.</p>
+      </div>
+      <form class="nlform rv" id="nlform">
+        <input type="email" required placeholder="din@epost.no" aria-label="E-post" />
+        <button type="submit">Meld Interesse</button>
+      </form>
+    </div>
+    <div class="bigmark">FLIGHTLAB</div>
+    <div class="fcols">
+      <div class="grp"><h4>Sortiment</h4><a href="#discer">Puttere</a><a href="#discer">Midrange</a><a href="#discer">Drivere</a><a href="#tilbehor">Bager &amp; tilbehør</a></div>
+      <div class="grp"><h4>Tjenester</h4><a href="#nl">Mystery Box</a><a href="#nl">Baneutstyr (B2B)</a><a href="#nl">Custom stamp</a></div>
+      <div class="grp"><h4>Merker</h4><a href="#discer">Kastaplast</a><a href="#discer">Discmania</a><a href="#discer">Latitude 64</a><a href="#discer">Westside · Dynamic Discs</a></div>
+    </div>
+    <div class="fbottom">Flightlab · Fra første kast til siste putt · Norge &amp; Norden · © 2026</div>
+  </div>
+</footer>
+
+<!-- Lenis 1.1.14 (MIT) inlined for offline-safe smooth momentum scrolling -->
+<script>var k="1.1.14";function w(r,t,e){return Math.max(r,Math.min(t,e))}function _(r,t,e){return(1-e)*r+e*t}function z(r,t,e,i){return _(r,t,1-Math.exp(-e*i))}function x(r,t){return(r%t+t)%t}var y=class{isRunning=!1;value=0;from=0;to=0;currentTime=0;lerp;duration;easing;onUpdate;advance(t){if(!this.isRunning)return;let e=!1;if(this.duration&&this.easing){this.currentTime+=t;let i=w(0,this.currentTime/this.duration,1);e=i>=1;let s=e?1:this.easing(i);this.value=this.from+(this.to-this.from)*s}else this.lerp?(this.value=z(this.value,this.to,this.lerp*60,t),Math.round(this.value)===this.to&&(this.value=this.to,e=!0)):(this.value=this.to,e=!0);e&&this.stop(),this.onUpdate?.(this.value,e)}stop(){this.isRunning=!1}fromTo(t,e,{lerp:i,duration:s,easing:o,onStart:l,onUpdate:m}){this.from=this.value=t,this.to=e,this.lerp=i,this.duration=s,this.easing=o,this.currentTime=0,this.isRunning=!0,l?.(),this.onUpdate=m}};function N(r,t){let e;return function(...i){let s=this;clearTimeout(e),e=setTimeout(()=>{e=void 0,r.apply(s,i)},t)}}var E=class{constructor(t,e,{autoResize:i=!0,debounce:s=250}={}){this.wrapper=t;this.content=e;i&&(this.debouncedResize=N(this.resize,s),this.wrapper instanceof Window?window.addEventListener("resize",this.debouncedResize,!1):(this.wrapperResizeObserver=new ResizeObserver(this.debouncedResize),this.wrapperResizeObserver.observe(this.wrapper)),this.contentResizeObserver=new ResizeObserver(this.debouncedResize),this.contentResizeObserver.observe(this.content)),this.resize()}width=0;height=0;scrollHeight=0;scrollWidth=0;debouncedResize;wrapperResizeObserver;contentResizeObserver;destroy(){this.wrapperResizeObserver?.disconnect(),this.contentResizeObserver?.disconnect(),this.wrapper===window&&this.debouncedResize&&window.removeEventListener("resize",this.debouncedResize,!1)}resize=()=>{this.onWrapperResize(),this.onContentResize()};onWrapperResize=()=>{this.wrapper instanceof Window?(this.width=window.innerWidth,this.height=window.innerHeight):(this.width=this.wrapper.clientWidth,this.height=this.wrapper.clientHeight)};onContentResize=()=>{this.wrapper instanceof Window?(this.scrollHeight=this.content.scrollHeight,this.scrollWidth=this.content.scrollWidth):(this.scrollHeight=this.wrapper.scrollHeight,this.scrollWidth=this.wrapper.scrollWidth)};get limit(){return{x:this.scrollWidth-this.width,y:this.scrollHeight-this.height}}};var g=class{events={};emit(t,...e){let i=this.events[t]||[];for(let s=0,o=i.length;s<o;s++)i[s]?.(...e)}on(t,e){return this.events[t]?.push(e)||(this.events[t]=[e]),()=>{this.events[t]=this.events[t]?.filter(i=>e!==i)}}off(t,e){this.events[t]=this.events[t]?.filter(i=>e!==i)}destroy(){this.events={}}};var R=100/6,p={passive:!1},T=class{constructor(t,e={wheelMultiplier:1,touchMultiplier:1}){this.element=t;this.options=e;window.addEventListener("resize",this.onWindowResize,!1),this.onWindowResize(),this.element.addEventListener("wheel",this.onWheel,p),this.element.addEventListener("touchstart",this.onTouchStart,p),this.element.addEventListener("touchmove",this.onTouchMove,p),this.element.addEventListener("touchend",this.onTouchEnd,p)}touchStart={x:0,y:0};lastDelta={x:0,y:0};window={width:0,height:0};emitter=new g;on(t,e){return this.emitter.on(t,e)}destroy(){this.emitter.destroy(),window.removeEventListener("resize",this.onWindowResize,!1),this.element.removeEventListener("wheel",this.onWheel,p),this.element.removeEventListener("touchstart",this.onTouchStart,p),this.element.removeEventListener("touchmove",this.onTouchMove,p),this.element.removeEventListener("touchend",this.onTouchEnd,p)}onTouchStart=t=>{let{clientX:e,clientY:i}=t.targetTouches?t.targetTouches[0]:t;this.touchStart.x=e,this.touchStart.y=i,this.lastDelta={x:0,y:0},this.emitter.emit("scroll",{deltaX:0,deltaY:0,event:t})};onTouchMove=t=>{let{clientX:e,clientY:i}=t.targetTouches?t.targetTouches[0]:t,s=-(e-this.touchStart.x)*this.options.touchMultiplier,o=-(i-this.touchStart.y)*this.options.touchMultiplier;this.touchStart.x=e,this.touchStart.y=i,this.lastDelta={x:s,y:o},this.emitter.emit("scroll",{deltaX:s,deltaY:o,event:t})};onTouchEnd=t=>{this.emitter.emit("scroll",{deltaX:this.lastDelta.x,deltaY:this.lastDelta.y,event:t})};onWheel=t=>{let{deltaX:e,deltaY:i,deltaMode:s}=t,o=s===1?R:s===2?this.window.width:1,l=s===1?R:s===2?this.window.height:1;e*=o,i*=l,e*=this.options.wheelMultiplier,i*=this.options.wheelMultiplier,this.emitter.emit("scroll",{deltaX:e,deltaY:i,event:t})};onWindowResize=()=>{this.window={width:window.innerWidth,height:window.innerHeight}}};var L=class{_isScrolling=!1;_isStopped=!1;_isLocked=!1;_preventNextNativeScrollEvent=!1;_resetVelocityTimeout=null;isTouching;time=0;userData={};lastVelocity=0;velocity=0;direction=0;options;targetScroll;animatedScroll;animate=new y;emitter=new g;dimensions;virtualScroll;constructor({wrapper:t=window,content:e=document.documentElement,eventsTarget:i=t,smoothWheel:s=!0,syncTouch:o=!1,syncTouchLerp:l=.075,touchInertiaMultiplier:m=35,duration:v,easing:u=C=>Math.min(1,1.001-Math.pow(2,-10*C)),lerp:h=.1,infinite:c=!1,orientation:b="vertical",gestureOrientation:n="vertical",touchMultiplier:a=1,wheelMultiplier:f=1,autoResize:S=!0,prevent:d,virtualScroll:M,overscroll:O=!0,__experimental__naiveDimensions:H=!1}={}){window.lenisVersion=k,(!t||t===document.documentElement||t===document.body)&&(t=window),this.options={wrapper:t,content:e,eventsTarget:i,smoothWheel:s,syncTouch:o,syncTouchLerp:l,touchInertiaMultiplier:m,duration:v,easing:u,lerp:h,infinite:c,gestureOrientation:n,orientation:b,touchMultiplier:a,wheelMultiplier:f,autoResize:S,prevent:d,virtualScroll:M,overscroll:O,__experimental__naiveDimensions:H},this.dimensions=new E(t,e,{autoResize:S}),this.updateClassName(),this.targetScroll=this.animatedScroll=this.actualScroll,this.options.wrapper.addEventListener("scroll",this.onNativeScroll,!1),this.options.wrapper.addEventListener("pointerdown",this.onPointerDown,!1),this.virtualScroll=new T(i,{touchMultiplier:a,wheelMultiplier:f}),this.virtualScroll.on("scroll",this.onVirtualScroll)}destroy(){this.emitter.destroy(),this.options.wrapper.removeEventListener("scroll",this.onNativeScroll,!1),this.options.wrapper.removeEventListener("pointerdown",this.onPointerDown,!1),this.virtualScroll.destroy(),this.dimensions.destroy(),this.cleanUpClassName()}on(t,e){return this.emitter.on(t,e)}off(t,e){return this.emitter.off(t,e)}setScroll(t){this.isHorizontal?this.rootElement.scrollLeft=t:this.rootElement.scrollTop=t}onPointerDown=t=>{t.button===1&&this.reset()};onVirtualScroll=t=>{if(typeof this.options.virtualScroll=="function"&&this.options.virtualScroll(t)===!1)return;let{deltaX:e,deltaY:i,event:s}=t;if(this.emitter.emit("virtual-scroll",{deltaX:e,deltaY:i,event:s}),s.ctrlKey||s.lenisStopPropagation)return;let o=s.type.includes("touch"),l=s.type.includes("wheel");if(this.isTouching=s.type==="touchstart"||s.type==="touchmove",this.options.syncTouch&&o&&s.type==="touchstart"&&!this.isStopped&&!this.isLocked){this.reset();return}let v=e===0&&i===0,u=this.options.gestureOrientation==="vertical"&&i===0||this.options.gestureOrientation==="horizontal"&&e===0;if(v||u)return;let h=s.composedPath();h=h.slice(0,h.indexOf(this.rootElement));let c=this.options.prevent;if(h.find(d=>d instanceof HTMLElement&&(typeof c=="function"&&c?.(d)||d.hasAttribute?.("data-lenis-prevent")||o&&d.hasAttribute?.("data-lenis-prevent-touch")||l&&d.hasAttribute?.("data-lenis-prevent-wheel"))))return;if(this.isStopped||this.isLocked){s.preventDefault();return}if(!(this.options.syncTouch&&o||this.options.smoothWheel&&l)){this.isScrolling="native",this.animate.stop(),s.lenisStopPropagation=!0;return}let n=i;this.options.gestureOrientation==="both"?n=Math.abs(i)>Math.abs(e)?i:e:this.options.gestureOrientation==="horizontal"&&(n=e),(!this.options.overscroll||this.options.infinite||this.options.wrapper!==window&&(this.animatedScroll>0&&this.animatedScroll<this.limit||this.animatedScroll===0&&i>0||this.animatedScroll===this.limit&&i<0))&&(s.lenisStopPropagation=!0),s.preventDefault();let a=o&&this.options.syncTouch,S=o&&s.type==="touchend"&&Math.abs(n)>5;S&&(n=this.velocity*this.options.touchInertiaMultiplier),this.scrollTo(this.targetScroll+n,{programmatic:!1,...a?{lerp:S?this.options.syncTouchLerp:1}:{lerp:this.options.lerp,duration:this.options.duration,easing:this.options.easing}})};resize(){this.dimensions.resize(),this.animatedScroll=this.targetScroll=this.actualScroll,this.emit()}emit(){this.emitter.emit("scroll",this)}onNativeScroll=()=>{if(this._resetVelocityTimeout!==null&&(clearTimeout(this._resetVelocityTimeout),this._resetVelocityTimeout=null),this._preventNextNativeScrollEvent){this._preventNextNativeScrollEvent=!1;return}if(this.isScrolling===!1||this.isScrolling==="native"){let t=this.animatedScroll;this.animatedScroll=this.targetScroll=this.actualScroll,this.lastVelocity=this.velocity,this.velocity=this.animatedScroll-t,this.direction=Math.sign(this.animatedScroll-t),this.isScrolling="native",this.emit(),this.velocity!==0&&(this._resetVelocityTimeout=setTimeout(()=>{this.lastVelocity=this.velocity,this.velocity=0,this.isScrolling=!1,this.emit()},400))}};reset(){this.isLocked=!1,this.isScrolling=!1,this.animatedScroll=this.targetScroll=this.actualScroll,this.lastVelocity=this.velocity=0,this.animate.stop()}start(){this.isStopped&&(this.isStopped=!1,this.reset())}stop(){this.isStopped||(this.isStopped=!0,this.animate.stop(),this.reset())}raf(t){let e=t-(this.time||t);this.time=t,this.animate.advance(e*.001)}scrollTo(t,{offset:e=0,immediate:i=!1,lock:s=!1,duration:o=this.options.duration,easing:l=this.options.easing,lerp:m=this.options.lerp,onStart:v,onComplete:u,force:h=!1,programmatic:c=!0,userData:b}={}){if(!((this.isStopped||this.isLocked)&&!h)){if(typeof t=="string"&&["top","left","start"].includes(t))t=0;else if(typeof t=="string"&&["bottom","right","end"].includes(t))t=this.limit;else{let n;if(typeof t=="string"?n=document.querySelector(t):t instanceof HTMLElement&&t?.nodeType&&(n=t),n){if(this.options.wrapper!==window){let f=this.rootElement.getBoundingClientRect();e-=this.isHorizontal?f.left:f.top}let a=n.getBoundingClientRect();t=(this.isHorizontal?a.left:a.top)+this.animatedScroll}}if(typeof t=="number"){if(t+=e,t=Math.round(t),this.options.infinite?c&&(this.targetScroll=this.animatedScroll=this.scroll):t=w(0,t,this.limit),t===this.targetScroll){v?.(this),u?.(this);return}if(this.userData=b??{},i){this.animatedScroll=this.targetScroll=t,this.setScroll(this.scroll),this.reset(),this.preventNextNativeScrollEvent(),this.emit(),u?.(this),this.userData={};return}c||(this.targetScroll=t),this.animate.fromTo(this.animatedScroll,t,{duration:o,easing:l,lerp:m,onStart:()=>{s&&(this.isLocked=!0),this.isScrolling="smooth",v?.(this)},onUpdate:(n,a)=>{this.isScrolling="smooth",this.lastVelocity=this.velocity,this.velocity=n-this.animatedScroll,this.direction=Math.sign(this.velocity),this.animatedScroll=n,this.setScroll(this.scroll),c&&(this.targetScroll=n),a||this.emit(),a&&(this.reset(),this.emit(),u?.(this),this.userData={},this.preventNextNativeScrollEvent())}})}}}preventNextNativeScrollEvent(){this._preventNextNativeScrollEvent=!0,requestAnimationFrame(()=>{this._preventNextNativeScrollEvent=!1})}get rootElement(){return this.options.wrapper===window?document.documentElement:this.options.wrapper}get limit(){return this.options.__experimental__naiveDimensions?this.isHorizontal?this.rootElement.scrollWidth-this.rootElement.clientWidth:this.rootElement.scrollHeight-this.rootElement.clientHeight:this.dimensions.limit[this.isHorizontal?"x":"y"]}get isHorizontal(){return this.options.orientation==="horizontal"}get actualScroll(){return this.isHorizontal?this.rootElement.scrollLeft:this.rootElement.scrollTop}get scroll(){return this.options.infinite?x(this.animatedScroll,this.limit):this.animatedScroll}get progress(){return this.limit===0?1:this.scroll/this.limit}get isScrolling(){return this._isScrolling}set isScrolling(t){this._isScrolling!==t&&(this._isScrolling=t,this.updateClassName())}get isStopped(){return this._isStopped}set isStopped(t){this._isStopped!==t&&(this._isStopped=t,this.updateClassName())}get isLocked(){return this._isLocked}set isLocked(t){this._isLocked!==t&&(this._isLocked=t,this.updateClassName())}get isSmooth(){return this.isScrolling==="smooth"}get className(){let t="lenis";return this.isStopped&&(t+=" lenis-stopped"),this.isLocked&&(t+=" lenis-locked"),this.isScrolling&&(t+=" lenis-scrolling"),this.isScrolling==="smooth"&&(t+=" lenis-smooth"),t}updateClassName(){this.cleanUpClassName(),this.rootElement.className=`${this.rootElement.className} ${this.className}`.trim()}cleanUpClassName(){this.rootElement.className=this.rootElement.className.replace(/lenis(-\w+)?/g,"").trim()}};globalThis.Lenis=L;
+//# sourceMappingURL=lenis.min.js.map</script>
+<script>
+'use strict';
+const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TOUCH=matchMedia('(pointer:coarse)').matches;
+
+/* On mobile, transforming a filtered SVG re-rasterises the whole filter
+   region every scroll frame — the #1 cause of the bag-zoom jank. Strip the
+   turbulence/blur filters on touch so the bag is flat vector = composited,
+   no per-frame re-raster. Desktop keeps the full texture + soft shadows. */
+if(TOUCH){
+  document.querySelectorAll('#bagbig [filter]').forEach(el=>el.removeAttribute('filter'));
+}
+
+/* ---- smooth momentum scroll ---- */
+let lenis=null;
+if(window.Lenis && !REDUCED && !matchMedia('(pointer:coarse)').matches){
+  document.documentElement.style.scrollBehavior='auto';
+  lenis=new Lenis({duration:1.25,easing:t=>Math.min(1,1.001-Math.pow(2,-10*t)),smoothWheel:true,touchMultiplier:1.6});
+  (function raf(t){lenis.raf(t);requestAnimationFrame(raf)})();
+  document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+    const id=a.getAttribute('href');if(id&&id.length>1&&document.querySelector(id)){e.preventDefault();lenis.scrollTo(id,{duration:1.4})}}));
+}
+
+/* ===== Zoom-portal scroll (GPU transforms only → no lag) =====
+   A realistic moulded frisbee floats level in the hero, glowing and rocking
+   gently. Scrolling levels it out to face you and flies you THROUGH its
+   pressed rings (eased scale — slow approach, deep dive) before the bloom
+   hands off to the catalogue. A second portal later zooms INTO an
+   illustrated disc-golf bag before the bags grid. Only transform and
+   opacity are animated — composited on the GPU, no repaint. */
+const journey=document.getElementById('journey');
+const flmark=document.getElementById('flmark');
+/* Must match the perspective on .scene: apparent scale is persp/(persp-z),
+   so we invert it to place the camera at the distance a given scale implies. */
+const PERSP=1100;
+const caps=[...document.querySelectorAll('#journey .jcap')];
+const cue=document.getElementById('cue');
+const prog=document.getElementById('prog');
+const bagportal=document.getElementById('bagportal');
+const bagbig=document.getElementById('bagbig');
+const bpcap=document.getElementById('bpcap');
+const bagflap=document.getElementById('bagflap'),bagslider=document.getElementById('bagslider'),bagint=document.getElementById('bagint');
+let lastK='';
+const clamp=(a,b,v)=>Math.max(a,Math.min(b,v));
+const smooth=p=>p<=0?0:p>=1?1:p*p*(3-2*p);
+function secP(el){const r=el.getBoundingClientRect();return clamp(0,1,-r.top/(r.height-innerHeight))}
+
+const l=document.getElementById('loader');setTimeout(()=>l&&l.classList.add('done'),400);
+
+/* Real backdrop photo, if one is set in Theme settings. window.FL_SCENE_BG
+   is emitted by Shopify as {src, srcset}. The drawn scenery below stays
+   put until the photo has decoded, so a slow connection or a broken URL
+   degrades to the illustration instead of an empty scene. */
+(function(){
+  const bg=window.FL_SCENE_BG,img=document.getElementById('scenebg'),scene=document.getElementById('scene');
+  if(!bg||!bg.src||!img||!scene)return;
+  img.onload=()=>scene.classList.add('has-photo');
+  img.onerror=()=>{img.removeAttribute('src');img.removeAttribute('srcset')};
+  if(bg.srcset){img.srcset=bg.srcset;img.sizes='100vw'}
+  img.src=bg.src;
+  if(img.complete&&img.naturalWidth)scene.classList.add('has-photo');
+})();
+
+/* Backdrop: a hazy forest fairway with a low sun and a disc-golf basket
+   standing under the disc. Built once as static SVG — it is never
+   transformed while scrolling, so the whole scene costs a single paint.
+   The realism comes from atmospheric perspective rather than detail:
+   distant layers are pale and low-contrast, near layers darker and
+   coarser, with mist banding between them. */
+(function(){
+  const sc=document.getElementById('scape');if(!sc)return;
+  const W=1440,H=620;
+  let seed=23;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const R=(a,b)=>a+rnd()*(b-a);
+  /* whole viewBox units: the scape renders at roughly 0.9 px per unit, so
+     sub-pixel precision only inflates the markup */
+  const f=n=>n.toFixed(0);
+
+  /* A spruce built from tiered, drooping branches with per-tier jitter,
+     so the silhouette breaks up the way a real conifer does instead of
+     reading as the plain triangle this used to draw. */
+  function spruce(x,base,h,w,lean){
+    const tiers=Math.round(R(9,14)),top=base-h;
+    let right='',left='';
+    for(let i=1;i<=tiers;i++){
+      const t=i/tiers;
+      const y=top+h*Math.pow(t,0.94);
+      const hw=w*Math.pow(t,0.8)*R(0.84,1.14);
+      const cx=x+lean*Math.pow(1-t,2)*h*0.1;
+      const droop=h*0.024*R(0.5,1.4);
+      const notch=R(0.42,0.62),step=h*0.042;
+      right+=' L'+f(cx+hw)+' '+f(y+droop)+' L'+f(cx+hw*notch)+' '+f(y+step);
+      left=' L'+f(cx-hw*notch)+' '+f(y+step)+' L'+f(cx-hw)+' '+f(y+droop)+left;
+    }
+    const tw=Math.max(1.2,w*0.1);
+    return 'M'+f(x)+' '+f(top)+right+' L'+f(x+tw)+' '+f(base)+' L'+f(x-tw)+' '+f(base)+left+' Z';
+  }
+
+  /* A broadleaf — lumpy canopy on a short trunk, mixed in for variety so
+     the treeline isn't uniformly coniferous. */
+  function broadleaf(x,base,h,w){
+    const n=11,cy=base-h*0.6,rx=w*0.5,ry=h*0.44,pts=[];
+    for(let i=0;i<n;i++){
+      const a=Math.PI*2*i/n,k=R(0.9,1.09);
+      pts.push([x+Math.cos(a)*rx*k,cy+Math.sin(a)*ry*k]);
+    }
+    /* round each span outwards into a lobe, so the canopy reads as foliage
+       instead of the angular boulder a straight-edged polygon gives */
+    let d='M'+f(pts[0][0])+' '+f(pts[0][1]);
+    for(let i=1;i<=n;i++){
+      const p=pts[i%n],q=pts[i-1];
+      const mx=(q[0]+p[0])*0.5,my=(q[1]+p[1])*0.5;
+      d+=' Q'+f(x+(mx-x)*1.3)+' '+f(cy+(my-cy)*1.3)+' '+f(p[0])+' '+f(p[1]);
+    }
+    const tw=Math.max(1.4,w*0.045),ty=cy+ry*0.55;
+    return d+' Z M'+f(x-tw)+' '+f(base)+' L'+f(x-tw*0.5)+' '+f(ty)+
+      ' L'+f(x+tw*0.5)+' '+f(ty)+' L'+f(x+tw)+' '+f(base)+' Z';
+  }
+
+  /* One band of forest. Trees are split across three sub-paths drawn at
+     different opacities: individual trees then sit at slightly different
+     depths in the haze instead of forming one flat cut-out wall. Still
+     only three paths per band, so it stays cheap. */
+  function band(baseY,hMin,hMax,wRatio,count,broadChance){
+    const tone=['','',''];
+    for(let i=0;i<count;i++){
+      /* clustered rather than evenly spaced — real treelines clump */
+      const x=-50+(W+100)*(i+R(-0.55,0.55))/count;
+      const h=R(hMin,hMax)*(rnd()<0.22?R(1.15,1.4):1);   // occasional tall one
+      const b=baseY+R(-5,5);
+      const t=rnd()<0.5?0:(rnd()<0.5?1:2);
+      tone[t]+=(broadChance&&rnd()<broadChance)
+        ? broadleaf(x,b,h*0.74,h*wRatio*1.7)
+        : spruce(x,b,h,h*wRatio,R(-1,1));
+    }
+    return tone;
+  }
+  const layer=(t,fill)=>'<path d="'+t[0]+'" fill="'+fill+'"/>'+
+    '<path d="'+t[1]+'" fill="'+fill+'" opacity=".82"/>'+
+    '<path d="'+t[2]+'" fill="'+fill+'" opacity=".66"/>';
+
+  /* Low scrub along a treeline base, so the trees don't meet the grass on
+     a ruler-straight line. */
+  function scrub(baseY,h,count){
+    let d='';
+    for(let i=0;i<count;i++){
+      const x=-40+(W+80)*(i+R(-0.5,0.5))/count;
+      const hh=h*R(0.55,1.5),w=hh*R(1.7,3.2);
+      d+='M'+f(x-w*0.5)+' '+f(baseY);
+      for(let j=0;j<=7;j++){
+        const a=Math.PI*(1-j/7);
+        d+=' L'+f(x+Math.cos(a)*w*0.5*R(0.9,1.06))+' '+f(baseY-Math.sin(a)*hh*R(0.68,1.18));
+      }
+      d+=' Z';
+    }
+    return d;
+  }
+
+  /* Scattered grass tufts on the fairway. */
+  function tufts(y0,y1,count){
+    let d='';
+    for(let i=0;i<count;i++){
+      const x=R(-20,W+20),y=R(y0,y1),s=R(2.5,6)*(0.6+(y-y0)/(y1-y0));
+      d+='M'+f(x)+' '+f(y)+' L'+f(x+s*0.35)+' '+f(y-s*1.9)+' L'+f(x+s*0.9)+' '+f(y)+' Z';
+    }
+    return d;
+  }
+
+  /* Smooth rolling hills far behind the trees. */
+  function hill(y0,amp,fr,ph){
+    let d='M0 '+H+' L0 '+f(y0);
+    for(let x=0;x<=W;x+=40){
+      const u=x/W*Math.PI;
+      d+=' L'+f(x)+' '+f(y0-amp*(0.5+0.5*Math.sin(u*fr+ph))-amp*0.26*Math.sin(u*fr*2.7+ph*1.7));
+    }
+    return d+' L'+W+' '+H+' Z';
+  }
+
+  /* The basket, drawn in local coordinates with the ground contact at
+     (0,0) and everything else above it, then placed under the disc. */
+  function basket(){
+    let chains='',slats='';
+    for(let i=0;i<16;i++){
+      const a=Math.PI*2*i/16,front=Math.sin(a)>0;
+      const x0=Math.cos(a)*52,y0=-168+Math.sin(a)*8;
+      const x1=Math.cos(a)*30,y1=-68+Math.sin(a)*4;
+      chains+='<path d="M'+f(x0)+' '+f(y0)+' Q'+f((x0+x1)*0.5*1.08)+' '+f((y0+y1)*0.5)+' '+f(x1)+' '+f(y1)+'"'+
+        ' stroke="'+(front?'#eef3ea':'#9fb3a5')+'" stroke-width="'+(front?1.5:1)+'" fill="none"'+
+        ' opacity="'+(front?0.88:0.45)+'"/>';
+    }
+    for(let i=0;i<=12;i++){
+      const a=Math.PI*i/12;
+      slats+='<path d="M'+f(-58*Math.cos(a))+' -58 L'+f(-45*Math.cos(a))+' -16"'+
+        ' stroke="#22392a" stroke-width="1.5" opacity=".75"/>';
+    }
+    return '<g transform="translate(720 566) scale(.9)">'+
+      '<ellipse cx="-16" cy="5" rx="66" ry="11" fill="#2c5133" opacity=".32"/>'+
+      '<rect x="-5" y="-176" width="10" height="170" rx="3" fill="url(#gPole)"/>'+
+      '<path d="M-58 -58 L-45 -16 A45 7 0 0 0 45 -16 L58 -58 Z" fill="url(#gCage)"/>'+
+      '<g fill="none">'+slats+'</g>'+
+      '<ellipse cx="0" cy="-16" rx="45" ry="7" fill="none" stroke="#1d3325" stroke-width="2.4"/>'+
+      '<ellipse cx="0" cy="-58" rx="58" ry="9" fill="none" stroke="#2c4835" stroke-width="5"/>'+
+      '<ellipse cx="0" cy="-59.5" rx="58" ry="9" fill="none" stroke="#c3d6c6" stroke-width="1.5" opacity=".65"/>'+
+      chains+
+      '<ellipse cx="0" cy="-168" rx="52" ry="8" fill="none" stroke="#2c4835" stroke-width="4.5"/>'+
+      '<ellipse cx="0" cy="-169.5" rx="52" ry="8" fill="none" stroke="#c3d6c6" stroke-width="1.4" opacity=".6"/>'+
+      '<path d="M-21 -170 L0 -191 L21 -170 Z" fill="#2a4433"/>'+
+      '</g>';
+  }
+
+  const defs='<defs>'+
+    '<linearGradient id="gHill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dbe8de"/><stop offset="1" stop-color="#c1d6ca"/></linearGradient>'+
+    '<linearGradient id="gFar" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#cadfd1"/><stop offset="1" stop-color="#a9c7b8"/></linearGradient>'+
+    '<linearGradient id="gMid" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#93b797"/><stop offset="1" stop-color="#628a6e"/></linearGradient>'+
+    '<linearGradient id="gNear" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#578266"/><stop offset="1" stop-color="#32543e"/></linearGradient>'+
+    '<linearGradient id="gFore" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e4b37"/><stop offset="1" stop-color="#1b3123"/></linearGradient>'+
+    '<linearGradient id="gGround" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3c583"/><stop offset=".45" stop-color="#83ac6b"/><stop offset="1" stop-color="#5b8350"/></linearGradient>'+
+    '<linearGradient id="gPole" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#22382a"/><stop offset=".42" stop-color="#54705b"/><stop offset="1" stop-color="#1b2f22"/></linearGradient>'+
+    '<linearGradient id="gCage" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#294331"/><stop offset=".46" stop-color="#3f6048"/><stop offset="1" stop-color="#1f3527"/></linearGradient>'+
+    '<linearGradient id="gMist" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#f4faf6" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'+
+    '</defs>';
+
+  sc.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMax slice">'+defs+
+    /* distant hills, hazed almost into the sky */
+    '<path d="'+hill(276,40,1.7,0.6)+'" fill="url(#gHill)" opacity=".78"/>'+
+    '<path d="'+hill(304,28,2.4,2.1)+'" fill="#bfd5c8" opacity=".82"/>'+
+    '<rect x="0" y="252" width="'+W+'" height="86" fill="url(#gMist)" opacity=".9"/>'+
+    /* far treeline */
+    layer(band(336,58,98,0.19,52,0.18),'url(#gFar)')+
+    '<path d="'+scrub(340,11,60)+'" fill="url(#gFar)" opacity=".8"/>'+
+    '<rect x="0" y="300" width="'+W+'" height="74" fill="url(#gMist)" opacity=".68"/>'+
+    /* mid treeline */
+    layer(band(396,92,152,0.2,36,0.2),'url(#gMid)')+
+    '<path d="'+scrub(400,16,46)+'" fill="url(#gMid)" opacity=".85"/>'+
+    '<rect x="0" y="360" width="'+W+'" height="64" fill="url(#gMist)" opacity=".45"/>'+
+    /* near treeline */
+    layer(band(450,132,214,0.21,25,0.22),'url(#gNear)')+
+    '<path d="'+scrub(452,24,34)+'" fill="url(#gNear)"/>'+
+    /* sunlit fairway */
+    '<path d="M0 444 Q360 432 720 440 Q1080 448 1440 436 L'+W+' '+H+' L0 '+H+' Z" fill="url(#gGround)"/>'+
+    '<ellipse cx="700" cy="470" rx="520" ry="26" fill="#b3d191" opacity=".3"/>'+
+    '<ellipse cx="760" cy="522" rx="600" ry="34" fill="#9cc07d" opacity=".26"/>'+
+    '<ellipse cx="300" cy="500" rx="420" ry="22" fill="#6f9a5c" opacity=".22"/>'+
+    '<ellipse cx="1150" cy="560" rx="480" ry="30" fill="#6f9a5c" opacity=".2"/>'+
+    '<path d="'+tufts(452,H,190)+'" fill="#4f7a45" opacity=".4"/>'+
+    basket()+
+    /* foreground framing trees, cropped by the edges of the frame */
+    '<path d="'+spruce(46,700,430,74,0.4)+spruce(-26,700,360,62,-0.3)+
+      spruce(1396,700,450,78,-0.4)+spruce(1466,700,380,66,0.3)+'" fill="url(#gFore)"/>'+
+    '</svg>';
+})();
+
+/* Rasterising the bag SVG is the heaviest thing on this page, and the cost
+   grows with how far it is scaled up — vector art is re-rastered at each
+   new scale, unlike the hero photo. Cap the zoom lower on phones. */
+const ZBAG=TOUCH?5.5:9.9, ZHERO=TOUCH?7:11;
+let lastKey='';
+function loop(){
+  // Only touch the hero when its section is actually on screen — avoids
+  // writing transforms every frame while the user is down in the catalogue.
+  const jr=journey.getBoundingClientRect();
+  if(jr.bottom>0 && jr.top<innerHeight){
+    const p=clamp(0,1,-jr.top/(jr.height-innerHeight));
+    const e=smooth(p);
+    /* Dolly, not scale. We pick the apparent size we want, then solve for the
+       camera distance that produces it, so the growth carries real
+       perspective and the type stays type. */
+    const s=1+Math.pow(e,1.45)*ZHERO;
+    const z=PERSP*(1-1/s);
+    if(flmark){
+      flmark.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
+      flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.46)/0.42))).toFixed(3);
+    }
+    const key=p.toFixed(3);
+    if(key!==lastKey){lastKey=key;
+      caps.forEach(c=>{const s=+c.dataset.show,h=+c.dataset.hide;c.classList.toggle('show',p>=s&&p<h)});
+      if(cue)cue.style.opacity=p>0.05?'0':'0.7';}
+  }
+  // Bag portal — same, only while it's in view
+  if(bagportal){const br=bagportal.getBoundingClientRect();
+    if(br.bottom>0 && br.top<innerHeight){
+      const bp=clamp(0,1,-br.top/(br.height-innerHeight));
+      /* The zipper is the point of this section, so it gets the long middle
+         of the scroll to itself: the bag barely moves while it opens, and
+         only once it is fully open does the camera dive in. Previously the
+         zipper ran from 8% to 38% while the bag was already zooming and
+         fading, which made it read as a fast cut rather than an opening. */
+      const k=smooth(clamp(0,1,(bp-0.05)/0.57));      // opens 5% -> 62%
+      const dive=smooth(clamp(0,1,(bp-0.62)/0.38));
+      const z=0.9+smooth(clamp(0,1,bp/0.62))*0.28+Math.pow(dive,1.5)*(ZBAG-1.18);
+      bagbig.style.transform='scale('+z.toFixed(3)+')';
+      bagbig.style.opacity=(1-smooth(clamp(0,1,(bp-0.8)/0.2))).toFixed(3);
+      if(bpcap)bpcap.style.opacity=(1-smooth(clamp(0,1,(bp-0.3)/0.25))).toFixed(3);
+      const kq=k.toFixed(3);                          // finer than the old 2dp
+      if(kq!==lastK){lastK=kq;
+        if(bagslider)bagslider.setAttribute('transform','translate('+(-(k*104)).toFixed(1)+' 0)');
+        const fs=1-0.62*k;
+        if(bagflap)bagflap.setAttribute('transform','translate(0 '+(368*(1-fs)).toFixed(1)+') scale(1 '+fs.toFixed(3)+')');
+        if(bagint)bagint.setAttribute('opacity',clamp(0,1,(k-0.1)/0.5).toFixed(3));
+      }
+    }
+  }
+  if(prog){const tot=clamp(0,1,scrollY/(document.documentElement.scrollHeight-innerHeight||1));prog.style.width=(tot*100).toFixed(1)+'%'}
+  requestAnimationFrame(loop);
+}
+if(!REDUCED)requestAnimationFrame(loop);
+else{caps.forEach(c=>c.classList.remove('show'));caps[0].classList.add('show');if(l)l.classList.add('done');}
+
+/* ===== reveal ===== */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.14});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+/* ===== catalog ===== */
+const BRAND={
+  'Kastaplast':{rim:['#C8E05A','#A9C93B','#7C9A24'],glow:'rgba(180,211,52,.4)',face:['#22301A','#18220F','#0E1408']},
+  'Discmania':{rim:['#4A6FD4','#24439B','#152A66'],glow:'rgba(74,111,212,.45)',face:['#101B3E','#0B1330','#070D22']},
+  'Latitude 64':{rim:['#FFD34D','#F2B705','#B98603'],glow:'rgba(242,183,5,.35)',face:['#2E2408','#221A05','#141003']},
+  'Westside':{rim:['#E06A5A','#C9453B','#8F2A24'],glow:'rgba(224,106,90,.4)',face:['#301A17','#220F0D','#140807']},
+  'Dynamic Discs':{rim:['#5AC8E0','#3BA9C9','#247C9A'],glow:'rgba(90,200,224,.4)',face:['#17282E','#0F1B20','#081013']}
+};
+// 15 discs across the 5 brands, grouped by flight class
+const DISCS=[
+  {b:'Kastaplast',m:'Reko',c:'Putter',n:[3,3,0,1],h:'kastaplast-reko-putter'},
+  {b:'Dynamic Discs',m:'Judge',c:'Putter',n:[2,4,0,1],h:'dynamic-discs-judge-putter'},
+  {b:'Discmania',m:'P2',c:'Putter',n:[2,3,0,2],h:'discmania-p2-putter'},
+  {b:'Kastaplast',m:'Berg',c:'Approach',n:[1,1,0,2],h:'kastaplast-berg-approach'},
+  {b:'Westside',m:'Harp',c:'Approach',n:[4,3,0,3],h:'westside-harp-approach'},
+  {b:'Discmania',m:'MD3',c:'Midrange',n:[5,5,0,2],h:'discmania-md3-midrange'},
+  {b:'Kastaplast',m:'Lots',c:'Midrange',n:[5,5,-0.5,1.5],h:'kastaplast-lots-midrange'},
+  {b:'Latitude 64',m:'Fuse',c:'Midrange',n:[6,6,-1,1],h:'latitude-64-fuse-midrange'},
+  {b:'Latitude 64',m:'River',c:'Fairway',n:[7,7,-1,1],h:'latitude-64-river-fairway-driver'},
+  {b:'Discmania',m:'FD',c:'Fairway',n:[7,6,-1,1],h:'discmania-fd-fairway-driver'},
+  {b:'Westside',m:'Underworld',c:'Fairway',n:[7,6,-3,1],h:'westside-underworld-fairway-driver'},
+  {b:'Latitude 64',m:'Ballista Pro',c:'Distanse',n:[14,4,0,3],h:'latitude-64-ballista-pro-distansedriver'},
+  {b:'Discmania',m:'DD3',c:'Distanse',n:[13,5,-1,3],h:'discmania-dd3-distansedriver'},
+  {b:'Dynamic Discs',m:'Trespass',c:'Distanse',n:[12,5,-0.5,3],h:'dynamic-discs-trespass-distansedriver'},
+  {b:'Kastaplast',m:'Grym X',c:'Distanse',n:[12,5,-1,3],h:'kastaplast-grym-x-distansedriver'}
+];
+const CLASS_ORDER=[['Putter','Puttere','Presisjon og kontroll rundt kurven'],['Approach','Approach','Trygge innspill mot kurven'],['Midrange','Midrange','Allrounderen i bagen'],['Fairway','Fairway-drivere','Kontrollert lengde'],['Distanse','Distansedrivere','Maks meter fra utkastet']];
+function disc3(b,m,n){const s=BRAND[b],S=108;
+  return '<div class="disc-scene"><div class="disc3d" style="width:'+S+'px;height:'+S+'px">'+
+   '<div class="dl" style="background:radial-gradient(circle at 35% 30%,'+s.rim[0]+' 0%,'+s.rim[1]+' 45%,'+s.rim[2]+' 100%);box-shadow:inset 0 2px 5px rgba(255,255,255,.35),inset 0 -4px 8px rgba(0,0,0,.5),0 0 26px '+s.glow+'"></div>'+
+   '<div class="dl dface" style="inset:7%;transform:translateZ(6px);background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,.035) 0 1.5px,rgba(0,0,0,.03) 1.5px 6px),radial-gradient(circle at 40% 35%,'+s.face[0]+' 0%,'+s.face[1]+' 60%,'+s.face[2]+' 100%)">'+
+   '<div class="dring"></div>'+
+   '<span style="font-size:6px;letter-spacing:2px;color:rgba(250,249,245,.75);text-transform:uppercase">'+b+'</span>'+
+   '<span style="font-size:14px;color:#faf9f5;font-family:var(--h);font-style:italic;white-space:nowrap;margin-top:2px">'+m+'</span>'+
+   '<span style="font-size:7px;letter-spacing:1px;color:rgba(250,249,245,.55);margin-top:3px">'+n.join(' · ')+'</span></div>'+
+   '<div class="dl" style="transform:translateZ(7px);background:radial-gradient(ellipse 55% 35% at 30% 22%,rgba(255,255,255,.32),rgba(255,255,255,.06) 45%,transparent 65%)"></div>'+
+   '</div></div>';}
+/* Prices come from Shopify as window.FL_PRICE, keyed by product handle.
+   The flat 179 kr is only a fallback for viewing this file on its own. */
+const FLPRICE=(typeof window!=='undefined'&&window.FL_PRICE)||{};
+const priceOf=d=>{const p=FLPRICE[d.h];return p&&isFinite(p.amount)?+p.amount:179};
+const priceText=d=>{const p=FLPRICE[d.h];return p&&p.text?p.text:'179 kr'};
+
+function card(d){return '<a class="pcard rv" href="/products/'+d.h+'"><div class="dw">'+disc3(d.b,d.m,d.n)+'</div><div class="shadow"></div>'+
+  '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span><span class="pr">'+priceText(d)+'</span></a>';}
+
+/* ---- catalogue filter: brand, type, price ---- */
+const F={brand:new Set(),type:new Set(),sort:''};
+const groupsEl=document.getElementById('disc-groups');
+
+function renderDiscs(first){
+  let items=DISCS.filter(d=>(!F.brand.size||F.brand.has(d.b))&&(!F.type.size||F.type.has(d.c)));
+  if(F.sort){
+    /* A price sort is global, so the per-class grouping is dropped while
+       it is active — otherwise you would only be sorting within a class. */
+    items=items.slice().sort((a,b)=>F.sort==='asc'?priceOf(a)-priceOf(b):priceOf(b)-priceOf(a));
+    groupsEl.innerHTML=items.length?'<div class="disc-group"><div class="pgrid">'+items.map(card).join('')+'</div></div>':'';
+  }else{
+    groupsEl.innerHTML=CLASS_ORDER.map(([key,title,sub])=>{
+      const g=items.filter(d=>d.c===key);if(!g.length)return '';
+      return '<div class="disc-group"><div class="gt rv"><h3>'+title+'</h3><span>'+sub+' · '+g.length+' modeller</span></div>'+
+        '<div class="pgrid">'+g.map(card).join('')+'</div></div>';
+    }).join('');
+  }
+  const empty=document.getElementById('fempty');if(empty)empty.hidden=items.length>0;
+  const n=F.brand.size+F.type.size+(F.sort?1:0);
+  const c=document.getElementById('fcount');if(c){c.hidden=!n;c.textContent=n||''}
+  const res=document.getElementById('fres');
+  if(res)res.textContent=items.length===DISCS.length?'Viser alle '+DISCS.length+' discer'
+    :items.length+' av '+DISCS.length+' discer';
+  /* First paint keeps the scroll reveal; later re-renders show at once, so
+     filtering does not look like a blank grid. */
+  if(first)groupsEl.querySelectorAll('.rv').forEach(el=>io.observe(el));
+  else groupsEl.querySelectorAll('.rv').forEach(el=>el.classList.add('in'));
+}
+
+(function(){
+  const btn=document.getElementById('filterbtn'),panel=document.getElementById('filterpanel');
+  if(!btn||!panel){renderDiscs(true);return}
+  const chip=(label,v)=>'<button class="fchip" type="button" role="switch" aria-pressed="false" data-v="'+v+'">'+label+'</button>';
+  const brands=[...new Set(DISCS.map(d=>d.b))].sort((a,b)=>a.localeCompare(b,'no'));
+  document.getElementById('fbrand').innerHTML=brands.map(b=>chip(b,b)).join('');
+  document.getElementById('ftype').innerHTML=CLASS_ORDER
+    .filter(([k])=>DISCS.some(d=>d.c===k)).map(([k,title])=>chip(title,k)).join('');
+  document.getElementById('fprice').innerHTML=chip('Lav til høy','asc')+chip('Høy til lav','desc');
+
+  btn.addEventListener('click',()=>{
+    const open=btn.getAttribute('aria-expanded')==='true';
+    btn.setAttribute('aria-expanded',String(!open));panel.hidden=open;
+  });
+  panel.addEventListener('click',e=>{
+    const t=e.target.closest('.fchip');
+    if(t){
+      const v=t.dataset.v,grp=t.parentElement.id;
+      if(grp==='fprice'){                       // price is a single choice
+        const on=F.sort===v;F.sort=on?'':v;
+        [...t.parentElement.children].forEach(c=>c.setAttribute('aria-pressed',String(!on&&c===t)));
+      }else{
+        const set=grp==='fbrand'?F.brand:F.type;
+        if(set.has(v)){set.delete(v);t.setAttribute('aria-pressed','false')}
+        else{set.add(v);t.setAttribute('aria-pressed','true')}
+      }
+      renderDiscs(false);return;
+    }
+    if(e.target.closest('#fclear'))clearAll();
+  });
+  document.addEventListener('click',e=>{if(e.target.closest('[data-clear]'))clearAll()});
+  function clearAll(){
+    F.brand.clear();F.type.clear();F.sort='';
+    panel.querySelectorAll('.fchip').forEach(c=>c.setAttribute('aria-pressed','false'));
+    renderDiscs(false);
+  }
+  renderDiscs(true);
+})();
+
+// bags (dedicated section)
+const BAGS=[
+  {img:'https://images.pexels.com/photos/5202030/pexels-photo-5202030.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Sling',d:'6–8 discer · lett for en rask runde',p:'299 kr',h:'flightlab-sling'},
+  {img:'https://images.pexels.com/photos/1178521/pexels-photo-1178521.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Starter Bag',d:'8–10 discer · flaskeholder',p:'349 kr',h:'flightlab-starter-bag'},
+  {img:'https://images.pexels.com/photos/2422461/pexels-photo-2422461.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Coursebag',d:'18+ discer, stativ og drikkeflaske',p:'699 kr',h:'flightlab-coursebag'},
+  {img:'https://images.pexels.com/photos/1103829/pexels-photo-1103829.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Tour Backpack',d:'25+ discer · innebygd stativ · værsikker',p:'1 099 kr',h:'flightlab-tour-backpack'}
+];
+// accessories
+const ACC=[
+  {img:'https://images.pexels.com/photos/12370410/pexels-photo-12370410.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Startsett — 3 Discer',d:'Putter, midrange og driver i én pakke',p:'349 kr',h:'startsett-3-discer'},
+  {img:'https://images.pexels.com/photos/5038791/pexels-photo-5038791.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Disc-Håndkle',d:'Tørt grep i regn og morgendugg',p:'149 kr',h:'disc-handkle'},
+  {img:'https://images.pexels.com/photos/1325711/pexels-photo-1325711.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Drikkeflaske',d:'750 ml, kald drikke hele runden',p:'129 kr',h:'flightlab-drikkeflaske'},
+  {img:'https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Caps',d:'Pustende caps med brodert logo',p:'199 kr',h:'flightlab-caps'},
+  {img:'https://images.pexels.com/photos/9072316/pexels-photo-9072316.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Mini-markør',d:'Merk liet ditt — metall med logo',p:'49 kr',h:'mini-markor'},
+  {img:'https://images.pexels.com/photos/4219654/pexels-photo-4219654.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Scorekort-holder',d:'Vær­sikker holder med blyant',p:'99 kr',h:'scorekort-holder'},
+  {img:'https://images.pexels.com/photos/9072311/pexels-photo-9072311.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Flightlab Hettegenser',d:'Myk collegegenser i skoggrønn',p:'549 kr',h:'flightlab-hettegenser'},
+  {img:'https://images.pexels.com/photos/6311392/pexels-photo-6311392.jpeg?auto=compress&cs=tinysrgb&w=700',n:'Øvingskurv',d:'Bærbar kurv for putt-trening hjemme',p:'899 kr',h:'ovingskurv'}
+];
+/* Image source, in priority order:
+   1. window.FL_IMG[handle] — set by Shopify (theme setting, else product photo)
+   2. the built-in placeholder below
+   Lets the shop owner swap any card image from Theme settings without code. */
+const FLIMG=(typeof window!=='undefined'&&window.FL_IMG)||{};
+const imgFor=a=>FLIMG[a.h]||a.img;
+const acard=a=>'<a class="acard rv" href="/products/'+a.h+'"><div class="im"><img src="'+imgFor(a)+'" alt="'+a.n+'" loading="lazy" onerror="this.style.display=\'none\'"></div>'+
+  '<div class="bd"><h4>'+a.n+'</h4><div class="ad">'+a.d+'</div><div class="ap">'+a.p+'</div></div></a>';
+if(window.FL_HERO){const hd=document.getElementById('herodisc');if(hd)hd.src=window.FL_HERO;}
+document.getElementById('bgrid').innerHTML=BAGS.map(acard).join('');
+document.getElementById('agrid').innerHTML=ACC.map(acard).join('');
+document.querySelectorAll('#disc-groups .rv,#bgrid .rv,#agrid .rv').forEach(el=>io.observe(el));
+
+document.getElementById('nlform').addEventListener('submit',e=>{e.preventDefault();
+  const f=e.target;if(f.querySelector('input').value.trim()){f.outerHTML='<div class="nlthanks">Takk! Vi sier ifra så fort dørene åpner. 🥏</div>'}});
+
+/* ===== catalogue search: live filter here, full-store search on submit ===== */
+(function(){
+  const q=document.getElementById('q'),hint=document.getElementById('searchhint');
+  if(!q)return;
+  const secs=['discer','bager','tilbehor'].map(id=>document.getElementById(id)).filter(Boolean);
+  const bp=document.getElementById('bagportal');
+  function run(){
+    const term=q.value.trim().toLowerCase();
+    const cards=document.querySelectorAll('#disc-groups .pcard,#bgrid .acard,#agrid .acard');
+    let shown=0;
+    cards.forEach(c=>{const hit=!term||c.textContent.toLowerCase().includes(term);c.style.display=hit?'':'none';if(hit&&term)shown++;});
+    document.querySelectorAll('#disc-groups .disc-group').forEach(g=>{
+      g.style.display=[...g.querySelectorAll('.pcard')].some(c=>c.style.display!=='none')?'':'none';});
+    if(term){
+      secs.forEach(s=>{const any=[...s.querySelectorAll('.pcard,.acard')].some(c=>c.style.display!=='none');s.style.display=any?'':'none';});
+      if(bp)bp.style.display='none';
+      hint.className='searchhint on';
+      hint.innerHTML=shown+' treff · <a href="#discer">Vis ↓</a> · <a href="/search?q='+encodeURIComponent(q.value)+'">Hele butikken →</a>';
+    }else{
+      secs.forEach(s=>s.style.display='');if(bp)bp.style.display='';hint.className='searchhint';hint.innerHTML='';
+    }
+  }
+  q.addEventListener('input',run);
+})();
+
+/* ===== Apple-style press feedback (pointer-based so iOS Safari honours it) ===== */
+(function(){
+  const SEL='.pcard,.acard,.btn,nav .nl a,.brand,.filterbtn,.fchip';
+  addEventListener('pointerdown',e=>{const t=e.target.closest(SEL);if(t)t.classList.add('pressing');},{passive:true});
+  const clear=()=>document.querySelectorAll('.pressing').forEach(el=>el.classList.remove('pressing'));
+  ['pointerup','pointercancel','pointerleave','dragstart','scroll'].forEach(ev=>addEventListener(ev,clear,{passive:true}));
+})();
+</script>
+</body>
+</html>
+
+{% endraw %}
