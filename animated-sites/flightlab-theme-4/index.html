@@ -347,11 +347,11 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
 
 /* One continuous canvas: the page owns the gradient, sections are glass-clear,
    so nothing ever cuts from one background colour to another. */
-body{background:#151D2B;color:var(--ink)}
+body{background:#0D1B2C;color:var(--ink)}
 body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:
     radial-gradient(80% 34% at 50% 0%,rgba(62,207,142,.05),transparent 60%),
-    linear-gradient(180deg,#151D2B 0%,#1A2333 28%,#161F2D 52%,#1D232E 78%,#151D2B 100%)}
+    linear-gradient(180deg,#0D1B2C 0%,#17293D 26%,#132335 52%,#1B2739 78%,#101C2C 100%)}
 .sec{position:relative;z-index:1}
 .sec.light,.sec.dark{background:transparent;color:var(--ink)}
 /* No rule between sections. Each one carries a large, very soft pool of
@@ -407,7 +407,7 @@ footer{border-top:none!important}
 footer{background:transparent;border-top:1px solid rgba(255,255,255,.08);color:var(--ink);position:relative;z-index:1}
 .bigmark{color:rgba(232,237,244,.10)}
 #bagportal{background:transparent;position:relative;z-index:1}
-#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,#212A3A,#181F2D 62%,#151D2B)}
+#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,#1F3048,#152234 62%,#101C2C)}
 #bagportal .bpcap{color:var(--ink)}
 #bagportal .bpcap .k{color:var(--signal)}
 #bagportal .bagbig{filter:drop-shadow(0 26px 54px rgba(0,0,0,.6))}
@@ -478,15 +478,24 @@ nav .brand,nav .nl a{color:var(--ink)}
    under a perspective, not from scale(), so the letters gain real depth and
    stay text rather than a stretched bitmap. */
 .scene{perspective:1100px;perspective-origin:50% 46%;
-  background:radial-gradient(70% 55% at 50% 42%,#202A3C 0%,#1A2231 45%,#161E2C 72%,#131A26 100%)}
-.fl-ambient{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(86% 66% at 50% 38%,#123F63 0%,#0E2C4C 36%,#0A1E36 66%,#081525 100%)}
+/* Glass is only ever as interesting as what is behind it. This is the light
+   source the letters refract: a broad aurora sitting right where the word is,
+   so the interiors read bright and the rims have something to catch. */
+.fl-aurora{position:absolute;left:50%;top:42%;width:104vw;height:70vh;z-index:0;
+  transform:translate(-50%,-50%);pointer-events:none;will-change:transform;
   background:
-    radial-gradient(42% 34% at 50% 44%,rgba(120,225,180,.10),transparent 70%),
-    radial-gradient(52% 44% at 50% 46%,rgba(170,205,235,.10),transparent 74%),
-    radial-gradient(120% 92% at 50% 50%,transparent 46%,rgba(6,9,14,.62) 100%)}
-.fl-bloom{position:absolute;left:50%;top:50%;width:86vw;height:34vh;z-index:1;
-  transform:translate(-50%,-50%);pointer-events:none;
-  background:radial-gradient(50% 50% at 50% 50%,rgba(180,228,248,.26),rgba(150,195,230,.11) 42%,transparent 72%)}
+    radial-gradient(24% 54% at 26% 42%,rgba(58,242,208,.52),transparent 72%),
+    radial-gradient(22% 48% at 52% 32%,rgba(104,220,255,.46),transparent 74%),
+    radial-gradient(24% 52% at 74% 40%,rgba(72,228,222,.40),transparent 74%)}
+.fl-ambient{position:absolute;inset:0;z-index:0;pointer-events:none;will-change:opacity;
+  background:radial-gradient(128% 100% at 50% 42%,transparent 52%,rgba(4,10,20,.72) 100%)}
+/* The surface the word stands on — it is what makes the reflection legible. */
+.fl-floor{position:absolute;left:0;right:0;bottom:0;height:34vh;z-index:1;pointer-events:none;will-change:opacity;
+  background:linear-gradient(180deg,transparent 0%,rgba(74,196,214,.07) 26%,rgba(6,16,29,.50) 100%)}
+.fl-bloom{position:absolute;left:50%;top:50%;width:86vw;height:30vh;z-index:1;
+  transform:translate(-50%,-50%);pointer-events:none;will-change:transform;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(196,246,255,.20),rgba(130,220,240,.08) 44%,transparent 72%)}
 .fl-stage{position:absolute;inset:0;z-index:2;display:grid;place-items:center;
   transform-style:preserve-3d;pointer-events:none}
 .fl-mark{margin:0;font-family:var(--b);font-weight:800;font-size:14.3vw;
@@ -496,54 +505,101 @@ nav .brand,nav .nl a{color:var(--ink)}
      transformed forces a re-raster of the whole thing every frame. The bloom
      is a separate, static layer behind the word instead. */}
 
-/* Liquid glass: the fill is almost nothing, a lit top and bottom edge give
-   it body, and the sheen is what actually reveals the letterforms. */
-/* Moulded glass, after the reference: real thickness you can see through,
-   a hard specular rim, and colour splitting at the edges where a thick
-   transparent solid disperses light. Four paint layers, no filters — a
-   filter on an element that is being transformed re-rasterises the whole
-   thing every frame. */
-/* GLASS, not a shaded solid.
-   The mistake before was soft light over the top and soft shade underneath —
-   that is diffuse shading, which is how you render clay. A transparent solid
-   has almost no diffuse term at all: the body stays as dark as whatever is
-   behind it, and every bit of energy sits in thin, hard, high-contrast rims
-   and a couple of narrow specular streaks. Hard stops everywhere below; no
-   soft falloff anywhere. */
-.fl-glass{position:relative;display:inline-block;z-index:1;
-  color:rgba(180,220,245,.035);                 /* all but clear */
-  -webkit-text-stroke:2.4px rgba(255,255,255,.98);
-  /* text-shadow can only be a shadow here. A zero-blur offset shadow paints
-     the entire glyph again a pixel or two over, which covers the whole letter
-     rather than edging it — that is what kept filling the body and making
-     this read as a solid. Dispersion lives in the specular layer instead,
-     where it is clipped to a few percent of the width. */
-  text-shadow:
-     3px 5px 9px rgba(6,12,22,.30),
-     12px 20px 30px rgba(0,0,0,.5)}            /* contact shadow only */
-.fl-glass::before,.fl-glass::after{content:attr(data-text);position:absolute;left:0;top:0;
-  white-space:nowrap;-webkit-background-clip:text;background-clip:text;color:transparent;
-  -webkit-text-stroke:0;pointer-events:none}
-/* Light entering the top edge and the caustic where it leaves the bottom —
-   both are narrow bands with hard stops, and the middle is left empty so the
-   page reads through the letter. */
-.fl-glass::before{background-image:linear-gradient(180deg,
-  rgba(255,255,255,1) 0%,rgba(255,255,255,.96) 6%,rgba(206,238,255,.42) 13%,
-  rgba(150,200,240,.06) 20%,transparent 26%,transparent 62%,
-  rgba(150,205,245,.20) 72%,rgba(226,246,255,.80) 87%,rgba(255,255,255,1) 100%)}
-/* One narrow specular streak. At 320% background-size a band spanning even
-   16% of the gradient covers half the word — which is what was filling the
-   letters and making them look solid. This one is a few percent wide. */
-.fl-glass::after{background-image:linear-gradient(102deg,transparent 46.2%,
-  rgba(255,105,215,.42) 47.4%,rgba(255,255,255,.72) 48.6%,rgba(255,255,255,1) 49.6%,
-  rgba(255,255,255,.72) 50.6%,rgba(105,225,255,.46) 51.8%,transparent 53%);
+/* Glass, built the way the reference renders actually build it.
+   The edge of a thick transparent solid is not one line — it is a rounded
+   bead, and a bead reads as three concentric bands: a bright outer catch, a
+   dark valley where the surface turns away, then the hot specular core.
+   -webkit-text-stroke is centred on the outline, so stacking three strokes of
+   decreasing width paints exactly those bands, and — unlike text-shadow —
+   a stroke never touches the inside of the letter. That is the whole trick;
+   text-shadow was what kept filling the bodies and making this read as clay.
+
+   Everything here is stroke or background-clip:text. No filters: a filter on
+   an element that is being transformed re-rasterises it every frame. */
+.fl-glass{position:relative;display:inline-block;z-index:2}
+.fl-glass>span{display:block;white-space:nowrap;color:transparent;
+  -webkit-text-stroke:0;pointer-events:none;
+  position:absolute;left:0;top:0}
+.fl-glass>span.g-size{position:relative}   /* the one that carries the layout */
+
+/* A sliver of the far face, showing through the near one. Small on purpose —
+   this is glass with some thickness, not an extruded slab. */
+.fl-glass .g-ext{color:rgba(96,178,206,.16);transform:translate(.013em,.017em)}
+
+/* The body. Nearly clear, so the aurora behind carries it, with light pooling
+   where it leaves the bottom of the letter. */
+.fl-glass .g-body{-webkit-background-clip:text;background-clip:text;
+  background-image:linear-gradient(180deg,
+    rgba(216,250,255,.30) 0%,rgba(134,216,240,.13) 18%,
+    rgba(92,178,210,.06) 46%,rgba(164,236,250,.20) 76%,
+    rgba(240,254,255,.46) 100%)}
+
+/* The bead. Widest first, then narrower on top of it.
+   A stroke colour cannot be a gradient, but a mask applies to the painted
+   element — stroke included — so the light along the bead is shaped there:
+   hot where the key light hits the top, falling away through the middle,
+   picking up again at the base where the floor throws light back. */
+.fl-glass .g-rim{-webkit-text-stroke:.050em rgba(198,242,255,.80);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.86) 16%,rgba(0,0,0,.42) 46%,rgba(0,0,0,.60) 76%,#000 100%);
+  mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.86) 16%,rgba(0,0,0,.42) 46%,rgba(0,0,0,.60) 76%,#000 100%)}
+.fl-glass .g-val{-webkit-text-stroke:.029em rgba(14,50,80,.66)}
+/* Dispersion: a thick edge splits what passes through it, so the two ends of
+   the spectrum come off the bead a hair apart. Strokes, so they stay on the
+   edge instead of washing over the letter. */
+.fl-glass .g-cy{-webkit-text-stroke:.013em rgba(110,240,255,.44);transform:translate(-.0035em,-.004em)}
+.fl-glass .g-mg{-webkit-text-stroke:.013em rgba(255,140,220,.26);transform:translate(.0035em,.004em)}
+.fl-glass .g-hot{-webkit-text-stroke:.0105em rgba(255,255,255,.98);
+  -webkit-mask-image:linear-gradient(168deg,#000 0%,rgba(0,0,0,.55) 22%,rgba(0,0,0,.22) 52%,rgba(0,0,0,.5) 78%,rgba(0,0,0,.92) 100%);
+  mask-image:linear-gradient(168deg,#000 0%,rgba(0,0,0,.55) 22%,rgba(0,0,0,.22) 52%,rgba(0,0,0,.5) 78%,rgba(0,0,0,.92) 100%)}
+
+/* One narrow travelling specular. At 320% background-size even a 16%-wide
+   band covers half the word, so this one is a few percent wide. */
+.fl-glass .g-irid{-webkit-background-clip:text;background-clip:text;
+  background-image:linear-gradient(102deg,transparent 47.9%,
+  rgba(255,105,215,.34) 48.5%,rgba(255,255,255,.62) 49.2%,rgba(255,255,255,.92) 49.7%,
+  rgba(255,255,255,.62) 50.2%,rgba(105,225,255,.38) 50.9%,transparent 51.5%);
   background-size:320% 100%;animation:fl-sheen 12s linear infinite}
 @keyframes fl-sheen{0%{background-position:190% 0}100%{background-position:-90% 0}}
-@media(prefers-reduced-motion:reduce){.fl-glass::after{animation:none}}
-.fl-moving .fl-glass::after{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.fl-glass .g-irid{animation:none}}
+.fl-moving .g-irid{animation-play-state:paused}
+/* Under motion the fine detail is not resolvable anyway, and each stroked
+   layer is another full re-raster of the word every frame. */
+.fl-moving .g-cy,.fl-moving .g-mg,.fl-moving .g-irid,.fl-moving .g-refl,
+.fl-moving .g-ext,.fl-moving .g-val{display:none}
+/* A stroked glyph is far dearer to raster than a filled one, so under motion
+   the bead collapses to a single stroke. */
+.fl-moving .g-hot{-webkit-text-stroke-width:0}
+/* Stroke cost scales with width, and the bead is not resolvable at speed. */
+.fl-moving .g-rim{-webkit-text-stroke-width:.020em}
+
+/* Standing on the floor. At top:100% a bare scaleY(-1) flips the box in place
+   about its own centre, which puts the mirror directly under the word; the
+   mask fades it out with distance. */
+.fl-glass .g-refl{top:100%;
+  -webkit-text-stroke:.026em rgba(176,230,252,.34);
+  transform:scaleY(-1);
+  -webkit-mask-image:linear-gradient(0deg,rgba(0,0,0,.62),transparent 52%);
+  mask-image:linear-gradient(0deg,rgba(0,0,0,.62),transparent 52%)}
 
 
-#loader{background:#151D2B}
+/* On a narrow, tall viewport the aurora's ellipses stretch vertically and read
+   as three separate columns. Widen and flatten them so it stays one wash of
+   light sitting behind the word. */
+@media(max-width:760px){
+  .fl-aurora{width:190vw;height:40vh;top:47%;
+    background:
+      radial-gradient(40% 62% at 26% 52%,rgba(58,242,208,.46),transparent 74%),
+      radial-gradient(36% 56% at 52% 42%,rgba(104,220,255,.42),transparent 76%),
+      radial-gradient(38% 58% at 76% 50%,rgba(72,228,222,.36),transparent 76%)}
+  .fl-bloom{width:120vw;height:22vh}
+  .fl-floor{height:26vh}
+  /* The bead is proportional, so at phone sizes it lands near a hairline.
+     Widen it a little so it still reads as a rounded edge. */
+  .fl-glass .g-rim{-webkit-text-stroke-width:.062em}
+  .fl-glass .g-val{-webkit-text-stroke-width:.036em}
+  .fl-glass .g-hot{-webkit-text-stroke-width:.013em}
+}
+#loader{background:#0B1826}
 .grain{opacity:.035}
 </style>
 </head>
@@ -579,11 +635,13 @@ nav .brand,nav .nl a{color:var(--ink)}
   <div class="scene" id="scene">
     <!-- Typography intro: no disc, no photo, no scenery. The word is the
          only subject; scrolling dollies the camera into it. -->
+    <div class="fl-aurora" aria-hidden="true"></div>
     <div class="fl-ambient" aria-hidden="true"></div>
     <div class="fl-bloom" aria-hidden="true"></div>
+    <div class="fl-floor" aria-hidden="true"></div>
     <div class="fl-stage">
       <h1 class="fl-mark" id="flmark" aria-label="FLIGHTLAB">
-        <span class="fl-glass" data-text="FLIGHTLAB">FLIGHTLAB</span>
+        <span class="fl-glass" aria-hidden="true"><span class="g-size">FLIGHTLAB</span><span class="g-ext">FLIGHTLAB</span><span class="g-body">FLIGHTLAB</span><span class="g-rim">FLIGHTLAB</span><span class="g-val">FLIGHTLAB</span><span class="g-cy">FLIGHTLAB</span><span class="g-mg">FLIGHTLAB</span><span class="g-hot">FLIGHTLAB</span><span class="g-irid">FLIGHTLAB</span><span class="g-refl">FLIGHTLAB</span></span>
       </h1>
     </div>
     <div class="grain"></div>
