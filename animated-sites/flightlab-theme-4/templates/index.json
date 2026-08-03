@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "wordmark-intro",
+      "settings": {
+        "wordmark": "FLIGHTLAB",
+        "subline": "Norsk discgolf",
+        "scroll_length": 260
+      }
+    },
+    "trust": {
+      "type": "trust-bar",
+      "blocks": {
+        "t1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "text": "Rask levering i hele Norge"
+          }
+        },
+        "t2": {
+          "type": "item",
+          "settings": {
+            "icon": "shield",
+            "text": "Trygg handel og enkel retur"
+          }
+        },
+        "t3": {
+          "type": "item",
+          "settings": {
+            "icon": "disc",
+            "text": "Utvalgte kvalitetsprodukter"
+          }
+        },
+        "t4": {
+          "type": "item",
+          "settings": {
+            "icon": "support",
+            "text": "Support fra discgolfere"
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "settings": {}
+    },
+    "story": {
+      "type": "brand-story",
+      "settings": {
+        "eyebrow": "Hvorfor Flightlab",
+        "heading": "Skapt for sporten. Bygget for naturen.",
+        "text": "<p>Discgolf er mer enn et spill. Det er skogsluft, konsentrasjon og følelsen når discen forlater hånden på akkurat riktig måte. Flightlab finnes for å gi deg utstyret som gjør at det blir flere av disse øyeblikkene — enten du kaster din første runde eller jakter på personlig rekord.</p>",
+        "cta_label": "Les historien vår",
+        "cta_link": "/pages/om-oss"
+      }
+    },
+    "discovery": {
+      "type": "product-discovery",
+      "blocks": {
+        "d1": {
+          "type": "path",
+          "settings": {
+            "label": "Ny spiller?",
+            "title": "Finn ditt første sett",
+            "text": "Nøye utvalgte startsett som gjør det enkelt — og gøy — å komme i gang.",
+            "cta": "Se startsett",
+            "link": "shopify://collections/startsett"
+          }
+        },
+        "d2": {
+          "type": "path",
+          "settings": {
+            "label": "Vil du bli bedre?",
+            "title": "Finn riktig disc",
+            "text": "Bruk flight ratings til å finne discen som løfter spillet ditt til neste nivå.",
+            "cta": "Lær om flight ratings",
+            "link": "shopify://collections/discer"
+          }
+        },
+        "d3": {
+          "type": "path",
+          "settings": {
+            "label": "Vet du hva du trenger?",
+            "title": "Utforsk alle discer",
+            "text": "Filtrer på type, produsent og flyegenskaper. Rett på sak.",
+            "cta": "Se alle discer",
+            "link": "shopify://collections/discer"
+          }
+        }
+      },
+      "block_order": [
+        "d1",
+        "d2",
+        "d3"
+      ],
+      "settings": {
+        "eyebrow": "Start her",
+        "heading": "Hvor er du i spillet?"
+      }
+    },
+    "categories": {
+      "type": "category-explorer",
+      "blocks": {
+        "c1": {
+          "type": "category",
+          "settings": {
+            "collection": "putters",
+            "title": "Putters",
+            "tagline": "Det siste kastet avgjør."
+          }
+        },
+        "c2": {
+          "type": "category",
+          "settings": {
+            "collection": "midrange",
+            "title": "Midrange",
+            "tagline": "Kontroll og presisjon."
+          }
+        },
+        "c3": {
+          "type": "category",
+          "settings": {
+            "collection": "drivers",
+            "title": "Drivers",
+            "tagline": "Lengde når det gjelder."
+          }
+        },
+        "c4": {
+          "type": "category",
+          "settings": {
+            "collection": "startsett",
+            "title": "Startsett",
+            "tagline": "Alt du trenger for å begynne."
+          }
+        }
+      },
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4"
+      ],
+      "settings": {
+        "eyebrow": "Kategorier",
+        "heading": "Bygg baggen din"
+      }
+    },
+    "flight": {
+      "type": "flight-rating-explainer",
+      "settings": {
+        "eyebrow": "Flight ratings",
+        "heading": "Fire tall. Hele flyvningen.",
+        "text": "Hver disc har fire tall som beskriver hvordan den flyr. Lær dem én gang — så velger du riktig disc resten av livet.",
+        "cta_label": "Se discene",
+        "cta_link": "shopify://collections/discer"
+      }
+    },
+    "featured": {
+      "type": "featured-products",
+      "settings": {
+        "eyebrow": "Utvalget",
+        "heading": "Discer vi stoler på",
+        "collection": "discer",
+        "count": 8
+      }
+    },
+    "guide": {
+      "type": "beginner-guide",
+      "blocks": {
+        "s1": {
+          "type": "step",
+          "settings": {
+            "text": "Velg et startsett — putter, midrange og driver"
+          }
+        },
+        "s2": {
+          "type": "step",
+          "settings": {
+            "text": "Lær hva flight ratings betyr for kastet ditt"
+          }
+        },
+        "s3": {
+          "type": "step",
+          "settings": {
+            "text": "Finn en bane i nærheten og kom deg ut"
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2",
+        "s3"
+      ],
+      "settings": {
+        "eyebrow": "Kom i gang",
+        "heading": "Ny innen discgolf?",
+        "text": "Du trenger ikke mye for å begynne — bare riktig utstyr og lysten til å komme deg ut. Vi hjelper deg med resten.",
+        "cta_label": "Start her",
+        "cta_link": "shopify://collections/startsett"
+      }
+    },
+    "community": {
+      "type": "community",
+      "settings": {
+        "eyebrow": "Flightlab-universet",
+        "heading": "Sporten er bedre sammen.",
+        "text": "Baner, folk og øyeblikk. Følg oss for tips, runder og historier fra norske skoger — og del dine egne.",
+        "cta_label": "Følg @flightlab",
+        "cta_link": ""
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "eyebrow": "Bli med",
+        "heading": "Få utvalgte flights rett i innboksen.",
+        "text": "Tips som gjør deg bedre, nyheter fra sporten og først tilgang på nye produkter. Ingen støy.",
+        "cta_label": "Meld meg på",
+        "note": "Du kan melde deg av når som helst."
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "trust",
+    "story",
+    "discovery",
+    "categories",
+    "flight",
+    "featured",
+    "guide",
+    "community",
+    "newsletter"
+  ]
+}
