@@ -106,7 +106,6 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
       <h1 class="fl-mark" id="flmark" aria-label="FLIGHTLAB">
         <span class="fl-glass" data-text="FLIGHTLAB">FLIGHTLAB</span>
       </h1>
-      <div class="fl-shards" id="flshards" aria-hidden="true"></div>
     </div>
     <div class="grain"></div>
     <div id="loader"><div class="ln"></div><div class="brand">FLIGHTLAB</div><div class="ln"></div></div>
@@ -382,107 +381,8 @@ if(window.Lenis && !REDUCED && !matchMedia('(pointer:coarse)').matches){
    opacity are animated — composited on the GPU, no repaint. */
 const journey=document.getElementById('journey');
 const flmark=document.getElementById('flmark');
-const flshards=document.getElementById('flshards');
-/* Must match the perspective on .scene: apparent scale is persp/(persp-z),
-   so we invert it to place the camera at the distance a given scale implies. */
-const PERSP=1100;
-/* Where the camera reaches the letters and the word breaks. Past this point
-   the shards no longer scale, only translate and rotate, so each one
-   rasterises exactly once instead of on every frame. */
-/* Break while the word still roughly fits the frame. Later than this and
-   the letters are wider than the viewport, so any grid gives slabs rather
-   than fragments; the pieces then stream past the camera, which is what
-   carries the sense of flying through. */
-const FRACTURE=0.30, HANDOVER=0.40, GONE=0.88;
-let shardsBuilt=false, frozenZ=0, flMoving=false;
-
-/* Rasterise the wordmark once. Painting the CSS glass into 72 live text
-   elements would re-rasterise huge type every frame; one shared bitmap is a
-   single decode and keeps the shards to plain composited layers. */
-function buildShards(){
-  if(shardsBuilt||!flshards||!flmark)return;
-  const glass=flmark.querySelector('.fl-glass');
-  const r=glass.getBoundingClientRect();
-  const W=Math.round(r.width), H=Math.round(r.height*1.25);
-  if(!W||!H)return;
-  const dpr=Math.min(devicePixelRatio||1,2);
-  const cv=document.createElement('canvas');
-  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
-  const g=cv.getContext('2d');
-  g.scale(dpr,dpr);
-  const fs=parseFloat(getComputedStyle(flmark).fontSize);
-  g.font='800 '+fs+'px Inter, sans-serif';
-  g.textBaseline='middle';g.textAlign='center';
-  const grad=g.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,'rgba(255,255,255,.88)');
-  grad.addColorStop(.10,'rgba(240,250,255,.30)');
-  grad.addColorStop(.28,'rgba(198,218,228,.09)');
-  grad.addColorStop(.55,'rgba(186,206,216,.04)');
-  grad.addColorStop(.82,'rgba(206,230,236,.12)');
-  grad.addColorStop(.96,'rgba(244,255,250,.60)');
-  grad.addColorStop(1,'rgba(255,255,255,.85)');
-  g.fillStyle=grad;g.fillText('FLIGHTLAB',W/2,H/2);
-  g.lineWidth=1.25;g.strokeStyle='rgba(232,246,252,.66)';
-  g.strokeText('FLIGHTLAB',W/2,H/2);
-  const url=cv.toDataURL('image/png');
-
-  /* Real glass does not break into a grid. An impact throws radial cracks
-     out from the point of contact and concentric ones around it, and the
-     cells between them are fine near the impact and coarser further out —
-     which is why the grid version read as puzzle pieces. Rings are spaced
-     on a power curve to get that gradient, and every vertex is jittered so
-     no two edges are parallel. */
-  const RAYS=TOUCH?12:18, RINGS=TOUCH?4:5;
-  let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
-  const cxp=44+rnd()*12, cyp=42+rnd()*16;          // impact point, off centre
-  const R=Math.hypot(Math.max(cxp,100-cxp),Math.max(cyp,100-cyp))*1.12;
-  const ang=[],rad=[];
-  for(let i=0;i<RAYS;i++)ang.push(i/RAYS*Math.PI*2+(rnd()-.5)*(Math.PI*2/RAYS)*0.55);
-  ang.push(ang[0]+Math.PI*2);
-  for(let i=0;i<=RINGS;i++)rad.push(R*Math.pow(i/RINGS,1.75)*(1+(rnd()-.5)*0.14));
-  const px=(a,r)=>[cxp+Math.cos(a)*r*(100/ (100)),cyp+Math.sin(a)*r*0.52];
-  const frag=document.createDocumentFragment();
-  for(let i=0;i<RAYS;i++)for(let j=0;j<RINGS;j++){
-    const a1=ang[i],a2=ang[i+1],r1=rad[j],r2=rad[j+1];
-    const jit=()=>1+(rnd()-.5)*0.16;
-    const P=[px(a1,r1*jit()),px(a2,r1*jit()),px(a2,r2*jit()),px(a1,r2*jit())];
-    /* Innermost cells are slivers, so collapse them to triangles — a shard
-       right at the impact has no inner edge left. */
-    const pts=(j===0?[P[0],P[2],P[3]]:P)
-      .map(q=>q[0].toFixed(2)+'% '+q[1].toFixed(2)+'%').join(',');
-    const el=document.createElement('span');
-    el.className='fl-shard';
-    el.style.width=W+'px';el.style.height=H+'px';
-    el.style.marginLeft=(-W/2)+'px';el.style.marginTop=(-H/2)+'px';
-    el.style.backgroundImage='url('+url+')';
-    el.style.clipPath='polygon('+pts+')';
-    /* Outward from the impact, fastest at the centre, and staggered so the
-       break travels through the pane instead of every piece leaving at once. */
-    const mid=(a1+a2)/2, t=j/RINGS;
-    el.style.setProperty('--dx',(Math.cos(mid)*(200+ (1-t)*520+rnd()*180)).toFixed(1)+'px');
-    el.style.setProperty('--dy',(Math.sin(mid)*(150+ (1-t)*380+rnd()*140)).toFixed(1)+'px');
-    el.style.setProperty('--dz',((1-t)*340-70+rnd()*120).toFixed(1)+'px');
-    el.style.setProperty('--ra',((rnd()*2-1)*(60+(1-t)*140)).toFixed(1)+'deg');
-    el.style.setProperty('--d',(t*0.34).toFixed(3));
-    frag.appendChild(el);
-  }
-  flshards.appendChild(frag);
-  shardsBuilt=true;
-}
-
-/* Build in slices. Creating the whole field in one go was a single task of a
-   few hundred milliseconds, which shows up as one dropped frame however it is
-   scheduled; spread over idle callbacks no slice is long enough to be felt. */
-function warmShards(){
-  if(shardsBuilt)return;
-  const run=deadline=>{
-    if(shardsBuilt)return;
-    buildShards();
-    void deadline;
-  };
-  if(window.requestIdleCallback)requestIdleCallback(run,{timeout:3000});
-  else setTimeout(run,1400);
-}
+const PERSP=1100;   /* must match the perspective on .scene */
+let flMoving=false;
 const caps=[...document.querySelectorAll('#journey .jcap')];
 const cue=document.getElementById('cue');
 const prog=document.getElementById('prog');
@@ -720,44 +620,10 @@ function loop(){
     if(flmark){
       const moving=p>0.03;
       if(moving!==flMoving){flMoving=moving;flmark.classList.toggle('fl-moving',moving)}
-      if(p<FRACTURE){
-        /* Intact: the camera flies in. */
-        flmark.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
-        flmark.style.opacity='1';
-        flmark.style.visibility='visible';
-        if(flshards&&flshards.classList.contains('on'))flshards.classList.remove('on');
-      }else{
-        if(!shardsBuilt)buildShards();   /* normally already built on idle */
-        if(flshards){
-          if(!flshards.classList.contains('on'))flshards.classList.add('on');
-
-          /* Cross-fade rather than swap. Through the hand-over the word and
-             the shard field carry the same transform, so they stay in
-             register and one simply becomes the other; the hard switch is
-             what read as a jump before. */
-          const cf=smooth(clamp(0,1,(p-FRACTURE)/(HANDOVER-FRACTURE)));
-          if(p<HANDOVER){
-            flmark.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
-            flmark.style.opacity=(1-cf).toFixed(3);
-            flmark.style.visibility='visible';
-            flshards.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
-            frozenZ=z;
-          }else{
-            flmark.style.visibility='hidden';
-            /* Past the hand-over the field is parked at the depth it reached:
-               letting the parent keep rescaling would re-rasterise every
-               piece on every frame. */
-            flshards.style.transform='translate3d(0,0,'+frozenZ.toFixed(2)+'px)';
-          }
-          flshards.style.opacity=cf.toFixed(3);
-
-          /* Eased in, so the pieces still form the word while it fades and
-             only then break away. */
-          const raw=clamp(0,1,(p-FRACTURE)/(GONE-FRACTURE));
-          flshards.style.setProperty('--k',Math.pow(raw,1.75).toFixed(4));
-          if(raw>=1)flshards.classList.remove('on');   /* no trace left */
-        }
-      }
+      /* One continuous move: the camera keeps closing on the word while the
+         word thins out and passes, so the intro ends without an event. */
+      flmark.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
+      flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.34)/0.46))).toFixed(3);
     }
     const key=p.toFixed(3);
     if(key!==lastKey){lastKey=key;
@@ -790,11 +656,6 @@ function loop(){
   }
   if(prog){const tot=clamp(0,1,scrollY/(document.documentElement.scrollHeight-innerHeight||1));prog.style.width=(tot*100).toFixed(1)+'%'}
   requestAnimationFrame(loop);
-}
-/* Build the shard field while the page is idle. Doing it at the moment of
-   the fracture cost a frame of well over a second. */
-if(!REDUCED){
-  warmShards();
 }
 if(!REDUCED)requestAnimationFrame(loop);
 else{caps.forEach(c=>c.classList.remove('show'));caps[0].classList.add('show');if(l)l.classList.add('done');}

@@ -336,11 +336,11 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
 
 /* One continuous canvas: the page owns the gradient, sections are glass-clear,
    so nothing ever cuts from one background colour to another. */
-body{background:#111827;color:var(--ink)}
+body{background:#151D2B;color:var(--ink)}
 body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:
     radial-gradient(80% 34% at 50% 0%,rgba(62,207,142,.05),transparent 60%),
-    linear-gradient(180deg,#111827 0%,#151E2B 28%,#121A26 52%,#181C24 78%,#111827 100%)}
+    linear-gradient(180deg,#151D2B 0%,#1A2333 28%,#161F2D 52%,#1D232E 78%,#151D2B 100%)}
 .sec{position:relative;z-index:1}
 .sec.light,.sec.dark{background:transparent;color:var(--ink)}
 /* No rule between sections. Each one carries a large, very soft pool of
@@ -376,8 +376,8 @@ footer{border-top:none!important}
 
 /* Cards become raised glass instead of white paper */
 .pcard,.acard{
-  background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.032));
-  border:1px solid rgba(255,255,255,.13);
+  background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.038));
+  border:1px solid rgba(255,255,255,.15);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 30px rgba(0,0,0,.4)}
 @media(hover:hover) and (pointer:fine){
   .pcard,.acard{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
@@ -396,13 +396,13 @@ footer{border-top:none!important}
 footer{background:transparent;border-top:1px solid rgba(255,255,255,.08);color:var(--ink);position:relative;z-index:1}
 .bigmark{color:rgba(232,237,244,.10)}
 #bagportal{background:transparent;position:relative;z-index:1}
-#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,#1B2230,#131A26 62%,#111827)}
+#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,#212A3A,#181F2D 62%,#151D2B)}
 #bagportal .bpcap{color:var(--ink)}
 #bagportal .bpcap .k{color:var(--signal)}
 #bagportal .bagbig{filter:drop-shadow(0 26px 54px rgba(0,0,0,.6))}
 
 /* Glass kept to the few chrome surfaces the brief allows */
-nav{background:rgba(13,17,23,.62);border-bottom:1px solid rgba(255,255,255,.10)}
+nav{background:rgba(21,29,43,.62);border-bottom:1px solid rgba(255,255,255,.10)}
 nav .brand,nav .nl a{color:var(--ink)}
 .navsearch{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 4px 16px rgba(0,0,0,.3)}
@@ -410,7 +410,7 @@ nav .brand,nav .nl a{color:var(--ink)}
 .navsearch input::placeholder{color:rgba(232,237,244,.38)}
 .searchhint{background:rgba(21,26,34,.96);border-color:rgba(255,255,255,.12);color:var(--mut)}
 @media(hover:none){
-  nav{background:rgba(13,17,23,.95)}
+  nav{background:rgba(21,29,43,.95)}
   .navsearch{background:rgba(255,255,255,.06)}
   .searchhint{background:#151A22}
 }
@@ -467,7 +467,7 @@ nav .brand,nav .nl a{color:var(--ink)}
    under a perspective, not from scale(), so the letters gain real depth and
    stay text rather than a stretched bitmap. */
 .scene{perspective:1100px;perspective-origin:50% 46%;
-  background:radial-gradient(70% 55% at 50% 42%,#19212F 0%,#141B27 45%,#111827 72%,#0D1117 100%)}
+  background:radial-gradient(70% 55% at 50% 42%,#202A3C 0%,#1A2231 45%,#161E2C 72%,#131A26 100%)}
 .fl-ambient{position:absolute;inset:0;z-index:0;pointer-events:none;
   background:
     radial-gradient(42% 34% at 50% 44%,rgba(120,225,180,.10),transparent 70%),
@@ -487,49 +487,53 @@ nav .brand,nav .nl a{color:var(--ink)}
 
 /* Liquid glass: the fill is almost nothing, a lit top and bottom edge give
    it body, and the sheen is what actually reveals the letterforms. */
-/* Real glass is mostly the thing behind it. The body is nearly clear and the
-   edge does the reading: a crisp bright rim is what the eye uses to resolve
-   a transparent object, so the fill can drop far lower than instinct says. */
-.fl-glass{position:relative;display:inline-block;color:rgba(238,248,252,.05);
-  -webkit-text-stroke:1.25px rgba(232,246,252,.66)}
+/* Moulded glass, after the reference: real thickness you can see through,
+   a hard specular rim, and colour splitting at the edges where a thick
+   transparent solid disperses light. Four paint layers, no filters — a
+   filter on an element that is being transformed re-rasterises the whole
+   thing every frame. */
+.fl-glass{position:relative;display:inline-block;z-index:1;
+  color:rgba(226,244,255,.045);
+  -webkit-text-stroke:1.5px rgba(255,255,255,.82);
+  /* the extrusion, stepped back and down, plus the chromatic fringe that
+     makes it read as a solid rather than an outline */
+  /* Just enough body to read as a solid: a short run of steps that fade out
+     fast, near-neutral so it stays glass rather than becoming a block, and
+     the faintest colour split at the vertical edges. */
+  text-shadow:
+     1.4px 0 0 rgba(120,225,255,.20),
+    -1.4px 0 0 rgba(255,130,220,.16),
+     1px 1.5px 0 rgba(206,232,250,.30),
+     2px 3px 0 rgba(176,208,236,.21),
+     3.5px 5px 0 rgba(146,182,214,.14),
+     5px 7.5px 0 rgba(116,152,188,.09),
+     7px 10px 0 rgba(90,124,160,.055),
+     9px 13px 0 rgba(68,98,132,.03),
+     10px 20px 34px rgba(0,0,0,.5)}
 .fl-glass::before,.fl-glass::after{content:attr(data-text);position:absolute;left:0;top:0;
   white-space:nowrap;-webkit-background-clip:text;background-clip:text;color:transparent;
   -webkit-text-stroke:0;pointer-events:none}
-/* background-image, not the background shorthand: the shorthand resets
-   background-clip back to border-box and the text clip is lost. */
-.fl-glass::before{background-image:linear-gradient(176deg,
-  rgba(255,255,255,.90) 0%,rgba(240,250,255,.32) 7%,rgba(198,218,228,.09) 22%,
-  rgba(186,206,216,.03) 42%,rgba(186,206,216,.03) 60%,rgba(206,230,236,.12) 80%,
-  rgba(248,253,255,.60) 94%,rgba(255,255,255,.86) 100%)}
-/* Internal refraction: a bright core sweep with a green fringe either side,
-   which is what sells it as glass rather than a shine. */
-.fl-glass::after{background-image:linear-gradient(102deg,transparent 36%,
-  rgba(150,232,198,.10) 43%,rgba(255,255,255,.30) 47%,rgba(255,255,255,.80) 50%,
-  rgba(255,255,255,.30) 53%,rgba(150,232,198,.10) 57%,transparent 64%);
-  background-size:300% 100%;animation:fl-sheen 15s linear infinite}
-.fl-moving .fl-glass::after{animation-play-state:paused}
+/* the body: bright where the light enters at the top, clear through the
+   middle so the page shows through, and a lit pool at the bottom where
+   light that travelled through the letter comes back out */
+/* offset a touch and given a dark contour, this layer becomes the inner wall
+   seen through the front face — the bright outer rim plus this dark inner
+   line is what reads as a hollow glass form */
+.fl-glass::before{transform:translate(1.4px,1.4px);
+  -webkit-text-stroke:1.3px rgba(12,24,40,.20);
+  background-image:linear-gradient(176deg,
+  rgba(255,255,255,.80) 0%,rgba(226,246,255,.34) 8%,rgba(176,214,238,.10) 24%,
+  rgba(150,190,220,.02) 44%,rgba(150,190,220,.02) 60%,rgba(186,224,244,.11) 78%,
+  rgba(238,250,255,.44) 92%,rgba(255,255,255,.74) 100%)}
+/* a single slow travelling highlight, with the colour split either side */
+.fl-glass::after{background-image:linear-gradient(100deg,transparent 33%,
+  rgba(255,120,220,.14) 40%,rgba(255,255,255,.34) 46%,rgba(255,255,255,.95) 50%,
+  rgba(255,255,255,.34) 54%,rgba(110,230,255,.16) 60%,transparent 67%);
+  background-size:300% 100%;animation:fl-sheen 13s linear infinite}
 @keyframes fl-sheen{0%{background-position:190% 0}100%{background-position:-90% 0}}
 @media(prefers-reduced-motion:reduce){.fl-glass::after{animation:none}}
+.fl-moving .fl-glass::after{animation-play-state:paused}
 
 
-/* ---------- Glass fracture ----------
-   The word does not fade; it breaks. Every shard shares one rasterised
-   bitmap of the wordmark as its background and differs only by clip-path,
-   so the browser decodes the type once and each shard is a plain composited
-   layer after that. The whole field is driven by a single custom property,
-   which means one style write per frame rather than one per shard. */
-.fl-shards{position:absolute;left:50%;top:50%;z-index:3;pointer-events:none;
-  transform-style:preserve-3d;visibility:hidden;--k:0}
-.fl-shards.on{visibility:visible}
-.fl-shard{position:absolute;left:0;top:0;
-  background-repeat:no-repeat;background-size:100% 100%;
-  background-color:rgba(198,240,222,.06);
-  backface-visibility:hidden;
-  --e:clamp(0,calc((var(--k) - var(--d)) / (1 - var(--d))),1);
-  transform:translate3d(calc(var(--dx) * var(--e)),calc(var(--dy) * var(--e)),calc(var(--dz) * var(--e)))
-            rotate(calc(var(--ra) * var(--e)))
-            scale(calc(1 - var(--e) * 0.78));
-  opacity:calc(1 - var(--e) * var(--e))}
-@media(prefers-reduced-motion:reduce){.fl-shard{transition:none}}
-#loader{background:#111827}
+#loader{background:#151D2B}
 .grain{opacity:.035}
