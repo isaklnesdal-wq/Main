@@ -486,7 +486,7 @@ nav .brand,nav .nl a{color:var(--ink)}
     radial-gradient(120% 92% at 50% 50%,transparent 46%,rgba(6,9,14,.62) 100%)}
 .fl-bloom{position:absolute;left:50%;top:50%;width:86vw;height:34vh;z-index:1;
   transform:translate(-50%,-50%);pointer-events:none;
-  background:radial-gradient(50% 50% at 50% 50%,rgba(178,226,240,.13),rgba(150,195,230,.06) 42%,transparent 72%)}
+  background:radial-gradient(50% 50% at 50% 50%,rgba(180,228,248,.26),rgba(150,195,230,.11) 42%,transparent 72%)}
 .fl-stage{position:absolute;inset:0;z-index:2;display:grid;place-items:center;
   transform-style:preserve-3d;pointer-events:none}
 .fl-mark{margin:0;font-family:var(--b);font-weight:800;font-size:14.3vw;
@@ -503,45 +503,41 @@ nav .brand,nav .nl a{color:var(--ink)}
    transparent solid disperses light. Four paint layers, no filters — a
    filter on an element that is being transformed re-rasterises the whole
    thing every frame. */
+/* GLASS, not a shaded solid.
+   The mistake before was soft light over the top and soft shade underneath —
+   that is diffuse shading, which is how you render clay. A transparent solid
+   has almost no diffuse term at all: the body stays as dark as whatever is
+   behind it, and every bit of energy sits in thin, hard, high-contrast rims
+   and a couple of narrow specular streaks. Hard stops everywhere below; no
+   soft falloff anywhere. */
 .fl-glass{position:relative;display:inline-block;z-index:1;
-  color:rgba(226,244,255,.045);
-  -webkit-text-stroke:1.15px rgba(255,255,255,.72);
-  /* the extrusion, stepped back and down, plus the chromatic fringe that
-     makes it read as a solid rather than an outline */
-  /* Rounded, blown-glass edges rather than a cut one: the hard rim is
-     backed by a soft light along the top and a soft shade underneath, and
-     that gradient across the edge is what the eye reads as a curve. The
-     extrusion is short — just enough body to sit in space. */
+  color:rgba(180,220,245,.035);                 /* all but clear */
+  -webkit-text-stroke:2.4px rgba(255,255,255,.98);
+  /* text-shadow can only be a shadow here. A zero-blur offset shadow paints
+     the entire glyph again a pixel or two over, which covers the whole letter
+     rather than edging it — that is what kept filling the body and making
+     this read as a solid. Dispersion lives in the specular layer instead,
+     where it is clipped to a few percent of the width. */
   text-shadow:
-     0 -1.5px 2.5px rgba(255,255,255,.55),
-     0 1.5px 3px rgba(14,26,44,.45),
-     1.2px 0 0 rgba(120,225,255,.16),
-    -1.2px 0 0 rgba(255,135,220,.13),
-     0.8px 1.2px 0 rgba(206,232,250,.22),
-     1.6px 2.4px 0 rgba(176,208,236,.15),
-     2.6px 3.8px 0 rgba(146,182,214,.09),
-     3.6px 5.2px 0 rgba(112,148,184,.05),
-     6px 13px 24px rgba(0,0,0,.45)}
+     3px 5px 9px rgba(6,12,22,.30),
+     12px 20px 30px rgba(0,0,0,.5)}            /* contact shadow only */
 .fl-glass::before,.fl-glass::after{content:attr(data-text);position:absolute;left:0;top:0;
   white-space:nowrap;-webkit-background-clip:text;background-clip:text;color:transparent;
   -webkit-text-stroke:0;pointer-events:none}
-/* the body: bright where the light enters at the top, clear through the
-   middle so the page shows through, and a lit pool at the bottom where
-   light that travelled through the letter comes back out */
-/* offset a touch and given a dark contour, this layer becomes the inner wall
-   seen through the front face — the bright outer rim plus this dark inner
-   line is what reads as a hollow glass form */
-.fl-glass::before{transform:translate(0.9px,0.9px);
-  -webkit-text-stroke:1px rgba(12,24,40,.16);
-  background-image:linear-gradient(176deg,
-  rgba(255,255,255,.80) 0%,rgba(226,246,255,.34) 8%,rgba(176,214,238,.10) 24%,
-  rgba(150,190,220,.02) 44%,rgba(150,190,220,.02) 60%,rgba(186,224,244,.11) 78%,
-  rgba(238,250,255,.44) 92%,rgba(255,255,255,.74) 100%)}
-/* a single slow travelling highlight, with the colour split either side */
-.fl-glass::after{background-image:linear-gradient(100deg,transparent 33%,
-  rgba(255,120,220,.14) 40%,rgba(255,255,255,.34) 46%,rgba(255,255,255,.95) 50%,
-  rgba(255,255,255,.34) 54%,rgba(110,230,255,.16) 60%,transparent 67%);
-  background-size:300% 100%;animation:fl-sheen 13s linear infinite}
+/* Light entering the top edge and the caustic where it leaves the bottom —
+   both are narrow bands with hard stops, and the middle is left empty so the
+   page reads through the letter. */
+.fl-glass::before{background-image:linear-gradient(180deg,
+  rgba(255,255,255,1) 0%,rgba(255,255,255,.96) 6%,rgba(206,238,255,.42) 13%,
+  rgba(150,200,240,.06) 20%,transparent 26%,transparent 62%,
+  rgba(150,205,245,.20) 72%,rgba(226,246,255,.80) 87%,rgba(255,255,255,1) 100%)}
+/* One narrow specular streak. At 320% background-size a band spanning even
+   16% of the gradient covers half the word — which is what was filling the
+   letters and making them look solid. This one is a few percent wide. */
+.fl-glass::after{background-image:linear-gradient(102deg,transparent 46.2%,
+  rgba(255,105,215,.42) 47.4%,rgba(255,255,255,.72) 48.6%,rgba(255,255,255,1) 49.6%,
+  rgba(255,255,255,.72) 50.6%,rgba(105,225,255,.46) 51.8%,transparent 53%);
+  background-size:320% 100%;animation:fl-sheen 12s linear infinite}
 @keyframes fl-sheen{0%{background-position:190% 0}100%{background-position:-90% 0}}
 @media(prefers-reduced-motion:reduce){.fl-glass::after{animation:none}}
 .fl-moving .fl-glass::after{animation-play-state:paused}
