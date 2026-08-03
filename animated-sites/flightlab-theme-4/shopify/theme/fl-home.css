@@ -359,6 +359,13 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
   radial-gradient(40% 34% at 86% 80%,rgba(62,207,142,.065),transparent 72%)}
 .sec.dark::before{background:
   radial-gradient(50% 42% at 50% 28%,rgba(72,196,196,.075),transparent 72%)}
+/* No rule under a group header and none above the footer. A heading is
+   separated by the space around it and by the light behind it; a drawn line
+   is what made the page read as stacked panels. */
+.disc-group .gt{border-bottom:none;position:relative}
+.disc-group .gt::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,rgba(255,255,255,.055),rgba(255,255,255,.012) 42%,transparent 76%)}
+footer{border-top:none!important}
 /* The newsletter drew a rule across the page too; same treatment. */
 #nl{border-top:none!important;position:relative}
 #nl::before{content:"";position:absolute;left:0;right:0;top:-11vh;bottom:-11vh;
@@ -468,7 +475,7 @@ nav .brand,nav .nl a{color:var(--ink)}
     radial-gradient(120% 92% at 50% 50%,transparent 46%,rgba(6,9,14,.62) 100%)}
 .fl-bloom{position:absolute;left:50%;top:50%;width:86vw;height:34vh;z-index:1;
   transform:translate(-50%,-50%);pointer-events:none;
-  background:radial-gradient(50% 50% at 50% 50%,rgba(146,235,196,.16),rgba(150,195,230,.07) 42%,transparent 72%)}
+  background:radial-gradient(50% 50% at 50% 50%,rgba(178,226,240,.13),rgba(150,195,230,.06) 42%,transparent 72%)}
 .fl-stage{position:absolute;inset:0;z-index:2;display:grid;place-items:center;
   transform-style:preserve-3d;pointer-events:none}
 .fl-mark{margin:0;font-family:var(--b);font-weight:800;font-size:14.3vw;
@@ -483,22 +490,22 @@ nav .brand,nav .nl a{color:var(--ink)}
 /* Real glass is mostly the thing behind it. The body is nearly clear and the
    edge does the reading: a crisp bright rim is what the eye uses to resolve
    a transparent object, so the fill can drop far lower than instinct says. */
-.fl-glass{position:relative;display:inline-block;color:rgba(222,252,241,.055);
-  -webkit-text-stroke:1.25px rgba(208,252,234,.62)}
+.fl-glass{position:relative;display:inline-block;color:rgba(238,248,252,.05);
+  -webkit-text-stroke:1.25px rgba(232,246,252,.66)}
 .fl-glass::before,.fl-glass::after{content:attr(data-text);position:absolute;left:0;top:0;
   white-space:nowrap;-webkit-background-clip:text;background-clip:text;color:transparent;
   -webkit-text-stroke:0;pointer-events:none}
 /* background-image, not the background shorthand: the shorthand resets
    background-clip back to border-box and the text clip is lost. */
 .fl-glass::before{background-image:linear-gradient(176deg,
-  rgba(255,255,255,.88) 0%,rgba(232,255,246,.34) 7%,rgba(170,220,200,.10) 22%,
-  rgba(140,190,175,.03) 42%,rgba(140,190,175,.03) 60%,rgba(178,232,208,.13) 80%,
-  rgba(244,255,250,.62) 94%,rgba(255,255,255,.85) 100%)}
+  rgba(255,255,255,.90) 0%,rgba(240,250,255,.32) 7%,rgba(198,218,228,.09) 22%,
+  rgba(186,206,216,.03) 42%,rgba(186,206,216,.03) 60%,rgba(206,230,236,.12) 80%,
+  rgba(248,253,255,.60) 94%,rgba(255,255,255,.86) 100%)}
 /* Internal refraction: a bright core sweep with a green fringe either side,
    which is what sells it as glass rather than a shine. */
 .fl-glass::after{background-image:linear-gradient(102deg,transparent 36%,
-  rgba(120,235,185,.16) 43%,rgba(255,255,255,.30) 47%,rgba(255,255,255,.80) 50%,
-  rgba(255,255,255,.30) 53%,rgba(120,235,185,.16) 57%,transparent 64%);
+  rgba(150,232,198,.10) 43%,rgba(255,255,255,.30) 47%,rgba(255,255,255,.80) 50%,
+  rgba(255,255,255,.30) 53%,rgba(150,232,198,.10) 57%,transparent 64%);
   background-size:300% 100%;animation:fl-sheen 15s linear infinite}
 .fl-moving .fl-glass::after{animation-play-state:paused}
 @keyframes fl-sheen{0%{background-position:190% 0}100%{background-position:-90% 0}}
@@ -518,10 +525,11 @@ nav .brand,nav .nl a{color:var(--ink)}
   background-repeat:no-repeat;background-size:100% 100%;
   background-color:rgba(198,240,222,.06);
   backface-visibility:hidden;
-  transform:translate3d(calc(var(--dx) * var(--k)),calc(var(--dy) * var(--k)),calc(var(--dz) * var(--k)))
-            rotate(calc(var(--ra) * var(--k)))
-            scale(calc(1 - var(--k) * 0.78));
-  opacity:calc(1 - var(--k) * var(--k))}
+  --e:clamp(0,calc((var(--k) - var(--d)) / (1 - var(--d))),1);
+  transform:translate3d(calc(var(--dx) * var(--e)),calc(var(--dy) * var(--e)),calc(var(--dz) * var(--e)))
+            rotate(calc(var(--ra) * var(--e)))
+            scale(calc(1 - var(--e) * 0.78));
+  opacity:calc(1 - var(--e) * var(--e))}
 @media(prefers-reduced-motion:reduce){.fl-shard{transition:none}}
 #loader{background:#111827}
 .grain{opacity:.035}

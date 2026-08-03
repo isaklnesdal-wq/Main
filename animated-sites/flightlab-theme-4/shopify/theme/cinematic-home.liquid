@@ -415,41 +415,55 @@ function buildShards(){
   g.textBaseline='middle';g.textAlign='center';
   const grad=g.createLinearGradient(0,0,0,H);
   grad.addColorStop(0,'rgba(255,255,255,.88)');
-  grad.addColorStop(.10,'rgba(232,255,246,.32)');
-  grad.addColorStop(.28,'rgba(170,220,200,.10)');
-  grad.addColorStop(.55,'rgba(140,190,175,.05)');
-  grad.addColorStop(.82,'rgba(178,232,208,.14)');
+  grad.addColorStop(.10,'rgba(240,250,255,.30)');
+  grad.addColorStop(.28,'rgba(198,218,228,.09)');
+  grad.addColorStop(.55,'rgba(186,206,216,.04)');
+  grad.addColorStop(.82,'rgba(206,230,236,.12)');
   grad.addColorStop(.96,'rgba(244,255,250,.60)');
   grad.addColorStop(1,'rgba(255,255,255,.85)');
   g.fillStyle=grad;g.fillText('FLIGHTLAB',W/2,H/2);
-  g.lineWidth=1.25;g.strokeStyle='rgba(208,252,234,.62)';
+  g.lineWidth=1.25;g.strokeStyle='rgba(232,246,252,.66)';
   g.strokeText('FLIGHTLAB',W/2,H/2);
   const url=cv.toDataURL('image/png');
 
-  /* A jittered grid so every pixel of the word belongs to some shard and it
-     reads as breaking rather than as pieces lifting off a surface. */
-  const COLS=TOUCH?10:16, ROWS=TOUCH?5:8;
+  /* Real glass does not break into a grid. An impact throws radial cracks
+     out from the point of contact and concentric ones around it, and the
+     cells between them are fine near the impact and coarser further out —
+     which is why the grid version read as puzzle pieces. Rings are spaced
+     on a power curve to get that gradient, and every vertex is jittered so
+     no two edges are parallel. */
+  const RAYS=TOUCH?12:18, RINGS=TOUCH?4:5;
   let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
-  const jx=()=>(rnd()-.5)*(100/COLS)*0.7, jy=()=>(rnd()-.5)*(100/ROWS)*0.7;
+  const cxp=44+rnd()*12, cyp=42+rnd()*16;          // impact point, off centre
+  const R=Math.hypot(Math.max(cxp,100-cxp),Math.max(cyp,100-cyp))*1.12;
+  const ang=[],rad=[];
+  for(let i=0;i<RAYS;i++)ang.push(i/RAYS*Math.PI*2+(rnd()-.5)*(Math.PI*2/RAYS)*0.55);
+  ang.push(ang[0]+Math.PI*2);
+  for(let i=0;i<=RINGS;i++)rad.push(R*Math.pow(i/RINGS,1.75)*(1+(rnd()-.5)*0.14));
+  const px=(a,r)=>[cxp+Math.cos(a)*r*(100/ (100)),cyp+Math.sin(a)*r*0.52];
   const frag=document.createDocumentFragment();
-  for(let c=0;c<COLS;c++)for(let rw=0;rw<ROWS;rw++){
-    const x0=c*100/COLS, x1=(c+1)*100/COLS, y0=rw*100/ROWS, y1=(rw+1)*100/ROWS;
+  for(let i=0;i<RAYS;i++)for(let j=0;j<RINGS;j++){
+    const a1=ang[i],a2=ang[i+1],r1=rad[j],r2=rad[j+1];
+    const jit=()=>1+(rnd()-.5)*0.16;
+    const P=[px(a1,r1*jit()),px(a2,r1*jit()),px(a2,r2*jit()),px(a1,r2*jit())];
+    /* Innermost cells are slivers, so collapse them to triangles — a shard
+       right at the impact has no inner edge left. */
+    const pts=(j===0?[P[0],P[2],P[3]]:P)
+      .map(q=>q[0].toFixed(2)+'% '+q[1].toFixed(2)+'%').join(',');
     const el=document.createElement('span');
     el.className='fl-shard';
     el.style.width=W+'px';el.style.height=H+'px';
     el.style.marginLeft=(-W/2)+'px';el.style.marginTop=(-H/2)+'px';
     el.style.backgroundImage='url('+url+')';
-    el.style.clipPath='polygon('+
-      (x0+jx()).toFixed(2)+'% '+(y0+jy()).toFixed(2)+'%,'+
-      (x1+jx()).toFixed(2)+'% '+(y0+jy()).toFixed(2)+'%,'+
-      (x1+jx()).toFixed(2)+'% '+(y1+jy()).toFixed(2)+'%,'+
-      (x0+jx()).toFixed(2)+'% '+(y1+jy()).toFixed(2)+'%)';
-    /* Outward from the centre, so the field opens around the camera. */
-    const cx=(x0+x1)/2-50, cy=(y0+y1)/2-50, m=Math.hypot(cx,cy)||1;
-    el.style.setProperty('--dx',(cx/m*(240+rnd()*520)).toFixed(1)+'px');
-    el.style.setProperty('--dy',(cy/m*(180+rnd()*420)).toFixed(1)+'px');
-    el.style.setProperty('--dz',(rnd()*420-90).toFixed(1)+'px');
-    el.style.setProperty('--ra',((rnd()*2-1)*110).toFixed(1)+'deg');
+    el.style.clipPath='polygon('+pts+')';
+    /* Outward from the impact, fastest at the centre, and staggered so the
+       break travels through the pane instead of every piece leaving at once. */
+    const mid=(a1+a2)/2, t=j/RINGS;
+    el.style.setProperty('--dx',(Math.cos(mid)*(200+ (1-t)*520+rnd()*180)).toFixed(1)+'px');
+    el.style.setProperty('--dy',(Math.sin(mid)*(150+ (1-t)*380+rnd()*140)).toFixed(1)+'px');
+    el.style.setProperty('--dz',((1-t)*340-70+rnd()*120).toFixed(1)+'px');
+    el.style.setProperty('--ra',((rnd()*2-1)*(60+(1-t)*140)).toFixed(1)+'deg');
+    el.style.setProperty('--d',(t*0.34).toFixed(3));
     frag.appendChild(el);
   }
   flshards.appendChild(frag);
