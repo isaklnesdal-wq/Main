@@ -31,7 +31,7 @@
   --color-on-dark-soft: rgba(242, 245, 249, 0.62);
 
   --surface-0: #1D2531;
-  --surface-1: #1C2431;
+  --surface-1: #232D3D;
   --surface-2: #2F3D53;
 
   --glass: rgba(255, 255, 255, 0.045);
@@ -82,7 +82,7 @@ body {
 
 /* ---------- Header, announcement, bottom nav: subtle glass ---------- */
 .site-header {
-  background: rgba(20, 26, 34, 0.66);
+  background: rgba(29, 37, 49, 0.68);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
   backdrop-filter: blur(20px) saturate(150%);
   border-bottom: 1px solid var(--glass-line);
@@ -98,7 +98,7 @@ body {
 }
 
 .mobile-bottom-nav {
-  background: rgba(20, 26, 34, 0.78);
+  background: rgba(29, 37, 49, 0.80);
   -webkit-backdrop-filter: blur(18px) saturate(150%);
   backdrop-filter: blur(18px) saturate(150%);
   border-top: 1px solid var(--glass-line);
@@ -114,8 +114,8 @@ body {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
-  .site-header { background: rgba(20, 26, 34, 0.95); }
-  .mobile-bottom-nav { background: rgba(20, 26, 34, 0.96); }
+  .site-header { background: rgba(29, 37, 49, 0.95); }
+  .mobile-bottom-nav { background: rgba(29, 37, 49, 0.96); }
 }
 
 .mobile-menu__panel { background: var(--surface-1); }

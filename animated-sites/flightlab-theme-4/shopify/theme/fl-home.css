@@ -399,7 +399,7 @@ footer{border-top:none!important}
   .pcard:hover,.acard:hover{background:linear-gradient(180deg,#354663,#2E3A4F);
     border-color:rgba(62,207,142,.3)}
 }
-.acard .im{background:linear-gradient(135deg,#1A2230,#0D1117)}
+.acard .im{background:linear-gradient(135deg,#273348,#1D2531)}
 .disc-group .gt{border-bottom-color:rgba(255,255,255,.09)}
 
 /* Newsletter, footer, bag portal — the last white surfaces */
@@ -424,9 +424,9 @@ nav .brand,nav .nl a{color:var(--ink)}
 .navsearch input::placeholder{color:rgba(232,237,244,.38)}
 .searchhint{background:rgba(21,26,34,.96);border-color:rgba(255,255,255,.12);color:var(--mut)}
 @media(hover:none){
-  nav{background:rgba(21,29,43,.95)}
+  nav{background:rgba(29,37,49,.95)}
   .navsearch{background:rgba(255,255,255,.06)}
-  .searchhint{background:#151A22}
+  .searchhint{background:#1D2531}
 }
 
 /* Green stays scarce: buttons, active states, highlights */
