@@ -472,6 +472,11 @@ nav .brand,nav .nl a{color:var(--ink)}
    fixed and barely visible, and it dithers those steps away. Without it the
    ambient fields read as gradients you can point at; with it they read as
    light in air. One 200px tile, composited, so it costs nothing to scroll. */
+/* An almost-nothing vignette over the whole page. At roughly 3% down in the
+   corners it is below the level you notice as darkening; it only biases the eye
+   toward the middle. Fixed, so it never moves against the content. */
+.fl-vig{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(118% 98% at 50% 48%,transparent 46%,rgba(5,9,15,.10) 78%,rgba(4,7,12,.20) 100%)}
 .fl-dither{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.018;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 .fl-discs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
@@ -674,11 +679,17 @@ nav .brand,nav .nl a{color:var(--ink)}
   .fl-svg .g-refl{stroke-width:.026em}
 }
 #loader{background:#1D2531}
-.grain{opacity:.035}
+/* The hero used to carry its own film grain. Now that .fl-dither covers the
+   whole page, the hero was getting both — so it sat about two levels brighter
+   than everything below it, and the hero's bottom edge was exactly where that
+   difference stopped. That was the last of the divider. The element stays;
+   it just no longer double-dithers the one section it happens to live in. */
+.grain{opacity:0}
 </style>
 </head>
 <body>
 <!-- Floating discs: one fixed layer behind every section, tying them together -->
+<div class="fl-vig" aria-hidden="true"></div>
 <div class="fl-dither" aria-hidden="true"></div>
 <div class="fl-discs" aria-hidden="true">
   <div class="fl-layer" data-k=".55" data-n="9" data-l="l1"></div>
@@ -1532,7 +1543,7 @@ function loop(){
       /* Written on the environment layer itself, and only when it actually
          changes. Setting a custom property on .scene invalidated style for
          every node in the hero, every frame. */
-      if(flenv){const ev=(1-smooth(clamp(0,1,(p-0.62)/0.34))).toFixed(2);
+      if(flenv){const ev=(1-smooth(clamp(0,1,(p-0.50)/0.28))).toFixed(2);
         if(ev!==lastEnv){lastEnv=ev;flenv.style.opacity=ev}}
       const q=smooth(clamp(0,1,(p-0.44)/0.52));
       flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.42)/0.32))).toFixed(3);
