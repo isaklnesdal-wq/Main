@@ -8,7 +8,7 @@
    that was hardcoded light.
 
    Palette matches the homepage exactly:
-     #141A22 page, #19212C secondary, #202938 cards.
+     #1D2531 page, #232D3D secondary, #2A374B cards.
    Green is reserved for things you can act on — buttons, active nav, focus,
    badges, prices on sale — so it keeps its value. Everything else is neutral.
    ========================================================================== */
@@ -25,14 +25,14 @@
 
   --color-ink: #E7ECF3;
   --color-ink-soft: rgba(231, 236, 243, 0.60);
-  --color-sand: #19212C;
+  --color-sand: #232D3D;
   --color-line: rgba(255, 255, 255, 0.08);
   --color-on-dark: #F2F5F9;
   --color-on-dark-soft: rgba(242, 245, 249, 0.62);
 
-  --surface-0: #151B23;
+  --surface-0: #1D2531;
   --surface-1: #1C2431;
-  --surface-2: #232D3E;
+  --surface-2: #2F3D53;
 
   --glass: rgba(255, 255, 255, 0.045);
   --glass-strong: rgba(255, 255, 255, 0.075);
@@ -60,8 +60,8 @@ body {
     radial-gradient(132% 27% at 96% 70%, rgba(60, 224, 255,0.0768), rgba(60, 224, 255,0.0300) 44%, transparent 86%),
     radial-gradient(128% 26% at 4% 83%, rgba(70, 240, 190,0.0732), rgba(70, 240, 190,0.0282) 44%, transparent 86%),
     radial-gradient(132% 27% at 98% 96%, rgba(96, 146, 255,0.0708), rgba(96, 146, 255,0.0270) 44%, transparent 86%),
-    linear-gradient(180deg, #151B23 0%, #18202B 10%, #1B2534 22%, #1E2A3B 34%,
-      #202E41 46%, #1F2F42 56%, #1C2A3A 68%, #182332 80%, #171C26 90%, #151B23 100%);
+    linear-gradient(180deg, #1D2531 0%, #212A39 10%, #253145 22%, #29374E 34%,
+      #2C3C55 46%, #2B3D57 56%, #26344A 68%, #212C3E 80%, #1F2632 90%, #1D2531 100%);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-attachment: scroll;
@@ -124,11 +124,11 @@ body {
 
 /* ---------- Surfaces that were hardcoded light ---------- */
 .discovery-card {
-  background: linear-gradient(180deg, #232D3E, #202938);
+  background: linear-gradient(180deg, #2F3D53, #2A374B);
   border-color: var(--glass-line);
 }
 .discovery-card:hover {
-  background: linear-gradient(180deg, #263143, #222B3B);
+  background: linear-gradient(180deg, #354663, #2E3A4F);
   border-color: rgba(62, 207, 142, 0.34);
   box-shadow: var(--shadow-lift);
 }
@@ -194,16 +194,16 @@ input::placeholder, textarea::placeholder { color: rgba(231, 236, 243, 0.36); }
 .product-gallery__thumb.is-active { border-color: var(--color-signal); }
 
 .brand-story__media,
-.article-card__media { background: linear-gradient(160deg, #202938, #141A22); }
-.category-card__media { background: linear-gradient(150deg, #202938 0%, #19212C 55%, #141A22 100%); }
-.community__media { background: linear-gradient(120deg, #1D2534 0%, #141A22 60%, #19212C 100%); }
+.article-card__media { background: linear-gradient(160deg, #2A374B, #1D2531); }
+.category-card__media { background: linear-gradient(150deg, #2A374B 0%, #232D3D 55%, #1D2531 100%); }
+.community__media { background: linear-gradient(120deg, #273348 0%, #1D2531 60%, #232D3D 100%); }
 .beginner-guide__media {
   background:
     radial-gradient(90% 90% at 20% 15%, rgba(62, 207, 142, 0.10) 0%, transparent 55%),
-    linear-gradient(200deg, #202938 0%, #141A22 100%);
+    linear-gradient(200deg, #2A374B 0%, #1D2531 100%);
 }
 .hero__media--placeholder {
-  background: linear-gradient(158deg, #141A22 0%, #19212C 58%, #141A22 100%);
+  background: linear-gradient(158deg, #1D2531 0%, #232D3D 58%, #1D2531 100%);
 }
 
 /* ---------- Green, used sparingly ----------

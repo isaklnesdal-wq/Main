@@ -341,7 +341,7 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
   --signal:#3ECF8E; --forest:#3ECF8E; --teal:#3ECF8E; --gold:rgba(232,237,244,.5);
   --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.07);
   --glassbrd:rgba(255,255,255,.12); --blur:blur(22px) saturate(150%);
-  --surf2:#19212C; --surf3:#141A22; --surf4:#202938;
+  --surf2:#232D3D; --surf3:#1D2531; --surf4:#2A374B;
   --on-signal:#06140D;
 }
 
@@ -359,7 +359,7 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
    neighbours — the light is always crossfading and never restarts at a
    boundary. Nothing here is anchored to a section, so section edges have
    nothing to coincide with. */
-body{background:#151B23;color:var(--ink);position:relative}
+body{background:#1D2531;color:var(--ink);position:relative}
 body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
   z-index:-2;pointer-events:none;
   background:
@@ -382,8 +382,8 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
     /* graphite -> dark navy -> slate blue -> a breath of cyan -> graphite.
        Each step is a couple of points of luminance, so the journey is felt
        rather than seen. */
-    linear-gradient(180deg,#151B23 0%,#18202B 10%,#1B2534 22%,#1E2A3B 34%,
-      #202E41 46%,#1F2F42 56%,#1C2A3A 68%,#182332 80%,#171C26 90%,#151B23 100%)}
+    linear-gradient(180deg,#1D2531 0%,#212A39 10%,#253145 22%,#29374E 34%,
+      #2C3C55 46%,#2B3D57 56%,#26344A 68%,#212C3E 80%,#1F2632 90%,#1D2531 100%)}
 .sec{position:relative;z-index:1}
 .sec.light,.sec.dark{background:transparent;color:var(--ink)}
 /* Sections carry no background and no ambient pool of their own. Anything
@@ -401,13 +401,13 @@ footer{border-top:none!important}
 
 /* Cards become raised glass instead of white paper */
 .pcard,.acard{
-  background:linear-gradient(180deg,#232D3E,#202938);
+  background:linear-gradient(180deg,#2F3D53,#2A374B);
   border:1px solid rgba(255,255,255,.12);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 30px rgba(0,0,0,.4)}
 @media(hover:hover) and (pointer:fine){
-  .pcard,.acard{background:linear-gradient(180deg,#202938,#1D2534);
+  .pcard,.acard{background:linear-gradient(180deg,#2A374B,#273348);
     backdrop-filter:none;-webkit-backdrop-filter:none}
-  .pcard:hover,.acard:hover{background:linear-gradient(180deg,#263143,#222B3B);
+  .pcard:hover,.acard:hover{background:linear-gradient(180deg,#354663,#2E3A4F);
     border-color:rgba(62,207,142,.3)}
 }
 .acard .im{background:linear-gradient(135deg,#1A2230,#0D1117)}
@@ -621,7 +621,7 @@ nav .brand,nav .nl a{color:var(--ink)}
 .fl-lights{animation:fl-lights 34s ease-in-out infinite;transform-origin:50% 50%}
 .fl-moving .fl-lights{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.fl-lights{animation:none}}
-.fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.019em;opacity:.23;
+.fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.019em;opacity:.34;
   transform-box:fill-box;transform-origin:center;
   transform:translateY(.74em) scaleY(-1);mask:url(#flReflFade)}
 
@@ -673,7 +673,7 @@ nav .brand,nav .nl a{color:var(--ink)}
   .fl-svg .g-spec{stroke-width:.010em}
   .fl-svg .g-refl{stroke-width:.026em}
 }
-#loader{background:#141A22}
+#loader{background:#1D2531}
 .grain{opacity:.035}
 </style>
 </head>
@@ -811,8 +811,8 @@ nav .brand,nav .nl a{color:var(--ink)}
             </linearGradient>
             <linearGradient id="flReflGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"   stop-color="#000"/>
-              <stop offset=".38" stop-color="#2A2A2A"/>
-              <stop offset=".72" stop-color="#8A8A8A"/>
+              <stop offset=".38" stop-color="#454545"/>
+              <stop offset=".72" stop-color="#A6A6A6"/>
               <stop offset="1"   stop-color="#FFFFFF"/>
             </linearGradient>
             <mask id="flReflFade" maskContentUnits="objectBoundingBox">
