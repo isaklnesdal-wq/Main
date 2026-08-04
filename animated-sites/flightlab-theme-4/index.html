@@ -369,8 +369,11 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
     radial-gradient(84% 15% at 90% 58%,rgba(62,207,142,.088),transparent 76%),
     radial-gradient(78% 14% at 14% 75%,rgba(96,132,232,.094),transparent 76%),
     radial-gradient(84% 15% at 88% 92%,rgba(72,196,196,.083),transparent 76%),
-    linear-gradient(180deg,#141A22 0%,#19212C 11%,#1A222E 22%,#202938 33%,
-      #1C2433 44%,#1E2736 55%,#1A2130 66%,#202938 77%,#1C2433 88%,#141A22 100%)}
+    /* graphite -> dark navy -> slate blue -> a breath of cyan -> graphite.
+       Each step is a couple of points of luminance, so the journey is felt
+       rather than seen. */
+    linear-gradient(180deg,#141A22 0%,#171E2A 10%,#1A2333 22%,#1D2839 34%,
+      #1F2C40 46%,#1E2D42 56%,#1B2839 68%,#182231 80%,#161C26 90%,#141A22 100%)}
 .sec{position:relative;z-index:1}
 .sec.light,.sec.dark{background:transparent;color:var(--ink)}
 /* Sections carry no background and no ambient pool of their own. Anything
@@ -491,12 +494,16 @@ nav .brand,nav .nl a{color:var(--ink)}
     /* the floor the word stands on */
     linear-gradient(180deg,transparent 62%,rgba(120,226,238,.07) 72%,rgba(20,26,34,.58) 100%),
     /* vignette */
-    radial-gradient(128% 100% at 50% 42%,transparent 54%,rgba(5,11,20,.66) 100%),
-    /* the light the crystal refracts — soft studio pools, not a neon field */
-    radial-gradient(34% 40% at 24% 50%,rgba(58,214,190,.26),transparent 76%),
-    radial-gradient(30% 36% at 54% 42%,rgba(104,196,232,.24),transparent 78%),
-    radial-gradient(32% 38% at 78% 50%,rgba(72,206,202,.20),transparent 78%),
-    radial-gradient(86% 66% at 50% 40%,#154265 0%,#14304E 34%,#192232 70%,#141A22 100%)}
+    radial-gradient(128% 100% at 50% 42%,transparent 60%,rgba(6,12,20,.46) 100%),
+    /* The environment. This is not meant to be seen — it is here only so the
+       crystal has something to reflect, the way a studio puts a softbox where
+       the camera cannot see it. At these levels the pools are near the
+       threshold of visibility against the base, so what reveals them is the
+       refraction inside the letters and almost nothing else. */
+    radial-gradient(38% 44% at 22% 48%,rgba(96,214,208,.075),transparent 78%),
+    radial-gradient(34% 40% at 55% 40%,rgba(128,198,236,.070),transparent 80%),
+    radial-gradient(36% 42% at 80% 50%,rgba(96,206,214,.055),transparent 80%),
+    radial-gradient(92% 72% at 50% 42%,#1A2734 0%,#18222E 40%,#161D27 74%,#141A22 100%)}
 .fl-stage{position:absolute;inset:0;z-index:2;transform-style:preserve-3d;pointer-events:none}
 .fl-mark{position:absolute;inset:0;margin:0;
   transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
@@ -555,6 +562,13 @@ nav .brand,nav .nl a{color:var(--ink)}
 /* Specular. Confined to the top of the form, because a light points from
    somewhere. An outline that is equally bright the whole way round is a tube. */
 .fl-svg .g-spec{fill:none;stroke:url(#flSpec);stroke-width:.011em;mask:url(#flSpecPos)}
+@keyframes fl-lights{
+  0%  {transform:translate(0,0)}
+  50% {transform:translate(2.6%,-1.1%)}
+  100%{transform:translate(0,0)}}
+.fl-lights{animation:fl-lights 34s ease-in-out infinite;transform-origin:50% 50%}
+.fl-moving .fl-lights{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.fl-lights{animation:none}}
 .fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.034em;opacity:.16;
   transform-box:fill-box;transform-origin:center;
   transform:translateY(.74em) scaleY(-1);mask:url(#flReflFade)}
@@ -566,7 +580,7 @@ nav .brand,nav .nl a{color:var(--ink)}
 .fl-moving .g-ext,.fl-moving .g-valley,.fl-moving .g-spec,
 .fl-moving .g-refl,.fl-moving .g-caus,.fl-moving .g-refr{display:none}
 .fl-moving .g-bevel{stroke-width:.026em;stroke:#E4F6FC}
-.fl-moving .g-dark{stroke:rgba(8,18,30,.55)}
+.fl-moving .g-dark{stroke:rgba(8,18,30,.55);stroke-width:.030em}
 .fl-moving .g-body{fill:rgba(221,246,255,.13);stroke:rgba(221,246,255,.13)}
 @media(hover:none){.fl-svg .g-refl{display:none}}
 
@@ -576,10 +590,10 @@ nav .brand,nav .nl a{color:var(--ink)}
 @media(max-width:760px){
   .scene{background:
     linear-gradient(180deg,transparent 66%,rgba(120,226,238,.06) 76%,rgba(20,26,34,.58) 100%),
-    radial-gradient(140% 100% at 50% 44%,transparent 56%,rgba(5,11,20,.64) 100%),
-    radial-gradient(58% 20% at 30% 50%,rgba(58,214,190,.26),transparent 78%),
-    radial-gradient(54% 18% at 70% 45%,rgba(104,196,232,.24),transparent 80%),
-    radial-gradient(110% 62% at 50% 42%,#154265 0%,#14304E 34%,#192232 70%,#141A22 100%)}
+    radial-gradient(140% 100% at 50% 44%,transparent 62%,rgba(6,12,20,.44) 100%),
+    radial-gradient(60% 22% at 30% 50%,rgba(96,214,208,.075),transparent 80%),
+    radial-gradient(56% 20% at 70% 45%,rgba(128,198,236,.068),transparent 82%),
+    radial-gradient(116% 68% at 50% 44%,#1A2734 0%,#18222E 40%,#161D27 74%,#141A22 100%)}
   /* Every width here is proportional, so at phone sizes the bevel lands near a
      hairline. Widen the whole bead so it still reads as a rounded edge. */
   .fl-svg .g-body,.fl-svg .g-refr{stroke-width:.052em}
@@ -642,12 +656,12 @@ nav .brand,nav .nl a{color:var(--ink)}
                  very low: the centre of a letter is supposed to be almost clear,
                  so this may only tint what is already there. -->
             <linearGradient id="flRefr" gradientUnits="userSpaceOnUse" x1="8%" y1="0" x2="96%" y2="0">
-              <stop offset="0"   stop-color="#C6F2F8" stop-opacity=".07"/>
-              <stop offset=".30" stop-color="#DDF6FF" stop-opacity=".13"/>
-              <stop offset=".52" stop-color="#EEF9FF" stop-opacity=".15"/>
-              <stop offset=".68" stop-color="#B8FFD9" stop-opacity=".07"/>
-              <stop offset=".82" stop-color="#C6F2F8" stop-opacity=".12"/>
-              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".06"/>
+              <stop offset="0"   stop-color="#C6F2F8" stop-opacity=".11"/>
+              <stop offset=".30" stop-color="#DDF6FF" stop-opacity=".19"/>
+              <stop offset=".52" stop-color="#EEF9FF" stop-opacity=".22"/>
+              <stop offset=".68" stop-color="#B8FFD9" stop-opacity=".10"/>
+              <stop offset=".82" stop-color="#C6F2F8" stop-opacity=".17"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".09"/>
             </linearGradient>
             <!-- Body tint. The specified progression, but at the alpha of a
                  clear solid: the interior carries the colour, it does not become
@@ -1033,9 +1047,9 @@ function buildChips(){
     const a=Math.atan2(ny,nx)+(Math.random()-.5)*1.1;
     const sz=0.26+Math.random()*0.48;
     out.push({x:nx,y:ny,
-      rel:Math.min(1,(d-1)/(MAXR-1))*0.62,       /* edges released first */
-      vx:Math.cos(a)*(0.35+Math.random()*0.95),
-      vy:Math.sin(a)*(0.35+Math.random()*0.95)-0.12,
+      rel:Math.min(1,(d-1)/(MAXR-1))*0.72,       /* edges released first */
+      vx:Math.cos(a)*(0.22+Math.random()*0.62),
+      vy:Math.sin(a)*(0.22+Math.random()*0.62)-0.08,
       w:sz*(0.6+Math.random()*1.5),              /* chips, not squares */
       h:sz*(0.6+Math.random()*1.5),
       al:0.40+Math.random()*0.60});
@@ -1051,12 +1065,12 @@ function drawChips(q,scale,cx,cy){
      frame instead of one per chip. */
   const B=4, paths=[];
   for(let i=0;i<B;i++) paths.push(new Path2D());
-  const drift=innerWidth*0.26;
+  const drift=innerWidth*0.30;
   for(let i=0;i<CHIPS.length;i++){
     const c=CHIPS[i];
     const t=(q-c.rel)/(1-c.rel);
     if(t<=0) continue;
-    const e=t*t;                                  /* slow release, then away */
+    const e=t*t*t;                                /* barely moves, then leaves */
     const px=c.x*scale+c.vx*drift*e+cx;
     const py=c.y*scale+c.vy*drift*e+cy;
     if(px<-40||py<-40||px>W/dpr+40||py>H/dpr+40) continue;
@@ -1144,6 +1158,9 @@ if(window.requestIdleCallback){requestIdleCallback(flPrep,{timeout:2500})}else{s
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(()=>{flFit();flPrep()})}
 const PERSP=1100;   /* must match the perspective on .scene */
 let flMoving=false;
+/* The hold before the intro will respond to anything at all. */
+let flArmed=false, pShown=0;
+setTimeout(()=>{flArmed=true},2600);
 const caps=[...document.querySelectorAll('#journey .jcap')];
 const cue=document.getElementById('cue');
 const prog=document.getElementById('prog');
@@ -1371,27 +1388,49 @@ function loop(){
   // writing transforms every frame while the user is down in the catalogue.
   const jr=journey.getBoundingClientRect();
   if(jr.bottom>0 && jr.top<innerHeight){
-    const p=clamp(0,1,-jr.top/(jr.height-innerHeight));
+    const pRaw=clamp(0,1,-jr.top/(jr.height-innerHeight));
+    /* HOLD. For the first stretch after load the piece simply sits there and
+       nothing responds to the wheel — long enough to look at the material
+       before touching anything. Afterwards the shown position eases toward the
+       real scroll position rather than snapping to it, so however far someone
+       scrolled during the hold, the camera still starts from rest and arrives
+       without a step. */
+    if(!flArmed) pShown=0;
+    else pShown += (pRaw-pShown)*0.075;
+    const p=pShown;
     const e=smooth(p);
     /* Dolly, not scale. We pick the apparent size we want, then solve for the
        camera distance that produces it, so the growth carries real
        perspective and the type stays type. */
     const s=1+Math.pow(e,1.45)*ZHERO;
     const z=PERSP*(1-1/s);
+    /* A flat plane under a perspective transform projects to a plain uniform
+       scale — mathematically it cannot look like anything else, which is why
+       the pure dolly still read as zooming. Giving the word a small yaw as the
+       camera closes puts its two ends at different depths, so the near end
+       grows faster than the far end. That difference is parallax, and parallax
+       is the thing the eye reads as travelling rather than scaling. Both start
+       at zero, so the piece is perfectly frontal while it is being looked at. */
+    /* The yaw is a desktop-only cue. A 3D-rotated element takes a different
+       raster path, which measured as the dominant new cost on a phone, and at
+       phone size the parallax it buys spans a few pixels. Touch keeps the pure
+       dolly. */
+    const yaw=TOUCH?0:(6.4*e);
+    const dx=(TOUCH?0:-3.1*e*innerWidth/100);
     if(flmark){
-      const moving=p>0.03;
+      const moving=p>0.006;
       if(moving!==flMoving){flMoving=moving;flmark.classList.toggle('fl-moving',moving)}
-      /* One continuous move: the camera keeps closing on the word while the
-         word thins out and passes, so the intro ends without an event. */
-      flmark.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
+      flmark.style.transform=TOUCH
+        ? 'translate3d(0,0,'+z.toFixed(2)+'px)'
+        : 'translate3d('+dx.toFixed(1)+'px,0,'+z.toFixed(2)+'px) rotateY('+yaw.toFixed(2)+'deg)';
       /* The word hands over to the chips rather than simply fading: it clears
-         while the field is still dense, so what you watch leave is glass. */
-      const q=smooth(clamp(0,1,(p-0.42)/0.50));
-      flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.40)/0.30))).toFixed(3);
+         while the field is still dense, so what you watch leave is crystal. */
+      const q=smooth(clamp(0,1,(p-0.44)/0.52));
+      flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.42)/0.32))).toFixed(3);
       if(flshards){
         if(q>0){
           if(flshards.style.opacity!=='1') flshards.style.opacity='1';
-          drawChips(q,s,flshards.width/chipScale/2,flshards.height/chipScale/2);
+          drawChips(q,s,flshards.width/chipScale/2+dx,flshards.height/chipScale/2);
         }else if(flshards.style.opacity!=='0'){
           flshards.style.opacity='0';
           drawChips(0,s,0,0);

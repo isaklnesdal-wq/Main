@@ -118,12 +118,12 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
                  very low: the centre of a letter is supposed to be almost clear,
                  so this may only tint what is already there. -->
             <linearGradient id="flRefr" gradientUnits="userSpaceOnUse" x1="8%" y1="0" x2="96%" y2="0">
-              <stop offset="0"   stop-color="#C6F2F8" stop-opacity=".07"/>
-              <stop offset=".30" stop-color="#DDF6FF" stop-opacity=".13"/>
-              <stop offset=".52" stop-color="#EEF9FF" stop-opacity=".15"/>
-              <stop offset=".68" stop-color="#B8FFD9" stop-opacity=".07"/>
-              <stop offset=".82" stop-color="#C6F2F8" stop-opacity=".12"/>
-              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".06"/>
+              <stop offset="0"   stop-color="#C6F2F8" stop-opacity=".11"/>
+              <stop offset=".30" stop-color="#DDF6FF" stop-opacity=".19"/>
+              <stop offset=".52" stop-color="#EEF9FF" stop-opacity=".22"/>
+              <stop offset=".68" stop-color="#B8FFD9" stop-opacity=".10"/>
+              <stop offset=".82" stop-color="#C6F2F8" stop-opacity=".17"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".09"/>
             </linearGradient>
             <!-- Body tint. The specified progression, but at the alpha of a
                  clear solid: the interior carries the colour, it does not become
@@ -509,9 +509,9 @@ function buildChips(){
     const a=Math.atan2(ny,nx)+(Math.random()-.5)*1.1;
     const sz=0.26+Math.random()*0.48;
     out.push({x:nx,y:ny,
-      rel:Math.min(1,(d-1)/(MAXR-1))*0.62,       /* edges released first */
-      vx:Math.cos(a)*(0.35+Math.random()*0.95),
-      vy:Math.sin(a)*(0.35+Math.random()*0.95)-0.12,
+      rel:Math.min(1,(d-1)/(MAXR-1))*0.72,       /* edges released first */
+      vx:Math.cos(a)*(0.22+Math.random()*0.62),
+      vy:Math.sin(a)*(0.22+Math.random()*0.62)-0.08,
       w:sz*(0.6+Math.random()*1.5),              /* chips, not squares */
       h:sz*(0.6+Math.random()*1.5),
       al:0.40+Math.random()*0.60});
@@ -527,12 +527,12 @@ function drawChips(q,scale,cx,cy){
      frame instead of one per chip. */
   const B=4, paths=[];
   for(let i=0;i<B;i++) paths.push(new Path2D());
-  const drift=innerWidth*0.26;
+  const drift=innerWidth*0.30;
   for(let i=0;i<CHIPS.length;i++){
     const c=CHIPS[i];
     const t=(q-c.rel)/(1-c.rel);
     if(t<=0) continue;
-    const e=t*t;                                  /* slow release, then away */
+    const e=t*t*t;                                /* barely moves, then leaves */
     const px=c.x*scale+c.vx*drift*e+cx;
     const py=c.y*scale+c.vy*drift*e+cy;
     if(px<-40||py<-40||px>W/dpr+40||py>H/dpr+40) continue;
@@ -620,6 +620,9 @@ if(window.requestIdleCallback){requestIdleCallback(flPrep,{timeout:2500})}else{s
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(()=>{flFit();flPrep()})}
 const PERSP=1100;   /* must match the perspective on .scene */
 let flMoving=false;
+/* The hold before the intro will respond to anything at all. */
+let flArmed=false, pShown=0;
+setTimeout(()=>{flArmed=true},2600);
 const caps=[...document.querySelectorAll('#journey .jcap')];
 const cue=document.getElementById('cue');
 const prog=document.getElementById('prog');
@@ -847,27 +850,49 @@ function loop(){
   // writing transforms every frame while the user is down in the catalogue.
   const jr=journey.getBoundingClientRect();
   if(jr.bottom>0 && jr.top<innerHeight){
-    const p=clamp(0,1,-jr.top/(jr.height-innerHeight));
+    const pRaw=clamp(0,1,-jr.top/(jr.height-innerHeight));
+    /* HOLD. For the first stretch after load the piece simply sits there and
+       nothing responds to the wheel — long enough to look at the material
+       before touching anything. Afterwards the shown position eases toward the
+       real scroll position rather than snapping to it, so however far someone
+       scrolled during the hold, the camera still starts from rest and arrives
+       without a step. */
+    if(!flArmed) pShown=0;
+    else pShown += (pRaw-pShown)*0.075;
+    const p=pShown;
     const e=smooth(p);
     /* Dolly, not scale. We pick the apparent size we want, then solve for the
        camera distance that produces it, so the growth carries real
        perspective and the type stays type. */
     const s=1+Math.pow(e,1.45)*ZHERO;
     const z=PERSP*(1-1/s);
+    /* A flat plane under a perspective transform projects to a plain uniform
+       scale — mathematically it cannot look like anything else, which is why
+       the pure dolly still read as zooming. Giving the word a small yaw as the
+       camera closes puts its two ends at different depths, so the near end
+       grows faster than the far end. That difference is parallax, and parallax
+       is the thing the eye reads as travelling rather than scaling. Both start
+       at zero, so the piece is perfectly frontal while it is being looked at. */
+    /* The yaw is a desktop-only cue. A 3D-rotated element takes a different
+       raster path, which measured as the dominant new cost on a phone, and at
+       phone size the parallax it buys spans a few pixels. Touch keeps the pure
+       dolly. */
+    const yaw=TOUCH?0:(6.4*e);
+    const dx=(TOUCH?0:-3.1*e*innerWidth/100);
     if(flmark){
-      const moving=p>0.03;
+      const moving=p>0.006;
       if(moving!==flMoving){flMoving=moving;flmark.classList.toggle('fl-moving',moving)}
-      /* One continuous move: the camera keeps closing on the word while the
-         word thins out and passes, so the intro ends without an event. */
-      flmark.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
+      flmark.style.transform=TOUCH
+        ? 'translate3d(0,0,'+z.toFixed(2)+'px)'
+        : 'translate3d('+dx.toFixed(1)+'px,0,'+z.toFixed(2)+'px) rotateY('+yaw.toFixed(2)+'deg)';
       /* The word hands over to the chips rather than simply fading: it clears
-         while the field is still dense, so what you watch leave is glass. */
-      const q=smooth(clamp(0,1,(p-0.42)/0.50));
-      flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.40)/0.30))).toFixed(3);
+         while the field is still dense, so what you watch leave is crystal. */
+      const q=smooth(clamp(0,1,(p-0.44)/0.52));
+      flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.42)/0.32))).toFixed(3);
       if(flshards){
         if(q>0){
           if(flshards.style.opacity!=='1') flshards.style.opacity='1';
-          drawChips(q,s,flshards.width/chipScale/2,flshards.height/chipScale/2);
+          drawChips(q,s,flshards.width/chipScale/2+dx,flshards.height/chipScale/2);
         }else if(flshards.style.opacity!=='0'){
           flshards.style.opacity='0';
           drawChips(0,s,0,0);
