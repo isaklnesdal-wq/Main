@@ -106,9 +106,67 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
     <div class="fl-floor" aria-hidden="true"></div>
     <div class="fl-stage">
       <h1 class="fl-mark" id="flmark" aria-label="FLIGHTLAB">
-        <span class="fl-glass" aria-hidden="true"><span class="g-size">FLIGHTLAB</span><span class="g-ext">FLIGHTLAB</span><span class="g-body">FLIGHTLAB</span><span class="g-rim">FLIGHTLAB</span><span class="g-val">FLIGHTLAB</span><span class="g-cy">FLIGHTLAB</span><span class="g-mg">FLIGHTLAB</span><span class="g-hot">FLIGHTLAB</span><span class="g-irid">FLIGHTLAB</span><span class="g-refl">FLIGHTLAB</span></span>
+        <svg class="fl-svg" id="flsvg" aria-hidden="true" focusable="false">
+          <defs>
+            <!-- Light entering the top of the crystal, running clear through the
+                 middle, pooling again where it leaves the bottom. The faint green
+                 near the base is the only green in the piece. -->
+            <linearGradient id="flBody" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"    stop-color="#DCF4FF" stop-opacity=".46"/>
+              <stop offset=".20"  stop-color="#9FD6EC" stop-opacity=".20"/>
+              <stop offset=".52"  stop-color="#7FBBD6" stop-opacity=".13"/>
+              <stop offset=".68"  stop-color="#86E0C4" stop-opacity=".15"/>
+              <stop offset=".86"  stop-color="#B4EAFB" stop-opacity=".27"/>
+              <stop offset="1"    stop-color="#EEFCFF" stop-opacity=".54"/>
+            </linearGradient>
+            <!-- The bevel. Top light hits it hardest, the middle turns away, the
+                 floor throws light back into the bottom. -->
+            <linearGradient id="flBevel" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"    stop-color="#FFFFFF" stop-opacity=".96"/>
+              <stop offset=".17"  stop-color="#E4F8FF" stop-opacity=".76"/>
+              <stop offset=".45"  stop-color="#9CCFE2" stop-opacity=".34"/>
+              <stop offset=".72"  stop-color="#C6EFFD" stop-opacity=".60"/>
+              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".94"/>
+            </linearGradient>
+            <linearGradient id="flValley" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"    stop-color="#0E2E44" stop-opacity=".34"/>
+              <stop offset=".5"   stop-color="#123B54" stop-opacity=".20"/>
+              <stop offset="1"    stop-color="#0E2E44" stop-opacity=".28"/>
+            </linearGradient>
+            <linearGradient id="flCore" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"    stop-color="#FFFFFF" stop-opacity="1"/>
+              <stop offset=".28"  stop-color="#FFFFFF" stop-opacity=".62"/>
+              <stop offset=".62"  stop-color="#DFF6FF" stop-opacity=".22"/>
+              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".70"/>
+            </linearGradient>
+            <linearGradient id="flHalo" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"    stop-color="#AEE8FF" stop-opacity=".20"/>
+              <stop offset=".55"  stop-color="#8ED8E4" stop-opacity=".09"/>
+              <stop offset="1"    stop-color="#CFF6FF" stop-opacity=".22"/>
+            </linearGradient>
+            <linearGradient id="flReflGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"   stop-color="#000"/>
+              <stop offset=".38" stop-color="#2A2A2A"/>
+              <stop offset=".72" stop-color="#8A8A8A"/>
+              <stop offset="1"   stop-color="#FFFFFF"/>
+            </linearGradient>
+            <!-- objectBoundingBox content, so the fade is measured against the
+                 reflection itself rather than the viewport. Because the layer is
+                 flipped, its local top is what ends up furthest from the word. -->
+            <mask id="flReflFade" maskContentUnits="objectBoundingBox">
+              <rect x="0" y="0" width="1" height="1" fill="url(#flReflGrad)"/>
+            </mask>
+          </defs>
+          <text class="g-halo"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-body"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-bevel"  x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-valley" x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-core"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-refl"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+        </svg>
       </h1>
     </div>
+    <canvas class="fl-shards" id="flshards" aria-hidden="true"></canvas>
     <div class="grain"></div>
     <div id="loader"><div class="ln"></div><div class="brand">FLIGHTLAB</div><div class="ln"></div></div>
 
@@ -383,6 +441,116 @@ if(window.Lenis && !REDUCED && !matchMedia('(pointer:coarse)').matches){
    opacity are animated — composited on the GPU, no repaint. */
 const journey=document.getElementById('journey');
 const flmark=document.getElementById('flmark');
+/* ---- Dissolve ------------------------------------------------------------
+   The wordmark is rasterised once, at idle, into a small offscreen canvas. Every
+   opaque sample on a grid becomes a chip, and each chip records how far it sat
+   from the edge of its letter — that distance becomes its release time, so the
+   edges let go first and the interiors last, the way a solid actually comes
+   apart. Nothing here runs on the scroll path except the draw. */
+const flshards=document.getElementById('flshards');
+let CHIPS=null, chipScale=1;
+function buildChips(){
+  if(!flsvg||!flshards) return;
+  const t=flsvg.querySelector('.g-body');
+  let bb; try{bb=t.getBBox()}catch(e){return}
+  if(!bb.width) return;
+  const cs=getComputedStyle(t);
+  const RW=420, k=RW/bb.width, RH=Math.max(8,Math.round(bb.height*k))+8;
+  const c=document.createElement('canvas'); c.width=RW; c.height=RH;
+  const x=c.getContext('2d',{willReadFrequently:true});
+  x.font=cs.fontWeight+' '+(parseFloat(cs.fontSize)*k)+'px '+cs.fontFamily;
+  if('letterSpacing' in x) x.letterSpacing=(parseFloat(cs.fontSize)*k*-0.045)+'px';
+  x.textAlign='center'; x.textBaseline='middle'; x.fillStyle='#fff';
+  x.fillText('FLIGHTLAB',RW/2,RH/2);
+  const px=x.getImageData(0,0,RW,RH).data;
+  const on=(ix,iy)=>ix>=0&&iy>=0&&ix<RW&&iy<RH&&px[((iy*RW+ix)<<2)+3]>110;
+  const coarse=matchMedia('(hover:none)').matches;
+  const out=[], STEP=coarse?4:2, MAXR=9;
+  for(let iy=0;iy<RH;iy+=STEP) for(let ix=0;ix<RW;ix+=STEP){
+    if(!on(ix,iy)) continue;
+    let d=MAXR;
+    for(let r=1;r<MAXR;r++){
+      if(!on(ix+r,iy)||!on(ix-r,iy)||!on(ix,iy+r)||!on(ix,iy-r)){d=r;break}
+    }
+    /* Jitter off the sampling lattice. Without this the chips line up in rows
+       and columns, and the camera magnifies that grid along with everything
+       else. The offset is in word space so it scales with the chip. */
+    const jx=(Math.random()-.5)*STEP*1.6, jy=(Math.random()-.5)*STEP*1.6;
+    const nx=(ix-RW/2+jx)/k, ny=(iy-RH/2+jy)/k;  /* back into word pixels */
+    const a=Math.atan2(ny,nx)+(Math.random()-.5)*1.1;
+    const sz=0.26+Math.random()*0.48;
+    out.push({x:nx,y:ny,
+      rel:Math.min(1,(d-1)/(MAXR-1))*0.62,       /* edges released first */
+      vx:Math.cos(a)*(0.35+Math.random()*0.95),
+      vy:Math.sin(a)*(0.35+Math.random()*0.95)-0.12,
+      w:sz*(0.6+Math.random()*1.5),              /* chips, not squares */
+      h:sz*(0.6+Math.random()*1.5),
+      al:0.40+Math.random()*0.60});
+  }
+  CHIPS=out; chipScale=1;
+}
+function drawChips(q,scale,cx,cy){
+  const g=flshards.getContext('2d');
+  const W=flshards.width, H=flshards.height, dpr=chipScale;
+  g.clearRect(0,0,W,H);
+  if(!CHIPS||q<=0) return;
+  /* Four alpha buckets, one path each: batching keeps this to four fills a
+     frame instead of one per chip. */
+  const B=4, paths=[];
+  for(let i=0;i<B;i++) paths.push(new Path2D());
+  const drift=innerWidth*0.26;
+  for(let i=0;i<CHIPS.length;i++){
+    const c=CHIPS[i];
+    const t=(q-c.rel)/(1-c.rel);
+    if(t<=0) continue;
+    const e=t*t;                                  /* slow release, then away */
+    const px=c.x*scale+c.vx*drift*e+cx;
+    const py=c.y*scale+c.vy*drift*e+cy;
+    if(px<-40||py<-40||px>W/dpr+40||py>H/dpr+40) continue;
+    const gw=c.w*scale*(1+e*0.5), gh=c.h*scale*(1+e*0.5);
+    const a=c.al*(1-t);
+    if(a<=0.02) continue;
+    const b=Math.min(B-1,(a*B)|0);
+    paths[b].rect(px*dpr,py*dpr,gw*dpr,gh*dpr);
+  }
+  for(let i=0;i<B;i++){
+    g.fillStyle='rgba(216,246,255,'+(((i+0.5)/B)*0.9).toFixed(3)+')';
+    g.fill(paths[i]);
+  }
+}
+function sizeShards(){
+  if(!flshards) return;
+  const r=flshards.getBoundingClientRect();
+  /* A phone rasterises at 3x; the chips are small, soft and moving, so
+     drawing them at 1:1 is invisible and cuts the fill area ninefold. */
+  chipScale=matchMedia('(hover:none)').matches?1:Math.min(2,devicePixelRatio||1);
+  flshards.width=Math.round(r.width*chipScale);
+  flshards.height=Math.round(r.height*chipScale);
+}
+/* Fit the wordmark to 70% of the viewport. Inter arrives over the network, so
+   its metrics are not known at author time and a hard-coded font-size would
+   land wherever the fallback happened to be wide. Measure once the font is in,
+   and again after a resize. getBBox is a layout read, so this runs off the
+   scroll path entirely. */
+const flsvg=document.getElementById('flsvg');
+function flFit(){
+  if(!flsvg) return;
+  const t=flsvg.querySelector('.g-body');
+  t.style.fontSize='';                       /* back to the CSS value to measure */
+  let w=0; try{w=t.getBBox().width}catch(e){return}
+  if(!w) return;
+  const cur=parseFloat(getComputedStyle(t).fontSize);
+  const px=cur*(innerWidth*0.70)/w;
+  flsvg.querySelectorAll('text').forEach(n=>n.style.fontSize=px+'px');
+}
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(flFit)}else{flFit()}
+flFit();
+addEventListener('resize',(()=>{let t;return()=>{clearTimeout(t);t=setTimeout(()=>{flFit();sizeShards();buildChips()},150)}})());
+/* Rasterising and sampling the word costs about a frame, so it happens when the
+   browser is otherwise idle — never on the scroll path. */
+function flPrep(){sizeShards();buildChips()}
+if(window.requestIdleCallback){requestIdleCallback(flPrep,{timeout:2500})}else{setTimeout(flPrep,900)}
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(()=>{flFit();flPrep()})}
 const PERSP=1100;   /* must match the perspective on .scene */
 let flMoving=false;
 const caps=[...document.querySelectorAll('#journey .jcap')];
@@ -625,7 +793,19 @@ function loop(){
       /* One continuous move: the camera keeps closing on the word while the
          word thins out and passes, so the intro ends without an event. */
       flmark.style.transform='translate3d(0,0,'+z.toFixed(2)+'px)';
-      flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.34)/0.46))).toFixed(3);
+      /* The word hands over to the chips rather than simply fading: it clears
+         while the field is still dense, so what you watch leave is glass. */
+      const q=smooth(clamp(0,1,(p-0.42)/0.50));
+      flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.40)/0.30))).toFixed(3);
+      if(flshards){
+        if(q>0){
+          if(flshards.style.opacity!=='1') flshards.style.opacity='1';
+          drawChips(q,s,flshards.width/chipScale/2,flshards.height/chipScale/2);
+        }else if(flshards.style.opacity!=='0'){
+          flshards.style.opacity='0';
+          drawChips(0,s,0,0);
+        }
+      }
     }
     const key=p.toFixed(3);
     if(key!==lastKey){lastKey=key;
