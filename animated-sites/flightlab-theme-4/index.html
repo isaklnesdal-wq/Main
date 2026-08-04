@@ -359,21 +359,31 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
    neighbours — the light is always crossfading and never restarts at a
    boundary. Nothing here is anchored to a section, so section edges have
    nothing to coincide with. */
-body{background:#171D26;color:var(--ink);position:relative}
+body{background:#151B23;color:var(--ink);position:relative}
 body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
   z-index:-2;pointer-events:none;
   background:
-    radial-gradient(104% 20% at 10% 7%,rgba(62,255,190,.26),rgba(62,255,190,.10) 46%,transparent 82%),
-    radial-gradient(108% 21% at 92% 23%,rgba(120,150,255,.25),rgba(120,150,255,.09) 46%,transparent 84%),
-    radial-gradient(104% 20% at 6% 40%,rgba(47,232,255,.26),rgba(47,232,255,.10) 46%,transparent 84%),
-    radial-gradient(108% 21% at 94% 57%,rgba(178,112,255,.23),rgba(178,112,255,.08) 46%,transparent 84%),
-    radial-gradient(104% 20% at 10% 74%,rgba(62,255,190,.24),rgba(62,255,190,.09) 46%,transparent 84%),
-    radial-gradient(108% 21% at 92% 91%,rgba(47,232,255,.24),rgba(47,232,255,.09) 46%,transparent 84%),
+    /* Volumetric colour rather than gradients you can point at. Each field is
+       far wider than it is tall and spaced closer together than it is wide, so
+       every one is already deep inside its neighbours before it has finished
+       fading — there is no position at which a single colour owns the frame,
+       which is what stops the eye finding an edge. Alphas are roughly half what
+       they were: the crystal has to stay the brightest thing on the page.
+       No filter: blur() anywhere. A ramp this wide already is the blur, and a
+       real one over a document this tall repaints on every scroll frame. */
+    radial-gradient(128% 26% at 6% 5%,rgba(70,240,190,0.0810),rgba(70,240,190,0.0330) 44%,transparent 84%),
+    radial-gradient(132% 27% at 96% 18%,rgba(96,146,255,0.0780),rgba(96,146,255,0.0300) 44%,transparent 86%),
+    radial-gradient(128% 26% at 4% 31%,rgba(60,224,255,0.0810),rgba(60,224,255,0.0312) 44%,transparent 86%),
+    radial-gradient(132% 27% at 98% 44%,rgba(214,120,232,0.0690),rgba(214,120,232,0.0264) 44%,transparent 86%),
+    radial-gradient(128% 26% at 6% 57%,rgba(160,116,255,0.0720),rgba(160,116,255,0.0276) 44%,transparent 86%),
+    radial-gradient(132% 27% at 96% 70%,rgba(60,224,255,0.0768),rgba(60,224,255,0.0300) 44%,transparent 86%),
+    radial-gradient(128% 26% at 4% 83%,rgba(70,240,190,0.0732),rgba(70,240,190,0.0282) 44%,transparent 86%),
+    radial-gradient(132% 27% at 98% 96%,rgba(96,146,255,0.0708),rgba(96,146,255,0.0270) 44%,transparent 86%),
     /* graphite -> dark navy -> slate blue -> a breath of cyan -> graphite.
        Each step is a couple of points of luminance, so the journey is felt
        rather than seen. */
-    linear-gradient(180deg,#171D26 0%,#1A222F 10%,#1E2839 22%,#212E41 34%,
-      #233248 46%,#223349 56%,#1F2E40 68%,#1B2637 80%,#191F2A 90%,#171D26 100%)}
+    linear-gradient(180deg,#151B23 0%,#18202B 10%,#1B2534 22%,#1E2A3B 34%,
+      #202E41 46%,#1F2F42 56%,#1C2A3A 68%,#182332 80%,#171C26 90%,#151B23 100%)}
 .sec{position:relative;z-index:1}
 .sec.light,.sec.dark{background:transparent;color:var(--ink)}
 /* Sections carry no background and no ambient pool of their own. Anything
@@ -456,6 +466,14 @@ nav .brand,nav .nl a{color:var(--ink)}
    the next. Each layer now slides against the scroll at its own rate, so discs
    cross the whole document and near ones pass far ones. That difference in rate
    is the entire sensation of moving through a space rather than past a picture. */
+/* A wide, very low-alpha ramp on a dark page is exactly the case where 8-bit
+   colour bands: the steps are far apart in space and only one level apart in
+   value, so you see rings. This is the same noise tile the hero already uses,
+   fixed and barely visible, and it dithers those steps away. Without it the
+   ambient fields read as gradients you can point at; with it they read as
+   light in air. One 200px tile, composited, so it costs nothing to scroll. */
+.fl-dither{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.018;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 .fl-discs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
 .fl-layer{position:absolute;left:0;right:0;top:0;height:0;will-change:transform}
 /* Three depth layers, each on its own figure-eight. The paths cross at their
@@ -512,9 +530,9 @@ nav .brand,nav .nl a{color:var(--ink)}
        a layer this size is one of the most expensive things you can put behind
        a scrolling page. Overlapping them is what makes the colour read as
        lit air rather than as shapes. */
-    radial-gradient(58% 66% at 15% 42%,rgba(62,255,190,.28),rgba(52,236,214,.12) 44%,transparent 80%),
-    radial-gradient(56% 62% at 50% 56%,rgba(47,232,255,.28),rgba(80,190,255,.11) 46%,transparent 82%),
-    radial-gradient(58% 64% at 86% 40%,rgba(150,140,255,.26),rgba(178,112,255,.10) 46%,transparent 82%),
+    radial-gradient(66% 74% at 12% 44%,rgba(70,240,190,0.1110),rgba(56,226,206,.075) 46%,transparent 84%),
+    radial-gradient(64% 70% at 48% 58%,rgba(60,224,255,0.1110),rgba(88,186,255,.072) 48%,transparent 86%),
+    radial-gradient(66% 72% at 88% 40%,rgba(160,132,255,.170),rgba(206,118,236,.068) 48%,transparent 86%),
     radial-gradient(92% 72% at 50% 42%,rgba(26,39,52,.72) 0%,rgba(24,34,46,.44) 40%,rgba(22,29,39,.18) 74%,transparent 100%)}
 .scene::after{content:none}
 .fl-stage{position:absolute;inset:0;z-index:2;transform-style:preserve-3d;pointer-events:none}
@@ -603,7 +621,7 @@ nav .brand,nav .nl a{color:var(--ink)}
 .fl-lights{animation:fl-lights 34s ease-in-out infinite;transform-origin:50% 50%}
 .fl-moving .fl-lights{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.fl-lights{animation:none}}
-.fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.019em;opacity:.20;
+.fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.019em;opacity:.23;
   transform-box:fill-box;transform-origin:center;
   transform:translateY(.74em) scaleY(-1);mask:url(#flReflFade)}
 
@@ -640,9 +658,9 @@ nav .brand,nav .nl a{color:var(--ink)}
   .fl-env{background:
     linear-gradient(180deg,transparent 66%,rgba(120,226,238,.06) 76%,rgba(20,26,34,.40) 100%),
     radial-gradient(140% 100% at 50% 44%,transparent 64%,rgba(6,12,20,.28) 100%),
-    radial-gradient(86% 26% at 20% 42%,rgba(62,255,190,.26),rgba(62,255,190,.10) 44%,transparent 80%),
-    radial-gradient(82% 24% at 54% 58%,rgba(47,232,255,.28),rgba(47,232,255,.11) 44%,transparent 82%),
-    radial-gradient(84% 25% at 82% 40%,rgba(140,150,255,.24),rgba(140,150,255,.09) 44%,transparent 82%),
+    radial-gradient(96% 30% at 18% 44%,rgba(70,240,190,0.1110),rgba(70,240,190,0.0432) 46%,transparent 84%),
+    radial-gradient(92% 28% at 54% 58%,rgba(60,224,255,0.1110),rgba(60,224,255,0.0450) 46%,transparent 86%),
+    radial-gradient(94% 29% at 84% 40%,rgba(160,132,255,.170),rgba(206,118,236,.066) 46%,transparent 86%),
     radial-gradient(116% 68% at 50% 44%,rgba(26,39,52,.72) 0%,rgba(24,34,46,.44) 40%,rgba(22,29,39,.18) 74%,transparent 100%)}
   /* Every width here is proportional, so at phone sizes the bevel lands near a
      hairline. Widen the whole bead so it still reads as a rounded edge. */
@@ -661,6 +679,7 @@ nav .brand,nav .nl a{color:var(--ink)}
 </head>
 <body>
 <!-- Floating discs: one fixed layer behind every section, tying them together -->
+<div class="fl-dither" aria-hidden="true"></div>
 <div class="fl-discs" aria-hidden="true">
   <div class="fl-layer" data-k=".55" data-n="9" data-l="l1"></div>
   <div class="fl-layer" data-k=".32" data-n="6" data-l="l2"></div>
