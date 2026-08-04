@@ -345,44 +345,45 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
   --on-signal:#06140D;
 }
 
-/* One continuous canvas: the page owns the gradient, sections are glass-clear,
-   so nothing ever cuts from one background colour to another. */
-body{background:#151A22;color:var(--ink)}
-body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+/* ---- One canvas, not a stack of panels ----
+   The previous version pinned this gradient to the viewport, which meant the
+   backdrop never changed while you scrolled: measured down a content-free
+   column it sat at a dead flat rgb(21,26,34) for 2200px at a time, and the only
+   variation came from each section popping its own little pool of colour near
+   its heading. Long flat runs punctuated by local blooms is exactly what reads
+   as stacked boxes.
+
+   So the field spans the document instead of the viewport, and the colour
+   pools are placed down the page rather than per section. Each pool is tall and
+   they are spaced closer together than they are wide, so every one overlaps its
+   neighbours — the light is always crossfading and never restarts at a
+   boundary. Nothing here is anchored to a section, so section edges have
+   nothing to coincide with. */
+body{background:#151A22;color:var(--ink);position:relative}
+body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
+  z-index:-2;pointer-events:none;
   background:
-    radial-gradient(80% 34% at 50% 0%,rgba(62,207,142,.05),transparent 60%),
-    linear-gradient(180deg,#151A22 0%,#1B2230 26%,#171D27 52%,#202938 78%,#151A22 100%)}
+    radial-gradient(78% 14% at 14% 7%,rgba(62,207,142,.10),transparent 74%),
+    radial-gradient(84% 15% at 88% 24%,rgba(96,132,232,.088),transparent 76%),
+    radial-gradient(78% 14% at 10% 41%,rgba(72,196,196,.085),transparent 76%),
+    radial-gradient(84% 15% at 90% 58%,rgba(62,207,142,.080),transparent 76%),
+    radial-gradient(78% 14% at 14% 75%,rgba(96,132,232,.085),transparent 76%),
+    radial-gradient(84% 15% at 88% 92%,rgba(72,196,196,.075),transparent 76%),
+    linear-gradient(180deg,#151A22 0%,#1B2230 11%,#181E29 22%,#202938 33%,
+      #1A2130 44%,#1C2433 55%,#171D27 66%,#1E2735 77%,#1A2130 88%,#151A22 100%)}
 .sec{position:relative;z-index:1}
 .sec.light,.sec.dark{background:transparent;color:var(--ink)}
-/* No rule between sections. Each one carries a large, very soft pool of
-   colour that reaches past its own edges, so neighbours overlap and the
-   boundary dissolves instead of being drawn. */
-.sec::before{content:"";position:absolute;left:0;right:0;top:-11vh;bottom:-11vh;
-  z-index:-1;pointer-events:none}
-#discer::before{background:
-  radial-gradient(44% 36% at 12% 20%,rgba(62,207,142,.11),transparent 70%),
-  radial-gradient(40% 34% at 88% 78%,rgba(84,150,220,.075),transparent 72%)}
-#bager::before{background:
-  radial-gradient(46% 38% at 88% 16%,rgba(96,132,232,.10),transparent 70%),
-  radial-gradient(42% 36% at 8% 84%,rgba(62,207,142,.065),transparent 72%)}
-#tilbehor::before{background:
-  radial-gradient(44% 36% at 14% 22%,rgba(150,112,232,.085),transparent 70%),
-  radial-gradient(40% 34% at 86% 80%,rgba(62,207,142,.065),transparent 72%)}
-.sec.dark::before{background:
-  radial-gradient(50% 42% at 50% 28%,rgba(72,196,196,.075),transparent 72%)}
+/* Sections carry no background and no ambient pool of their own. Anything
+   anchored to a section edge gives the eye something to find. */
+.sec::before{content:none}
 /* No rule under a group header and none above the footer. A heading is
    separated by the space around it and by the light behind it; a drawn line
    is what made the page read as stacked panels. */
 .disc-group .gt{border-bottom:none;position:relative}
-.disc-group .gt::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
-  background:linear-gradient(90deg,rgba(255,255,255,.055),rgba(255,255,255,.012) 42%,transparent 76%)}
+.disc-group .gt::after{content:none}
 footer{border-top:none!important}
-/* The newsletter drew a rule across the page too; same treatment. */
 #nl{border-top:none!important;position:relative}
-#nl::before{content:"";position:absolute;left:0;right:0;top:-11vh;bottom:-11vh;
-  z-index:-1;pointer-events:none;background:
-  radial-gradient(46% 40% at 78% 24%,rgba(62,207,142,.09),transparent 70%),
-  radial-gradient(40% 34% at 16% 82%,rgba(96,132,232,.06),transparent 72%)}
+#nl::before{content:none}
 .sec.dark .sec-head h2 em{color:var(--signal)}
 
 /* Cards become raised glass instead of white paper */
@@ -407,7 +408,7 @@ footer{border-top:none!important}
 footer{background:transparent;border-top:1px solid rgba(255,255,255,.08);color:var(--ink);position:relative;z-index:1}
 .bigmark{color:rgba(232,237,244,.10)}
 #bagportal{background:transparent;position:relative;z-index:1}
-#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,#202938,#1B2230 62%,#151A22)}
+#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,rgba(40,51,70,.55),rgba(27,34,48,.30) 62%,rgba(21,26,34,0))}
 #bagportal .bpcap{color:var(--ink)}
 #bagportal .bpcap .k{color:var(--signal)}
 #bagportal .bagbig{filter:drop-shadow(0 26px 54px rgba(0,0,0,.6))}
@@ -445,7 +446,15 @@ nav .brand,nav .nl a{color:var(--ink)}
    One fixed layer behind everything, so the same few discs carry across
    every section and tie them together. Transform only, and they sit under
    the content layer so they can never cross text or buttons. */
+/* One floating system for the whole page, not a set per section.
+   The layers were previously pinned inside a fixed, viewport-sized box, so six
+   of the nine discs sat permanently off-screen and the three that showed never
+   moved relative to the viewport — nothing ever travelled from one section into
+   the next. Each layer now slides against the scroll at its own rate, so discs
+   cross the whole document and near ones pass far ones. That difference in rate
+   is the entire sensation of moving through a space rather than past a picture. */
 .fl-discs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.fl-layer{position:absolute;left:0;right:0;top:0;height:0;will-change:transform}
 /* Three depth layers, each on its own figure-eight. The paths cross at their
    centre, so nothing ever tracks in a straight line and the drift reads as
    floating rather than sliding. Transform only — these never touch layout. */
@@ -459,23 +468,14 @@ nav .brand,nav .nl a{color:var(--ink)}
 /* Layer 1 — near: large and very blurred, because it is close to the eye and
    far outside the focal plane. It should never resolve as an object. */
 .fl-disc.l1{--o:.30;--bg:radial-gradient(circle at 50% 50%,rgba(178,220,248,.34),rgba(150,196,230,.20) 26%,rgba(120,165,205,.08) 52%,transparent 74%)}
-.fl-disc.l1.a{--d:58vmin;left:-8vw;top:12vh;animation:fl8-far 240s ease-in-out infinite}
-.fl-disc.l1.b{--d:50vmin;right:-6vw;top:128vh;animation:fl8-far 300s ease-in-out infinite reverse}
-.fl-disc.l1.c{--d:64vmin;left:14vw;top:262vh;animation:fl8-far 270s ease-in-out infinite}
 /* Layer 2 — mid */
 .fl-disc.l2{--o:.10;--bg:radial-gradient(circle at 38% 30%,rgba(196,230,250,.80),rgba(110,158,196,.44) 40%,rgba(40,62,86,.14) 66%,transparent 78%)}
-.fl-disc.l2.a{--d:22vmin;right:12vw;top:56vh;animation:fl8-mid 170s ease-in-out infinite}
-.fl-disc.l2.b{--d:18vmin;left:6vw;top:176vh;animation:fl8-mid 195s ease-in-out infinite reverse}
-.fl-disc.l2.c{--d:24vmin;right:20vw;top:300vh;animation:fl8-mid 182s ease-in-out infinite}
 /* Layer 3 — far: tiny and sharp, the only layer in focus. */
 .fl-disc.l3{--o:.11;--bg:radial-gradient(circle at 34% 28%,rgba(206,236,252,.95),rgba(96,144,182,.62) 44%,rgba(24,38,52,.24) 72%,transparent 80%)}
-.fl-disc.l3.a{--d:5.5vmin;left:28vw;top:88vh;animation:fl8-near 140s ease-in-out infinite}
-.fl-disc.l3.b{--d:4.5vmin;right:32vw;top:214vh;animation:fl8-near 158s ease-in-out infinite reverse}
-.fl-disc.l3.c{--d:6.5vmin;left:44vw;top:340vh;animation:fl8-near 150s ease-in-out infinite}
 @keyframes fl8-far{0%{transform:translate3d(7.00vw,0.00vh,0) rotateX(68deg) rotateZ(0deg)}12.5%{transform:translate3d(4.95vw,4.50vh,0) rotateX(68deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(68deg) rotateZ(90deg)}37.5%{transform:translate3d(-4.95vw,-4.50vh,0) rotateX(68deg) rotateZ(135deg)}50%{transform:translate3d(-7.00vw,0.00vh,0) rotateX(68deg) rotateZ(180deg)}62.5%{transform:translate3d(-4.95vw,4.50vh,0) rotateX(68deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(68deg) rotateZ(270deg)}87.5%{transform:translate3d(4.95vw,-4.50vh,0) rotateX(68deg) rotateZ(315deg)}100%{transform:translate3d(7.00vw,0.00vh,0) rotateX(68deg) rotateZ(360deg)}}
 @keyframes fl8-mid{0%{transform:translate3d(5.00vw,0.00vh,0) rotateX(62deg) rotateZ(0deg)}12.5%{transform:translate3d(3.53vw,3.00vh,0) rotateX(62deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(62deg) rotateZ(90deg)}37.5%{transform:translate3d(-3.53vw,-3.00vh,0) rotateX(62deg) rotateZ(135deg)}50%{transform:translate3d(-5.00vw,0.00vh,0) rotateX(62deg) rotateZ(180deg)}62.5%{transform:translate3d(-3.53vw,3.00vh,0) rotateX(62deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(62deg) rotateZ(270deg)}87.5%{transform:translate3d(3.53vw,-3.00vh,0) rotateX(62deg) rotateZ(315deg)}100%{transform:translate3d(5.00vw,0.00vh,0) rotateX(62deg) rotateZ(360deg)}}
 @keyframes fl8-near{0%{transform:translate3d(3.50vw,0.00vh,0) rotateX(58deg) rotateZ(0deg)}12.5%{transform:translate3d(2.47vw,2.25vh,0) rotateX(58deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(58deg) rotateZ(90deg)}37.5%{transform:translate3d(-2.47vw,-2.25vh,0) rotateX(58deg) rotateZ(135deg)}50%{transform:translate3d(-3.50vw,0.00vh,0) rotateX(58deg) rotateZ(180deg)}62.5%{transform:translate3d(-2.47vw,2.25vh,0) rotateX(58deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(58deg) rotateZ(270deg)}87.5%{transform:translate3d(2.47vw,-2.25vh,0) rotateX(58deg) rotateZ(315deg)}100%{transform:translate3d(3.50vw,0.00vh,0) rotateX(58deg) rotateZ(360deg)}}
-@media(max-width:560px){.fl-disc.l1.c,.fl-disc.l2.c,.fl-disc.l3.c{display:none}}
+@media(max-width:560px){.fl-disc.l1.c,.fl-disc.l2.c,}
 @media(prefers-reduced-motion:reduce){.fl-disc{animation:none}}
 
 /* ---------- Typography intro ----------
@@ -483,26 +483,20 @@ nav .brand,nav .nl a{color:var(--ink)}
    under a perspective, not from scale(), so the letters gain real depth and
    stay text rather than a stretched bitmap. */
 .scene{perspective:1100px;perspective-origin:50% 46%;
-  background:radial-gradient(86% 66% at 50% 40%,#123A5C 0%,#122B46 34%,#161E2C 70%,#151A22 100%)}
-/* Glass is only ever as interesting as what is behind it. This is the light
-   source the letters refract: a broad aurora sitting right where the word is,
-   so the interiors read bright and the rims have something to catch. */
-.fl-aurora{position:absolute;left:50%;top:50%;width:104vw;height:70vh;z-index:0;
-  transform:translate(-50%,-50%);pointer-events:none;will-change:transform;
+  /* Aurora, vignette and floor were three separate full-viewport elements.
+     Inside a sticky container each one repaints on its own every frame, so they
+     are folded into one stack of background layers on a single element — same
+     picture, a third of the paint. Order is top layer first. */
   background:
-    radial-gradient(24% 54% at 26% 42%,rgba(58,242,208,.52),transparent 72%),
-    radial-gradient(22% 48% at 52% 32%,rgba(104,220,255,.46),transparent 74%),
-    radial-gradient(24% 52% at 74% 40%,rgba(72,228,222,.40),transparent 74%)}
-.fl-ambient{position:absolute;inset:0;z-index:0;pointer-events:none;will-change:opacity;
-  background:radial-gradient(128% 100% at 50% 42%,transparent 52%,rgba(4,10,20,.72) 100%)}
-/* The surface the word stands on — it is what makes the reflection legible. */
-.fl-floor{position:absolute;left:0;right:0;bottom:0;height:34vh;z-index:1;pointer-events:none;will-change:opacity;
-  background:linear-gradient(180deg,transparent 0%,rgba(74,196,214,.06) 26%,rgba(21,26,34,.62) 100%)}
-.fl-bloom{position:absolute;left:50%;top:50%;width:88vw;height:26vh;z-index:1;
-  transform:translate(-50%,-50%);pointer-events:none;will-change:transform;
-  background:radial-gradient(50% 50% at 50% 50%,rgba(196,246,255,.20),rgba(130,220,240,.08) 44%,transparent 72%)}
-/* The stage is the full frame so the camera axis runs through the middle of
-   the viewport, which is where the word sits. */
+    /* the floor the word stands on */
+    linear-gradient(180deg,transparent 62%,rgba(74,196,214,.06) 72%,rgba(21,26,34,.62) 100%),
+    /* vignette */
+    radial-gradient(128% 100% at 50% 42%,transparent 52%,rgba(4,10,20,.72) 100%),
+    /* the light the crystal refracts — soft studio pools, not a neon field */
+    radial-gradient(34% 40% at 24% 50%,rgba(58,214,190,.26),transparent 76%),
+    radial-gradient(30% 36% at 54% 42%,rgba(104,196,232,.24),transparent 78%),
+    radial-gradient(32% 38% at 78% 50%,rgba(72,206,202,.20),transparent 78%),
+    radial-gradient(86% 66% at 50% 40%,#123A5C 0%,#122B46 34%,#161E2C 70%,#151A22 100%)}
 .fl-stage{position:absolute;inset:0;z-index:2;transform-style:preserve-3d;pointer-events:none}
 .fl-mark{position:absolute;inset:0;margin:0;
   transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
@@ -510,78 +504,82 @@ nav .brand,nav .nl a{color:var(--ink)}
      transformed forces a re-raster of the whole thing every frame. */}
 
 /* ---- The crystal ----
-   Drawn in SVG rather than with -webkit-text-stroke, for two reasons the CSS
-   property cannot give:
+   Drawn in SVG rather than with -webkit-text-stroke, for two things the CSS
+   property cannot give: rounded corners (a stroke with round joins dilates the
+   glyph and rounds every corner on the way out; -webkit-text-stroke miters),
+   and gradient edges (an SVG stroke takes a paint server, a CSS stroke colour
+   is one flat value).
 
-   1. Rounded corners. A stroke with round joins expands the glyph outward and
-      rounds every corner as it goes; -webkit-text-stroke miters, so the CSS
-      version always came out sharp.
-   2. Gradient edges. An SVG stroke takes a paint server, so the light can run
-      along the bead — bright where the key light lands on top, falling away
-      through the middle, picking up again where the floor bounces back. A CSS
-      stroke colour is a single flat value.
+   The last pass read as neon, and the reason was structural rather than a
+   matter of tuning: it was lit additively. mix-blend-mode:screen and a soft
+   outer halo are how you draw a light source, so that is what the eye saw.
+   Glass is not a light source. It is a dark-edged solid that redirects light,
+   and it is legible because of four things, none of which is a glow:
 
-   The SVG carries no viewBox, so one user unit is one CSS pixel and the text
-   behaves like ordinary text: em-based stroke widths track the font size, and
-   nothing depends on knowing the font's metrics in advance (Inter arrives over
-   the network, so those metrics are not knowable at author time).
+     a dark contour where the surface turns away from the camera,
+     the background visibly displaced inside it,
+     specular hits confined to where a light actually points,
+     and light pooling at the bottom where the solid concentrates it.
 
-   Every gradient below is objectBoundingBox by default, i.e. relative to the
-   word's own box — so the lighting stays put whatever the viewport does. */
+   All four are below. Nothing here blends additively and nothing glows.
+
+   The SVG carries no viewBox, so one user unit is one CSS pixel and em-based
+   stroke widths track the font size; nothing depends on knowing Inter's
+   metrics in advance, which matters because it arrives over the network. */
 .fl-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-/* The chips are drawn at native resolution on a plain, untransformed canvas.
-   Putting them inside .fl-mark would have been simpler, but the word is several
-   times its original size by the time it comes apart, and a bitmap carried
-   along by the dolly gets magnified with it. Positions are projected in script
-   instead, so every chip stays sharp however close the camera gets. */
-.fl-shards{position:absolute;inset:0;width:100%;height:100%;z-index:3;
-  pointer-events:none;opacity:0}
 .fl-svg text{font-family:var(--b);font-weight:800;font-size:13.4vw;
   letter-spacing:-.045em;paint-order:stroke;stroke-linejoin:round;stroke-linecap:round}
 
-/* Ambient light caught by the whole piece — this is the crystal glowing
-   because it is reflecting the room, not a bloom filter. */
-.fl-svg .g-halo{fill:none;stroke:url(#flHalo);stroke-width:.10em;mix-blend-mode:screen}
-/* The body: a rounded, very slightly dilated silhouette, filled clear enough
-   to see the page through it but bright enough to sit above the background. */
+/* Thickness. Offset behind the near face, so all you see is the sliver of the
+   far side that the near face does not cover — which is what reading depth in
+   a transparent solid actually consists of. */
+.fl-svg .g-ext{fill:rgba(16,44,64,.55);stroke:rgba(16,44,64,.55);stroke-width:.070em;
+  transform:translate(.016em,.021em)}
+/* The dark contour. Widest layer, sitting under the body, so what shows is a
+   dark rim just outside the glass. This single layer is most of the difference
+   between glass and neon: a lit tube has no dark edge, a solid always does. */
+.fl-svg .g-dark{fill:none;stroke:url(#flDark);stroke-width:.098em;
+  transform:translate(.004em,.006em)}
+/* Refraction. The gradient is in userSpaceOnUse, so it is positioned against
+   the viewport rather than the glyph: it restates the light behind the word but
+   displaced sideways, which is what you see through a thick solid — the
+   backdrop, shifted and concentrated, not the backdrop lined up behind it. */
+.fl-svg .g-refr{fill:url(#flRefr);stroke:url(#flRefr);stroke-width:.072em}
+/* Body tint: blue-green, and almost clear. */
 .fl-svg .g-body{fill:url(#flBody);stroke:url(#flBody);stroke-width:.072em}
-/* The bevel — the rounded edge of the crystal. */
-.fl-svg .g-bevel{fill:none;stroke:url(#flBevel);stroke-width:.058em;mix-blend-mode:screen}
-/* Where the bevel turns away from the light. */
-.fl-svg .g-valley{fill:none;stroke:url(#flValley);stroke-width:.020em}
-/* The specular line riding the very top of the bevel. */
-.fl-svg .g-core{fill:none;stroke:url(#flCore);stroke-width:.0105em;mix-blend-mode:screen}
-/* Standing on a surface. Flipped about its own centre after being dropped a
-   little under the baseline. */
-.fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.034em;opacity:.20;
+/* The caustic — light gathered and dumped out of the bottom of the solid. */
+.fl-svg .g-caus{fill:url(#flCaus)}
+/* The polished bevel. Moderate, and dark through its middle band. */
+.fl-svg .g-bevel{fill:none;stroke:url(#flBevel);stroke-width:.056em}
+.fl-svg .g-valley{fill:none;stroke:url(#flValley);stroke-width:.022em}
+/* Specular. Confined to the top of the form, because a light points from
+   somewhere. An outline that is equally bright the whole way round is a tube. */
+.fl-svg .g-spec{fill:none;stroke:url(#flSpec);stroke-width:.013em;mask:url(#flSpecPos)}
+.fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.034em;opacity:.16;
   transform-box:fill-box;transform-origin:center;
   transform:translateY(.74em) scaleY(-1);mask:url(#flReflFade)}
 
-/* Under motion the crystal keeps only its body and bevel: a stroked glyph is
-   far dearer to raster than a filled one, and none of this detail survives
-   the camera speed anyway. */
-.fl-moving .g-halo,.fl-moving .g-valley,.fl-moving .g-core,.fl-moving .g-refl{display:none}
-/* Flat paint and no blending while the camera is moving. A gradient stroke has
-   to consult a paint server for every covered pixel and a blend mode costs an
-   extra compositing pass — both are re-done on every frame of the dolly,
-   neither is resolvable at that speed. */
-.fl-moving .g-bevel{stroke-width:.030em;stroke:#DCF5FF;mix-blend-mode:normal}
-.fl-moving .g-body{fill:rgba(186,232,250,.15);stroke:rgba(186,232,250,.15)}
-@media(hover:none){
-  .fl-svg .g-halo{display:none}
-  .fl-svg .g-bevel,.fl-svg .g-core{mix-blend-mode:normal}
-}
+/* Under motion the crystal keeps its contour, body and bevel only. A stroked
+   glyph is far dearer to raster than a filled one, a gradient stroke consults a
+   paint server for every covered pixel, and none of the fine detail survives
+   the camera speed — so what remains is flat-painted. */
+.fl-moving .g-ext,.fl-moving .g-valley,.fl-moving .g-spec,
+.fl-moving .g-refl,.fl-moving .g-caus,.fl-moving .g-refr{display:none}
+.fl-moving .g-bevel{stroke-width:.030em;stroke:#CFEAF6}
+.fl-moving .g-dark{stroke:rgba(8,18,30,.55)}
+.fl-moving .g-body{fill:rgba(150,206,226,.17);stroke:rgba(150,206,226,.17)}
+@media(hover:none){.fl-svg .g-refl{display:none}}
 
 /* On a narrow, tall viewport the aurora's ellipses stretch vertically and read
    as three separate columns. Widen and flatten them so it stays one wash of
    light sitting behind the word. */
 @media(max-width:760px){
-  .fl-aurora{width:190vw;height:40vh;top:47%;
-    background:
-      radial-gradient(42% 62% at 32% 50%,rgba(58,242,208,.44),transparent 76%),
-      radial-gradient(40% 58% at 68% 44%,rgba(104,220,255,.42),transparent 78%)}
-  .fl-bloom{width:120vw;height:22vh}
-  .fl-floor{height:26vh}
+  .scene{background:
+    linear-gradient(180deg,transparent 66%,rgba(74,196,214,.05) 76%,rgba(21,26,34,.62) 100%),
+    radial-gradient(140% 100% at 50% 44%,transparent 54%,rgba(4,10,20,.70) 100%),
+    radial-gradient(58% 20% at 30% 50%,rgba(58,214,190,.26),transparent 78%),
+    radial-gradient(54% 18% at 70% 45%,rgba(104,196,232,.24),transparent 80%),
+    radial-gradient(110% 62% at 50% 42%,#123A5C 0%,#122B46 34%,#161E2C 70%,#151A22 100%)}
   /* Every width here is proportional, so at phone sizes the bevel lands near a
      hairline. Widen the whole bead so it still reads as a rounded edge. */
   .fl-svg .g-body{stroke-width:.086em}
@@ -597,9 +595,9 @@ nav .brand,nav .nl a{color:var(--ink)}
 <body>
 <!-- Floating discs: one fixed layer behind every section, tying them together -->
 <div class="fl-discs" aria-hidden="true">
-  <span class="fl-disc l1 a"></span><span class="fl-disc l1 b"></span><span class="fl-disc l1 c"></span>
-  <span class="fl-disc l2 a"></span><span class="fl-disc l2 b"></span><span class="fl-disc l2 c"></span>
-  <span class="fl-disc l3 a"></span><span class="fl-disc l3 b"></span><span class="fl-disc l3 c"></span>
+  <div class="fl-layer" data-k=".55" data-n="9" data-l="l1"></div>
+  <div class="fl-layer" data-k=".32" data-n="6" data-l="l2"></div>
+  <div class="fl-layer" data-k=".14" data-n="4" data-l="l3"></div>
 </div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="bagko" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -2 -2 -2 0 5.4" result="m"/><feComponentTransfer in="m"><feFuncA type="discrete" tableValues="0 0 1 1"/></feComponentTransfer></filter></svg>
 
@@ -626,68 +624,106 @@ nav .brand,nav .nl a{color:var(--ink)}
   <div class="scene" id="scene">
     <!-- Typography intro: no disc, no photo, no scenery. The word is the
          only subject; scrolling dollies the camera into it. -->
-    <div class="fl-aurora" aria-hidden="true"></div>
-    <div class="fl-ambient" aria-hidden="true"></div>
-    <div class="fl-bloom" aria-hidden="true"></div>
-    <div class="fl-floor" aria-hidden="true"></div>
     <div class="fl-stage">
       <h1 class="fl-mark" id="flmark" aria-label="FLIGHTLAB">
         <svg class="fl-svg" id="flsvg" aria-hidden="true" focusable="false">
           <defs>
-            <!-- Light entering the top of the crystal, running clear through the
-                 middle, pooling again where it leaves the bottom. The faint green
-                 near the base is the only green in the piece. -->
-            <linearGradient id="flBody" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"    stop-color="#DCF4FF" stop-opacity=".46"/>
-              <stop offset=".20"  stop-color="#9FD6EC" stop-opacity=".20"/>
-              <stop offset=".52"  stop-color="#7FBBD6" stop-opacity=".13"/>
-              <stop offset=".68"  stop-color="#86E0C4" stop-opacity=".15"/>
-              <stop offset=".86"  stop-color="#B4EAFB" stop-opacity=".27"/>
-              <stop offset="1"    stop-color="#EEFCFF" stop-opacity=".54"/>
+            <!-- The contour where the surface turns away. Not black: glass
+                 picks up the room even in shadow. -->
+            <linearGradient id="flDark" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"   stop-color="#0A1826" stop-opacity=".50"/>
+              <stop offset=".42" stop-color="#08131F" stop-opacity=".70"/>
+              <stop offset="1"   stop-color="#0B1B2A" stop-opacity=".58"/>
             </linearGradient>
-            <!-- The bevel. Top light hits it hardest, the middle turns away, the
-                 floor throws light back into the bottom. -->
+            <!-- Refraction. userSpaceOnUse, so this is measured against the
+                 viewport, not the glyph: the same light that is behind the word,
+                 shifted right and concentrated, the way a thick solid moves what
+                 you see through it. -->
+            <linearGradient id="flRefr" gradientUnits="userSpaceOnUse" x1="8%" y1="0" x2="96%" y2="0">
+              <stop offset="0"   stop-color="#1E4A52" stop-opacity=".26"/>
+              <stop offset=".30" stop-color="#34BEAA" stop-opacity=".40"/>
+              <stop offset=".56" stop-color="#5ABEE1" stop-opacity=".44"/>
+              <stop offset=".80" stop-color="#38C4BA" stop-opacity=".36"/>
+              <stop offset="1"   stop-color="#1E4A52" stop-opacity=".24"/>
+            </linearGradient>
+            <!-- Body tint: blue-green, and almost clear. -->
+            <linearGradient id="flBody" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"   stop-color="#CFEFFB" stop-opacity=".20"/>
+              <stop offset=".24" stop-color="#8FC8DE" stop-opacity=".07"/>
+              <stop offset=".54" stop-color="#6FA8C4" stop-opacity=".04"/>
+              <stop offset=".72" stop-color="#7FD8BC" stop-opacity=".07"/>
+              <stop offset="1"   stop-color="#D6F4FF" stop-opacity=".18"/>
+            </linearGradient>
+            <!-- Light gathered through the solid and dumped out of the bottom. -->
+            <linearGradient id="flCaus" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"    stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset=".62"  stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset=".80"  stop-color="#B7ECFA" stop-opacity=".10"/>
+              <stop offset=".93"  stop-color="#DFF8FF" stop-opacity=".30"/>
+              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".46"/>
+            </linearGradient>
+            <!-- The polished bevel: bright where the key light lands, dark
+                 through the middle where the surface rolls away, a little
+                 bounce at the base. -->
             <linearGradient id="flBevel" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"    stop-color="#FFFFFF" stop-opacity=".96"/>
-              <stop offset=".17"  stop-color="#E4F8FF" stop-opacity=".76"/>
-              <stop offset=".45"  stop-color="#9CCFE2" stop-opacity=".34"/>
-              <stop offset=".72"  stop-color="#C6EFFD" stop-opacity=".60"/>
-              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".94"/>
+              <stop offset="0"   stop-color="#F2FCFF" stop-opacity=".82"/>
+              <stop offset=".13" stop-color="#CDEAF6" stop-opacity=".50"/>
+              <stop offset=".34" stop-color="#6E9CB4" stop-opacity=".16"/>
+              <stop offset=".62" stop-color="#7FB0C6" stop-opacity=".18"/>
+              <stop offset=".86" stop-color="#CDEEFA" stop-opacity=".44"/>
+              <stop offset="1"   stop-color="#EEFBFF" stop-opacity=".66"/>
             </linearGradient>
             <linearGradient id="flValley" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"    stop-color="#0E2E44" stop-opacity=".34"/>
-              <stop offset=".5"   stop-color="#123B54" stop-opacity=".20"/>
-              <stop offset="1"    stop-color="#0E2E44" stop-opacity=".28"/>
+              <stop offset="0"   stop-color="#0C2536" stop-opacity=".40"/>
+              <stop offset=".5"  stop-color="#10303F" stop-opacity=".22"/>
+              <stop offset="1"   stop-color="#0C2536" stop-opacity=".34"/>
             </linearGradient>
-            <linearGradient id="flCore" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"    stop-color="#FFFFFF" stop-opacity="1"/>
-              <stop offset=".28"  stop-color="#FFFFFF" stop-opacity=".62"/>
-              <stop offset=".62"  stop-color="#DFF6FF" stop-opacity=".22"/>
-              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".70"/>
+            <!-- Specular, confined to the top of the form. Transparent below a
+                 fifth of the height, so the highlight sits where a light points
+                 instead of ringing the whole letter. -->
+            <linearGradient id="flSpec" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"    stop-color="#FFFFFF" stop-opacity=".98"/>
+              <stop offset=".10"  stop-color="#FFFFFF" stop-opacity=".72"/>
+              <stop offset=".19"  stop-color="#FFFFFF" stop-opacity=".10"/>
+              <stop offset=".24"  stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset=".90"  stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset="1"    stop-color="#EAFAFF" stop-opacity=".30"/>
             </linearGradient>
-            <linearGradient id="flHalo" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"    stop-color="#AEE8FF" stop-opacity=".20"/>
-              <stop offset=".55"  stop-color="#8ED8E4" stop-opacity=".09"/>
-              <stop offset="1"    stop-color="#CFF6FF" stop-opacity=".22"/>
-            </linearGradient>
+            <!-- Two studio lights, as mask pools. Stops fade to transparent
+                 rather than to black so the two overlap additively instead of
+                 the second one punching a hole in the first. -->
+            <radialGradient id="flSpecA" gradientUnits="userSpaceOnUse" cx="30%" cy="34%" r="30%">
+              <stop offset="0"   stop-color="#fff" stop-opacity="1"/>
+              <stop offset=".55" stop-color="#fff" stop-opacity=".45"/>
+              <stop offset="1"   stop-color="#fff" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="flSpecB" gradientUnits="userSpaceOnUse" cx="74%" cy="42%" r="22%">
+              <stop offset="0"   stop-color="#fff" stop-opacity=".92"/>
+              <stop offset=".5"  stop-color="#fff" stop-opacity=".38"/>
+              <stop offset="1"   stop-color="#fff" stop-opacity="0"/>
+            </radialGradient>
+            <mask id="flSpecPos" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+              <rect x="0" y="0" width="100%" height="100%" fill="url(#flSpecA)"/>
+              <rect x="0" y="0" width="100%" height="100%" fill="url(#flSpecB)"/>
+            </mask>
             <linearGradient id="flReflGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"   stop-color="#000"/>
               <stop offset=".38" stop-color="#2A2A2A"/>
               <stop offset=".72" stop-color="#8A8A8A"/>
               <stop offset="1"   stop-color="#FFFFFF"/>
             </linearGradient>
-            <!-- objectBoundingBox content, so the fade is measured against the
-                 reflection itself rather than the viewport. Because the layer is
-                 flipped, its local top is what ends up furthest from the word. -->
             <mask id="flReflFade" maskContentUnits="objectBoundingBox">
               <rect x="0" y="0" width="1" height="1" fill="url(#flReflGrad)"/>
             </mask>
           </defs>
-          <text class="g-halo"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-ext"    x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-dark"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-refr"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-body"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-caus"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-bevel"  x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-valley" x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-core"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-spec"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-refl"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
         </svg>
       </h1>
@@ -1044,6 +1080,44 @@ function drawChips(q,scale,cx,cy){
     g.fill(paths[i]);
   }
 }
+/* ---- Floating system ----
+   Discs are laid out down the whole document, then each layer is offset against
+   the scroll by its own factor. A disc at document position T shows up on screen
+   at T - k*scrollY, so a layer needs to cover vh + k*(doc - vh); spacing them
+   over exactly that range is what keeps discs entering and leaving continuously
+   instead of resetting anywhere. */
+const flLayers=[...document.querySelectorAll('.fl-layer')].map(el=>({
+  el, k:parseFloat(el.dataset.k), n:parseInt(el.dataset.n,10), l:el.dataset.l}));
+const FL_SIZE={l1:[40,64],l2:[14,26],l3:[4.5,8]};
+function flBuildDiscs(){
+  const coarse=matchMedia('(hover:none)').matches;
+  const doc=document.documentElement.scrollHeight, vh=innerHeight;
+  flLayers.forEach((L,li)=>{
+    const n=coarse?Math.max(2,L.n-2):L.n;
+    const span=vh+L.k*Math.max(0,doc-vh);
+    const [smin,smax]=FL_SIZE[L.l];
+    let html='';
+    for(let i=0;i<n;i++){
+      /* Deterministic jitter: same layout every load, no clumping. */
+      const r1=((i*2654435761)%1000)/1000, r2=((i*40503+li*7919)%1000)/1000;
+      const top=span*((i+0.5)/n)-vh*0.2+ (r1-0.5)*span/n*0.30;
+      const left=6+r2*82;
+      const d=smin+(smax-smin)*r1;
+      const dur=[240,300,270,195,170,182][i%6]+li*40;
+      const name=['fl8-far','fl8-mid','fl8-near'][li];
+      html+='<span class="fl-disc '+L.l+'" style="--d:'+d.toFixed(1)+'vmin;left:'+left.toFixed(1)
+           +'%;top:'+top.toFixed(0)+'px;animation:'+name+' '+dur+'s ease-in-out infinite'
+           +(i%2?' reverse':'')+'"></span>';
+    }
+    L.el.innerHTML=html;
+  });
+}
+function flDiscParallax(y){
+  for(let i=0;i<flLayers.length;i++){
+    const L=flLayers[i];
+    L.el.style.transform='translate3d(0,'+(-y*L.k).toFixed(1)+'px,0)';
+  }
+}
 function sizeShards(){
   if(!flshards) return;
   const r=flshards.getBoundingClientRect();
@@ -1071,10 +1145,10 @@ function flFit(){
 }
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(flFit)}else{flFit()}
 flFit();
-addEventListener('resize',(()=>{let t;return()=>{clearTimeout(t);t=setTimeout(()=>{flFit();sizeShards();buildChips()},150)}})());
+addEventListener('resize',(()=>{let t;return()=>{clearTimeout(t);t=setTimeout(()=>{flFit();sizeShards();buildChips();flBuildDiscs();flDiscParallax(scrollY)},150)}})());
 /* Rasterising and sampling the word costs about a frame, so it happens when the
    browser is otherwise idle — never on the scroll path. */
-function flPrep(){sizeShards();buildChips()}
+function flPrep(){sizeShards();buildChips();flBuildDiscs();flDiscParallax(scrollY)}
 if(window.requestIdleCallback){requestIdleCallback(flPrep,{timeout:2500})}else{setTimeout(flPrep,900)}
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(()=>{flFit();flPrep()})}
 const PERSP=1100;   /* must match the perspective on .scene */
@@ -1362,6 +1436,7 @@ function loop(){
       }
     }
   }
+  flDiscParallax(scrollY);
   if(prog){const tot=clamp(0,1,scrollY/(document.documentElement.scrollHeight-innerHeight||1));prog.style.width=(tot*100).toFixed(1)+'%'}
   requestAnimationFrame(loop);
 }

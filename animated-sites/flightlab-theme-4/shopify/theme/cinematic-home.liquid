@@ -71,9 +71,9 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
 </script>
 <!-- Floating discs: one fixed layer behind every section, tying them together -->
 <div class="fl-discs" aria-hidden="true">
-  <span class="fl-disc l1 a"></span><span class="fl-disc l1 b"></span><span class="fl-disc l1 c"></span>
-  <span class="fl-disc l2 a"></span><span class="fl-disc l2 b"></span><span class="fl-disc l2 c"></span>
-  <span class="fl-disc l3 a"></span><span class="fl-disc l3 b"></span><span class="fl-disc l3 c"></span>
+  <div class="fl-layer" data-k=".55" data-n="9" data-l="l1"></div>
+  <div class="fl-layer" data-k=".32" data-n="6" data-l="l2"></div>
+  <div class="fl-layer" data-k=".14" data-n="4" data-l="l3"></div>
 </div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="bagko" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -2 -2 -2 0 5.4" result="m"/><feComponentTransfer in="m"><feFuncA type="discrete" tableValues="0 0 1 1"/></feComponentTransfer></filter></svg>
 
@@ -100,68 +100,106 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
   <div class="scene" id="scene">
     <!-- Typography intro: no disc, no photo, no scenery. The word is the
          only subject; scrolling dollies the camera into it. -->
-    <div class="fl-aurora" aria-hidden="true"></div>
-    <div class="fl-ambient" aria-hidden="true"></div>
-    <div class="fl-bloom" aria-hidden="true"></div>
-    <div class="fl-floor" aria-hidden="true"></div>
     <div class="fl-stage">
       <h1 class="fl-mark" id="flmark" aria-label="FLIGHTLAB">
         <svg class="fl-svg" id="flsvg" aria-hidden="true" focusable="false">
           <defs>
-            <!-- Light entering the top of the crystal, running clear through the
-                 middle, pooling again where it leaves the bottom. The faint green
-                 near the base is the only green in the piece. -->
-            <linearGradient id="flBody" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"    stop-color="#DCF4FF" stop-opacity=".46"/>
-              <stop offset=".20"  stop-color="#9FD6EC" stop-opacity=".20"/>
-              <stop offset=".52"  stop-color="#7FBBD6" stop-opacity=".13"/>
-              <stop offset=".68"  stop-color="#86E0C4" stop-opacity=".15"/>
-              <stop offset=".86"  stop-color="#B4EAFB" stop-opacity=".27"/>
-              <stop offset="1"    stop-color="#EEFCFF" stop-opacity=".54"/>
+            <!-- The contour where the surface turns away. Not black: glass
+                 picks up the room even in shadow. -->
+            <linearGradient id="flDark" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"   stop-color="#0A1826" stop-opacity=".50"/>
+              <stop offset=".42" stop-color="#08131F" stop-opacity=".70"/>
+              <stop offset="1"   stop-color="#0B1B2A" stop-opacity=".58"/>
             </linearGradient>
-            <!-- The bevel. Top light hits it hardest, the middle turns away, the
-                 floor throws light back into the bottom. -->
+            <!-- Refraction. userSpaceOnUse, so this is measured against the
+                 viewport, not the glyph: the same light that is behind the word,
+                 shifted right and concentrated, the way a thick solid moves what
+                 you see through it. -->
+            <linearGradient id="flRefr" gradientUnits="userSpaceOnUse" x1="8%" y1="0" x2="96%" y2="0">
+              <stop offset="0"   stop-color="#1E4A52" stop-opacity=".26"/>
+              <stop offset=".30" stop-color="#34BEAA" stop-opacity=".40"/>
+              <stop offset=".56" stop-color="#5ABEE1" stop-opacity=".44"/>
+              <stop offset=".80" stop-color="#38C4BA" stop-opacity=".36"/>
+              <stop offset="1"   stop-color="#1E4A52" stop-opacity=".24"/>
+            </linearGradient>
+            <!-- Body tint: blue-green, and almost clear. -->
+            <linearGradient id="flBody" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"   stop-color="#CFEFFB" stop-opacity=".20"/>
+              <stop offset=".24" stop-color="#8FC8DE" stop-opacity=".07"/>
+              <stop offset=".54" stop-color="#6FA8C4" stop-opacity=".04"/>
+              <stop offset=".72" stop-color="#7FD8BC" stop-opacity=".07"/>
+              <stop offset="1"   stop-color="#D6F4FF" stop-opacity=".18"/>
+            </linearGradient>
+            <!-- Light gathered through the solid and dumped out of the bottom. -->
+            <linearGradient id="flCaus" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"    stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset=".62"  stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset=".80"  stop-color="#B7ECFA" stop-opacity=".10"/>
+              <stop offset=".93"  stop-color="#DFF8FF" stop-opacity=".30"/>
+              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".46"/>
+            </linearGradient>
+            <!-- The polished bevel: bright where the key light lands, dark
+                 through the middle where the surface rolls away, a little
+                 bounce at the base. -->
             <linearGradient id="flBevel" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"    stop-color="#FFFFFF" stop-opacity=".96"/>
-              <stop offset=".17"  stop-color="#E4F8FF" stop-opacity=".76"/>
-              <stop offset=".45"  stop-color="#9CCFE2" stop-opacity=".34"/>
-              <stop offset=".72"  stop-color="#C6EFFD" stop-opacity=".60"/>
-              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".94"/>
+              <stop offset="0"   stop-color="#F2FCFF" stop-opacity=".82"/>
+              <stop offset=".13" stop-color="#CDEAF6" stop-opacity=".50"/>
+              <stop offset=".34" stop-color="#6E9CB4" stop-opacity=".16"/>
+              <stop offset=".62" stop-color="#7FB0C6" stop-opacity=".18"/>
+              <stop offset=".86" stop-color="#CDEEFA" stop-opacity=".44"/>
+              <stop offset="1"   stop-color="#EEFBFF" stop-opacity=".66"/>
             </linearGradient>
             <linearGradient id="flValley" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"    stop-color="#0E2E44" stop-opacity=".34"/>
-              <stop offset=".5"   stop-color="#123B54" stop-opacity=".20"/>
-              <stop offset="1"    stop-color="#0E2E44" stop-opacity=".28"/>
+              <stop offset="0"   stop-color="#0C2536" stop-opacity=".40"/>
+              <stop offset=".5"  stop-color="#10303F" stop-opacity=".22"/>
+              <stop offset="1"   stop-color="#0C2536" stop-opacity=".34"/>
             </linearGradient>
-            <linearGradient id="flCore" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"    stop-color="#FFFFFF" stop-opacity="1"/>
-              <stop offset=".28"  stop-color="#FFFFFF" stop-opacity=".62"/>
-              <stop offset=".62"  stop-color="#DFF6FF" stop-opacity=".22"/>
-              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".70"/>
+            <!-- Specular, confined to the top of the form. Transparent below a
+                 fifth of the height, so the highlight sits where a light points
+                 instead of ringing the whole letter. -->
+            <linearGradient id="flSpec" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"    stop-color="#FFFFFF" stop-opacity=".98"/>
+              <stop offset=".10"  stop-color="#FFFFFF" stop-opacity=".72"/>
+              <stop offset=".19"  stop-color="#FFFFFF" stop-opacity=".10"/>
+              <stop offset=".24"  stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset=".90"  stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset="1"    stop-color="#EAFAFF" stop-opacity=".30"/>
             </linearGradient>
-            <linearGradient id="flHalo" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"    stop-color="#AEE8FF" stop-opacity=".20"/>
-              <stop offset=".55"  stop-color="#8ED8E4" stop-opacity=".09"/>
-              <stop offset="1"    stop-color="#CFF6FF" stop-opacity=".22"/>
-            </linearGradient>
+            <!-- Two studio lights, as mask pools. Stops fade to transparent
+                 rather than to black so the two overlap additively instead of
+                 the second one punching a hole in the first. -->
+            <radialGradient id="flSpecA" gradientUnits="userSpaceOnUse" cx="30%" cy="34%" r="30%">
+              <stop offset="0"   stop-color="#fff" stop-opacity="1"/>
+              <stop offset=".55" stop-color="#fff" stop-opacity=".45"/>
+              <stop offset="1"   stop-color="#fff" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="flSpecB" gradientUnits="userSpaceOnUse" cx="74%" cy="42%" r="22%">
+              <stop offset="0"   stop-color="#fff" stop-opacity=".92"/>
+              <stop offset=".5"  stop-color="#fff" stop-opacity=".38"/>
+              <stop offset="1"   stop-color="#fff" stop-opacity="0"/>
+            </radialGradient>
+            <mask id="flSpecPos" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+              <rect x="0" y="0" width="100%" height="100%" fill="url(#flSpecA)"/>
+              <rect x="0" y="0" width="100%" height="100%" fill="url(#flSpecB)"/>
+            </mask>
             <linearGradient id="flReflGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"   stop-color="#000"/>
               <stop offset=".38" stop-color="#2A2A2A"/>
               <stop offset=".72" stop-color="#8A8A8A"/>
               <stop offset="1"   stop-color="#FFFFFF"/>
             </linearGradient>
-            <!-- objectBoundingBox content, so the fade is measured against the
-                 reflection itself rather than the viewport. Because the layer is
-                 flipped, its local top is what ends up furthest from the word. -->
             <mask id="flReflFade" maskContentUnits="objectBoundingBox">
               <rect x="0" y="0" width="1" height="1" fill="url(#flReflGrad)"/>
             </mask>
           </defs>
-          <text class="g-halo"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-ext"    x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-dark"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-refr"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-body"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-caus"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-bevel"  x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-valley" x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-core"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-spec"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-refl"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
         </svg>
       </h1>
@@ -518,6 +556,44 @@ function drawChips(q,scale,cx,cy){
     g.fill(paths[i]);
   }
 }
+/* ---- Floating system ----
+   Discs are laid out down the whole document, then each layer is offset against
+   the scroll by its own factor. A disc at document position T shows up on screen
+   at T - k*scrollY, so a layer needs to cover vh + k*(doc - vh); spacing them
+   over exactly that range is what keeps discs entering and leaving continuously
+   instead of resetting anywhere. */
+const flLayers=[...document.querySelectorAll('.fl-layer')].map(el=>({
+  el, k:parseFloat(el.dataset.k), n:parseInt(el.dataset.n,10), l:el.dataset.l}));
+const FL_SIZE={l1:[40,64],l2:[14,26],l3:[4.5,8]};
+function flBuildDiscs(){
+  const coarse=matchMedia('(hover:none)').matches;
+  const doc=document.documentElement.scrollHeight, vh=innerHeight;
+  flLayers.forEach((L,li)=>{
+    const n=coarse?Math.max(2,L.n-2):L.n;
+    const span=vh+L.k*Math.max(0,doc-vh);
+    const [smin,smax]=FL_SIZE[L.l];
+    let html='';
+    for(let i=0;i<n;i++){
+      /* Deterministic jitter: same layout every load, no clumping. */
+      const r1=((i*2654435761)%1000)/1000, r2=((i*40503+li*7919)%1000)/1000;
+      const top=span*((i+0.5)/n)-vh*0.2+ (r1-0.5)*span/n*0.30;
+      const left=6+r2*82;
+      const d=smin+(smax-smin)*r1;
+      const dur=[240,300,270,195,170,182][i%6]+li*40;
+      const name=['fl8-far','fl8-mid','fl8-near'][li];
+      html+='<span class="fl-disc '+L.l+'" style="--d:'+d.toFixed(1)+'vmin;left:'+left.toFixed(1)
+           +'%;top:'+top.toFixed(0)+'px;animation:'+name+' '+dur+'s ease-in-out infinite'
+           +(i%2?' reverse':'')+'"></span>';
+    }
+    L.el.innerHTML=html;
+  });
+}
+function flDiscParallax(y){
+  for(let i=0;i<flLayers.length;i++){
+    const L=flLayers[i];
+    L.el.style.transform='translate3d(0,'+(-y*L.k).toFixed(1)+'px,0)';
+  }
+}
 function sizeShards(){
   if(!flshards) return;
   const r=flshards.getBoundingClientRect();
@@ -545,10 +621,10 @@ function flFit(){
 }
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(flFit)}else{flFit()}
 flFit();
-addEventListener('resize',(()=>{let t;return()=>{clearTimeout(t);t=setTimeout(()=>{flFit();sizeShards();buildChips()},150)}})());
+addEventListener('resize',(()=>{let t;return()=>{clearTimeout(t);t=setTimeout(()=>{flFit();sizeShards();buildChips();flBuildDiscs();flDiscParallax(scrollY)},150)}})());
 /* Rasterising and sampling the word costs about a frame, so it happens when the
    browser is otherwise idle — never on the scroll path. */
-function flPrep(){sizeShards();buildChips()}
+function flPrep(){sizeShards();buildChips();flBuildDiscs();flDiscParallax(scrollY)}
 if(window.requestIdleCallback){requestIdleCallback(flPrep,{timeout:2500})}else{setTimeout(flPrep,900)}
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(()=>{flFit();flPrep()})}
 const PERSP=1100;   /* must match the perspective on .scene */
@@ -836,6 +912,7 @@ function loop(){
       }
     }
   }
+  flDiscParallax(scrollY);
   if(prog){const tot=clamp(0,1,scrollY/(document.documentElement.scrollHeight-innerHeight||1));prog.style.width=(tot*100).toFixed(1)+'%'}
   requestAnimationFrame(loop);
 }
