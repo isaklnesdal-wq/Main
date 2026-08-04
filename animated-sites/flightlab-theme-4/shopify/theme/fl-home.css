@@ -262,6 +262,13 @@ nav .nl a.pressing,.brand.pressing{display:inline-block;transform:scale(.88)!imp
 .disc-scene{perspective:800px}
 /* Discs hold still (rotateX tilt) and only spin while hovered — avoids
    15+ continuous CSS animations compositing every frame. */
+/* Fifteen preserve-3d disc renders is real raster work, and most of them are
+   far off screen at any moment. .dw already has a fixed height, so containing
+   the render inside it changes no layout — and it is deliberately not on the
+   card itself, which is a subgrid item and has to keep participating in the
+   row heights. */
+.disc-scene{content-visibility:auto;contain-intrinsic-size:auto 132px}
+@media(max-width:560px){.disc-scene{contain-intrinsic-size:auto 74px}}
 .disc3d{position:relative;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(0);animation:spin 15s linear infinite;animation-play-state:paused}
 .pcard:hover .disc3d{animation-play-state:running}
 @keyframes spin{from{transform:rotateX(58deg) rotateZ(0)}to{transform:rotateX(58deg) rotateZ(360deg)}}
@@ -360,14 +367,14 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
        they were: the crystal has to stay the brightest thing on the page.
        No filter: blur() anywhere. A ramp this wide already is the blur, and a
        real one over a document this tall repaints on every scroll frame. */
-    radial-gradient(128% 26% at 6% 5%,rgba(70,240,190,0.0810),rgba(70,240,190,0.0330) 44%,transparent 84%),
-    radial-gradient(132% 27% at 96% 18%,rgba(96,146,255,0.0780),rgba(96,146,255,0.0300) 44%,transparent 86%),
-    radial-gradient(128% 26% at 4% 31%,rgba(60,224,255,0.0810),rgba(60,224,255,0.0312) 44%,transparent 86%),
-    radial-gradient(132% 27% at 98% 44%,rgba(214,120,232,0.0690),rgba(214,120,232,0.0264) 44%,transparent 86%),
-    radial-gradient(128% 26% at 6% 57%,rgba(160,116,255,0.0720),rgba(160,116,255,0.0276) 44%,transparent 86%),
-    radial-gradient(132% 27% at 96% 70%,rgba(60,224,255,0.0768),rgba(60,224,255,0.0300) 44%,transparent 86%),
-    radial-gradient(128% 26% at 4% 83%,rgba(70,240,190,0.0732),rgba(70,240,190,0.0282) 44%,transparent 86%),
-    radial-gradient(132% 27% at 98% 96%,rgba(96,146,255,0.0708),rgba(96,146,255,0.0270) 44%,transparent 86%),
+    /* Five rather than eight. They are wide enough that the overlap — and so the
+       continuous colour drift — is unchanged, and this is a gradient stack being
+       rasterised down an 11700px-tall layer as you scroll. */
+    radial-gradient(140% 34% at 5% 8%,rgba(70,240,190,.083),rgba(70,240,190,.033) 46%,transparent 86%),
+    radial-gradient(144% 35% at 97% 29%,rgba(96,146,255,.080),rgba(96,146,255,.030) 46%,transparent 88%),
+    radial-gradient(140% 34% at 3% 50%,rgba(60,224,255,.082),rgba(60,224,255,.031) 46%,transparent 88%),
+    radial-gradient(144% 35% at 99% 71%,rgba(180,116,244,.072),rgba(180,116,244,.027) 46%,transparent 88%),
+    radial-gradient(140% 34% at 5% 92%,rgba(70,240,190,.076),rgba(70,240,190,.029) 46%,transparent 88%),
     /* graphite -> dark navy -> slate blue -> a breath of cyan -> graphite.
        Each step is a couple of points of luminance, so the journey is felt
        rather than seen. */
@@ -389,6 +396,18 @@ footer{border-top:none!important}
 .sec.dark .sec-head h2 em{color:var(--signal)}
 
 /* Cards become raised glass instead of white paper */
+/* Every card in a row shares the row's grid lines, so the badge, the flight
+   numbers and the price sit on the same baselines across the row however many
+   lines a product name happens to run to. On a phone the names range from two
+   to four lines, which was throwing the badges out by ~20px. Subgrid is the only
+   way to say "as tall as the tallest one in this row" in CSS; where it is not
+   supported the card just falls back to its previous column layout. */
+.pgrid>.pcard{display:grid;grid-template-rows:subgrid;grid-row:span 6;
+  justify-items:center;align-content:start}
+/* Shorter names would otherwise centre inside the shared row; start-aligning
+   puts the first line of every product name on the same baseline. */
+.pgrid>.pcard>h3{align-self:start}
+@media(max-width:560px){.pgrid>.pcard{grid-row:span 5}}
 .pcard,.acard{
   background:linear-gradient(180deg,#2F3D53,#2A374B);
   border:1px solid rgba(255,255,255,.12);
@@ -505,7 +524,12 @@ nav .brand,nav .nl a{color:var(--ink)}
    The camera dollies toward the word: apparent size comes from translateZ
    under a perspective, not from scale(), so the letters gain real depth and
    stay text rather than a stretched bitmap. */
-.scene{perspective:1100px;perspective-origin:50% 46%;
+.scene{perspective:1100px;perspective-origin:50% 50%;
+  /* The origin has to sit where the word sits. It was at 46% while the wordmark
+     is centred at 50%, and everything under a perspective expands away from that
+     point — so the word slid downward as the camera came in: dead centre at rest,
+     68px low by the time it filled the phone. Same point now, so it grows in
+     place. */
   /* No background of its own. The hero used to paint an opaque backdrop, and
      where it ended — the join with #discer — the colour jumped 23 points of
      blue in a single row, which is the line you could see. The page field runs
