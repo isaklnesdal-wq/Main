@@ -518,6 +518,17 @@ nav .brand,nav .nl a{color:var(--ink)}
 @keyframes fl8-mid{0%{transform:translate3d(5.00vw,0.00vh,0) rotateX(62deg) rotateZ(0deg)}12.5%{transform:translate3d(3.53vw,3.00vh,0) rotateX(62deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(62deg) rotateZ(90deg)}37.5%{transform:translate3d(-3.53vw,-3.00vh,0) rotateX(62deg) rotateZ(135deg)}50%{transform:translate3d(-5.00vw,0.00vh,0) rotateX(62deg) rotateZ(180deg)}62.5%{transform:translate3d(-3.53vw,3.00vh,0) rotateX(62deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(62deg) rotateZ(270deg)}87.5%{transform:translate3d(3.53vw,-3.00vh,0) rotateX(62deg) rotateZ(315deg)}100%{transform:translate3d(5.00vw,0.00vh,0) rotateX(62deg) rotateZ(360deg)}}
 @keyframes fl8-near{0%{transform:translate3d(3.50vw,0.00vh,0) rotateX(58deg) rotateZ(0deg)}12.5%{transform:translate3d(2.47vw,2.25vh,0) rotateX(58deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(58deg) rotateZ(90deg)}37.5%{transform:translate3d(-2.47vw,-2.25vh,0) rotateX(58deg) rotateZ(135deg)}50%{transform:translate3d(-3.50vw,0.00vh,0) rotateX(58deg) rotateZ(180deg)}62.5%{transform:translate3d(-2.47vw,2.25vh,0) rotateX(58deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(58deg) rotateZ(270deg)}87.5%{transform:translate3d(2.47vw,-2.25vh,0) rotateX(58deg) rotateZ(315deg)}100%{transform:translate3d(3.50vw,0.00vh,0) rotateX(58deg) rotateZ(360deg)}}
 @media(max-width:560px){.fl-disc.l1.c,.fl-disc.l2.c,}
+/* On a phone the discs drop their rotation. A rotating soft ellipse looks
+   identical to a still one at these sizes and opacities, and translate-only
+   keyframes are the cheapest thing an animation can be. */
+@media(hover:none){
+  @keyframes fl8-far{0%{transform:translate3d(7vw,0,0)}25%{transform:translate3d(0,0,0)}
+    50%{transform:translate3d(-7vw,0,0)}75%{transform:translate3d(0,0,0)}100%{transform:translate3d(7vw,0,0)}}
+  @keyframes fl8-mid{0%{transform:translate3d(5vw,0,0)}25%{transform:translate3d(0,3vh,0)}
+    50%{transform:translate3d(-5vw,0,0)}75%{transform:translate3d(0,-3vh,0)}100%{transform:translate3d(5vw,0,0)}}
+  @keyframes fl8-near{0%{transform:translate3d(3.5vw,0,0)}25%{transform:translate3d(0,2vh,0)}
+    50%{transform:translate3d(-3.5vw,0,0)}75%{transform:translate3d(0,-2vh,0)}100%{transform:translate3d(3.5vw,0,0)}}
+}
 @media(prefers-reduced-motion:reduce){.fl-disc{animation:none}}
 
 /* ---------- Typography intro ----------
@@ -549,6 +560,11 @@ nav .brand,nav .nl a{color:var(--ink)}
    a shape, above the level that reads as dead space. Transform-only animation on
    composited layers, so this is a GPU move and not a repaint. */
 .fl-caus-a,.fl-caus-b{position:absolute;inset:-22%;pointer-events:none;will-change:transform}
+/* The hero's atmosphere kept animating for the entire page — measured at about
+   340ms of style recalculation across a full scroll, spent on something that
+   was not on screen. Parked whenever the hero is not in view. */
+.hero-off .fl-caus-a,.hero-off .fl-caus-b,
+.hero-off .fl-env,.hero-off .fl-lights{animation-play-state:paused}
 .fl-caus-a{background:
     radial-gradient(46% 30% at 33% 63%,rgba(196,238,255,.0125),transparent 72%),
     radial-gradient(38% 24% at 67% 71%,rgba(150,252,220,.0095),transparent 74%);

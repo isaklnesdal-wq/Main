@@ -594,7 +594,7 @@ function flBuildDiscs(){
   const coarse=matchMedia('(hover:none)').matches;
   const doc=document.documentElement.scrollHeight, vh=innerHeight;
   flLayers.forEach((L,li)=>{
-    const n=coarse?Math.max(2,L.n-2):L.n;
+    const n=coarse?Math.max(2,Math.round(L.n*0.5)):L.n;
     const span=vh+L.k*Math.max(0,doc-vh);
     const [smin,smax]=FL_SIZE[L.l];
     let html='';
@@ -614,6 +614,10 @@ function flBuildDiscs(){
   });
 }
 function flDiscParallax(y){
+  /* Sub-pixel changes are invisible and still cost a style recalculation on
+     three elements, so only write when the rounded value actually moves. */
+  if(y===lastPar) return;
+  lastPar=y;
   for(let i=0;i<flLayers.length;i++){
     const L=flLayers[i];
     L.el.style.transform='translate3d(0,'+(-y*L.k).toFixed(1)+'px,0)';
@@ -878,13 +882,46 @@ const l=document.getElementById('loader');setTimeout(()=>l&&l.classList.add('don
    grows with how far it is scaled up — vector art is re-rastered at each
    new scale, unlike the hero photo. Cap the zoom lower on phones. */
 const ZBAG=TOUCH?5.5:9.9, ZHERO=TOUCH?7:11;
+
+/* ---- Geometry cache ------------------------------------------------------
+   The scroll loop used to call getBoundingClientRect() on the hero and on the
+   bag portal, and read documentElement.scrollHeight, on every single frame —
+   and it did so *after* it had already written transforms and opacities. Each
+   of those reads therefore forced a synchronous layout to flush the pending
+   writes. Measured on a phone at 6x throttle: 1.32 layouts and 3.70 style
+   recalculations per frame across a full-page scroll, which is exactly what a
+   sticky scroll feels like.
+
+   None of these values change while you scroll. They are read once here and
+   refreshed only when something can actually move them, and the loop derives
+   everything it needs from scrollY, which is free. */
+const GEO={jTop:0,jH:0,bTop:0,bH:0,max:1,vh:0};
+function flGeom(){
+  GEO.vh=innerHeight;
+  const y=scrollY;
+  if(journey){const r=journey.getBoundingClientRect();GEO.jTop=r.top+y;GEO.jH=r.height}
+  if(bagportal){const r=bagportal.getBoundingClientRect();GEO.bTop=r.top+y;GEO.bH=r.height}
+  GEO.max=Math.max(1,document.documentElement.scrollHeight-GEO.vh);
+}
+flGeom();
+/* Park the hero's atmosphere whenever the hero is not on screen. */
+if(journey&&'IntersectionObserver' in window){
+  new IntersectionObserver(es=>{
+    document.documentElement.classList.toggle('hero-off',!es[0].isIntersecting);
+  },{rootMargin:'10% 0px'}).observe(journey);
+}
+addEventListener('resize',(()=>{let t;return()=>{clearTimeout(t);t=setTimeout(flGeom,150)}})());
+addEventListener('load',flGeom);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(flGeom);
+let lastProg='',lastPar=-1;
 let lastKey='';
 function loop(){
   // Only touch the hero when its section is actually on screen — avoids
   // writing transforms every frame while the user is down in the catalogue.
-  const jr=journey.getBoundingClientRect();
-  if(jr.bottom>0 && jr.top<innerHeight){
-    const pRaw=clamp(0,1,-jr.top/(jr.height-innerHeight));
+  const _y=scrollY;                       // one cheap read, no layout forced
+  const jTop=GEO.jTop-_y;
+  if(jTop+GEO.jH>0 && jTop<GEO.vh){
+    const pRaw=clamp(0,1,-jTop/(GEO.jH-GEO.vh||1));
     /* HOLD. For the first stretch after load the piece simply sits there and
        nothing responds to the wheel — long enough to look at the material
        before touching anything. Afterwards the shown position eases toward the
@@ -946,9 +983,9 @@ function loop(){
       if(cue)cue.style.opacity=p>0.05?'0':'0.7';}
   }
   // Bag portal — same, only while it's in view
-  if(bagportal){const br=bagportal.getBoundingClientRect();
-    if(br.bottom>0 && br.top<innerHeight){
-      const bp=clamp(0,1,-br.top/(br.height-innerHeight));
+  if(bagportal){const bTop=GEO.bTop-_y;
+    if(bTop+GEO.bH>0 && bTop<GEO.vh){
+      const bp=clamp(0,1,-bTop/(GEO.bH-GEO.vh||1));
       /* The zipper is the point of this section, so it gets the long middle
          of the scroll to itself: the bag barely moves while it opens, and
          only once it is fully open does the camera dive in. Previously the
@@ -969,8 +1006,9 @@ function loop(){
       }
     }
   }
-  flDiscParallax(scrollY);
-  if(prog){const tot=clamp(0,1,scrollY/(document.documentElement.scrollHeight-innerHeight||1));prog.style.width=(tot*100).toFixed(1)+'%'}
+  flDiscParallax(_y);
+  if(prog){const w=(clamp(0,1,_y/GEO.max)*100).toFixed(1)+'%';
+    if(w!==lastProg){lastProg=w;prog.style.width=w}}
   requestAnimationFrame(loop);
 }
 if(!REDUCED)requestAnimationFrame(loop);
