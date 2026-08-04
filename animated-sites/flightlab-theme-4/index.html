@@ -363,12 +363,12 @@ body{background:#141A22;color:var(--ink);position:relative}
 body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
   z-index:-2;pointer-events:none;
   background:
-    radial-gradient(92% 17% at 12% 7%,rgba(62,255,190,.19),rgba(62,255,190,.07) 46%,transparent 80%),
-    radial-gradient(96% 18% at 90% 23%,rgba(120,150,255,.18),rgba(120,150,255,.07) 46%,transparent 82%),
-    radial-gradient(92% 17% at 8% 40%,rgba(47,232,255,.19),rgba(47,232,255,.07) 46%,transparent 82%),
-    radial-gradient(96% 18% at 92% 57%,rgba(178,112,255,.16),rgba(178,112,255,.06) 46%,transparent 82%),
-    radial-gradient(92% 17% at 12% 74%,rgba(62,255,190,.17),rgba(62,255,190,.06) 46%,transparent 82%),
-    radial-gradient(96% 18% at 90% 91%,rgba(47,232,255,.17),rgba(47,232,255,.06) 46%,transparent 82%),
+    radial-gradient(104% 20% at 10% 7%,rgba(62,255,190,.26),rgba(62,255,190,.10) 46%,transparent 82%),
+    radial-gradient(108% 21% at 92% 23%,rgba(120,150,255,.25),rgba(120,150,255,.09) 46%,transparent 84%),
+    radial-gradient(104% 20% at 6% 40%,rgba(47,232,255,.26),rgba(47,232,255,.10) 46%,transparent 84%),
+    radial-gradient(108% 21% at 94% 57%,rgba(178,112,255,.23),rgba(178,112,255,.08) 46%,transparent 84%),
+    radial-gradient(104% 20% at 10% 74%,rgba(62,255,190,.24),rgba(62,255,190,.09) 46%,transparent 84%),
+    radial-gradient(108% 21% at 92% 91%,rgba(47,232,255,.24),rgba(47,232,255,.09) 46%,transparent 84%),
     /* graphite -> dark navy -> slate blue -> a breath of cyan -> graphite.
        Each step is a couple of points of luminance, so the journey is felt
        rather than seen. */
@@ -600,11 +600,17 @@ nav .brand,nav .nl a{color:var(--ink)}
    paint server for every covered pixel, and none of the fine detail survives
    the camera speed — so what remains is flat-painted. */
 .fl-moving .g-ext,.fl-moving .g-valley,.fl-moving .g-spec,
-.fl-moving .g-refl,.fl-moving .g-caus,.fl-moving .g-refr{display:none}
+.fl-moving .g-caus,.fl-moving .g-refr{display:none}
+/* The reflection stays through the whole intro. It sits inside .fl-mark, so it
+   takes the same dolly and the same fade as the word without being told to —
+   it travels and comes apart with it. Only its paint is cheapened while moving:
+   a flat stroke instead of a gradient, and no mask, because the distance fade
+   is not readable at that speed and a mask is a second pass. */
+.fl-moving .g-refl{stroke:#BFE6F2;stroke-width:.018em;opacity:.15;
+  mask:none;-webkit-mask:none}
 .fl-moving .g-bevel{stroke-width:.026em;stroke:#E4F6FC}
 .fl-moving .g-dark{stroke:rgba(8,18,30,.55);stroke-width:.030em}
 .fl-moving .g-body{fill:rgba(221,246,255,.13);stroke:rgba(221,246,255,.13)}
-@media(hover:none){.fl-svg .g-refl{display:none}}
 
 /* On a phone the section copy sat left while the hero captions sat centred,
    so the page read as two different alignments stacked on each other. Both
@@ -695,22 +701,22 @@ nav .brand,nav .nl a{color:var(--ink)}
                  very low: the centre of a letter is supposed to be almost clear,
                  so this may only tint what is already there. -->
             <linearGradient id="flRefr" gradientUnits="userSpaceOnUse" x1="8%" y1="0" x2="96%" y2="0">
-              <stop offset="0"   stop-color="#7CFFD4" stop-opacity=".16"/>
-              <stop offset=".30" stop-color="#5FE8FF" stop-opacity=".24"/>
-              <stop offset=".52" stop-color="#CFF4FF" stop-opacity=".26"/>
-              <stop offset=".68" stop-color="#B08CFF" stop-opacity=".16"/>
-              <stop offset=".82" stop-color="#6FE6FF" stop-opacity=".20"/>
-              <stop offset="1"   stop-color="#8CFFD0" stop-opacity=".12"/>
+              <stop offset="0"   stop-color="#7CFFD4" stop-opacity=".10"/>
+              <stop offset=".30" stop-color="#5FE8FF" stop-opacity=".15"/>
+              <stop offset=".52" stop-color="#CFF4FF" stop-opacity=".16"/>
+              <stop offset=".68" stop-color="#B08CFF" stop-opacity=".10"/>
+              <stop offset=".82" stop-color="#6FE6FF" stop-opacity=".13"/>
+              <stop offset="1"   stop-color="#8CFFD0" stop-opacity=".08"/>
             </linearGradient>
             <!-- Body tint. The specified progression, but at the alpha of a
                  clear solid: the interior carries the colour, it does not become
                  the colour. -->
             <linearGradient id="flBody" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".17"/>
-              <stop offset=".22" stop-color="#EEF9FF" stop-opacity=".08"/>
-              <stop offset=".50" stop-color="#DDF6FF" stop-opacity=".05"/>
-              <stop offset=".74" stop-color="#C6F2F8" stop-opacity=".08"/>
-              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".16"/>
+              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".12"/>
+              <stop offset=".22" stop-color="#EEF9FF" stop-opacity=".045"/>
+              <stop offset=".50" stop-color="#DDF6FF" stop-opacity=".025"/>
+              <stop offset=".74" stop-color="#C6F2F8" stop-opacity=".045"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".11"/>
             </linearGradient>
             <!-- Light gathered through the solid and released at the base. -->
             <linearGradient id="flCaus" x1="0" y1="0" x2="0" y2="1">
