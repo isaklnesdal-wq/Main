@@ -403,7 +403,15 @@ footer{border-top:none!important}
 .pcard,.acard{
   background:linear-gradient(180deg,#2F3D53,#2A374B);
   border:1px solid rgba(255,255,255,.12);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 30px rgba(0,0,0,.4)}
+  /* Same material as the wordmark. The crystal is lit by a bright polished edge
+     along its top and a cooler bounce off the floor at its base, with the body
+     doing almost nothing — so every raised surface on the page is lit the same
+     way, with the same two lines and the same colours. It is not a card style
+     and a logo style; it is one material seen twice. */
+  box-shadow:
+    inset 0 1px 0 rgba(248,252,255,.15),
+    inset 0 -1px 0 rgba(174,239,245,.055),
+    0 18px 40px rgba(6,10,18,.34)}
 @media(hover:hover) and (pointer:fine){
   .pcard,.acard{background:linear-gradient(180deg,#2A374B,#273348);
     backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -521,11 +529,43 @@ nav .brand,nav .nl a{color:var(--ink)}
    These two pseudo-elements also carried leftovers from the original light
    theme — a 32%-white radial and a green ground wash, both still painting over
    the dark hero. Overridden here rather than left to fight. */
+/* Light that has already been through the crystal, pooled low and behind it.
+   Two fields, drifting on different periods (54s and 71s) so their overlap never
+   repeats on a beat you could learn. Peak alpha is ~5%, which lands at 2-4% of
+   the surface once it is over the ambient field — below the level you notice as
+   a shape, above the level that reads as dead space. Transform-only animation on
+   composited layers, so this is a GPU move and not a repaint. */
+.fl-caus-a,.fl-caus-b{position:absolute;inset:-22%;pointer-events:none;will-change:transform}
+.fl-caus-a{background:
+    radial-gradient(46% 30% at 33% 63%,rgba(196,238,255,.0125),transparent 72%),
+    radial-gradient(38% 24% at 67% 71%,rgba(150,252,220,.0095),transparent 74%);
+  animation:fl-caus-a 54s ease-in-out infinite}
+.fl-caus-b{background:
+    radial-gradient(52% 27% at 58% 59%,rgba(172,212,255,.011),transparent 74%),
+    radial-gradient(34% 22% at 25% 72%,rgba(206,190,255,.009),transparent 76%);
+  animation:fl-caus-b 71s ease-in-out infinite}
+@keyframes fl-caus-a{
+  0%{transform:translate3d(-1.6%,.6%,0) scale(1)}
+  50%{transform:translate3d(2.1%,-.9%,0) scale(1.055)}
+  100%{transform:translate3d(-1.6%,.6%,0) scale(1)}}
+@keyframes fl-caus-b{
+  0%{transform:translate3d(1.9%,-.5%,0) scale(1.045)}
+  50%{transform:translate3d(-1.7%,1%,0) scale(1)}
+  100%{transform:translate3d(1.9%,-.5%,0) scale(1.045)}}
+/* The room breathes. 58s, two and a half per cent — under the threshold you can
+   see directly, over the threshold that makes a still image feel dead. */
+@keyframes fl-env-breathe{
+  0%{transform:translateZ(0) scale(1)}
+  50%{transform:translateZ(0) scale(1.025)}
+  100%{transform:translateZ(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){
+  .fl-caus-a,.fl-caus-b,.fl-env{animation:none}}
 .fl-env{position:absolute;inset:0;z-index:0;pointer-events:none;will-change:opacity;
   /* Its own raster, so the sticky scene composites it instead of repainting
      the whole gradient stack as the hero moves. Harmless under the scene's
      perspective: translateZ(0) resolves to a scale of exactly 1. */
   transform:translateZ(0);backface-visibility:hidden;
+  animation:fl-env-breathe 58s ease-in-out infinite;
   background:
     linear-gradient(180deg,transparent 62%,rgba(120,226,238,.07) 72%,rgba(20,26,34,.40) 100%),
     radial-gradient(128% 100% at 50% 42%,transparent 62%,rgba(6,12,20,.30) 100%),
@@ -626,7 +666,7 @@ nav .brand,nav .nl a{color:var(--ink)}
 .fl-lights{animation:fl-lights 34s ease-in-out infinite;transform-origin:50% 50%}
 .fl-moving .fl-lights{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.fl-lights{animation:none}}
-.fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.019em;opacity:.34;
+.fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.019em;opacity:.375;
   transform-box:fill-box;transform-origin:center;
   transform:translateY(.74em) scaleY(-1);mask:url(#flReflFade)}
 
@@ -719,7 +759,9 @@ nav .brand,nav .nl a{color:var(--ink)}
 <!-- ===== Hero: real Higgsfield video autoplays; scroll ZOOMS INTO the disc ===== -->
 <section id="journey">
   <div class="scene" id="scene">
-    <div class="fl-env" id="flenv" aria-hidden="true"></div>
+    <div class="fl-env" id="flenv" aria-hidden="true">
+      <div class="fl-caus-a"></div><div class="fl-caus-b"></div>
+    </div>
     <!-- Typography intro: no disc, no photo, no scenery. The word is the
          only subject; scrolling dollies the camera into it. -->
     <div class="fl-stage">
