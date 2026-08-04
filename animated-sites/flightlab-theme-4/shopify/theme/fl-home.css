@@ -352,12 +352,12 @@ body{background:#141A22;color:var(--ink);position:relative}
 body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
   z-index:-2;pointer-events:none;
   background:
-    radial-gradient(78% 14% at 14% 7%,rgba(62,207,142,.11),transparent 74%),
-    radial-gradient(84% 15% at 88% 24%,rgba(96,132,232,.097),transparent 76%),
-    radial-gradient(78% 14% at 10% 41%,rgba(72,196,196,.094),transparent 76%),
-    radial-gradient(84% 15% at 90% 58%,rgba(62,207,142,.088),transparent 76%),
-    radial-gradient(78% 14% at 14% 75%,rgba(96,132,232,.094),transparent 76%),
-    radial-gradient(84% 15% at 88% 92%,rgba(72,196,196,.083),transparent 76%),
+    radial-gradient(92% 17% at 12% 7%,rgba(62,255,190,.19),rgba(62,255,190,.07) 46%,transparent 80%),
+    radial-gradient(96% 18% at 90% 23%,rgba(120,150,255,.18),rgba(120,150,255,.07) 46%,transparent 82%),
+    radial-gradient(92% 17% at 8% 40%,rgba(47,232,255,.19),rgba(47,232,255,.07) 46%,transparent 82%),
+    radial-gradient(96% 18% at 92% 57%,rgba(178,112,255,.16),rgba(178,112,255,.06) 46%,transparent 82%),
+    radial-gradient(92% 17% at 12% 74%,rgba(62,255,190,.17),rgba(62,255,190,.06) 46%,transparent 82%),
+    radial-gradient(96% 18% at 90% 91%,rgba(47,232,255,.17),rgba(47,232,255,.06) 46%,transparent 82%),
     /* graphite -> dark navy -> slate blue -> a breath of cyan -> graphite.
        Each step is a couple of points of luminance, so the journey is felt
        rather than seen. */
@@ -487,15 +487,24 @@ nav .brand,nav .nl a{color:var(--ink)}
    These two pseudo-elements also carried leftovers from the original light
    theme — a 32%-white radial and a green ground wash, both still painting over
    the dark hero. Overridden here rather than left to fight. */
-.scene::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  opacity:var(--env,1);
+.fl-env{position:absolute;inset:0;z-index:0;pointer-events:none;will-change:opacity;
+  /* Its own raster, so the sticky scene composites it instead of repainting
+     the whole gradient stack as the hero moves. Harmless under the scene's
+     perspective: translateZ(0) resolves to a scale of exactly 1. */
+  transform:translateZ(0);backface-visibility:hidden;
   background:
-    linear-gradient(180deg,transparent 62%,rgba(120,226,238,.07) 72%,rgba(20,26,34,.42) 100%),
-    radial-gradient(128% 100% at 50% 42%,transparent 60%,rgba(6,12,20,.34) 100%),
-    radial-gradient(38% 44% at 22% 48%,rgba(96,214,208,.075),transparent 78%),
-    radial-gradient(34% 40% at 55% 40%,rgba(128,198,236,.070),transparent 80%),
-    radial-gradient(36% 42% at 80% 50%,rgba(96,206,214,.055),transparent 80%),
-    radial-gradient(92% 72% at 50% 42%,rgba(26,39,52,.85) 0%,rgba(24,34,46,.55) 40%,rgba(22,29,39,.22) 74%,transparent 100%)}
+    linear-gradient(180deg,transparent 62%,rgba(120,226,238,.07) 72%,rgba(20,26,34,.40) 100%),
+    radial-gradient(128% 100% at 50% 42%,transparent 62%,rgba(6,12,20,.30) 100%),
+    /* Neon pools, wide and very soft so they bleed into one another. A big
+       transparent colour ramp is what a blur of a small bright blob would give
+       you anyway, and it costs nothing to composite — an actual blur filter on
+       a layer this size is one of the most expensive things you can put behind
+       a scrolling page. Overlapping them is what makes the colour read as
+       lit air rather than as shapes. */
+    radial-gradient(58% 66% at 15% 42%,rgba(62,255,190,.28),rgba(52,236,214,.12) 44%,transparent 80%),
+    radial-gradient(56% 62% at 50% 56%,rgba(47,232,255,.28),rgba(80,190,255,.11) 46%,transparent 82%),
+    radial-gradient(58% 64% at 86% 40%,rgba(150,140,255,.26),rgba(178,112,255,.10) 46%,transparent 82%),
+    radial-gradient(92% 72% at 50% 42%,rgba(26,39,52,.72) 0%,rgba(24,34,46,.44) 40%,rgba(22,29,39,.18) 74%,transparent 100%)}
 .scene::after{content:none}
 .fl-stage{position:absolute;inset:0;z-index:2;transform-style:preserve-3d;pointer-events:none}
 .fl-mark{position:absolute;inset:0;margin:0;
@@ -586,16 +595,32 @@ nav .brand,nav .nl a{color:var(--ink)}
 .fl-moving .g-body{fill:rgba(221,246,255,.13);stroke:rgba(221,246,255,.13)}
 @media(hover:none){.fl-svg .g-refl{display:none}}
 
+/* On a phone the section copy sat left while the hero captions sat centred,
+   so the page read as two different alignments stacked on each other. Both
+   .sec-head and the group titles are flex rows, so centring the text alone is
+   not enough — the rows have to centre their own items too. Nothing moves on
+   desktop; the two-column heading there is intact. */
+@media(max-width:760px){
+  .sec-head{justify-content:center;text-align:center;flex-direction:column;align-items:center}
+  .sec-head p{margin-left:auto;margin-right:auto;text-align:center}
+  .sec-head .fbtn,.sec-head .filterbtn{margin-inline:auto}
+  .disc-group .gt{justify-content:center;text-align:center;flex-wrap:wrap;row-gap:2px}
+  .sec .k{text-align:center}
+  /* The newsletter block is its own grid, not a .sec-head. */
+  #nl .k,#nl h2,#nl p{text-align:center}
+  #nl .nlform{margin-inline:auto}
+}
 /* On a narrow, tall viewport the aurora's ellipses stretch vertically and read
    as three separate columns. Widen and flatten them so it stays one wash of
    light sitting behind the word. */
 @media(max-width:760px){
-  .scene::before{background:
-    linear-gradient(180deg,transparent 66%,rgba(120,226,238,.06) 76%,rgba(20,26,34,.42) 100%),
-    radial-gradient(140% 100% at 50% 44%,transparent 62%,rgba(6,12,20,.32) 100%),
-    radial-gradient(60% 22% at 30% 50%,rgba(96,214,208,.075),transparent 80%),
-    radial-gradient(56% 20% at 70% 45%,rgba(128,198,236,.068),transparent 82%),
-    radial-gradient(116% 68% at 50% 44%,rgba(26,39,52,.85) 0%,rgba(24,34,46,.55) 40%,rgba(22,29,39,.22) 74%,transparent 100%)}
+  .fl-env{background:
+    linear-gradient(180deg,transparent 66%,rgba(120,226,238,.06) 76%,rgba(20,26,34,.40) 100%),
+    radial-gradient(140% 100% at 50% 44%,transparent 64%,rgba(6,12,20,.28) 100%),
+    radial-gradient(86% 26% at 20% 42%,rgba(62,255,190,.26),rgba(62,255,190,.10) 44%,transparent 80%),
+    radial-gradient(82% 24% at 54% 58%,rgba(47,232,255,.28),rgba(47,232,255,.11) 44%,transparent 82%),
+    radial-gradient(84% 25% at 82% 40%,rgba(140,150,255,.24),rgba(140,150,255,.09) 44%,transparent 82%),
+    radial-gradient(116% 68% at 50% 44%,rgba(26,39,52,.72) 0%,rgba(24,34,46,.44) 40%,rgba(22,29,39,.18) 74%,transparent 100%)}
   /* Every width here is proportional, so at phone sizes the bevel lands near a
      hairline. Widen the whole bead so it still reads as a rounded edge. */
   .fl-svg .g-body,.fl-svg .g-refr{stroke-width:.052em}

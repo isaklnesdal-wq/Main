@@ -48,12 +48,16 @@
 body {
   background-color: var(--surface-0);
   background-image:
-    radial-gradient(78% 14% at 14% 7%, rgba(62, 207, 142, 0.11), transparent 74%),
-    radial-gradient(84% 15% at 88% 24%, rgba(96, 132, 232, 0.097), transparent 76%),
-    radial-gradient(78% 14% at 10% 41%, rgba(72, 196, 196, 0.094), transparent 76%),
-    radial-gradient(84% 15% at 90% 58%, rgba(62, 207, 142, 0.088), transparent 76%),
-    radial-gradient(78% 14% at 14% 75%, rgba(96, 132, 232, 0.094), transparent 76%),
-    radial-gradient(84% 15% at 88% 92%, rgba(72, 196, 196, 0.083), transparent 76%),
+    /* Neon pools, wide and very soft so they bleed into one another — the same
+       set the homepage uses, so the colour under your feet carries across. A
+       broad transparent ramp gives what a blur of a small bright blob would,
+       without a filter that would repaint on every scroll frame. */
+    radial-gradient(92% 17% at 12% 7%, rgba(62, 255, 190, 0.19), rgba(62, 255, 190, 0.07) 46%, transparent 80%),
+    radial-gradient(96% 18% at 90% 23%, rgba(120, 150, 255, 0.18), rgba(120, 150, 255, 0.07) 46%, transparent 82%),
+    radial-gradient(92% 17% at 8% 40%, rgba(47, 232, 255, 0.19), rgba(47, 232, 255, 0.07) 46%, transparent 82%),
+    radial-gradient(96% 18% at 92% 57%, rgba(178, 112, 255, 0.16), rgba(178, 112, 255, 0.06) 46%, transparent 82%),
+    radial-gradient(92% 17% at 12% 74%, rgba(62, 255, 190, 0.17), rgba(62, 255, 190, 0.06) 46%, transparent 82%),
+    radial-gradient(96% 18% at 90% 91%, rgba(47, 232, 255, 0.17), rgba(47, 232, 255, 0.06) 46%, transparent 82%),
     linear-gradient(180deg, #141A22 0%, #171E2A 10%, #1A2333 22%, #1D2839 34%,
       #1F2C40 46%, #1E2D42 56%, #1B2839 68%, #182231 80%, #161C26 90%, #141A22 100%);
   background-repeat: no-repeat;

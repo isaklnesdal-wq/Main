@@ -98,6 +98,7 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
 <!-- ===== Hero: real Higgsfield video autoplays; scroll ZOOMS INTO the disc ===== -->
 <section id="journey">
   <div class="scene" id="scene">
+    <div class="fl-env" id="flenv" aria-hidden="true"></div>
     <!-- Typography intro: no disc, no photo, no scenery. The word is the
          only subject; scrolling dollies the camera into it. -->
     <div class="fl-stage">
@@ -118,12 +119,12 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
                  very low: the centre of a letter is supposed to be almost clear,
                  so this may only tint what is already there. -->
             <linearGradient id="flRefr" gradientUnits="userSpaceOnUse" x1="8%" y1="0" x2="96%" y2="0">
-              <stop offset="0"   stop-color="#C6F2F8" stop-opacity=".11"/>
-              <stop offset=".30" stop-color="#DDF6FF" stop-opacity=".19"/>
-              <stop offset=".52" stop-color="#EEF9FF" stop-opacity=".22"/>
-              <stop offset=".68" stop-color="#B8FFD9" stop-opacity=".10"/>
-              <stop offset=".82" stop-color="#C6F2F8" stop-opacity=".17"/>
-              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".09"/>
+              <stop offset="0"   stop-color="#7CFFD4" stop-opacity=".16"/>
+              <stop offset=".30" stop-color="#5FE8FF" stop-opacity=".24"/>
+              <stop offset=".52" stop-color="#CFF4FF" stop-opacity=".26"/>
+              <stop offset=".68" stop-color="#B08CFF" stop-opacity=".16"/>
+              <stop offset=".82" stop-color="#6FE6FF" stop-opacity=".20"/>
+              <stop offset="1"   stop-color="#8CFFD0" stop-opacity=".12"/>
             </linearGradient>
             <!-- Body tint. The specified progression, but at the alpha of a
                  clear solid: the interior carries the colour, it does not become
@@ -469,7 +470,8 @@ if(window.Lenis && !REDUCED && !matchMedia('(pointer:coarse)').matches){
    illustrated disc-golf bag before the bags grid. Only transform and
    opacity are animated — composited on the GPU, no repaint. */
 const journey=document.getElementById('journey');
-const sceneEl=document.getElementById('scene');
+const flenv=document.getElementById('flenv');
+let lastEnv='';
 const flmark=document.getElementById('flmark');
 /* ---- Dissolve ------------------------------------------------------------
    The wordmark is rasterised once, at idle, into a small offscreen canvas. Every
@@ -890,7 +892,11 @@ function loop(){
          while the field is still dense, so what you watch leave is crystal. */
       /* Dissolve the hero's own environment as the intro ends, so the join
          with the catalogue is the page field meeting itself. */
-      scene.style.setProperty('--env',(1-smooth(clamp(0,1,(p-0.62)/0.34))).toFixed(3));
+      /* Written on the environment layer itself, and only when it actually
+         changes. Setting a custom property on .scene invalidated style for
+         every node in the hero, every frame. */
+      if(flenv){const ev=(1-smooth(clamp(0,1,(p-0.62)/0.34))).toFixed(2);
+        if(ev!==lastEnv){lastEnv=ev;flenv.style.opacity=ev}}
       const q=smooth(clamp(0,1,(p-0.44)/0.52));
       flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.42)/0.32))).toFixed(3);
       if(flshards){
