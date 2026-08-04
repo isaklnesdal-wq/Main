@@ -30,9 +30,9 @@
   --color-on-dark: #F2F5F9;
   --color-on-dark-soft: rgba(242, 245, 249, 0.62);
 
-  --surface-0: #141A22;
-  --surface-1: #19212C;
-  --surface-2: #202938;
+  --surface-0: #171D26;
+  --surface-1: #1C2431;
+  --surface-2: #232D3E;
 
   --glass: rgba(255, 255, 255, 0.045);
   --glass-strong: rgba(255, 255, 255, 0.075);
@@ -58,8 +58,8 @@ body {
     radial-gradient(108% 21% at 94% 57%, rgba(178, 112, 255, 0.23), rgba(178, 112, 255, 0.08) 46%, transparent 84%),
     radial-gradient(104% 20% at 10% 74%, rgba(62, 255, 190, 0.24), rgba(62, 255, 190, 0.09) 46%, transparent 84%),
     radial-gradient(108% 21% at 92% 91%, rgba(47, 232, 255, 0.24), rgba(47, 232, 255, 0.09) 46%, transparent 84%),
-    linear-gradient(180deg, #141A22 0%, #171E2A 10%, #1A2333 22%, #1D2839 34%,
-      #1F2C40 46%, #1E2D42 56%, #1B2839 68%, #182231 80%, #161C26 90%, #141A22 100%);
+    linear-gradient(180deg, #171D26 0%, #1A222F 10%, #1E2839 22%, #212E41 34%,
+      #233248 46%, #223349 56%, #1F2E40 68%, #1B2637 80%, #191F2A 90%, #171D26 100%);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-attachment: scroll;

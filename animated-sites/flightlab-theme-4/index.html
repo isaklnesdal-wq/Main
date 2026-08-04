@@ -359,7 +359,7 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
    neighbours — the light is always crossfading and never restarts at a
    boundary. Nothing here is anchored to a section, so section edges have
    nothing to coincide with. */
-body{background:#141A22;color:var(--ink);position:relative}
+body{background:#171D26;color:var(--ink);position:relative}
 body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
   z-index:-2;pointer-events:none;
   background:
@@ -372,8 +372,8 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
     /* graphite -> dark navy -> slate blue -> a breath of cyan -> graphite.
        Each step is a couple of points of luminance, so the journey is felt
        rather than seen. */
-    linear-gradient(180deg,#141A22 0%,#171E2A 10%,#1A2333 22%,#1D2839 34%,
-      #1F2C40 46%,#1E2D42 56%,#1B2839 68%,#182231 80%,#161C26 90%,#141A22 100%)}
+    linear-gradient(180deg,#171D26 0%,#1A222F 10%,#1E2839 22%,#212E41 34%,
+      #233248 46%,#223349 56%,#1F2E40 68%,#1B2637 80%,#191F2A 90%,#171D26 100%)}
 .sec{position:relative;z-index:1}
 .sec.light,.sec.dark{background:transparent;color:var(--ink)}
 /* Sections carry no background and no ambient pool of their own. Anything
@@ -595,22 +595,16 @@ nav .brand,nav .nl a{color:var(--ink)}
   transform-box:fill-box;transform-origin:center;
   transform:translateY(.74em) scaleY(-1);mask:url(#flReflFade)}
 
-/* Under motion the crystal keeps its contour, body and bevel only. A stroked
-   glyph is far dearer to raster than a filled one, a gradient stroke consults a
-   paint server for every covered pixel, and none of the fine detail survives
-   the camera speed — so what remains is flat-painted. */
-.fl-moving .g-ext,.fl-moving .g-valley,.fl-moving .g-spec,
-.fl-moving .g-caus,.fl-moving .g-refr{display:none}
-/* The reflection stays through the whole intro. It sits inside .fl-mark, so it
-   takes the same dolly and the same fade as the word without being told to —
-   it travels and comes apart with it. Only its paint is cheapened while moving:
-   a flat stroke instead of a gradient, and no mask, because the distance fade
-   is not readable at that speed and a mask is a second pass. */
-.fl-moving .g-refl{stroke:#BFE6F2;stroke-width:.018em;opacity:.15;
-  mask:none;-webkit-mask:none}
-.fl-moving .g-bevel{stroke-width:.026em;stroke:#E4F6FC}
-.fl-moving .g-dark{stroke:rgba(8,18,30,.55);stroke-width:.030em}
-.fl-moving .g-body{fill:rgba(221,246,255,.13);stroke:rgba(221,246,255,.13)}
+/* THE MATERIAL IS CONSTANT.
+   There used to be a .fl-moving state here that swapped the glass to flat paint,
+   thinned the bevel and hid five of the nine layers the moment the camera
+   started. It was a real saving, and it was also wrong: it meant the crystal
+   visibly changed substance the instant you touched the wheel. Every layer,
+   every gradient, every width and the reflection are now identical from load
+   until the fragments take over. Nothing about the material is keyed to scroll.
+
+   What still animates is only the camera — transform and perspective — the
+   opacity of the final dissolve, and the fragments themselves. */
 
 /* On a phone the section copy sat left while the hero captions sat centred,
    so the page read as two different alignments stacked on each other. Both
@@ -701,22 +695,22 @@ nav .brand,nav .nl a{color:var(--ink)}
                  very low: the centre of a letter is supposed to be almost clear,
                  so this may only tint what is already there. -->
             <linearGradient id="flRefr" gradientUnits="userSpaceOnUse" x1="8%" y1="0" x2="96%" y2="0">
-              <stop offset="0"   stop-color="#7CFFD4" stop-opacity=".10"/>
-              <stop offset=".30" stop-color="#5FE8FF" stop-opacity=".15"/>
-              <stop offset=".52" stop-color="#CFF4FF" stop-opacity=".16"/>
-              <stop offset=".68" stop-color="#B08CFF" stop-opacity=".10"/>
-              <stop offset=".82" stop-color="#6FE6FF" stop-opacity=".13"/>
-              <stop offset="1"   stop-color="#8CFFD0" stop-opacity=".08"/>
+              <stop offset="0"   stop-color="#7CFFD4" stop-opacity=".055"/>
+              <stop offset=".30" stop-color="#5FE8FF" stop-opacity=".085"/>
+              <stop offset=".52" stop-color="#CFF4FF" stop-opacity=".09"/>
+              <stop offset=".68" stop-color="#B08CFF" stop-opacity=".055"/>
+              <stop offset=".82" stop-color="#6FE6FF" stop-opacity=".075"/>
+              <stop offset="1"   stop-color="#8CFFD0" stop-opacity=".045"/>
             </linearGradient>
             <!-- Body tint. The specified progression, but at the alpha of a
                  clear solid: the interior carries the colour, it does not become
                  the colour. -->
             <linearGradient id="flBody" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".12"/>
-              <stop offset=".22" stop-color="#EEF9FF" stop-opacity=".045"/>
-              <stop offset=".50" stop-color="#DDF6FF" stop-opacity=".025"/>
-              <stop offset=".74" stop-color="#C6F2F8" stop-opacity=".045"/>
-              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".11"/>
+              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".085"/>
+              <stop offset=".22" stop-color="#EEF9FF" stop-opacity=".022"/>
+              <stop offset=".50" stop-color="#DDF6FF" stop-opacity=".010"/>
+              <stop offset=".74" stop-color="#C6F2F8" stop-opacity=".022"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".075"/>
             </linearGradient>
             <!-- Light gathered through the solid and released at the base. -->
             <linearGradient id="flCaus" x1="0" y1="0" x2="0" y2="1">
@@ -732,13 +726,13 @@ nav .brand,nav .nl a{color:var(--ink)}
                  what carry the reflections while the centre stays clear. The one
                  green stop is a reflection caught low on the form, nothing more. -->
             <linearGradient id="flBevel" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".92"/>
-              <stop offset=".12" stop-color="#EEF9FF" stop-opacity=".64"/>
+              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".98"/>
+              <stop offset=".12" stop-color="#EEF9FF" stop-opacity=".72"/>
               <stop offset=".34" stop-color="#DDF6FF" stop-opacity=".22"/>
               <stop offset=".56" stop-color="#C6F2F8" stop-opacity=".26"/>
               <stop offset=".74" stop-color="#B8FFD9" stop-opacity=".24"/>
-              <stop offset=".88" stop-color="#C6F2F8" stop-opacity=".52"/>
-              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".78"/>
+              <stop offset=".88" stop-color="#C6F2F8" stop-opacity=".60"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".86"/>
             </linearGradient>
             <linearGradient id="flValley" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"   stop-color="#0F2634" stop-opacity=".32"/>
