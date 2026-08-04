@@ -469,6 +469,7 @@ if(window.Lenis && !REDUCED && !matchMedia('(pointer:coarse)').matches){
    illustrated disc-golf bag before the bags grid. Only transform and
    opacity are animated — composited on the GPU, no repaint. */
 const journey=document.getElementById('journey');
+const sceneEl=document.getElementById('scene');
 const flmark=document.getElementById('flmark');
 /* ---- Dissolve ------------------------------------------------------------
    The wordmark is rasterised once, at idle, into a small offscreen canvas. Every
@@ -887,6 +888,9 @@ function loop(){
         : 'translate3d('+dx.toFixed(1)+'px,0,'+z.toFixed(2)+'px) rotateY('+yaw.toFixed(2)+'deg)';
       /* The word hands over to the chips rather than simply fading: it clears
          while the field is still dense, so what you watch leave is crystal. */
+      /* Dissolve the hero's own environment as the intro ends, so the join
+         with the catalogue is the page field meeting itself. */
+      scene.style.setProperty('--env',(1-smooth(clamp(0,1,(p-0.62)/0.34))).toFixed(3));
       const q=smooth(clamp(0,1,(p-0.44)/0.52));
       flmark.style.opacity=(1-smooth(clamp(0,1,(p-0.42)/0.32))).toFixed(3);
       if(flshards){

@@ -1,0 +1,245 @@
+/* ==========================================================================
+   FLIGHTLAB — premium-dark.css  (flightlab-theme-4 only)
+
+   Loaded after base/sections/commerce on every template except the homepage,
+   which ships its own styles in fl-home.css. It re-tones the existing design
+   and changes nothing structural: no layout, spacing, grid or component markup
+   is touched. Every rule here either retunes a token or repaints a surface
+   that was hardcoded light.
+
+   Palette matches the homepage exactly:
+     #141A22 page, #19212C secondary, #202938 cards.
+   Green is reserved for things you can act on — buttons, active nav, focus,
+   badges, prices on sale — so it keeps its value. Everything else is neutral.
+   ========================================================================== */
+
+/* ---------- Tokens ---------- */
+:root {
+  /* base.css still defines --color-signal as #F25C1A, the old orange. Nothing
+     overrode it, so primary buttons, the cart badge, sale prices, pagination
+     and the focus ring were all rendering orange on every page except the
+     homepage. This is the line that makes the accent FlightLab green. */
+  --color-signal: #3ECF8E;
+  --color-signal-hover: #5BE0A5;
+  --on-signal: #06140D;
+
+  --color-ink: #E7ECF3;
+  --color-ink-soft: rgba(231, 236, 243, 0.60);
+  --color-sand: #19212C;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-on-dark: #F2F5F9;
+  --color-on-dark-soft: rgba(242, 245, 249, 0.62);
+
+  --surface-0: #141A22;
+  --surface-1: #19212C;
+  --surface-2: #202938;
+
+  --glass: rgba(255, 255, 255, 0.045);
+  --glass-strong: rgba(255, 255, 255, 0.075);
+  --glass-line: rgba(255, 255, 255, 0.10);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --shadow-lift: 0 20px 48px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- One continuous page ----------
+   The same field the homepage uses, so moving from the homepage to a product
+   or collection page does not change the colour under your feet. */
+body {
+  background-color: var(--surface-0);
+  background-image:
+    radial-gradient(78% 14% at 14% 7%, rgba(62, 207, 142, 0.11), transparent 74%),
+    radial-gradient(84% 15% at 88% 24%, rgba(96, 132, 232, 0.097), transparent 76%),
+    radial-gradient(78% 14% at 10% 41%, rgba(72, 196, 196, 0.094), transparent 76%),
+    radial-gradient(84% 15% at 90% 58%, rgba(62, 207, 142, 0.088), transparent 76%),
+    radial-gradient(78% 14% at 14% 75%, rgba(96, 132, 232, 0.094), transparent 76%),
+    radial-gradient(84% 15% at 88% 92%, rgba(72, 196, 196, 0.083), transparent 76%),
+    linear-gradient(180deg, #141A22 0%, #171E2A 10%, #1A2333 22%, #1D2839 34%,
+      #1F2C40 46%, #1E2D42 56%, #1B2839 68%, #182231 80%, #161C26 90%, #141A22 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-attachment: scroll;
+  color: var(--color-ink);
+}
+
+.section--dark,
+.section--sand,
+.collection-hero,
+.site-footer { background: transparent; }
+
+.section--dark { color: var(--color-ink); }
+
+.section { position: relative; }
+/* No rule between sections. A drawn hairline is exactly what makes a page read
+   as stacked blocks; the space around a heading already separates it. */
+.section + .section::before { content: none; }
+
+/* ---------- Header, announcement, bottom nav: subtle glass ---------- */
+.site-header {
+  background: rgba(20, 26, 34, 0.66);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+  border-bottom: 1px solid var(--glass-line);
+  color: var(--color-ink);
+}
+.site-header__logo { color: var(--color-ink); }
+.header-icon-btn:hover { background: var(--glass-strong); }
+
+.announcement {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--color-on-dark-soft);
+  border-bottom: 1px solid var(--glass-line);
+}
+
+.mobile-bottom-nav {
+  background: rgba(20, 26, 34, 0.78);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border-top: 1px solid var(--glass-line);
+}
+.mobile-bottom-nav__item { color: var(--color-ink-soft); }
+
+/* A blurred bar that is on screen for the whole scroll has to re-composite
+   every frame, which is the one glass effect phones actually feel. Opaque
+   there instead — visually near-identical, materially cheaper. */
+@media (hover: none) {
+  .site-header,
+  .mobile-bottom-nav {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .site-header { background: rgba(20, 26, 34, 0.95); }
+  .mobile-bottom-nav { background: rgba(20, 26, 34, 0.96); }
+}
+
+.mobile-menu__panel { background: var(--surface-1); }
+.mobile-menu__backdrop,
+.cart-drawer__backdrop { background: rgba(8, 12, 18, 0.66); }
+
+/* ---------- Surfaces that were hardcoded light ---------- */
+.discovery-card {
+  background: linear-gradient(180deg, #232D3E, #202938);
+  border-color: var(--glass-line);
+}
+.discovery-card:hover {
+  background: linear-gradient(180deg, #263143, #222B3B);
+  border-color: rgba(62, 207, 142, 0.34);
+  box-shadow: var(--shadow-lift);
+}
+
+.field input, .field textarea, .field select,
+.newsletter-form input[type='email'],
+.utility-page .search-form input,
+.facets__price input {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--glass-line);
+  color: var(--color-ink);
+}
+input::placeholder, textarea::placeholder { color: rgba(231, 236, 243, 0.36); }
+
+.field input:focus, .field textarea:focus,
+.newsletter-form input[type='email']:focus { border-color: var(--color-signal); }
+
+.collection-toolbar select {
+  background-color: rgba(255, 255, 255, 0.04);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23E7ECF3' stroke-width='1.5'/%3E%3C/svg%3E");
+  border-color: var(--glass-line);
+  color: var(--color-ink);
+}
+
+.facets summary { border-color: var(--glass-line); }
+.facets details[open] summary { border-color: var(--color-signal); }
+.facets__panel {
+  background: var(--surface-2);
+  border-color: var(--glass-line);
+}
+.active-facets a { background: var(--glass-strong); }
+
+.cart-drawer__panel { background: var(--surface-1); }
+.cart-drawer__foot {
+  background: var(--surface-2);
+  border-top-color: var(--glass-line);
+}
+
+.product-trust {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+}
+.qty { border-color: var(--glass-line); }
+.qty button:hover { background: var(--glass-strong); }
+
+.flight-chip { background: rgba(255, 255, 255, 0.05); }
+.flight-chip__value { color: var(--color-ink); }
+
+.flight-tile {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--glass-line);
+}
+.flight-tile:hover, .flight-tile:focus-within {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(62, 207, 142, 0.45);
+}
+
+/* Media wells and gradient placeholders, re-keyed to the palette */
+.product-card__media,
+.product-gallery__main,
+.product-gallery__thumb,
+.cart-line__media { background: var(--surface-2); }
+.product-gallery__thumb.is-active { border-color: var(--color-signal); }
+
+.brand-story__media,
+.article-card__media { background: linear-gradient(160deg, #202938, #141A22); }
+.category-card__media { background: linear-gradient(150deg, #202938 0%, #19212C 55%, #141A22 100%); }
+.community__media { background: linear-gradient(120deg, #1D2534 0%, #141A22 60%, #19212C 100%); }
+.beginner-guide__media {
+  background:
+    radial-gradient(90% 90% at 20% 15%, rgba(62, 207, 142, 0.10) 0%, transparent 55%),
+    linear-gradient(200deg, #202938 0%, #141A22 100%);
+}
+.hero__media--placeholder {
+  background: linear-gradient(158deg, #141A22 0%, #19212C 58%, #141A22 100%);
+}
+
+/* ---------- Green, used sparingly ----------
+   Eyebrows and trust icons were signal-coloured, which put the accent on
+   almost every section. Those go neutral; green stays on the things a
+   visitor can act on, plus a few genuine highlights. */
+.eyebrow, .on-dark .eyebrow { color: rgba(231, 236, 243, 0.42); }
+.trust-bar__item svg { color: rgba(231, 236, 243, 0.38); }
+.discovery-card__label { color: rgba(231, 236, 243, 0.42); }
+
+.btn--primary { background: var(--color-signal); color: var(--on-signal); }
+.btn--primary:hover {
+  background: var(--color-signal-hover);
+  box-shadow: 0 10px 30px rgba(62, 207, 142, 0.22);
+}
+.btn--secondary {
+  background: var(--glass);
+  border-color: var(--glass-line);
+  color: var(--color-ink);
+}
+.btn--secondary:hover, .on-dark .btn--secondary:hover { background: var(--glass-strong); }
+.btn--dark {
+  background: var(--glass-strong);
+  color: var(--color-ink);
+  border-color: var(--glass-line);
+}
+.btn--dark:hover { background: rgba(255, 255, 255, 0.11); }
+
+.product-card__badge { background: var(--glass-strong); color: var(--color-ink); }
+.product-card__badge--sale { background: var(--color-signal); color: var(--on-signal); }
+.cart-count { background: var(--color-signal); color: var(--on-signal); }
+.pagination [aria-current='page'] { background: var(--color-signal); color: var(--on-signal); }
+.pagination a:hover { background: var(--glass-strong); }
+.newsletter__success { color: var(--color-signal); }
+.price--sale { color: var(--color-signal); }
+.product-trust__item svg { color: var(--color-signal); }
+.site-footer a:hover { color: var(--color-signal); }
+
+.site-footer {
+  border-top: 1px solid var(--glass-line);
+  color: var(--color-on-dark-soft);
+}
+.site-footer__bottom { border-top-color: var(--glass-line); }
+
+.skip-link { background: var(--color-signal); color: var(--on-signal); }

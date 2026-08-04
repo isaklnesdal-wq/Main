@@ -475,24 +475,28 @@ nav .brand,nav .nl a{color:var(--ink)}
    under a perspective, not from scale(), so the letters gain real depth and
    stay text rather than a stretched bitmap. */
 .scene{perspective:1100px;perspective-origin:50% 46%;
-  /* Aurora, vignette and floor were three separate full-viewport elements.
-     Inside a sticky container each one repaints on its own every frame, so they
-     are folded into one stack of background layers on a single element — same
-     picture, a third of the paint. Order is top layer first. */
+  /* No background of its own. The hero used to paint an opaque backdrop, and
+     where it ended — the join with #discer — the colour jumped 23 points of
+     blue in a single row, which is the line you could see. The page field runs
+     behind the hero instead, so the hero and the catalogue are literally the
+     same surface and there is nothing left to step. */
+  background:transparent}
+/* The environment lives here so it can be faded out on its own as the intro
+   finishes. By the time the join arrives there is nothing left of it, and the
+   hero hands over to the page field with no edge at all.
+   These two pseudo-elements also carried leftovers from the original light
+   theme — a 32%-white radial and a green ground wash, both still painting over
+   the dark hero. Overridden here rather than left to fight. */
+.scene::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  opacity:var(--env,1);
   background:
-    /* the floor the word stands on */
-    linear-gradient(180deg,transparent 62%,rgba(120,226,238,.07) 72%,rgba(20,26,34,.58) 100%),
-    /* vignette */
-    radial-gradient(128% 100% at 50% 42%,transparent 60%,rgba(6,12,20,.46) 100%),
-    /* The environment. This is not meant to be seen — it is here only so the
-       crystal has something to reflect, the way a studio puts a softbox where
-       the camera cannot see it. At these levels the pools are near the
-       threshold of visibility against the base, so what reveals them is the
-       refraction inside the letters and almost nothing else. */
+    linear-gradient(180deg,transparent 62%,rgba(120,226,238,.07) 72%,rgba(20,26,34,.42) 100%),
+    radial-gradient(128% 100% at 50% 42%,transparent 60%,rgba(6,12,20,.34) 100%),
     radial-gradient(38% 44% at 22% 48%,rgba(96,214,208,.075),transparent 78%),
     radial-gradient(34% 40% at 55% 40%,rgba(128,198,236,.070),transparent 80%),
     radial-gradient(36% 42% at 80% 50%,rgba(96,206,214,.055),transparent 80%),
-    radial-gradient(92% 72% at 50% 42%,#1A2734 0%,#18222E 40%,#161D27 74%,#141A22 100%)}
+    radial-gradient(92% 72% at 50% 42%,rgba(26,39,52,.85) 0%,rgba(24,34,46,.55) 40%,rgba(22,29,39,.22) 74%,transparent 100%)}
+.scene::after{content:none}
 .fl-stage{position:absolute;inset:0;z-index:2;transform-style:preserve-3d;pointer-events:none}
 .fl-mark{position:absolute;inset:0;margin:0;
   transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
@@ -586,12 +590,12 @@ nav .brand,nav .nl a{color:var(--ink)}
    as three separate columns. Widen and flatten them so it stays one wash of
    light sitting behind the word. */
 @media(max-width:760px){
-  .scene{background:
-    linear-gradient(180deg,transparent 66%,rgba(120,226,238,.06) 76%,rgba(20,26,34,.58) 100%),
-    radial-gradient(140% 100% at 50% 44%,transparent 62%,rgba(6,12,20,.44) 100%),
+  .scene::before{background:
+    linear-gradient(180deg,transparent 66%,rgba(120,226,238,.06) 76%,rgba(20,26,34,.42) 100%),
+    radial-gradient(140% 100% at 50% 44%,transparent 62%,rgba(6,12,20,.32) 100%),
     radial-gradient(60% 22% at 30% 50%,rgba(96,214,208,.075),transparent 80%),
     radial-gradient(56% 20% at 70% 45%,rgba(128,198,236,.068),transparent 82%),
-    radial-gradient(116% 68% at 50% 44%,#1A2734 0%,#18222E 40%,#161D27 74%,#141A22 100%)}
+    radial-gradient(116% 68% at 50% 44%,rgba(26,39,52,.85) 0%,rgba(24,34,46,.55) 40%,rgba(22,29,39,.22) 74%,transparent 100%)}
   /* Every width here is proportional, so at phone sizes the bevel lands near a
      hairline. Widen the whole bead so it still reads as a rounded edge. */
   .fl-svg .g-body,.fl-svg .g-refr{stroke-width:.052em}
