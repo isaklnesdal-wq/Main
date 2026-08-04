@@ -330,7 +330,7 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
   --signal:#3ECF8E; --forest:#3ECF8E; --teal:#3ECF8E; --gold:rgba(232,237,244,.5);
   --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.07);
   --glassbrd:rgba(255,255,255,.12); --blur:blur(22px) saturate(150%);
-  --surf2:#1B2230; --surf3:#151A22; --surf4:#202938;
+  --surf2:#19212C; --surf3:#141A22; --surf4:#202938;
   --on-signal:#06140D;
 }
 
@@ -348,18 +348,18 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
    neighbours — the light is always crossfading and never restarts at a
    boundary. Nothing here is anchored to a section, so section edges have
    nothing to coincide with. */
-body{background:#151A22;color:var(--ink);position:relative}
+body{background:#141A22;color:var(--ink);position:relative}
 body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
   z-index:-2;pointer-events:none;
   background:
-    radial-gradient(78% 14% at 14% 7%,rgba(62,207,142,.10),transparent 74%),
-    radial-gradient(84% 15% at 88% 24%,rgba(96,132,232,.088),transparent 76%),
-    radial-gradient(78% 14% at 10% 41%,rgba(72,196,196,.085),transparent 76%),
-    radial-gradient(84% 15% at 90% 58%,rgba(62,207,142,.080),transparent 76%),
-    radial-gradient(78% 14% at 14% 75%,rgba(96,132,232,.085),transparent 76%),
-    radial-gradient(84% 15% at 88% 92%,rgba(72,196,196,.075),transparent 76%),
-    linear-gradient(180deg,#151A22 0%,#1B2230 11%,#181E29 22%,#202938 33%,
-      #1A2130 44%,#1C2433 55%,#171D27 66%,#1E2735 77%,#1A2130 88%,#151A22 100%)}
+    radial-gradient(78% 14% at 14% 7%,rgba(62,207,142,.11),transparent 74%),
+    radial-gradient(84% 15% at 88% 24%,rgba(96,132,232,.097),transparent 76%),
+    radial-gradient(78% 14% at 10% 41%,rgba(72,196,196,.094),transparent 76%),
+    radial-gradient(84% 15% at 90% 58%,rgba(62,207,142,.088),transparent 76%),
+    radial-gradient(78% 14% at 14% 75%,rgba(96,132,232,.094),transparent 76%),
+    radial-gradient(84% 15% at 88% 92%,rgba(72,196,196,.083),transparent 76%),
+    linear-gradient(180deg,#141A22 0%,#19212C 11%,#1A222E 22%,#202938 33%,
+      #1C2433 44%,#1E2736 55%,#1A2130 66%,#202938 77%,#1C2433 88%,#141A22 100%)}
 .sec{position:relative;z-index:1}
 .sec.light,.sec.dark{background:transparent;color:var(--ink)}
 /* Sections carry no background and no ambient pool of their own. Anything
@@ -397,7 +397,7 @@ footer{border-top:none!important}
 footer{background:transparent;border-top:1px solid rgba(255,255,255,.08);color:var(--ink);position:relative;z-index:1}
 .bigmark{color:rgba(232,237,244,.10)}
 #bagportal{background:transparent;position:relative;z-index:1}
-#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,rgba(40,51,70,.55),rgba(27,34,48,.30) 62%,rgba(21,26,34,0))}
+#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,rgba(43,55,75,.55),rgba(30,38,52,.30) 62%,rgba(20,26,34,0))}
 #bagportal .bpcap{color:var(--ink)}
 #bagportal .bpcap .k{color:var(--signal)}
 #bagportal .bagbig{filter:drop-shadow(0 26px 54px rgba(0,0,0,.6))}
@@ -478,14 +478,14 @@ nav .brand,nav .nl a{color:var(--ink)}
      picture, a third of the paint. Order is top layer first. */
   background:
     /* the floor the word stands on */
-    linear-gradient(180deg,transparent 62%,rgba(74,196,214,.06) 72%,rgba(21,26,34,.62) 100%),
+    linear-gradient(180deg,transparent 62%,rgba(120,226,238,.07) 72%,rgba(20,26,34,.58) 100%),
     /* vignette */
-    radial-gradient(128% 100% at 50% 42%,transparent 52%,rgba(4,10,20,.72) 100%),
+    radial-gradient(128% 100% at 50% 42%,transparent 54%,rgba(5,11,20,.66) 100%),
     /* the light the crystal refracts — soft studio pools, not a neon field */
     radial-gradient(34% 40% at 24% 50%,rgba(58,214,190,.26),transparent 76%),
     radial-gradient(30% 36% at 54% 42%,rgba(104,196,232,.24),transparent 78%),
     radial-gradient(32% 38% at 78% 50%,rgba(72,206,202,.20),transparent 78%),
-    radial-gradient(86% 66% at 50% 40%,#123A5C 0%,#122B46 34%,#161E2C 70%,#151A22 100%)}
+    radial-gradient(86% 66% at 50% 40%,#154265 0%,#14304E 34%,#192232 70%,#141A22 100%)}
 .fl-stage{position:absolute;inset:0;z-index:2;transform-style:preserve-3d;pointer-events:none}
 .fl-mark{position:absolute;inset:0;margin:0;
   transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
@@ -522,28 +522,28 @@ nav .brand,nav .nl a{color:var(--ink)}
 /* Thickness. Offset behind the near face, so all you see is the sliver of the
    far side that the near face does not cover — which is what reading depth in
    a transparent solid actually consists of. */
-.fl-svg .g-ext{fill:rgba(16,44,64,.55);stroke:rgba(16,44,64,.55);stroke-width:.070em;
-  transform:translate(.016em,.021em)}
+.fl-svg .g-ext{fill:rgba(16,44,64,.55);stroke:rgba(16,44,64,.55);stroke-width:.040em;
+  transform:translate(.019em,.025em)}
 /* The dark contour. Widest layer, sitting under the body, so what shows is a
    dark rim just outside the glass. This single layer is most of the difference
    between glass and neon: a lit tube has no dark edge, a solid always does. */
-.fl-svg .g-dark{fill:none;stroke:url(#flDark);stroke-width:.098em;
+.fl-svg .g-dark{fill:none;stroke:url(#flDark);stroke-width:.062em;
   transform:translate(.004em,.006em)}
 /* Refraction. The gradient is in userSpaceOnUse, so it is positioned against
    the viewport rather than the glyph: it restates the light behind the word but
    displaced sideways, which is what you see through a thick solid — the
    backdrop, shifted and concentrated, not the backdrop lined up behind it. */
-.fl-svg .g-refr{fill:url(#flRefr);stroke:url(#flRefr);stroke-width:.072em}
+.fl-svg .g-refr{fill:url(#flRefr);stroke:url(#flRefr);stroke-width:.040em}
 /* Body tint: blue-green, and almost clear. */
-.fl-svg .g-body{fill:url(#flBody);stroke:url(#flBody);stroke-width:.072em}
+.fl-svg .g-body{fill:url(#flBody);stroke:url(#flBody);stroke-width:.040em}
 /* The caustic — light gathered and dumped out of the bottom of the solid. */
 .fl-svg .g-caus{fill:url(#flCaus)}
 /* The polished bevel. Moderate, and dark through its middle band. */
-.fl-svg .g-bevel{fill:none;stroke:url(#flBevel);stroke-width:.056em}
-.fl-svg .g-valley{fill:none;stroke:url(#flValley);stroke-width:.022em}
+.fl-svg .g-bevel{fill:none;stroke:url(#flBevel);stroke-width:.040em}
+.fl-svg .g-valley{fill:none;stroke:url(#flValley);stroke-width:.016em}
 /* Specular. Confined to the top of the form, because a light points from
    somewhere. An outline that is equally bright the whole way round is a tube. */
-.fl-svg .g-spec{fill:none;stroke:url(#flSpec);stroke-width:.013em;mask:url(#flSpecPos)}
+.fl-svg .g-spec{fill:none;stroke:url(#flSpec);stroke-width:.011em;mask:url(#flSpecPos)}
 .fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.034em;opacity:.16;
   transform-box:fill-box;transform-origin:center;
   transform:translateY(.74em) scaleY(-1);mask:url(#flReflFade)}
@@ -554,9 +554,9 @@ nav .brand,nav .nl a{color:var(--ink)}
    the camera speed — so what remains is flat-painted. */
 .fl-moving .g-ext,.fl-moving .g-valley,.fl-moving .g-spec,
 .fl-moving .g-refl,.fl-moving .g-caus,.fl-moving .g-refr{display:none}
-.fl-moving .g-bevel{stroke-width:.030em;stroke:#CFEAF6}
+.fl-moving .g-bevel{stroke-width:.026em;stroke:#E4F6FC}
 .fl-moving .g-dark{stroke:rgba(8,18,30,.55)}
-.fl-moving .g-body{fill:rgba(150,206,226,.17);stroke:rgba(150,206,226,.17)}
+.fl-moving .g-body{fill:rgba(221,246,255,.13);stroke:rgba(221,246,255,.13)}
 @media(hover:none){.fl-svg .g-refl{display:none}}
 
 /* On a narrow, tall viewport the aurora's ellipses stretch vertically and read
@@ -564,18 +564,18 @@ nav .brand,nav .nl a{color:var(--ink)}
    light sitting behind the word. */
 @media(max-width:760px){
   .scene{background:
-    linear-gradient(180deg,transparent 66%,rgba(74,196,214,.05) 76%,rgba(21,26,34,.62) 100%),
-    radial-gradient(140% 100% at 50% 44%,transparent 54%,rgba(4,10,20,.70) 100%),
+    linear-gradient(180deg,transparent 66%,rgba(120,226,238,.06) 76%,rgba(20,26,34,.58) 100%),
+    radial-gradient(140% 100% at 50% 44%,transparent 56%,rgba(5,11,20,.64) 100%),
     radial-gradient(58% 20% at 30% 50%,rgba(58,214,190,.26),transparent 78%),
     radial-gradient(54% 18% at 70% 45%,rgba(104,196,232,.24),transparent 80%),
-    radial-gradient(110% 62% at 50% 42%,#123A5C 0%,#122B46 34%,#161E2C 70%,#151A22 100%)}
+    radial-gradient(110% 62% at 50% 42%,#154265 0%,#14304E 34%,#192232 70%,#141A22 100%)}
   /* Every width here is proportional, so at phone sizes the bevel lands near a
      hairline. Widen the whole bead so it still reads as a rounded edge. */
-  .fl-svg .g-body{stroke-width:.086em}
-  .fl-svg .g-bevel{stroke-width:.070em}
-  .fl-svg .g-valley{stroke-width:.026em}
-  .fl-svg .g-core{stroke-width:.014em}
-  .fl-svg .g-refl{stroke-width:.044em}
+  .fl-svg .g-body,.fl-svg .g-refr{stroke-width:.052em}
+  .fl-svg .g-dark{stroke-width:.076em}
+  .fl-svg .g-bevel{stroke-width:.052em}
+  .fl-svg .g-valley{stroke-width:.019em}
+  .fl-svg .g-spec{stroke-width:.013em}
 }
-#loader{background:#151A22}
+#loader{background:#141A22}
 .grain{opacity:.035}

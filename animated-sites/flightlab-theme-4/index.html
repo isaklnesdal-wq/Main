@@ -341,7 +341,7 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
   --signal:#3ECF8E; --forest:#3ECF8E; --teal:#3ECF8E; --gold:rgba(232,237,244,.5);
   --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.07);
   --glassbrd:rgba(255,255,255,.12); --blur:blur(22px) saturate(150%);
-  --surf2:#1B2230; --surf3:#151A22; --surf4:#202938;
+  --surf2:#19212C; --surf3:#141A22; --surf4:#202938;
   --on-signal:#06140D;
 }
 
@@ -359,18 +359,18 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
    neighbours — the light is always crossfading and never restarts at a
    boundary. Nothing here is anchored to a section, so section edges have
    nothing to coincide with. */
-body{background:#151A22;color:var(--ink);position:relative}
+body{background:#141A22;color:var(--ink);position:relative}
 body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
   z-index:-2;pointer-events:none;
   background:
-    radial-gradient(78% 14% at 14% 7%,rgba(62,207,142,.10),transparent 74%),
-    radial-gradient(84% 15% at 88% 24%,rgba(96,132,232,.088),transparent 76%),
-    radial-gradient(78% 14% at 10% 41%,rgba(72,196,196,.085),transparent 76%),
-    radial-gradient(84% 15% at 90% 58%,rgba(62,207,142,.080),transparent 76%),
-    radial-gradient(78% 14% at 14% 75%,rgba(96,132,232,.085),transparent 76%),
-    radial-gradient(84% 15% at 88% 92%,rgba(72,196,196,.075),transparent 76%),
-    linear-gradient(180deg,#151A22 0%,#1B2230 11%,#181E29 22%,#202938 33%,
-      #1A2130 44%,#1C2433 55%,#171D27 66%,#1E2735 77%,#1A2130 88%,#151A22 100%)}
+    radial-gradient(78% 14% at 14% 7%,rgba(62,207,142,.11),transparent 74%),
+    radial-gradient(84% 15% at 88% 24%,rgba(96,132,232,.097),transparent 76%),
+    radial-gradient(78% 14% at 10% 41%,rgba(72,196,196,.094),transparent 76%),
+    radial-gradient(84% 15% at 90% 58%,rgba(62,207,142,.088),transparent 76%),
+    radial-gradient(78% 14% at 14% 75%,rgba(96,132,232,.094),transparent 76%),
+    radial-gradient(84% 15% at 88% 92%,rgba(72,196,196,.083),transparent 76%),
+    linear-gradient(180deg,#141A22 0%,#19212C 11%,#1A222E 22%,#202938 33%,
+      #1C2433 44%,#1E2736 55%,#1A2130 66%,#202938 77%,#1C2433 88%,#141A22 100%)}
 .sec{position:relative;z-index:1}
 .sec.light,.sec.dark{background:transparent;color:var(--ink)}
 /* Sections carry no background and no ambient pool of their own. Anything
@@ -408,7 +408,7 @@ footer{border-top:none!important}
 footer{background:transparent;border-top:1px solid rgba(255,255,255,.08);color:var(--ink);position:relative;z-index:1}
 .bigmark{color:rgba(232,237,244,.10)}
 #bagportal{background:transparent;position:relative;z-index:1}
-#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,rgba(40,51,70,.55),rgba(27,34,48,.30) 62%,rgba(21,26,34,0))}
+#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,rgba(43,55,75,.55),rgba(30,38,52,.30) 62%,rgba(20,26,34,0))}
 #bagportal .bpcap{color:var(--ink)}
 #bagportal .bpcap .k{color:var(--signal)}
 #bagportal .bagbig{filter:drop-shadow(0 26px 54px rgba(0,0,0,.6))}
@@ -489,14 +489,14 @@ nav .brand,nav .nl a{color:var(--ink)}
      picture, a third of the paint. Order is top layer first. */
   background:
     /* the floor the word stands on */
-    linear-gradient(180deg,transparent 62%,rgba(74,196,214,.06) 72%,rgba(21,26,34,.62) 100%),
+    linear-gradient(180deg,transparent 62%,rgba(120,226,238,.07) 72%,rgba(20,26,34,.58) 100%),
     /* vignette */
-    radial-gradient(128% 100% at 50% 42%,transparent 52%,rgba(4,10,20,.72) 100%),
+    radial-gradient(128% 100% at 50% 42%,transparent 54%,rgba(5,11,20,.66) 100%),
     /* the light the crystal refracts — soft studio pools, not a neon field */
     radial-gradient(34% 40% at 24% 50%,rgba(58,214,190,.26),transparent 76%),
     radial-gradient(30% 36% at 54% 42%,rgba(104,196,232,.24),transparent 78%),
     radial-gradient(32% 38% at 78% 50%,rgba(72,206,202,.20),transparent 78%),
-    radial-gradient(86% 66% at 50% 40%,#123A5C 0%,#122B46 34%,#161E2C 70%,#151A22 100%)}
+    radial-gradient(86% 66% at 50% 40%,#154265 0%,#14304E 34%,#192232 70%,#141A22 100%)}
 .fl-stage{position:absolute;inset:0;z-index:2;transform-style:preserve-3d;pointer-events:none}
 .fl-mark{position:absolute;inset:0;margin:0;
   transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
@@ -533,28 +533,28 @@ nav .brand,nav .nl a{color:var(--ink)}
 /* Thickness. Offset behind the near face, so all you see is the sliver of the
    far side that the near face does not cover — which is what reading depth in
    a transparent solid actually consists of. */
-.fl-svg .g-ext{fill:rgba(16,44,64,.55);stroke:rgba(16,44,64,.55);stroke-width:.070em;
-  transform:translate(.016em,.021em)}
+.fl-svg .g-ext{fill:rgba(16,44,64,.55);stroke:rgba(16,44,64,.55);stroke-width:.040em;
+  transform:translate(.019em,.025em)}
 /* The dark contour. Widest layer, sitting under the body, so what shows is a
    dark rim just outside the glass. This single layer is most of the difference
    between glass and neon: a lit tube has no dark edge, a solid always does. */
-.fl-svg .g-dark{fill:none;stroke:url(#flDark);stroke-width:.098em;
+.fl-svg .g-dark{fill:none;stroke:url(#flDark);stroke-width:.062em;
   transform:translate(.004em,.006em)}
 /* Refraction. The gradient is in userSpaceOnUse, so it is positioned against
    the viewport rather than the glyph: it restates the light behind the word but
    displaced sideways, which is what you see through a thick solid — the
    backdrop, shifted and concentrated, not the backdrop lined up behind it. */
-.fl-svg .g-refr{fill:url(#flRefr);stroke:url(#flRefr);stroke-width:.072em}
+.fl-svg .g-refr{fill:url(#flRefr);stroke:url(#flRefr);stroke-width:.040em}
 /* Body tint: blue-green, and almost clear. */
-.fl-svg .g-body{fill:url(#flBody);stroke:url(#flBody);stroke-width:.072em}
+.fl-svg .g-body{fill:url(#flBody);stroke:url(#flBody);stroke-width:.040em}
 /* The caustic — light gathered and dumped out of the bottom of the solid. */
 .fl-svg .g-caus{fill:url(#flCaus)}
 /* The polished bevel. Moderate, and dark through its middle band. */
-.fl-svg .g-bevel{fill:none;stroke:url(#flBevel);stroke-width:.056em}
-.fl-svg .g-valley{fill:none;stroke:url(#flValley);stroke-width:.022em}
+.fl-svg .g-bevel{fill:none;stroke:url(#flBevel);stroke-width:.040em}
+.fl-svg .g-valley{fill:none;stroke:url(#flValley);stroke-width:.016em}
 /* Specular. Confined to the top of the form, because a light points from
    somewhere. An outline that is equally bright the whole way round is a tube. */
-.fl-svg .g-spec{fill:none;stroke:url(#flSpec);stroke-width:.013em;mask:url(#flSpecPos)}
+.fl-svg .g-spec{fill:none;stroke:url(#flSpec);stroke-width:.011em;mask:url(#flSpecPos)}
 .fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.034em;opacity:.16;
   transform-box:fill-box;transform-origin:center;
   transform:translateY(.74em) scaleY(-1);mask:url(#flReflFade)}
@@ -565,9 +565,9 @@ nav .brand,nav .nl a{color:var(--ink)}
    the camera speed — so what remains is flat-painted. */
 .fl-moving .g-ext,.fl-moving .g-valley,.fl-moving .g-spec,
 .fl-moving .g-refl,.fl-moving .g-caus,.fl-moving .g-refr{display:none}
-.fl-moving .g-bevel{stroke-width:.030em;stroke:#CFEAF6}
+.fl-moving .g-bevel{stroke-width:.026em;stroke:#E4F6FC}
 .fl-moving .g-dark{stroke:rgba(8,18,30,.55)}
-.fl-moving .g-body{fill:rgba(150,206,226,.17);stroke:rgba(150,206,226,.17)}
+.fl-moving .g-body{fill:rgba(221,246,255,.13);stroke:rgba(221,246,255,.13)}
 @media(hover:none){.fl-svg .g-refl{display:none}}
 
 /* On a narrow, tall viewport the aurora's ellipses stretch vertically and read
@@ -575,20 +575,20 @@ nav .brand,nav .nl a{color:var(--ink)}
    light sitting behind the word. */
 @media(max-width:760px){
   .scene{background:
-    linear-gradient(180deg,transparent 66%,rgba(74,196,214,.05) 76%,rgba(21,26,34,.62) 100%),
-    radial-gradient(140% 100% at 50% 44%,transparent 54%,rgba(4,10,20,.70) 100%),
+    linear-gradient(180deg,transparent 66%,rgba(120,226,238,.06) 76%,rgba(20,26,34,.58) 100%),
+    radial-gradient(140% 100% at 50% 44%,transparent 56%,rgba(5,11,20,.64) 100%),
     radial-gradient(58% 20% at 30% 50%,rgba(58,214,190,.26),transparent 78%),
     radial-gradient(54% 18% at 70% 45%,rgba(104,196,232,.24),transparent 80%),
-    radial-gradient(110% 62% at 50% 42%,#123A5C 0%,#122B46 34%,#161E2C 70%,#151A22 100%)}
+    radial-gradient(110% 62% at 50% 42%,#154265 0%,#14304E 34%,#192232 70%,#141A22 100%)}
   /* Every width here is proportional, so at phone sizes the bevel lands near a
      hairline. Widen the whole bead so it still reads as a rounded edge. */
-  .fl-svg .g-body{stroke-width:.086em}
-  .fl-svg .g-bevel{stroke-width:.070em}
-  .fl-svg .g-valley{stroke-width:.026em}
-  .fl-svg .g-core{stroke-width:.014em}
-  .fl-svg .g-refl{stroke-width:.044em}
+  .fl-svg .g-body,.fl-svg .g-refr{stroke-width:.052em}
+  .fl-svg .g-dark{stroke-width:.076em}
+  .fl-svg .g-bevel{stroke-width:.052em}
+  .fl-svg .g-valley{stroke-width:.019em}
+  .fl-svg .g-spec{stroke-width:.013em}
 }
-#loader{background:#151A22}
+#loader{background:#141A22}
 .grain{opacity:.035}
 </style>
 </head>
@@ -628,84 +628,75 @@ nav .brand,nav .nl a{color:var(--ink)}
       <h1 class="fl-mark" id="flmark" aria-label="FLIGHTLAB">
         <svg class="fl-svg" id="flsvg" aria-hidden="true" focusable="false">
           <defs>
-            <!-- The contour where the surface turns away. Not black: glass
-                 picks up the room even in shadow. -->
+            <!-- The contour where the surface turns away from the light.
+                 Not black: crystal picks up the room even in shadow. -->
             <linearGradient id="flDark" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#0A1826" stop-opacity=".50"/>
-              <stop offset=".42" stop-color="#08131F" stop-opacity=".70"/>
-              <stop offset="1"   stop-color="#0B1B2A" stop-opacity=".58"/>
+              <stop offset="0"   stop-color="#0D1B28" stop-opacity=".42"/>
+              <stop offset=".42" stop-color="#0B1622" stop-opacity=".62"/>
+              <stop offset="1"   stop-color="#0E1E2C" stop-opacity=".50"/>
             </linearGradient>
             <!-- Refraction. userSpaceOnUse, so this is measured against the
-                 viewport, not the glyph: the same light that is behind the word,
-                 shifted right and concentrated, the way a thick solid moves what
-                 you see through it. -->
+                 viewport rather than the glyph: it restates the light behind the
+                 word, displaced sideways — what you see through a thick solid is
+                 the backdrop moved, not the backdrop lined up behind it. Kept
+                 very low: the centre of a letter is supposed to be almost clear,
+                 so this may only tint what is already there. -->
             <linearGradient id="flRefr" gradientUnits="userSpaceOnUse" x1="8%" y1="0" x2="96%" y2="0">
-              <stop offset="0"   stop-color="#1E4A52" stop-opacity=".26"/>
-              <stop offset=".30" stop-color="#34BEAA" stop-opacity=".40"/>
-              <stop offset=".56" stop-color="#5ABEE1" stop-opacity=".44"/>
-              <stop offset=".80" stop-color="#38C4BA" stop-opacity=".36"/>
-              <stop offset="1"   stop-color="#1E4A52" stop-opacity=".24"/>
+              <stop offset="0"   stop-color="#C6F2F8" stop-opacity=".07"/>
+              <stop offset=".30" stop-color="#DDF6FF" stop-opacity=".13"/>
+              <stop offset=".52" stop-color="#EEF9FF" stop-opacity=".15"/>
+              <stop offset=".68" stop-color="#B8FFD9" stop-opacity=".07"/>
+              <stop offset=".82" stop-color="#C6F2F8" stop-opacity=".12"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".06"/>
             </linearGradient>
-            <!-- Body tint: blue-green, and almost clear. -->
+            <!-- Body tint. The specified progression, but at the alpha of a
+                 clear solid: the interior carries the colour, it does not become
+                 the colour. -->
             <linearGradient id="flBody" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#CFEFFB" stop-opacity=".20"/>
-              <stop offset=".24" stop-color="#8FC8DE" stop-opacity=".07"/>
-              <stop offset=".54" stop-color="#6FA8C4" stop-opacity=".04"/>
-              <stop offset=".72" stop-color="#7FD8BC" stop-opacity=".07"/>
-              <stop offset="1"   stop-color="#D6F4FF" stop-opacity=".18"/>
+              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".17"/>
+              <stop offset=".22" stop-color="#EEF9FF" stop-opacity=".08"/>
+              <stop offset=".50" stop-color="#DDF6FF" stop-opacity=".05"/>
+              <stop offset=".74" stop-color="#C6F2F8" stop-opacity=".08"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".16"/>
             </linearGradient>
-            <!-- Light gathered through the solid and dumped out of the bottom. -->
+            <!-- Light gathered through the solid and released at the base. -->
             <linearGradient id="flCaus" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"    stop-color="#FFFFFF" stop-opacity="0"/>
-              <stop offset=".62"  stop-color="#FFFFFF" stop-opacity="0"/>
-              <stop offset=".80"  stop-color="#B7ECFA" stop-opacity=".10"/>
-              <stop offset=".93"  stop-color="#DFF8FF" stop-opacity=".30"/>
-              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".46"/>
+              <stop offset=".64"  stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset=".79"  stop-color="#C6F2F8" stop-opacity=".12"/>
+              <stop offset=".88"  stop-color="#B8FFD9" stop-opacity=".16"/>
+              <stop offset=".95"  stop-color="#DDF6FF" stop-opacity=".34"/>
+              <stop offset="1"    stop-color="#F8FCFF" stop-opacity=".52"/>
             </linearGradient>
-            <!-- The polished bevel: bright where the key light lands, dark
-                 through the middle where the surface rolls away, a little
-                 bounce at the base. -->
+            <!-- The bevel. This is where the material actually lives: the whole
+                 specified progression at full strength, because the edges are
+                 what carry the reflections while the centre stays clear. The one
+                 green stop is a reflection caught low on the form, nothing more. -->
             <linearGradient id="flBevel" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#F2FCFF" stop-opacity=".82"/>
-              <stop offset=".13" stop-color="#CDEAF6" stop-opacity=".50"/>
-              <stop offset=".34" stop-color="#6E9CB4" stop-opacity=".16"/>
-              <stop offset=".62" stop-color="#7FB0C6" stop-opacity=".18"/>
-              <stop offset=".86" stop-color="#CDEEFA" stop-opacity=".44"/>
-              <stop offset="1"   stop-color="#EEFBFF" stop-opacity=".66"/>
+              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".92"/>
+              <stop offset=".12" stop-color="#EEF9FF" stop-opacity=".64"/>
+              <stop offset=".34" stop-color="#DDF6FF" stop-opacity=".22"/>
+              <stop offset=".56" stop-color="#C6F2F8" stop-opacity=".26"/>
+              <stop offset=".74" stop-color="#B8FFD9" stop-opacity=".24"/>
+              <stop offset=".88" stop-color="#C6F2F8" stop-opacity=".52"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".78"/>
             </linearGradient>
             <linearGradient id="flValley" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#0C2536" stop-opacity=".40"/>
-              <stop offset=".5"  stop-color="#10303F" stop-opacity=".22"/>
-              <stop offset="1"   stop-color="#0C2536" stop-opacity=".34"/>
+              <stop offset="0"   stop-color="#0F2634" stop-opacity=".32"/>
+              <stop offset=".5"  stop-color="#14313E" stop-opacity=".16"/>
+              <stop offset="1"   stop-color="#0F2634" stop-opacity=".26"/>
             </linearGradient>
             <!-- Specular, confined to the top of the form. Transparent below a
                  fifth of the height, so the highlight sits where a light points
                  instead of ringing the whole letter. -->
             <linearGradient id="flSpec" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"    stop-color="#FFFFFF" stop-opacity=".98"/>
-              <stop offset=".10"  stop-color="#FFFFFF" stop-opacity=".72"/>
-              <stop offset=".19"  stop-color="#FFFFFF" stop-opacity=".10"/>
+              <stop offset=".10"  stop-color="#F8FCFF" stop-opacity=".74"/>
+              <stop offset=".19"  stop-color="#EEF9FF" stop-opacity=".12"/>
               <stop offset=".24"  stop-color="#FFFFFF" stop-opacity="0"/>
               <stop offset=".90"  stop-color="#FFFFFF" stop-opacity="0"/>
-              <stop offset="1"    stop-color="#EAFAFF" stop-opacity=".30"/>
+              <stop offset="1"    stop-color="#DDF6FF" stop-opacity=".34"/>
             </linearGradient>
-            <!-- Two studio lights, as mask pools. Stops fade to transparent
-                 rather than to black so the two overlap additively instead of
-                 the second one punching a hole in the first. -->
-            <radialGradient id="flSpecA" gradientUnits="userSpaceOnUse" cx="30%" cy="34%" r="30%">
-              <stop offset="0"   stop-color="#fff" stop-opacity="1"/>
-              <stop offset=".55" stop-color="#fff" stop-opacity=".45"/>
-              <stop offset="1"   stop-color="#fff" stop-opacity="0"/>
-            </radialGradient>
-            <radialGradient id="flSpecB" gradientUnits="userSpaceOnUse" cx="74%" cy="42%" r="22%">
-              <stop offset="0"   stop-color="#fff" stop-opacity=".92"/>
-              <stop offset=".5"  stop-color="#fff" stop-opacity=".38"/>
-              <stop offset="1"   stop-color="#fff" stop-opacity="0"/>
-            </radialGradient>
-            <mask id="flSpecPos" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
-              <rect x="0" y="0" width="100%" height="100%" fill="url(#flSpecA)"/>
-              <rect x="0" y="0" width="100%" height="100%" fill="url(#flSpecB)"/>
-            </mask>
             <linearGradient id="flReflGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"   stop-color="#000"/>
               <stop offset=".38" stop-color="#2A2A2A"/>

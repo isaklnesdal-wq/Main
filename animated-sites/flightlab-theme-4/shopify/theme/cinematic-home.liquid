@@ -104,84 +104,75 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
       <h1 class="fl-mark" id="flmark" aria-label="FLIGHTLAB">
         <svg class="fl-svg" id="flsvg" aria-hidden="true" focusable="false">
           <defs>
-            <!-- The contour where the surface turns away. Not black: glass
-                 picks up the room even in shadow. -->
+            <!-- The contour where the surface turns away from the light.
+                 Not black: crystal picks up the room even in shadow. -->
             <linearGradient id="flDark" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#0A1826" stop-opacity=".50"/>
-              <stop offset=".42" stop-color="#08131F" stop-opacity=".70"/>
-              <stop offset="1"   stop-color="#0B1B2A" stop-opacity=".58"/>
+              <stop offset="0"   stop-color="#0D1B28" stop-opacity=".42"/>
+              <stop offset=".42" stop-color="#0B1622" stop-opacity=".62"/>
+              <stop offset="1"   stop-color="#0E1E2C" stop-opacity=".50"/>
             </linearGradient>
             <!-- Refraction. userSpaceOnUse, so this is measured against the
-                 viewport, not the glyph: the same light that is behind the word,
-                 shifted right and concentrated, the way a thick solid moves what
-                 you see through it. -->
+                 viewport rather than the glyph: it restates the light behind the
+                 word, displaced sideways — what you see through a thick solid is
+                 the backdrop moved, not the backdrop lined up behind it. Kept
+                 very low: the centre of a letter is supposed to be almost clear,
+                 so this may only tint what is already there. -->
             <linearGradient id="flRefr" gradientUnits="userSpaceOnUse" x1="8%" y1="0" x2="96%" y2="0">
-              <stop offset="0"   stop-color="#1E4A52" stop-opacity=".26"/>
-              <stop offset=".30" stop-color="#34BEAA" stop-opacity=".40"/>
-              <stop offset=".56" stop-color="#5ABEE1" stop-opacity=".44"/>
-              <stop offset=".80" stop-color="#38C4BA" stop-opacity=".36"/>
-              <stop offset="1"   stop-color="#1E4A52" stop-opacity=".24"/>
+              <stop offset="0"   stop-color="#C6F2F8" stop-opacity=".07"/>
+              <stop offset=".30" stop-color="#DDF6FF" stop-opacity=".13"/>
+              <stop offset=".52" stop-color="#EEF9FF" stop-opacity=".15"/>
+              <stop offset=".68" stop-color="#B8FFD9" stop-opacity=".07"/>
+              <stop offset=".82" stop-color="#C6F2F8" stop-opacity=".12"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".06"/>
             </linearGradient>
-            <!-- Body tint: blue-green, and almost clear. -->
+            <!-- Body tint. The specified progression, but at the alpha of a
+                 clear solid: the interior carries the colour, it does not become
+                 the colour. -->
             <linearGradient id="flBody" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#CFEFFB" stop-opacity=".20"/>
-              <stop offset=".24" stop-color="#8FC8DE" stop-opacity=".07"/>
-              <stop offset=".54" stop-color="#6FA8C4" stop-opacity=".04"/>
-              <stop offset=".72" stop-color="#7FD8BC" stop-opacity=".07"/>
-              <stop offset="1"   stop-color="#D6F4FF" stop-opacity=".18"/>
+              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".17"/>
+              <stop offset=".22" stop-color="#EEF9FF" stop-opacity=".08"/>
+              <stop offset=".50" stop-color="#DDF6FF" stop-opacity=".05"/>
+              <stop offset=".74" stop-color="#C6F2F8" stop-opacity=".08"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".16"/>
             </linearGradient>
-            <!-- Light gathered through the solid and dumped out of the bottom. -->
+            <!-- Light gathered through the solid and released at the base. -->
             <linearGradient id="flCaus" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"    stop-color="#FFFFFF" stop-opacity="0"/>
-              <stop offset=".62"  stop-color="#FFFFFF" stop-opacity="0"/>
-              <stop offset=".80"  stop-color="#B7ECFA" stop-opacity=".10"/>
-              <stop offset=".93"  stop-color="#DFF8FF" stop-opacity=".30"/>
-              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".46"/>
+              <stop offset=".64"  stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset=".79"  stop-color="#C6F2F8" stop-opacity=".12"/>
+              <stop offset=".88"  stop-color="#B8FFD9" stop-opacity=".16"/>
+              <stop offset=".95"  stop-color="#DDF6FF" stop-opacity=".34"/>
+              <stop offset="1"    stop-color="#F8FCFF" stop-opacity=".52"/>
             </linearGradient>
-            <!-- The polished bevel: bright where the key light lands, dark
-                 through the middle where the surface rolls away, a little
-                 bounce at the base. -->
+            <!-- The bevel. This is where the material actually lives: the whole
+                 specified progression at full strength, because the edges are
+                 what carry the reflections while the centre stays clear. The one
+                 green stop is a reflection caught low on the form, nothing more. -->
             <linearGradient id="flBevel" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#F2FCFF" stop-opacity=".82"/>
-              <stop offset=".13" stop-color="#CDEAF6" stop-opacity=".50"/>
-              <stop offset=".34" stop-color="#6E9CB4" stop-opacity=".16"/>
-              <stop offset=".62" stop-color="#7FB0C6" stop-opacity=".18"/>
-              <stop offset=".86" stop-color="#CDEEFA" stop-opacity=".44"/>
-              <stop offset="1"   stop-color="#EEFBFF" stop-opacity=".66"/>
+              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".92"/>
+              <stop offset=".12" stop-color="#EEF9FF" stop-opacity=".64"/>
+              <stop offset=".34" stop-color="#DDF6FF" stop-opacity=".22"/>
+              <stop offset=".56" stop-color="#C6F2F8" stop-opacity=".26"/>
+              <stop offset=".74" stop-color="#B8FFD9" stop-opacity=".24"/>
+              <stop offset=".88" stop-color="#C6F2F8" stop-opacity=".52"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".78"/>
             </linearGradient>
             <linearGradient id="flValley" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#0C2536" stop-opacity=".40"/>
-              <stop offset=".5"  stop-color="#10303F" stop-opacity=".22"/>
-              <stop offset="1"   stop-color="#0C2536" stop-opacity=".34"/>
+              <stop offset="0"   stop-color="#0F2634" stop-opacity=".32"/>
+              <stop offset=".5"  stop-color="#14313E" stop-opacity=".16"/>
+              <stop offset="1"   stop-color="#0F2634" stop-opacity=".26"/>
             </linearGradient>
             <!-- Specular, confined to the top of the form. Transparent below a
                  fifth of the height, so the highlight sits where a light points
                  instead of ringing the whole letter. -->
             <linearGradient id="flSpec" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"    stop-color="#FFFFFF" stop-opacity=".98"/>
-              <stop offset=".10"  stop-color="#FFFFFF" stop-opacity=".72"/>
-              <stop offset=".19"  stop-color="#FFFFFF" stop-opacity=".10"/>
+              <stop offset=".10"  stop-color="#F8FCFF" stop-opacity=".74"/>
+              <stop offset=".19"  stop-color="#EEF9FF" stop-opacity=".12"/>
               <stop offset=".24"  stop-color="#FFFFFF" stop-opacity="0"/>
               <stop offset=".90"  stop-color="#FFFFFF" stop-opacity="0"/>
-              <stop offset="1"    stop-color="#EAFAFF" stop-opacity=".30"/>
+              <stop offset="1"    stop-color="#DDF6FF" stop-opacity=".34"/>
             </linearGradient>
-            <!-- Two studio lights, as mask pools. Stops fade to transparent
-                 rather than to black so the two overlap additively instead of
-                 the second one punching a hole in the first. -->
-            <radialGradient id="flSpecA" gradientUnits="userSpaceOnUse" cx="30%" cy="34%" r="30%">
-              <stop offset="0"   stop-color="#fff" stop-opacity="1"/>
-              <stop offset=".55" stop-color="#fff" stop-opacity=".45"/>
-              <stop offset="1"   stop-color="#fff" stop-opacity="0"/>
-            </radialGradient>
-            <radialGradient id="flSpecB" gradientUnits="userSpaceOnUse" cx="74%" cy="42%" r="22%">
-              <stop offset="0"   stop-color="#fff" stop-opacity=".92"/>
-              <stop offset=".5"  stop-color="#fff" stop-opacity=".38"/>
-              <stop offset="1"   stop-color="#fff" stop-opacity="0"/>
-            </radialGradient>
-            <mask id="flSpecPos" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
-              <rect x="0" y="0" width="100%" height="100%" fill="url(#flSpecA)"/>
-              <rect x="0" y="0" width="100%" height="100%" fill="url(#flSpecB)"/>
-            </mask>
             <linearGradient id="flReflGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"   stop-color="#000"/>
               <stop offset=".38" stop-color="#2A2A2A"/>
