@@ -108,9 +108,9 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
             <!-- The contour where the surface turns away from the light.
                  Not black: crystal picks up the room even in shadow. -->
             <linearGradient id="flDark" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#0D1B28" stop-opacity=".24"/>
-              <stop offset=".42" stop-color="#0B1622" stop-opacity=".36"/>
-              <stop offset="1"   stop-color="#0E1E2C" stop-opacity=".28"/>
+              <stop offset="0"   stop-color="#12283A" stop-opacity=".16"/>
+              <stop offset=".42" stop-color="#0E2032" stop-opacity=".24"/>
+              <stop offset="1"   stop-color="#12283A" stop-opacity=".18"/>
             </linearGradient>
             <!-- Refraction. userSpaceOnUse, so this is measured against the
                  viewport rather than the glyph: it restates the light behind the
@@ -150,13 +150,13 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
                  what carry the reflections while the centre stays clear. The one
                  green stop is a reflection caught low on the form, nothing more. -->
             <linearGradient id="flBevel" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".98"/>
-              <stop offset=".12" stop-color="#EEF9FF" stop-opacity=".72"/>
-              <stop offset=".34" stop-color="#DDF6FF" stop-opacity=".22"/>
-              <stop offset=".56" stop-color="#C6F2F8" stop-opacity=".26"/>
+              <stop offset="0"   stop-color="#FFFFFF" stop-opacity="1"/>
+              <stop offset=".12" stop-color="#F6FDFF" stop-opacity=".82"/>
+              <stop offset=".34" stop-color="#DDF6FF" stop-opacity=".26"/>
+              <stop offset=".56" stop-color="#C6F2F8" stop-opacity=".30"/>
               <stop offset=".74" stop-color="#B8FFD9" stop-opacity=".24"/>
-              <stop offset=".88" stop-color="#C6F2F8" stop-opacity=".60"/>
-              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".86"/>
+              <stop offset=".88" stop-color="#D6F7FC" stop-opacity=".70"/>
+              <stop offset="1"   stop-color="#C4F4F9" stop-opacity=".94"/>
             </linearGradient>
             <linearGradient id="flValley" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"   stop-color="#0F2634" stop-opacity=".32"/>
@@ -173,6 +173,21 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
               <stop offset=".24"  stop-color="#FFFFFF" stop-opacity="0"/>
               <stop offset=".90"  stop-color="#FFFFFF" stop-opacity="0"/>
               <stop offset="1"    stop-color="#DDF6FF" stop-opacity=".34"/>
+            </linearGradient>
+            <!-- Colour that only exists inside the glass. Real crystal splits
+                 light where it is thickest and where the surface turns hardest —
+                 the edges and corners — and barely at all across a flat face.
+                 So this is a stroke, not a fill: it can only ever appear on the
+                 edge. The hues run along the word rather than being one tint, so
+                 different letters catch different parts of the spectrum, the way
+                 a real piece does as you move past it. All of it under 0.2 alpha. -->
+            <linearGradient id="flIris" gradientUnits="userSpaceOnUse" x1="6%" y1="20%" x2="94%" y2="80%">
+              <stop offset="0"    stop-color="#5A8CFF" stop-opacity=".13"/>
+              <stop offset=".21"  stop-color="#78F0FF" stop-opacity=".18"/>
+              <stop offset=".43"  stop-color="#FFB4D7" stop-opacity=".12"/>
+              <stop offset=".63"  stop-color="#AA82FF" stop-opacity=".14"/>
+              <stop offset=".83"  stop-color="#6EFFC8" stop-opacity=".11"/>
+              <stop offset="1"    stop-color="#5A8CFF" stop-opacity=".12"/>
             </linearGradient>
             <linearGradient id="flGloss" x1="0" y1="0" x2=".65" y2="1">
               <stop offset="0"    stop-color="#FFFFFF" stop-opacity=".30"/>
@@ -200,6 +215,7 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
           <text class="g-body"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-gloss"  x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-caus"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-iris"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-bevel"  x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-valley" x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-spec"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
