@@ -108,9 +108,9 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
             <!-- The contour where the surface turns away from the light.
                  Not black: crystal picks up the room even in shadow. -->
             <linearGradient id="flDark" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#0D1B28" stop-opacity=".42"/>
-              <stop offset=".42" stop-color="#0B1622" stop-opacity=".62"/>
-              <stop offset="1"   stop-color="#0E1E2C" stop-opacity=".50"/>
+              <stop offset="0"   stop-color="#0D1B28" stop-opacity=".24"/>
+              <stop offset=".42" stop-color="#0B1622" stop-opacity=".36"/>
+              <stop offset="1"   stop-color="#0E1E2C" stop-opacity=".28"/>
             </linearGradient>
             <!-- Refraction. userSpaceOnUse, so this is measured against the
                  viewport rather than the glyph: it restates the light behind the
@@ -119,22 +119,22 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
                  very low: the centre of a letter is supposed to be almost clear,
                  so this may only tint what is already there. -->
             <linearGradient id="flRefr" gradientUnits="userSpaceOnUse" x1="8%" y1="0" x2="96%" y2="0">
-              <stop offset="0"   stop-color="#7CFFD4" stop-opacity=".055"/>
-              <stop offset=".30" stop-color="#5FE8FF" stop-opacity=".085"/>
-              <stop offset=".52" stop-color="#CFF4FF" stop-opacity=".09"/>
-              <stop offset=".68" stop-color="#B08CFF" stop-opacity=".055"/>
-              <stop offset=".82" stop-color="#6FE6FF" stop-opacity=".075"/>
-              <stop offset="1"   stop-color="#8CFFD0" stop-opacity=".045"/>
+              <stop offset="0"   stop-color="#7CFFD4" stop-opacity=".022"/>
+              <stop offset=".30" stop-color="#5FE8FF" stop-opacity=".034"/>
+              <stop offset=".52" stop-color="#CFF4FF" stop-opacity=".036"/>
+              <stop offset=".68" stop-color="#B08CFF" stop-opacity=".022"/>
+              <stop offset=".82" stop-color="#6FE6FF" stop-opacity=".030"/>
+              <stop offset="1"   stop-color="#8CFFD0" stop-opacity=".018"/>
             </linearGradient>
             <!-- Body tint. The specified progression, but at the alpha of a
                  clear solid: the interior carries the colour, it does not become
                  the colour. -->
             <linearGradient id="flBody" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".085"/>
-              <stop offset=".22" stop-color="#EEF9FF" stop-opacity=".022"/>
-              <stop offset=".50" stop-color="#DDF6FF" stop-opacity=".010"/>
-              <stop offset=".74" stop-color="#C6F2F8" stop-opacity=".022"/>
-              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".075"/>
+              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".030"/>
+              <stop offset=".22" stop-color="#EEF9FF" stop-opacity=".008"/>
+              <stop offset=".50" stop-color="#DDF6FF" stop-opacity=".004"/>
+              <stop offset=".74" stop-color="#C6F2F8" stop-opacity=".008"/>
+              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".028"/>
             </linearGradient>
             <!-- Light gathered through the solid and released at the base. -->
             <linearGradient id="flCaus" x1="0" y1="0" x2="0" y2="1">
@@ -167,12 +167,22 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
                  fifth of the height, so the highlight sits where a light points
                  instead of ringing the whole letter. -->
             <linearGradient id="flSpec" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"    stop-color="#FFFFFF" stop-opacity=".98"/>
-              <stop offset=".10"  stop-color="#F8FCFF" stop-opacity=".74"/>
+              <stop offset="0"    stop-color="#FFFFFF" stop-opacity="1"/>
+              <stop offset=".10"  stop-color="#F8FCFF" stop-opacity=".86"/>
               <stop offset=".19"  stop-color="#EEF9FF" stop-opacity=".12"/>
               <stop offset=".24"  stop-color="#FFFFFF" stop-opacity="0"/>
               <stop offset=".90"  stop-color="#FFFFFF" stop-opacity="0"/>
               <stop offset="1"    stop-color="#DDF6FF" stop-opacity=".34"/>
+            </linearGradient>
+            <linearGradient id="flGloss" x1="0" y1="0" x2=".65" y2="1">
+              <stop offset="0"    stop-color="#FFFFFF" stop-opacity=".30"/>
+              <stop offset=".16"  stop-color="#F2FCFF" stop-opacity=".21"/>
+              <stop offset=".33"  stop-color="#DDF6FF" stop-opacity=".05"/>
+              <stop offset=".44"  stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset=".62"  stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset=".74"  stop-color="#C6F2F8" stop-opacity=".10"/>
+              <stop offset=".88"  stop-color="#EAFBFF" stop-opacity=".26"/>
+              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".34"/>
             </linearGradient>
             <linearGradient id="flReflGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"   stop-color="#000"/>
@@ -188,6 +198,7 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
           <text class="g-dark"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-refr"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-body"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <text class="g-gloss"  x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-caus"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-bevel"  x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
           <text class="g-valley" x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>

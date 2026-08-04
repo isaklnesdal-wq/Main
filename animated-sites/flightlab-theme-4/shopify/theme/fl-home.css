@@ -551,7 +551,7 @@ nav .brand,nav .nl a{color:var(--ink)}
 /* Thickness. Offset behind the near face, so all you see is the sliver of the
    far side that the near face does not cover — which is what reading depth in
    a transparent solid actually consists of. */
-.fl-svg .g-ext{fill:rgba(16,44,64,.55);stroke:rgba(16,44,64,.55);stroke-width:.040em;
+.fl-svg .g-ext{fill:rgba(150,205,228,.15);stroke:rgba(150,205,228,.15);stroke-width:.040em;
   transform:translate(.019em,.025em)}
 /* The dark contour. Widest layer, sitting under the body, so what shows is a
    dark rim just outside the glass. This single layer is most of the difference
@@ -565,6 +565,11 @@ nav .brand,nav .nl a{color:var(--ink)}
 .fl-svg .g-refr{fill:url(#flRefr);stroke:url(#flRefr);stroke-width:.040em}
 /* Body tint: blue-green, and almost clear. */
 .fl-svg .g-body{fill:url(#flBody);stroke:url(#flBody);stroke-width:.040em}
+/* Gloss — the sweep of reflected light a polished surface carries across
+   itself. Fill only, so it stays strictly inside the letter: a reflection ON
+   the glass, never a glow around it. This is what stops a fully clear letter
+   from reading as an empty hole. */
+.fl-svg .g-gloss{fill:url(#flGloss)}
 /* The caustic — light gathered and dumped out of the bottom of the solid. */
 .fl-svg .g-caus{fill:url(#flCaus)}
 /* The polished bevel. Moderate, and dark through its middle band. */
