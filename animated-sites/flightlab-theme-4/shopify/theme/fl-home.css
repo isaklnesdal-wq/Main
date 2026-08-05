@@ -754,3 +754,237 @@ nav .brand,nav .nl a{color:var(--ink)}
    difference stopped. That was the last of the divider. The element stays;
    it just no longer double-dithers the one section it happens to live in. */
 .grain{opacity:0}
+
+/* ==========================================================================
+   MATERIAL PASS — one lighting model for the whole page
+
+   Up to here the page was correct but it was still built out of components:
+   every surface had its own background, its own uniform border and its own
+   idea of where the light was. This block does not add anything to look at.
+   It states the lighting once and then makes every surface obey it, so the
+   difference between a card, a button and a chip is which *material* it is,
+   not which style it was given.
+
+   Four materials, and they are the only ones on the page:
+
+     Crystal   the wordmark, and nothing else. Refracts. Untouched here.
+     Graphite  the environment. Absorbs. Never flat, never highlighted.
+     Smoked    cards and panels. Transmits the environment, reflects softly.
+     Satin     buttons, chips, badges, fields. Catches a highlight, never
+               a specular. Brushed, not chromed.
+
+   They deliberately do not react to light the same way, which is what makes
+   them read as different substances rather than different colours.
+   ========================================================================== */
+
+:root{
+  /* One light, above and slightly in front, plus a cool bounce off the floor.
+     Every surface below is lit by these two numbers and nothing else — this
+     is the same pair the crystal's polished top edge and floor bounce already
+     use, so a card and the wordmark are lit by the same lamp. */
+  --lit-top:rgba(248,252,255,.15);
+  --lit-bot:rgba(174,239,245,.055);
+  /* A real edge is not the same brightness the whole way round. The top rail
+     faces the light, the sides graze it, the bottom sees only the bounce.
+     A border that is one flat colour on all four sides is the single most
+     "drawn in a browser" thing a surface can do. */
+  --edge-top:rgba(255,255,255,.17);
+  --edge-side:rgba(255,255,255,.105);
+  --edge-bot:rgba(255,255,255,.055);
+  /* Contact with the ground, not a glow. Neutral, never tinted with the
+     accent — coloured shadow is light a surface does not emit. */
+  --contact:0 18px 40px rgba(6,10,18,.34);
+  --contact-near:0 8px 20px rgba(6,10,18,.30);
+  --contact-far:0 30px 62px rgba(6,10,18,.44);
+}
+
+/* ---------- Graphite: the environment is never still ----------
+   The page field is a document-tall gradient, which gave depth but froze the
+   moment you stopped scrolling. Light in a room does not hold still. This is
+   one fixed layer of very wide, very low colour that drifts on a 96s loop —
+   transform only, so it runs on the compositor and never touches layout or
+   style. It is under the dither and the vignette, so what you actually see is
+   the tone of the room changing, not three coloured blobs moving. */
+.fl-air{position:fixed;inset:-20%;z-index:-2;pointer-events:none;
+  will-change:transform;
+  background:
+    radial-gradient(40% 30% at 22% 24%,rgba(60,224,255,.052),transparent 72%),
+    radial-gradient(44% 33% at 79% 63%,rgba(158,124,255,.043),transparent 74%),
+    radial-gradient(38% 28% at 57% 11%,rgba(70,240,190,.040),transparent 72%),
+    radial-gradient(42% 31% at 30% 86%,rgba(96,146,255,.038),transparent 74%);
+  animation:fl-air 96s ease-in-out infinite}
+@keyframes fl-air{
+  0%  {transform:translate3d(-2.0%,-1.3%,0)}
+  34% {transform:translate3d(1.7%,1.1%,0)}
+  67% {transform:translate3d(-1.1%,1.9%,0)}
+  100%{transform:translate3d(-2.0%,-1.3%,0)}}
+@media(prefers-reduced-motion:reduce){.fl-air{animation:none}}
+
+/* ---------- Smoked glass: cards and panels ----------
+   These were opaque panels sitting on top of the environment. A panel that
+   blocks the light behind it is pasted onto the page; a pane that passes some
+   of it through is in the room. The fills are translucent now, so a card in
+   the cyan part of the page picks up cyan and a card lower down picks up
+   violet — without a single card-specific colour anywhere.
+
+   The first background layer is the reflection: a wide, very soft band with no
+   hard start or end. It is 3x the card's height, so only a slice of it shows,
+   and hover slides the slice — the reflection moves across the pane the way it
+   would if you leaned in. That is the whole hover effect. */
+.pcard,.acard{
+  background-color:transparent;
+  background-image:
+    linear-gradient(176deg,
+      rgba(255,255,255,0)     0%,
+      rgba(248,252,255,.052) 27%,
+      rgba(248,252,255,.016) 45%,
+      rgba(255,255,255,0)    66%),
+    linear-gradient(180deg,rgba(47,60,81,.50),rgba(36,47,64,.58));
+  background-repeat:no-repeat;
+  background-size:100% 300%,100% 100%;
+  background-position:0 20%,0 0;
+  border-top-color:var(--edge-top);
+  border-left-color:var(--edge-side);
+  border-right-color:var(--edge-side);
+  border-bottom-color:var(--edge-bot);
+  box-shadow:
+    inset 0 1px 0 var(--lit-top),
+    inset 0 -1px 0 var(--lit-bot),
+    var(--contact);
+  /* An object with mass does not bounce when you point at it. The overshoot
+     easing was the last thing on the page that felt like a UI animation
+     rather than a thing moving. */
+  transition:
+    transform .5s cubic-bezier(.22,1,.32,1),
+    box-shadow .45s cubic-bezier(.22,1,.32,1),
+    background-position .6s cubic-bezier(.22,1,.32,1),
+    border-color .45s ease}
+.pcard:hover,.acard:hover{
+  /* Depth increases, the reflection slides, the top rail catches more light.
+     No colour change: a pane of glass does not turn green when you look at
+     it, and the accent is reserved for things you can act on. */
+  transform:translateY(-4px);
+  /* Restated, not inherited: an earlier rule sets `background` on hover, and
+     the shorthand would drop this back to an opaque fill with the reflection
+     layer gone — the pane would stop being glass the moment you pointed at it.
+     The fill is identical to the resting one. Only the reflection moves. */
+  background-image:
+    linear-gradient(176deg,
+      rgba(255,255,255,0)     0%,
+      rgba(248,252,255,.052) 27%,
+      rgba(248,252,255,.016) 45%,
+      rgba(255,255,255,0)    66%),
+    linear-gradient(180deg,rgba(47,60,81,.50),rgba(36,47,64,.58));
+  background-size:100% 300%,100% 100%;
+  background-position:0 56%,0 0;
+  border-top-color:rgba(255,255,255,.26);
+  border-left-color:rgba(255,255,255,.14);
+  border-right-color:rgba(255,255,255,.14);
+  /* An earlier rule turned this edge green on hover. Green is for things you
+     can act on, not for announcing that the cursor exists. */
+  border-bottom-color:var(--edge-bot);
+  box-shadow:
+    inset 0 1px 0 rgba(248,252,255,.23),
+    inset 0 -1px 0 rgba(174,239,245,.075),
+    var(--contact-far)}
+/* No backdrop blur. It was the obvious way to say "glass", and it was measured:
+   twenty panes each re-compositing a blur while a fixed layer drifts behind
+   them took the catalogue scroll from 37.6ms to 69.3ms a frame on a throttled
+   desktop. A pane that transmits the room already reads as glass — the blur was
+   the effect, the transmission is the material, and a material that halves the
+   frame rate is not a premium one. */
+/* The media well was an opaque slab inside a translucent pane, which put a hard
+   seam across the middle of every accessory card — one object made of two
+   materials. It is the same pane, recessed: a recess catches less light, so it
+   is darker, and it still transmits the room. */
+.acard .im{
+  background:linear-gradient(150deg,rgba(16,22,32,.13),rgba(10,15,23,.21));
+  box-shadow:inset 0 -1px 0 rgba(248,252,255,.035)}
+/* Panels are the same pane, thinner. */
+.filterpanel,.nlform,.nlthanks{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
+  background-color:transparent;
+  border-top-color:var(--edge-top);
+  border-left-color:var(--edge-side);
+  border-right-color:var(--edge-side);
+  border-bottom-color:var(--edge-bot);
+  box-shadow:inset 0 1px 0 var(--lit-top)}
+
+/* ---------- Satin metal: everything you touch ----------
+   Brushed, not polished. A soft top-to-bottom fall in brightness, a single
+   hairline where the light lands on the top edge, and a dark line where the
+   underside turns away. No specular dot, no rim light, no chrome. Hover
+   raises the highlight rather than changing the colour — metal catching more
+   light, which is what actually happens when you tilt something towards a
+   lamp. All of it is inset shadow, so nothing here changes a box's size. */
+.btn.p{
+  background-image:linear-gradient(180deg,#50DAA1 0%,#3ECF8E 54%,#34BD7F 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -1px 0 rgba(0,0,0,.16),
+    var(--contact-near)}
+.btn.p:hover{
+  background-image:linear-gradient(180deg,#5DE3AC 0%,#46D796 54%,#3AC888 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.38),
+    inset 0 -1px 0 rgba(0,0,0,.16),
+    0 14px 30px rgba(6,10,18,.40)}
+.btn.g,.fchip,.filterbtn,.navsearch{
+  background-color:transparent;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.032));
+  border-top-color:var(--edge-top);
+  border-left-color:var(--edge-side);
+  border-right-color:var(--edge-side);
+  border-bottom-color:var(--edge-bot);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 14px rgba(6,10,18,.24);
+  transition:background-image .3s ease,box-shadow .3s ease,border-color .3s ease}
+.btn.g:hover,.fchip:hover,.filterbtn:hover{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.135),rgba(255,255,255,.052));
+  border-top-color:rgba(255,255,255,.26);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.19),0 8px 22px rgba(6,10,18,.32)}
+.navsearch:focus-within{
+  border-top-color:rgba(255,255,255,.28);
+  border-left-color:var(--edge-side);
+  border-right-color:var(--edge-side);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 8px 24px rgba(6,10,18,.34)}
+/* Pressed state is a real state change, so the metal is genuinely lit from
+   the other side: the top rail goes dark and the bottom picks up the bounce. */
+.fchip[aria-pressed="true"],.filterbtn[aria-expanded="true"]{
+  background-image:linear-gradient(180deg,#4AD79A,#35BE80);
+  border-top-color:rgba(255,255,255,.30);
+  border-bottom-color:rgba(0,0,0,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(0,0,0,.16),
+    var(--contact-near)}
+.filterbtn[aria-expanded="true"]{color:var(--on-signal)}
+/* Small satin details. Inset only — these sit on the subgrid rows and must
+   not change height by so much as a pixel. */
+.pcard .cls{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.042));
+  background-color:transparent;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11),inset 0 -1px 0 rgba(0,0,0,.10)}
+.fcount,.nlform button{
+  background-image:linear-gradient(180deg,#4AD79A,#35BE80);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(0,0,0,.14)}
+/* Once the button itself is the lit metal, a green count on it has nothing to
+   read against. It becomes the recess instead — cut into the same surface. */
+.filterbtn[aria-expanded="true"] .fcount{
+  background-image:linear-gradient(180deg,rgba(4,16,10,.42),rgba(4,16,10,.30));
+  color:rgba(240,255,248,.92);
+  box-shadow:inset 0 1px 0 rgba(0,0,0,.20),inset 0 -1px 0 rgba(255,255,255,.16)}
+
+/* ---------- Chrome ----------
+   The header is a pane like the cards, lit the same way. */
+nav{
+  border-bottom:1px solid var(--edge-bot);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 30px rgba(6,10,18,.26)}
+/* A two-colour accent stripe pinned across the top of every screen is a web
+   page telling you it is a web page. It still reports position; it just does
+   it in the same satin as everything else instead of announcing itself. */
+.prog{height:2px;background:linear-gradient(90deg,
+  rgba(232,237,244,.20),rgba(232,237,244,.52))}
+footer{border-top:1px solid var(--edge-bot)!important}
+/* The footer links were still #2b3a33 — a dark green from the light theme that
+   nothing ever re-toned. On graphite they are all but unreadable. Nothing in a
+   premium product is illegible by accident. */
+.fcols .grp a{color:rgba(232,237,244,.60);transition:color .25s ease}
+.fcols .grp a:hover{color:var(--ink)}

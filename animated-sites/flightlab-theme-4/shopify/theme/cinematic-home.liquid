@@ -70,6 +70,7 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
 {%- endif %}
 </script>
 <!-- Floating discs: one fixed layer behind every section, tying them together -->
+<div class="fl-air" aria-hidden="true"></div>
 <div class="fl-vig" aria-hidden="true"></div>
 <div class="fl-dither" aria-hidden="true"></div>
 <div class="fl-discs" aria-hidden="true">
@@ -1047,7 +1048,7 @@ const DISCS=[
 const CLASS_ORDER=[['Putter','Puttere','Presisjon og kontroll rundt kurven'],['Approach','Approach','Trygge innspill mot kurven'],['Midrange','Midrange','Allrounderen i bagen'],['Fairway','Fairway-drivere','Kontrollert lengde'],['Distanse','Distansedrivere','Maks meter fra utkastet']];
 function disc3(b,m,n){const s=BRAND[b],S=108;
   return '<div class="disc-scene"><div class="disc3d" style="width:'+S+'px;height:'+S+'px">'+
-   '<div class="dl" style="background:radial-gradient(circle at 35% 30%,'+s.rim[0]+' 0%,'+s.rim[1]+' 45%,'+s.rim[2]+' 100%);box-shadow:inset 0 2px 5px rgba(255,255,255,.35),inset 0 -4px 8px rgba(0,0,0,.5),0 0 26px '+s.glow+'"></div>'+
+   '<div class="dl" style="background:radial-gradient(circle at 35% 30%,'+s.rim[0]+' 0%,'+s.rim[1]+' 45%,'+s.rim[2]+' 100%);box-shadow:inset 0 2px 5px rgba(255,255,255,.35),inset 0 -4px 8px rgba(0,0,0,.5),0 12px 20px rgba(4,8,14,.45)"></div>'+
    '<div class="dl dface" style="inset:7%;transform:translateZ(6px);background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,.035) 0 1.5px,rgba(0,0,0,.03) 1.5px 6px),radial-gradient(circle at 40% 35%,'+s.face[0]+' 0%,'+s.face[1]+' 60%,'+s.face[2]+' 100%)">'+
    '<div class="dring"></div>'+
    '<span style="font-size:6px;letter-spacing:2px;color:rgba(250,249,245,.75);text-transform:uppercase">'+b+'</span>'+
