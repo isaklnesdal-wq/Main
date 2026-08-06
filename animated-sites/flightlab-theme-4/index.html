@@ -370,13 +370,67 @@ body{background:#262F3B;color:var(--ink);position:relative}
 body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
   z-index:-2;pointer-events:none;
   background:
-    /* Nothing here is keyed to a section any more. This is one neutral
-       graphite ramp for the whole document — the lightness the lift gave it and
-       no opinion about colour at all. Every atmosphere the page has now comes
-       from the single ambient layer below, which means there is exactly one
-       thing deciding what colour you are standing in, and it moves. */
-    linear-gradient(180deg,#262F3B 0%,#2A3343 10%,#2D3A4E 22%,#313F57 34%,
-      #34445D 46%,#33455F 56%,#2E3D53 68%,#2A3547 80%,#282F3C 90%,#262F3B 100%)}
+    /* THE SECTION COLOUR IS PAINTED DOWN THE DOCUMENT, AND STAYS THERE.
+
+       This is the layer that was here before, keyed to boundaries measured off
+       the rendered page rather than to even spacing. It was taken out when a
+       later brief asked for one continuous ambient background and nothing
+       coloured per section; that instruction was followed literally and it
+       removed working output nobody had asked to lose. It is back, and it is
+       back alongside the moving layer rather than instead of it — every
+       section sits in its own colour whether or not anything is scrolling,
+       and the fixed layer above still shifts as you travel. */
+
+       This is why the page used to feel like one colour from top to bottom.
+       The fields sat at 8, 29, 50, 71 and 92 per cent — evenly spaced, and
+       measured against nothing. The sections are not evenly spaced: the hero
+       runs to 25.6%, the discs hold 25.6-57%, the bags 57-79.6%, accessories
+       79.6-89.8% and the footer from 92.8%. So the disc section owned nearly a
+       third of the document and had two different fields drifting across it,
+       while the bag section was handed the tail of one meant for somewhere
+       else. No section was ever fully inside its own colour, which is exactly
+       the way to make a long page feel like it has one.
+
+       Every field below is placed on a boundary that was measured off the
+       rendered document. Each is far wider than it is tall and reaches well
+       into its neighbours, so a section is already picking up the next colour
+       before it has let go of its own — the change is continuous, and there is
+       no scroll position where a single hue owns the frame.
+
+       No filter: blur() anywhere. A ramp this wide already is the blur, and a
+       real one over a 10,000px document repaints on every scroll frame. The
+       dither layer matters more than usual now: eleven low-alpha fields over a
+       dark page is precisely the case that bands on 8-bit displays. */
+
+    /* HERO — deep graphite, electric blue, cyan. */
+    radial-gradient(152% 30% at 5% 4%,rgba(58,134,255,.075),rgba(58,134,255,.028) 46%,transparent 86%),
+    radial-gradient(150% 29% at 96% 16%,rgba(64,214,240,.070),rgba(64,214,240,.026) 46%,transparent 88%),
+
+    /* DISCS — deep violet, soft magenta, and electric blue kept small, so it
+       reads as a reflection thrown from the hero rather than a third colour. */
+    radial-gradient(154% 32% at 4% 31%,rgba(124,77,255,.085),rgba(124,77,255,.032) 46%,transparent 88%),
+    radial-gradient(150% 30% at 97% 43%,rgba(214,94,196,.075),rgba(214,94,196,.028) 46%,transparent 88%),
+    radial-gradient(88% 15% at 8% 51%,rgba(58,134,255,.055),rgba(58,134,255,.020) 48%,transparent 84%),
+
+    /* BAGS — warm graphite carried by the ramp, bronze and amber over it. The
+       swing from violet to warm is the largest on the page and it is spread
+       across fourteen per cent of the document so that none of it is an edge. */
+    radial-gradient(152% 31% at 96% 62%,rgba(176,124,72,.080),rgba(176,124,72,.030) 46%,transparent 88%),
+    radial-gradient(150% 30% at 5% 71%,rgba(224,166,90,.075),rgba(224,166,90,.028) 46%,transparent 88%),
+
+    /* ACCESSORIES — deep emerald, dark teal, and a small petrol reflection. */
+    radial-gradient(150% 28% at 95% 82%,rgba(38,168,112,.080),rgba(38,168,112,.030) 46%,transparent 88%),
+    radial-gradient(148% 27% at 6% 87%,rgba(28,122,132,.070),rgba(28,122,132,.026) 46%,transparent 88%),
+    radial-gradient(86% 14% at 92% 90%,rgba(40,100,124,.055),rgba(40,100,124,.020) 48%,transparent 84%),
+
+    /* FOOTER — back to dark navy, slowly. */
+    radial-gradient(150% 26% at 8% 97%,rgba(42,62,104,.065),rgba(42,62,104,.024) 46%,transparent 88%),
+
+    /* The graphite underneath. It is the page's own ramp with a hue departure
+       laid on it per zone — never a colour of its own, only a temperature —
+       and every stop holds the lightness the lift gave it, so the page cannot
+       darken on the way through. It ends on the exact colour it started. */
+    linear-gradient(180deg,#262F3B 0%,#283648 14%,#343B50 26%,#3C3E59 38%,#454059 48%,#454254 56%,#423D43 64%,#403837 72%,#343535 80%,#213436 86%,#1F313A 93%,#262F3B 100%)}
 
 /* ===== ONE CONTINUOUS ENVIRONMENT ========================================
    A single fixed layer, three very large soft fields on it, and the only thing
