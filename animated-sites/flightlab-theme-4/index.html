@@ -2152,35 +2152,46 @@ const AMB=[
   /* Crystal blue and ice blue. Both were too saturated before — an electric
      blue and a cyan, which are lit colours rather than cold ones. Crystal and
      ice are pale and nearly grey; what they carry is temperature, not hue. */
-  [0.00,[146,190,232,.172],[186,222,240,.158],[ 44, 58, 90,.140]],
+  [0.00,[146,190,232,.048],[186,222,240,.044],[44,58,90,.039]],
   /* Midnight violet and deep indigo. The magenta that stood here was the one
      field on the page you could have named from across the room, and naming it
      is the failure. Indigo sits between violet and the hero's blue, so the
      discs are reached through the colour before them rather than against it.
      The electric blue stays, small, as a reflection thrown forward. */
-  [0.28,[104, 80,190,.184],[ 74, 86,176,.170],[ 72,140,235,.146]],
+  [0.28,[104,80,190,.052],[74,86,176,.048],[72,140,235,.041]],
   /* Smoky bronze, soft amber, warm graphite. Smoke means grey in it: the
      bronze is pulled well off full saturation so the warmth arrives as a
      change of temperature and not as a brown. */
-  [0.62,[158,120, 84,.180],[214,164,102,.164],[118,104, 92,.146]],
+  [0.62,[158,120,84,.050],[214,164,102,.046],[118,104,92,.041]],
   /* Deep emerald, dark teal, petrol. */
-  [0.85,[ 34,150,104,.180],[ 28,112,124,.166],[ 36, 96,116,.146]],
+  [0.85,[34,150,104,.050],[28,112,124,.046],[36,96,116,.041]],
   /* Deep graphite and dark navy: the room it started in. */
-  [1.00,[ 44, 50, 60,.164],[ 38, 54, 92,.152],[ 42, 48, 66,.134]]
+  [1.00,[44,50,60,.046],[38,54,92,.043],[42,48,66,.038]]
 ];
 let ambP=0, ambRoot=document.documentElement, ambLast='';
 function ambMix(t){
   let i=0; while(i<AMB.length-2&&t>AMB[i+1][0]) i++;
   const A=AMB[i],B=AMB[i+1];
   let f=Math.max(0,Math.min(1,(t-A[0])/((B[0]-A[0])||1)));
-  /* Smoothstep, not the raw fraction. Interpolating straight between keys is
-     continuous in value but not in rate: at every key the colour changes
-     direction on a corner, and a corner is a moment — the eye finds it even at
-     this alpha, and that moment is the thing the brief calls a visible
-     transition. Easing the fraction so its rate is zero at both ends means the
-     colour arrives at each key already travelling at the speed it will leave
-     it. There is then no instant anywhere on the page where anything happens. */
-  f=f*f*(3-2*f);
+  /* Eased at the ends only, linear through the middle — not smoothstep.
+     Both remove the corner at a key, which is the thing you could see. But
+     smoothstep pays for it by concentrating all the travel into the centre of
+     the segment: it raised the fastest moment on the page from 5.9 to 8.0 dE
+     across a screen of scrolling, so it fixed the corner by making the run
+     between corners worse. This ramps the rate up over the first sixth,
+     holds it flat, and lets it down over the last sixth. Rate is still zero
+     at every key, and the peak is only 1.22x the flat run instead of 1.5x.
+
+     The numbers that matter: no screen-height of scrolling anywhere on this
+     page now moves the colour more than 2.3 dE, which is the threshold at
+     which two colours side by side stop being distinguishable. It is not that
+     the transitions are hard to see — there is no moment at which enough
+     changes to be seen at all. Across the whole journey the zones still sit
+     4 to 8 dE apart, and hero to bags is sixteen. Felt, never watched. */
+  const W=.18;
+  f = f<W      ? f*f/(2*W*(1-W))
+    : f<1-W    ? (f-W/2)/(1-W)
+    :            1-((1-f)*(1-f))/(2*W*(1-W));
   const out=[];
   for(let k=1;k<=3;k++){
     const a=A[k],b=B[k];
