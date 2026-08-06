@@ -214,17 +214,21 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
               <rect x="0" y="0" width="1" height="1" fill="url(#flReflGrad)"/>
             </mask>
           </defs>
-          <text class="g-ext"    x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-dark"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-refr"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-body"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-gloss"  x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-caus"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-iris"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-bevel"  x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-valley" x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-spec"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
-          <text class="g-refl"   x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text>
+          <!-- One group per layer, each holding the typed letters and the drawn
+               A. Every material property — fill, stroke, gradient, width, mask
+               and transform — is set on the group, so both reach the letter the
+               same way and the A cannot drift from the rest of the word. -->
+          <g class="fl-ly g-ext"   ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
+          <g class="fl-ly g-dark"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
+          <g class="fl-ly g-refr"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
+          <g class="fl-ly g-body"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
+          <g class="fl-ly g-gloss" ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
+          <g class="fl-ly g-caus"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
+          <g class="fl-ly g-iris"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
+          <g class="fl-ly g-bevel" ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
+          <g class="fl-ly g-valley"><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
+          <g class="fl-ly g-spec"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
+          <g class="fl-ly g-refl"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
         </svg>
       </h1>
     </div>
@@ -524,8 +528,19 @@ function buildChips(){
   const x=c.getContext('2d',{willReadFrequently:true});
   x.font=cs.fontWeight+' '+(parseFloat(cs.fontSize)*k)+'px '+cs.fontFamily;
   if('letterSpacing' in x) x.letterSpacing=(parseFloat(cs.fontSize)*k*-0.045)+'px';
-  x.textAlign='center'; x.textBaseline='middle'; x.fillStyle='#fff';
-  x.fillText('FLIGHTLAB',RW/2,RH/2);
+  x.textAlign='left'; x.textBaseline='middle'; x.fillStyle='#fff';
+  /* Drawn in the same three pieces as the SVG — the typed letters either side
+     of a gap, and the A in it — so the word comes apart into the shape you were
+     just looking at instead of into Inter's A. Positions come from the same
+     advances the browser would have used, so the letters land where a plain
+     centred fillText would have put them. */
+  const mH=x.measureText('H'),
+        capC=mH.actualBoundingBoxAscent+mH.actualBoundingBoxDescent,
+        left=RW/2-x.measureText('FLIGHTLAB').width/2,
+        preA=x.measureText('FLIGHTL').width;
+  x.fillText('FLIGHTL',left,RH/2);
+  x.fillText('B',left+x.measureText('FLIGHTLA').width,RH/2);
+  if(capC) x.fill(new Path2D(flAPath(left+preA,RH/2+mH.actualBoundingBoxDescent,capC)));
   const px=x.getImageData(0,0,RW,RH).data;
   const on=(ix,iy)=>ix>=0&&iy>=0&&ix<RW&&iy<RH&&px[((iy*RW+ix)<<2)+3]>110;
   const coarse=matchMedia('(hover:none)').matches;
@@ -633,6 +648,127 @@ function sizeShards(){
   flshards.width=Math.round(r.width*chipScale);
   flshards.height=Math.round(r.height*chipScale);
 }
+/* ---- The A ----
+   The one letter in the word that is drawn instead of typed. The brief for it
+   is a rounded triangular structure with softened corners and a crossbar that
+   hangs inside the glass rather than bridging the legs, and no typeface will
+   give you that.
+
+   The risk with drawing one letter of a word is that it reads as a letter from
+   somewhere else, so none of the numbers below are invented. The edge slopes,
+   the leg thickness, the axis, the counter and the height and weight of the
+   crossbar were all measured off a raster of Inter ExtraBold's own A, which is
+   what the other eight glyphs are set in. The letter therefore stands on the
+   same angles and carries the same weight as its neighbours; what changes is
+   only what the brief asked to change — the apex is rounded instead of cut
+   flat, the corners are softened, and the crossbar is detached.
+
+   Everything is in units of cap height, x from the glyph origin and y from the
+   cap line, so one description drives the SVG and the chip raster at any size. */
+const FLA={
+  oL:{f:.15,x:.3449,m:-.3660}, oR:{f:.15,x:.6827,m:.3618},  /* outer edges  */
+  iL:{f:.30,x:.4729,m:-.3325}, iR:{f:.30,x:.5547,m:.3325},  /* counter edges */
+  rApex:.105, rFootO:.055, rFootI:.046, rCount:.028,
+  barTop:.630, barBot:.788, barGap:.053, barR:.048
+};
+function flEdge(e,f){return e.x+e.m*(f-e.f)}
+/* Where two edges would meet if nothing rounded them off — the virtual apex. */
+function flMeet(a,b){
+  const f=((b.x-b.m*b.f)-(a.x-a.m*a.f))/(a.m-b.m);
+  return [flEdge(a,f),f];
+}
+/* A polygon with a radius per corner. Each corner becomes the arc inscribed in
+   it, which is what keeps the rounding tangent to both edges: the straight runs
+   arrive at the curve without a kink, so a stroke laid over the result reads as
+   one continuous polished edge rather than a chain of segments. */
+function flRound(pts,radii){
+  const n=pts.length, c=[];
+  for(let i=0;i<n;i++){
+    const P=pts[i], A=pts[(i+n-1)%n], B=pts[(i+1)%n];
+    let v1=[A[0]-P[0],A[1]-P[1]], v2=[B[0]-P[0],B[1]-P[1]];
+    const l1=Math.hypot(v1[0],v1[1]), l2=Math.hypot(v2[0],v2[1]);
+    v1=[v1[0]/l1,v1[1]/l1]; v2=[v2[0]/l2,v2[1]/l2];
+    const half=Math.acos(Math.max(-1,Math.min(1,v1[0]*v2[0]+v1[1]*v2[1])))/2;
+    let r=radii[i], d=r/Math.tan(half);
+    const lim=Math.min(l1,l2)*.5;            /* never eat a whole edge */
+    if(d>lim){d=lim; r=d*Math.tan(half)}
+    const T1=[P[0]+v1[0]*d,P[1]+v1[1]*d], T2=[P[0]+v2[0]*d,P[1]+v2[1]*d];
+    const bx=v1[0]+v2[0], by=v1[1]+v2[1], bl=Math.hypot(bx,by)||1, k=r/Math.sin(half);
+    const C=[P[0]+bx/bl*k, P[1]+by/bl*k];    /* centre of the inscribed arc */
+    const cr=(T1[0]-C[0])*(T2[1]-C[1])-(T1[1]-C[1])*(T2[0]-C[0]);
+    c.push({T1:T1,T2:T2,r:r,s:cr>0?1:0});
+  }
+  const f=v=>v.toFixed(2);
+  let d='M'+f(c[0].T1[0])+' '+f(c[0].T1[1]);
+  for(let i=0;i<n;i++){
+    const k=c[i], nx=c[(i+1)%n].T1;
+    d+='A'+f(k.r)+' '+f(k.r)+' 0 0 '+k.s+' '+f(k.T2[0])+' '+f(k.T2[1])
+      +'L'+f(nx[0])+' '+f(nx[1]);
+  }
+  return d+'Z';
+}
+/* Three closed contours, wound so the default fill rule does the work: the
+   outer triangle clockwise, the opening counter-clockwise so it cuts a hole,
+   and the crossbar clockwise again so it fills back in as solid material
+   floating in that hole. Stroked layers get the same three edges to run along,
+   which is what makes the bar look suspended inside the crystal — it carries
+   its own complete bevel, the way a real inclusion would. */
+function flAPath(ox,oy,cap){
+  const A=FLA, P=(nx,nf)=>[ox+nx*cap, oy+(nf-1)*cap];
+  const ip=flMeet(A.iL,A.iR);
+  /* The apex is rounded across the cap line rather than by extending the two
+     outer edges until they cross. That crossing sits well above the cap line —
+     Inter cuts its apex flat — so rounding it there is the one radius that
+     would make the letter the right height, and it comes out a dome. Rounding
+     the flat instead leaves the height fixed and the radius free, so the apex
+     can be softened as far as it wants without the A growing taller than the
+     letters beside it. */
+  const outer=flRound([P(flEdge(A.oL,0),0),P(flEdge(A.oR,0),0),
+                       P(flEdge(A.oR,1),1),P(flEdge(A.oL,1),1)],
+                      [A.rApex*cap,A.rApex*cap,A.rFootO*cap,A.rFootO*cap]);
+  const inner=flRound([P(ip[0],ip[1]),P(flEdge(A.iL,1),1),P(flEdge(A.iR,1),1)],
+                      [A.rCount*cap,A.rFootI*cap,A.rFootI*cap]);
+  /* The crossbar. Its ends run parallel to the legs rather than square to the
+     baseline, so the space around it is the same width the whole way down and
+     the bar reads as held in the middle of the opening rather than wedged into
+     it. It is a touch lighter than the legs and touches nothing. */
+  const g=A.barGap, t=A.barTop, b=A.barBot, rb=A.barR*cap;
+  const bar=flRound([P(flEdge(A.iL,t)+g,t),P(flEdge(A.iR,t)-g,t),
+                     P(flEdge(A.iR,b)-g,b),P(flEdge(A.iL,b)+g,b)],
+                    [rb,rb,rb,rb]);
+  return outer+inner+bar;
+}
+/* Cap height and font ascent, read off the ink of an H rather than off the font
+   size, so both are right whichever font actually rendered — Inter once it is
+   over the network, or the fallback until it lands. The ratios are only there
+   for browsers without actualBoundingBox. */
+function flMetrics(font,fs){
+  const c=(flMetrics.c||(flMetrics.c=document.createElement('canvas').getContext('2d')));
+  c.font=font; c.textBaseline='alphabetic';
+  const m=c.measureText('H');
+  return {cap:m.actualBoundingBoxAscent||fs*.7031,
+          asc:m.fontBoundingBoxAscent||fs*.9031};
+}
+/* Draw the A into every layer. The string is identical for all eleven, so it is
+   built once and shared; the material comes from the group each path sits in.
+
+   The letter is hung off getExtentOfChar rather than getStartPositionOfChar.
+   The word is set with dominant-baseline:central, and the position call reports
+   the y that was asked for — 50% — not the baseline the glyphs actually sit on,
+   which is half the font's ascent-minus-descent lower. The extent box is
+   measured, so its top plus the ascent is the real baseline. */
+function flDrawA(){
+  if(!flsvg) return;
+  const tx=flsvg.querySelector('.fl-ly text');
+  if(!tx) return;
+  let e; try{e=tx.getExtentOfChar(7)}catch(err){return}   /* the A's cell */
+  if(!e||!e.height) return;
+  const cs=getComputedStyle(tx), fs=parseFloat(cs.fontSize);
+  const m=flMetrics(cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily,fs);
+  const d=flAPath(e.x,e.y+m.asc,m.cap);
+  flsvg.querySelectorAll('.fl-a').forEach(n=>n.setAttribute('d',d));
+}
+
 /* Fit the wordmark to 70% of the viewport. Inter arrives over the network, so
    its metrics are not known at author time and a hard-coded font-size would
    land wherever the fallback happened to be wide. Measure once the font is in,
@@ -647,7 +783,10 @@ function flFit(){
   if(!w) return;
   const cur=parseFloat(getComputedStyle(t).fontSize);
   const px=cur*(innerWidth*0.70)/w;
-  flsvg.querySelectorAll('text').forEach(n=>n.style.fontSize=px+'px');
+  /* The size goes on the layer groups, not the text: the drawn A inherits its
+     scale and its em-based stroke widths from the same place the letters do. */
+  flsvg.querySelectorAll('.fl-ly').forEach(n=>n.style.fontSize=px+'px');
+  flDrawA();
 }
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(flFit)}else{flFit()}
 flFit();

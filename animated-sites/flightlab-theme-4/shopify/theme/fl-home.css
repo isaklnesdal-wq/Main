@@ -655,20 +655,27 @@ nav .brand,nav .nl a{color:var(--ink)}
    the letter. With round joins and a bead this wide, each corner is replaced
    by an arc of the bead's radius. On F, L, I, H, T, B that is invisible:
    their corners are square and a 5px arc on a 190px letter reads as a
-   polished edge. The A is the only glyph in FLIGHTLAB with acute angles, and
-   an acute angle is exactly what a round join destroys — measured against the
-   real outline, the apex was replaced by a dome and the counter lost its
-   point and became a blob. That is why the A kept looking wrong however the
-   material was tuned: the material was fine, the letterform was not.
+   polished edge. It is the acute angles that a round join destroys: an apex
+   comes back as a dome and a pointed counter as a blob, both measurably away
+   from the real outline.
 
-   Mitred, the corners follow the outline again. The limit is 2.4, so the
-   apex falls back to a flat cut at exactly the angle the typeface itself
-   cuts it, and nothing spikes. Corners still carry more material than the
-   flat runs — a miter reaches further out than a round join does — so the
-   crystal is still thickest where it turns. */
-.fl-svg text{font-family:var(--b);font-weight:800;font-size:13.4vw;
+   Mitred, the corners follow the outline again. The limit is 2.4, so nothing
+   spikes. Corners still carry more material than the flat runs — a miter
+   reaches further out than a round join does — so the crystal is still
+   thickest where it turns.
+
+   The A is drawn rather than typed (see flAPath below) and its corners are
+   rounded in the geometry itself, at radii chosen per corner. That is the
+   right place for them: a join style is a property of the bead and applies
+   the same everywhere, whereas an apex and a foot want different amounts of
+   softening. The letter arrives already rounded and the bead just follows it. */
+.fl-svg .fl-ly{font-family:var(--b);font-weight:800;font-size:13.4vw;
   letter-spacing:-.045em;paint-order:stroke;
   stroke-linejoin:miter;stroke-miterlimit:2.4;stroke-linecap:round}
+/* The typed A is still in the string — it keeps Inter's advance width, so L
+   and B sit exactly where they always did — but it paints nothing, and the
+   drawn A takes its place. */
+.fl-svg .a-slot{fill:none;stroke:none}
 
 /* Thickness.
 
