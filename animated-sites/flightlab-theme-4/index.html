@@ -659,8 +659,27 @@ nav .brand,nav .nl a{color:var(--ink)}
    the top-left of the scene, and the whole dissolve happens in the corner. */
 .fl-shards{position:absolute;inset:0;width:100%;height:100%;z-index:3;
   pointer-events:none;opacity:0}
+/* MITRED JOINS, NOT ROUND ONES.
+
+   Every layer of the crystal is a stroke laid on the glyph outline, so the
+   join style is not a detail of the bevel — it is what decides the shape of
+   the letter. With round joins and a bead this wide, each corner is replaced
+   by an arc of the bead's radius. On F, L, I, H, T, B that is invisible:
+   their corners are square and a 5px arc on a 190px letter reads as a
+   polished edge. The A is the only glyph in FLIGHTLAB with acute angles, and
+   an acute angle is exactly what a round join destroys — measured against the
+   real outline, the apex was replaced by a dome and the counter lost its
+   point and became a blob. That is why the A kept looking wrong however the
+   material was tuned: the material was fine, the letterform was not.
+
+   Mitred, the corners follow the outline again. The limit is 2.4, so the
+   apex falls back to a flat cut at exactly the angle the typeface itself
+   cuts it, and nothing spikes. Corners still carry more material than the
+   flat runs — a miter reaches further out than a round join does — so the
+   crystal is still thickest where it turns. */
 .fl-svg text{font-family:var(--b);font-weight:800;font-size:13.4vw;
-  letter-spacing:-.045em;paint-order:stroke;stroke-linejoin:round;stroke-linecap:round}
+  letter-spacing:-.045em;paint-order:stroke;
+  stroke-linejoin:miter;stroke-miterlimit:2.4;stroke-linecap:round}
 
 /* Thickness.
 
