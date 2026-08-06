@@ -70,6 +70,21 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
 {%- endif %}
 </script>
 <!-- Floating discs: one fixed layer behind every section, tying them together -->
+{%- comment -%}
+  Kapasitetsvelgeren, flighttallene og merkepanelene har bakgrunnene sine i
+  fl-bagcap.css, som ligger utenfor dette repoet og derfor ikke fikk lysloeftet.
+  Uten disse to reglene blir de moerkere enn siden de ligger paa. Samme kurve
+  som resten av loeftet: L* -> 0.919*L* + 5.57, kulor og metning uroert.
+{%- endcomment -%}
+<style>
+#flnum .fr{background:
+  radial-gradient(120% 90% at 30% 10%,rgba(248,252,255,.06),rgba(248,252,255,0) 58%),
+  linear-gradient(180deg,var(--surf4,#323F54),#293444 62%,#242D3B)}
+#merker .bpan{background:
+  radial-gradient(26% 30% at 78% 50%,var(--g2) 0%,transparent 70%),
+  radial-gradient(58% 62% at 78% 50%,var(--g) 0%,transparent 72%),
+  linear-gradient(180deg,#242B3A 0%,#262F3B 42%,#242B3A 100%)}
+</style>
 <div class="fl-air" aria-hidden="true"></div>
 <div class="fl-vig" aria-hidden="true"></div>
 <div class="fl-dither" aria-hidden="true"></div>
