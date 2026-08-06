@@ -389,18 +389,18 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
    44% before letting it go means the number in the declaration is close to the
    number you actually see. The peak is 17-20%; averaged over the frame, after
    the falloff, that lands in the 5-10% the brief asks for. */
-:root{--amb1:rgba(58,134,255,.180);--amb1b:rgba(58,134,255,.067);
-      --amb2:rgba(64,214,240,.166);--amb2b:rgba(64,214,240,.061);
-      --amb3:rgba(38,58,96,.144); --amb3b:rgba(38,58,96,.053)}
-/* The environment is held off the centre of the frame. Products sit in the
-   middle column, and a wash is loudest exactly where they are trying to be —
-   so the layer is masked down to a little over a third of its strength there
-   and comes up to full only out at the edges, where there is nothing but room.
-   The atmosphere is unchanged in character; it has simply been moved off the
-   merchandise and onto the walls. */
+:root{--amb1:rgba(146,190,232,.171);--amb1b:rgba(146,190,232,.063);
+      --amb2:rgba(186,222,240,.157);--amb2b:rgba(186,222,240,.058);
+      --amb3:rgba(44,58,90,.139);   --amb3b:rgba(44,58,90,.051)}
+/* No mask. There was one here that held the layer to 38% of its strength
+   through the middle of the frame and let it up to full only at the edges,
+   the idea being to keep the wash off the merchandise. The hero is mostly
+   open background so it read there at full strength; every section below
+   fills that middle with content, so all that survived of the environment
+   was a thin margin down each side at a third strength. That is why the hero
+   changed colour and nothing under it appeared to. The layer is even across
+   the whole frame now. */
 .fl-amb{position:fixed;inset:-18%;z-index:-2;pointer-events:none;
-  -webkit-mask-image:radial-gradient(64% 54% at 50% 46%,rgba(0,0,0,.38),rgba(0,0,0,.74) 58%,#000 86%);
-          mask-image:radial-gradient(64% 54% at 50% 46%,rgba(0,0,0,.38),rgba(0,0,0,.74) 58%,#000 86%);
   background:
     radial-gradient(78% 62% at 16% 18%,var(--amb1),var(--amb1b) 44%,transparent 80%),
     radial-gradient(82% 66% at 86% 46%,var(--amb2),var(--amb2b) 44%,transparent 82%),
