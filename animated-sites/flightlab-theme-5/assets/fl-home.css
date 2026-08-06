@@ -1,0 +1,1028 @@
+:root{
+  --paper:#FAF9F5; --ink:#0A1614; --forest:#123F39; --signal:#FF6B35; --gold:#F2B705;
+  --teal:#33C6B4; --mut:#6b7d72; --line:rgba(10,22,20,.12);
+  --glass:rgba(255,255,255,.24); --glass2:rgba(255,255,255,.46); --glassbrd:rgba(255,255,255,.6);
+  --blur:blur(24px) saturate(190%);
+  --h:'Space Grotesk',sans-serif; --b:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--b);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--signal)}
+/* ===== liquid-glass sticky nav with always-on search ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;gap:clamp(10px,2vw,22px);padding:10px clamp(14px,3.5vw,36px);
+  background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border-bottom:1px solid rgba(255,255,255,.5);box-shadow:0 6px 26px rgba(10,22,20,.08)}
+nav .brand{font-family:var(--h);font-weight:700;font-size:20px;color:var(--ink);flex:none}
+.navsearch{position:relative;flex:1;max-width:520px;margin:0 auto;display:flex;align-items:center;gap:9px;
+  background:var(--glass2);border:1px solid var(--glassbrd);border-radius:999px;padding:8px 15px;
+  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 4px 16px rgba(10,22,20,.07);transition:box-shadow .25s,border-color .25s}
+.navsearch:focus-within{border-color:rgba(255,107,53,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 6px 22px rgba(255,107,53,.16)}
+.navsearch svg{flex:none;color:var(--mut)}
+.navsearch input{flex:1;border:none;outline:none;background:transparent;font-family:var(--b);font-size:14px;color:var(--ink);min-width:0}
+.navsearch input::placeholder{color:var(--mut)}
+.navsearch input::-webkit-search-cancel-button{-webkit-appearance:none}
+.searchhint{position:absolute;top:calc(100% + 9px);left:0;right:0;display:none;padding:11px 16px;font-size:13px;color:var(--mut);
+  background:var(--glass2);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border:1px solid var(--glassbrd);border-radius:16px;box-shadow:0 14px 40px rgba(10,22,20,.16)}
+.searchhint.on{display:block}
+.searchhint a{color:var(--signal);font-weight:600}
+nav .nl{display:flex;gap:22px;align-items:center;flex:none}
+nav .nl a{font-size:13px;font-weight:500;color:var(--ink);transition:color .2s}
+nav .nl a:hover{color:var(--signal)}
+@media(max-width:860px){nav .nl a:not(.cta){display:none}}
+/* Phones keep the full menu — Discer / Bager / Tilbehør / Kontakt — with the
+   search field shrunk to make room for it. */
+@media(max-width:640px){
+  nav{gap:8px;padding:9px 18px 9px 14px}
+  nav .brand{font-size:15px;letter-spacing:0}
+  .navsearch{max-width:none;flex:1 1 60px;min-width:0;padding:6px 10px;gap:6px}
+  .navsearch svg{width:15px;height:15px}
+  .navsearch input{font-size:12.5px}
+  nav .nl{gap:11px}
+  nav .nl a:not(.cta){display:inline}
+  nav .nl a{font-size:11.5px}
+}
+@media(max-width:520px){nav .brand{display:none}}
+
+/* ===== SCROLL-ZOOM PORTALS (GPU transforms only — buttery, no lag) ===== */
+/* Hero: the real Higgsfield clip autoplays behind a giant disc; scroll
+   zooms INTO the disc and hands off to the catalogue. */
+#journey{position:relative;height:380vh}
+/* Bright, hazy morning sky with a low sun. Kept in CSS rather than the SVG
+   so it scales with the viewport instead of being cropped on narrow phones. */
+.scene{position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden;
+  background:
+    radial-gradient(circle 34px at 68% 25%,rgba(255,253,245,.98),rgba(255,247,225,.88) 58%,rgba(255,240,208,0) 100%),
+    radial-gradient(circle 150px at 68% 25%,rgba(255,240,203,.5),rgba(255,236,190,0) 100%),
+    radial-gradient(circle 420px at 68% 25%,rgba(255,228,168,.3),rgba(255,226,166,0) 100%),
+    radial-gradient(130% 60% at 60% 58%,rgba(255,243,219,.55),rgba(255,243,219,0) 66%),
+    linear-gradient(180deg,#79b6ce 0%,#a3d0da 24%,#c8e2dd 46%,#e2ede1 68%,#edf2e6 100%)}
+/* soft atmospheric lift right around the floating disc */
+.scene::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(44% 26% at 50% 42%,rgba(255,255,255,.32),transparent 74%)}
+/* gentle ground shade — nothing like the old near-black wash */
+.scene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:28%;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(26,52,35,.4))}
+/* light vignette only; the caption gets its own scrim so white text stays
+   readable without having to darken the whole sky */
+.vtint{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(92% 74% at 50% 44%,transparent 46%,rgba(12,30,20,.3) 100%),
+    linear-gradient(180deg,rgba(12,30,20,.2),transparent 22%,transparent 64%,rgba(12,30,20,.34))}
+/* a photograph is far busier than the drawn scenery, so it needs a
+   stronger scrim to keep the white headline legible */
+.scene.has-photo .vtint{
+  background:radial-gradient(94% 76% at 50% 44%,rgba(8,18,12,.1) 38%,rgba(8,18,12,.52) 100%),
+    linear-gradient(180deg,rgba(8,18,12,.44),rgba(8,18,12,.1) 26%,rgba(8,18,12,.16) 58%,rgba(8,18,12,.6))}
+/* Optional real backdrop photo (Theme settings → Bakgrunnsbilde). Only
+   shown once it has actually decoded, so a slow or missing image leaves
+   the drawn scenery in place rather than flashing an empty scene. */
+.scenephoto{position:absolute;inset:0;z-index:0;overflow:hidden;opacity:0;transition:opacity .6s ease}
+.scene.has-photo .scenephoto{opacity:1}
+.scene.has-photo .scape{display:none}
+/* The basket was moved left inside the photo itself, so desktop needs no
+   panning — at 16:10 the photo is width-limited anyway and X has no effect. */
+.scenephoto img{width:100%;height:100%;object-fit:cover;object-position:50% 55%;display:block}
+/* A phone crops away most of the width. Centring would leave a basket
+   sliced in half at the frame edge, so pan to a clean stretch of forest —
+   the disc fills the middle of a phone screen anyway. */
+@media(max-width:560px){.scenephoto img{object-position:60% 55%}}
+/* layered forest + fairway + basket, built once by JS (static, cheap) */
+.scape{position:absolute;inset:0;z-index:0;pointer-events:none}
+.scape svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:62%;display:block}
+/* the zoom target — a realistic moulded frisbee, level with the camera.
+   It floats, glows and rocks gently back and forth; scrolling levels it
+   out and flies you THROUGH its pressed rings — no hard direct zoom. */
+.portal{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;will-change:transform,opacity}
+.hero-stage{position:relative;width:min(60vmin,500px);height:min(60vmin,500px);perspective:1200px;animation:bob 6.5s ease-in-out infinite}
+.hero-stage .layer{position:absolute;inset:0;border-radius:50%}
+@keyframes bob{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}
+/* Softer than it was: the daylight backdrop does the work now, so the aura
+   only needs to lift the disc off the treeline, not tint the whole sky. */
+.disc-aura{position:absolute;inset:-22%;border-radius:50%;
+  background:radial-gradient(circle,rgba(120,240,225,.26) 20%,rgba(90,215,200,.11) 44%,rgba(90,215,200,.03) 60%,transparent 72%);
+  animation:aura 4.5s ease-in-out infinite}
+@keyframes aura{0%,100%{transform:scale(.96)}50%{transform:scale(1.07)}}
+/* rest pose: standing upright, turned to the side and slanted; JS eases it
+   square to the camera as the dive toward the rings begins */
+.tilt{position:absolute;inset:0;transform:rotateY(36deg) rotateX(8deg);transform-style:preserve-3d;will-change:transform}
+.hero-disc{position:absolute;inset:0;border-radius:50%;animation:rock 7s ease-in-out infinite;
+  box-shadow:0 0 70px rgba(60,216,204,.55),0 0 180px rgba(46,190,178,.38),0 34px 90px rgba(0,0,0,.45)}
+@keyframes rock{0%,100%{transform:rotateZ(-11deg)}50%{transform:rotateZ(11deg)}}
+/* real product photo variant */
+.hero-disc.photo{overflow:hidden;background:#0b1b12}
+.hero-disc.photo img{width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.16);display:block}
+/* moulded plastic, lit flat from top-left: rim → shoulder → flight plate.
+   Green colourway, soft pressed rings. */
+.hd-rim{background:linear-gradient(135deg,#a4e8c0 0%,#2e9c5b 38%,#137043 72%,#06381f 100%);
+  box-shadow:inset 0 0 0 2px rgba(4,44,24,.5),inset 0 7px 14px rgba(255,255,255,.32),inset 0 -10px 20px rgba(0,0,0,.45)}
+.layer.hd-bevel{inset:7%;background:linear-gradient(135deg,#82d8a4,#23904f 55%,#0b562e 100%);
+  box-shadow:inset 0 0 0 2.5px rgba(6,48,26,.45),inset 0 5px 10px rgba(255,255,255,.26),inset 0 -9px 18px rgba(0,0,0,.34)}
+.layer.hd-face{inset:14%;background:linear-gradient(135deg,#79d49b 0%,#1e8b4b 52%,#0b5c30 100%);
+  box-shadow:inset 0 0 0 2px rgba(8,52,30,.42),inset 0 3px 7px rgba(255,255,255,.2),inset 0 -6px 13px rgba(0,0,0,.26)}
+.hd-face i{position:absolute;border-radius:50%;
+  box-shadow:inset 0 0 0 2px rgba(6,50,28,.32),inset 0 4px 7px rgba(255,255,255,.14),inset 0 -4px 8px rgba(0,0,0,.17)}
+.layer.hd-hub{inset:42.5%;background:linear-gradient(135deg,#85dba6,#23904f 60%,#0f6236);
+  box-shadow:inset 0 0 0 2px rgba(8,52,30,.38),inset 0 3px 5px rgba(255,255,255,.28),inset 0 -3px 7px rgba(0,0,0,.3)}
+/* anisotropic plastic sheen — rotates with the rock, so light plays across
+   the plate as the disc moves */
+.layer.hd-sheen{background:conic-gradient(from 210deg,rgba(255,255,255,.10),transparent 70deg,rgba(0,0,0,.13) 150deg,transparent 215deg,rgba(255,255,255,.07) 300deg,transparent 360deg)}
+/* printed stamp on the flight plate (tonal ink, subtle emboss) */
+.hd-stamp{position:absolute;inset:17%;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:.9}
+.hd-stamp svg{width:100%;height:100%;filter:drop-shadow(0 1px 0 rgba(0,0,0,.3))}
+.hd-noise{opacity:.16;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hd-flash{position:absolute;top:5.4%;left:47.6%;width:4.8%;height:1.7%;border-radius:99px;background:rgba(10,66,36,.5)}
+.hd-glare{background:radial-gradient(ellipse 44% 17% at 30% 11%,rgba(255,255,255,.72),rgba(255,255,255,.12) 46%,transparent 66%)}
+.portalglow{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 50%,#3fd0c2,#1f8a80 40%,#0a1614 72%)}
+.grain{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* branded intro loader */
+#loader{position:absolute;inset:0;z-index:8;background:#060c09;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .7s,filter .7s}
+#loader.done{opacity:0;filter:blur(8px);pointer-events:none}
+#loader .brand{font-family:var(--h);font-weight:700;letter-spacing:.4em;text-indent:.4em;font-size:24px;color:#fff}
+#loader .ln{width:56px;height:1px;background:rgba(255,255,255,.25)}
+/* bag zoom portal (between discs and bags) */
+/* Same paper background as the rest of the site, so this reads as the bag
+   standing on the page rather than a dark panel dropped into it. */
+#bagportal{position:relative;height:240vh;background:var(--paper)}
+#bagportal .pin{position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(62% 50% at 50% 44%,#fff,var(--paper) 58%,#eef1e8)}
+#bagportal .bagbig{width:min(52vmin,400px);height:min(66vmin,510px);position:relative;
+  display:flex;align-items:center;justify-content:center;transform-origin:50% 50.5%; /* the zipper */
+  filter:drop-shadow(0 26px 54px rgba(14,26,19,.26));will-change:transform,opacity}
+#bagportal .bagbig svg{width:100%;height:100%;display:block}
+#bagportal .bpcap{position:absolute;z-index:3;top:12%;left:0;right:0;text-align:center;color:var(--ink);pointer-events:none;will-change:opacity}
+#bagportal .bpcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--signal);margin-bottom:10px}
+#bagportal .bpcap h2{font-family:var(--h);font-weight:500;font-size:clamp(24px,4vw,44px)}
+
+/* journey captions */
+.jcap{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);z-index:6;text-align:center;padding:0 24px;pointer-events:none;opacity:0;transition:opacity .5s}
+.jcap.show{opacity:1}
+/* local scrim: keeps the white headline legible against the bright sky
+   without dimming the scenery behind it */
+.jcap::before{content:"";position:absolute;left:50%;top:50%;width:150%;height:260%;transform:translate(-50%,-50%);
+  z-index:-1;pointer-events:none;
+  background:radial-gradient(46% 38% at 50% 50%,rgba(8,22,15,.52),rgba(8,22,15,.22) 55%,rgba(8,22,15,0) 78%)}
+.jcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+.jcap h1{font-family:var(--h);font-weight:700;font-size:clamp(46px,11vw,140px);line-height:.9;letter-spacing:-.03em;color:#fff;text-shadow:0 4px 18px rgba(6,18,12,.75),0 10px 46px rgba(6,18,12,.55)}
+.jcap h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,5vw,60px);letter-spacing:-.02em;color:#fff;text-shadow:0 4px 16px rgba(6,18,12,.75),0 8px 34px rgba(6,18,12,.5)}
+.jcap p{margin:16px auto 0;max-width:40ch;font-size:14.5px;font-weight:300;line-height:1.7;color:rgba(255,255,255,.9)}
+.jcap .btns{margin-top:26px;display:flex;gap:14px;justify-content:center;pointer-events:auto}
+.btn{border:none;cursor:pointer;font-family:var(--b);font-size:13px;font-weight:600;padding:13px 26px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;transition:transform .4s cubic-bezier(.34,1.5,.5,1),box-shadow .25s,background .25s}
+.btn.p{background:var(--signal);color:#fff}.btn.p:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,107,53,.4)}
+/* Apple-style pointer press (iOS ignores :active without a handler) */
+.pcard.pressing,.acard.pressing{transform:translateY(-3px) scale(.965)!important;transition:transform .11s ease-out!important}
+.btn.pressing{transform:scale(.9)!important;transition:transform .1s ease-out!important}
+nav .nl a.pressing,.brand.pressing{display:inline-block;transform:scale(.88)!important;transition:transform .1s ease-out!important}
+.btn.g{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.45);backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%)}
+.scrollcue{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:6;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#fff;opacity:.7;transition:opacity .4s}
+/* impact flash at the end */
+.flash{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 46%,rgba(255,213,77,.9),transparent 42%);mix-blend-mode:screen}
+
+/* progress bar */
+.prog{position:fixed;left:0;top:0;height:3px;width:0;background:linear-gradient(90deg,var(--signal),var(--gold));z-index:90}
+
+/* ===== content sections ===== */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+.sec{padding:clamp(80px,12vh,140px) 0}
+.sec.light{background:var(--paper);color:var(--ink)}
+.sec.dark{background:#e8f2ee;color:var(--ink)}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:44px}
+.sec-head h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,4.6vw,52px);line-height:1;letter-spacing:-.02em}
+.sec-head h2 em{font-style:italic;color:var(--forest)}
+.sec.dark .sec-head h2 em{color:var(--forest)}
+.sec-head p{font-size:14px;font-weight:300;color:var(--mut);max-width:44ch;margin-top:10px}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:1000px){.pgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.pgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .pcard{padding:12px 6px;border-radius:14px}
+  .pcard .dw{height:74px}
+  .pcard .disc-scene{zoom:.6}
+  .pcard .shadow{width:48px;height:9px;margin-top:-4px}
+  .pcard h3{font-size:11px;margin-top:6px;line-height:1.15}
+  .pcard .cls{margin-top:6px;font-size:8px;letter-spacing:.06em;padding:3px 6px}
+  .pcard .fn{display:none}
+  .pcard .pr{margin-top:auto;padding-top:8px;font-size:12.5px}
+  .disc-group{margin-bottom:26px}
+  .disc-group .gt h3{font-size:16px}}
+.disc-group{margin-bottom:40px}
+/* ---- catalogue filter ---- */
+.filterbtn{display:inline-flex;align-items:center;gap:7px;vertical-align:middle;margin-left:14px;
+  font-family:var(--b);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;
+  padding:8px 15px;border-radius:999px;border:1px solid var(--glassbrd);background:var(--glass2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 3px 12px rgba(10,22,20,.07);
+  -webkit-tap-highlight-color:transparent;transition:border-color .2s,box-shadow .2s}
+.filterbtn:hover{border-color:rgba(255,107,53,.5)}
+.filterbtn[aria-expanded="true"]{border-color:var(--signal);color:var(--signal)}
+.filterbtn.pressing{transform:scale(.93)!important;transition:transform .1s ease-out!important}
+.fcount{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;
+  border-radius:999px;background:var(--signal);color:#fff;font-size:11px;font-weight:700}
+.filterpanel{margin:0 0 26px;padding:18px 20px;border:1px solid var(--line);border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.45));
+  display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.filterpanel[hidden]{display:none}
+.fgroup h4{font-family:var(--h);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mut);margin-bottom:10px}
+.fchips{display:flex;flex-wrap:wrap;gap:7px}
+.fchip{font-family:var(--b);font-size:12.5px;font-weight:500;color:var(--ink);cursor:pointer;
+  padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.7);
+  -webkit-tap-highlight-color:transparent;transition:background .18s,border-color .18s,color .18s}
+.fchip:hover{border-color:rgba(255,107,53,.45)}
+.fchip[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:#fff}
+.fchip.pressing{transform:scale(.92)!important;transition:transform .1s ease-out!important}
+.frow{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border-top:1px solid var(--line);padding-top:13px}
+.fres{font-size:12.5px;color:var(--mut)}
+.fclear,.flink{font-family:var(--b);font-size:12.5px;font-weight:600;color:var(--signal);cursor:pointer;
+  background:none;border:none;padding:4px 2px;-webkit-tap-highlight-color:transparent}
+.fempty{text-align:center;color:var(--mut);font-size:14px;padding:34px 0}
+.fempty[hidden]{display:none}
+@media(max-width:560px){
+  .filterbtn{margin-left:10px;font-size:12px;padding:7px 13px}
+  .filterpanel{padding:15px 15px;gap:14px;grid-template-columns:1fr}
+}
+.disc-group .gt{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.disc-group .gt h3{font-family:var(--h);font-weight:600;font-size:20px;letter-spacing:-.01em}
+.disc-group .gt span{font-size:12px;color:var(--mut)}
+.pcard{background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.56));border:1px solid rgba(255,255,255,.8);border-radius:20px;padding:24px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;-webkit-tap-highlight-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 24px rgba(14,26,19,.06);transition:transform .42s cubic-bezier(.34,1.4,.5,1),box-shadow .3s}
+.pcard:hover{transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 20px 44px rgba(14,26,19,.14)}
+
+.pcard .dw{height:132px;display:flex;align-items:center;justify-content:center}
+.pcard .shadow{width:76px;height:14px;border-radius:50%;background:radial-gradient(ellipse,rgba(14,26,19,.22),transparent 70%);margin-top:-6px}
+.pcard h3{font-family:var(--h);font-weight:600;font-size:17px;margin-top:14px}
+.pcard .cls{margin-top:8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);background:#f0efe9;border-radius:999px;padding:4px 11px}
+.pcard .fn{margin-top:9px;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.pcard .pr{margin-top:auto;padding-top:14px;font-size:15px;font-weight:600;color:var(--forest)}
+.disc-scene{perspective:800px}
+/* Discs hold still (rotateX tilt) and only spin while hovered — avoids
+   15+ continuous CSS animations compositing every frame. */
+/* Fifteen preserve-3d disc renders is real raster work, and most of them are
+   far off screen at any moment. .dw already has a fixed height, so containing
+   the render inside it changes no layout — and it is deliberately not on the
+   card itself, which is a subgrid item and has to keep participating in the
+   row heights. */
+.disc-scene{content-visibility:auto;contain-intrinsic-size:auto 132px}
+@media(max-width:560px){.disc-scene{contain-intrinsic-size:auto 74px}}
+.disc3d{position:relative;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(0);animation:spin 15s linear infinite;animation-play-state:paused}
+.pcard:hover .disc3d{animation-play-state:running}
+@keyframes spin{from{transform:rotateX(58deg) rotateZ(0)}to{transform:rotateX(58deg) rotateZ(360deg)}}
+.dl{position:absolute;inset:0;border-radius:50%}
+.dface{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.dring{position:absolute;inset:12%;border-radius:50%;border:1px solid rgba(250,249,245,.22)}
+.agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:1000px){.agrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.agrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .acard .bd{padding:12px 12px 14px}.acard h4{font-size:14px}.acard .ad{font-size:11px}}
+.acard{background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.56));border:1px solid rgba(255,255,255,.8);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 24px rgba(14,26,19,.06);transition:transform .42s cubic-bezier(.34,1.4,.5,1),box-shadow .3s}
+/* frosted glass only on desktop pointers (backdrop-filter is too heavy on mobile GPUs) */
+@media(hover:hover) and (pointer:fine){
+  .pcard,.acard{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.36));backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%)}
+}
+@media(hover:none){
+  nav{background:rgba(247,249,246,.92);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .navsearch{background:rgba(255,255,255,.94);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .searchhint{background:rgba(255,255,255,.97);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .btn.g{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(20,42,62,.86)}
+  /* drop-shadow on scaled elements re-rasters every frame on mobile — drop it */
+  #bagportal .bagbig{filter:none}
+  .hd-stamp svg{filter:none}
+}
+.acard:hover{transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 20px 44px rgba(14,26,19,.14)}
+
+.acard .im{aspect-ratio:1;overflow:hidden;background:linear-gradient(135deg,#1B4332,#2E6B4F)}
+.acard .im img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.acard:hover .im img{transform:scale(1.05)}
+.acard .bd{padding:16px 16px 18px;flex:1;display:flex;flex-direction:column}
+.acard h4{font-family:var(--h);font-weight:600;font-size:16px}
+.acard .ad{font-size:11.5px;font-weight:300;color:var(--mut);margin-top:5px;line-height:1.5}
+.acard .ap{margin-top:auto;padding-top:10px;font-size:14px;font-weight:600;color:var(--forest)}
+.brandrow{display:flex;flex-wrap:wrap;gap:clamp(18px,4vw,54px);align-items:center;justify-content:center;margin-top:8px}
+.brandrow span{font-family:var(--h);font-style:italic;font-size:clamp(18px,2.4vw,30px);color:var(--mut)}
+/* footer */
+footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
+.nlrow{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:end;padding-bottom:56px;border-bottom:1px solid rgba(14,26,19,.12)}
+.nlrow h2{font-family:var(--h);font-weight:500;font-size:clamp(26px,4vw,46px);line-height:1.02;letter-spacing:-.02em}
+.nlrow h2 em{font-style:italic;color:var(--forest)}
+.nlrow p{margin-top:14px;font-size:14px;font-weight:300;color:var(--mut);max-width:42ch}
+.nlform{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px;display:flex;gap:8px;max-width:460px;margin-left:auto}
+.nlform input{flex:1;background:transparent;border:none;outline:none;color:var(--ink);font-family:var(--b);font-size:14px;padding:12px 18px;min-width:0}
+.nlform input::placeholder{color:var(--mut)}
+.nlform button{border:none;cursor:pointer;background:var(--signal);color:#fff;border-radius:999px;padding:12px 24px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.nlthanks{max-width:460px;margin-left:auto;padding:16px 24px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:14px}
+.bigmark{font-family:var(--h);font-weight:700;font-size:clamp(64px,18vw,240px);line-height:.82;letter-spacing:-.03em;margin:48px 0 32px;color:#152a5e}
+.fcols{display:flex;flex-wrap:wrap;gap:40px 64px;justify-content:space-between}
+.fcols .grp h4{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+.fcols .grp a{display:block;font-size:14px;color:#2b3a33;padding:5px 0}
+.fbottom{margin-top:38px;font-size:11px;color:var(--mut)}
+@media(max-width:760px){.nlrow{grid-template-columns:1fr}.nlform,.nlthanks{margin-left:0;width:100%;max-width:100%;min-width:0}}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.disc3d,.hero-disc,.hero-stage,.disc-aura{animation:none}
+  #journey{height:100vh;height:100dvh}.scene{position:relative}}
+/* ==========================================================================
+   THEME 4 — dark canvas + typography intro
+   Appended last, so every rule above survives untouched and this only
+   re-tones. Layout, spacing, grids, breakpoints and component markup are
+   exactly as in flightlab-cinematic.
+   ========================================================================== */
+
+:root{
+  --paper:#171C23; --ink:#E8EDF4; --mut:rgba(232,237,244,.56);
+  --line:rgba(255,255,255,.09);
+  --signal:#3ECF8E; --forest:#3ECF8E; --teal:#3ECF8E; --gold:rgba(232,237,244,.5);
+  --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.07);
+  --glassbrd:rgba(255,255,255,.12); --blur:blur(22px) saturate(150%);
+  --surf2:#2B3647; --surf3:#262F3B; --surf4:#323F54;
+  --on-signal:#06140D;
+}
+
+/* ---- One canvas, not a stack of panels ----
+   The previous version pinned this gradient to the viewport, which meant the
+   backdrop never changed while you scrolled: measured down a content-free
+   column it sat at a dead flat rgb(21,26,34) for 2200px at a time, and the only
+   variation came from each section popping its own little pool of colour near
+   its heading. Long flat runs punctuated by local blooms is exactly what reads
+   as stacked boxes.
+
+   So the field spans the document instead of the viewport, and the colour
+   pools are placed down the page rather than per section. Each pool is tall and
+   they are spaced closer together than they are wide, so every one overlaps its
+   neighbours — the light is always crossfading and never restarts at a
+   boundary. Nothing here is anchored to a section, so section edges have
+   nothing to coincide with. */
+body{background:#262F3B;color:var(--ink);position:relative}
+body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
+  z-index:-2;pointer-events:none;
+  background:
+    /* Volumetric colour rather than gradients you can point at. Each field is
+       far wider than it is tall and spaced closer together than it is wide, so
+       every one is already deep inside its neighbours before it has finished
+       fading — there is no position at which a single colour owns the frame,
+       which is what stops the eye finding an edge. Alphas are roughly half what
+       they were: the crystal has to stay the brightest thing on the page.
+       No filter: blur() anywhere. A ramp this wide already is the blur, and a
+       real one over a document this tall repaints on every scroll frame. */
+    /* Five rather than eight. They are wide enough that the overlap — and so the
+       continuous colour drift — is unchanged, and this is a gradient stack being
+       rasterised down an 11700px-tall layer as you scroll. */
+    radial-gradient(140% 34% at 5% 8%,rgba(70,240,190,.083),rgba(70,240,190,.033) 46%,transparent 86%),
+    radial-gradient(144% 35% at 97% 29%,rgba(96,146,255,.080),rgba(96,146,255,.030) 46%,transparent 88%),
+    radial-gradient(140% 34% at 3% 50%,rgba(60,224,255,.082),rgba(60,224,255,.031) 46%,transparent 88%),
+    radial-gradient(144% 35% at 99% 71%,rgba(180,116,244,.072),rgba(180,116,244,.027) 46%,transparent 88%),
+    radial-gradient(140% 34% at 5% 92%,rgba(70,240,190,.076),rgba(70,240,190,.029) 46%,transparent 88%),
+    /* graphite -> dark navy -> slate blue -> a breath of cyan -> graphite.
+       Each step is a couple of points of luminance, so the journey is felt
+       rather than seen. */
+    linear-gradient(180deg,#262F3B 0%,#2A3343 10%,#2D3A4E 22%,#313F57 34%,
+      #34445D 46%,#33455F 56%,#2E3D53 68%,#2A3547 80%,#282F3C 90%,#262F3B 100%)}
+.sec{position:relative;z-index:1}
+.sec.light,.sec.dark{background:transparent;color:var(--ink)}
+/* Sections carry no background and no ambient pool of their own. Anything
+   anchored to a section edge gives the eye something to find. */
+.sec::before{content:none}
+/* No rule under a group header and none above the footer. A heading is
+   separated by the space around it and by the light behind it; a drawn line
+   is what made the page read as stacked panels. */
+.disc-group .gt{border-bottom:none;position:relative}
+.disc-group .gt::after{content:none}
+footer{border-top:none!important}
+#nl{border-top:none!important;position:relative}
+#nl::before{content:none}
+.sec.dark .sec-head h2 em{color:var(--signal)}
+
+/* Cards become raised glass instead of white paper */
+/* Every card in a row shares the row's grid lines, so the badge, the flight
+   numbers and the price sit on the same baselines across the row however many
+   lines a product name happens to run to. On a phone the names range from two
+   to four lines, which was throwing the badges out by ~20px. Subgrid is the only
+   way to say "as tall as the tallest one in this row" in CSS; where it is not
+   supported the card just falls back to its previous column layout. */
+.pgrid>.pcard{display:grid;grid-template-rows:subgrid;grid-row:span 6;
+  justify-items:center;align-content:start}
+/* Shorter names would otherwise centre inside the shared row; start-aligning
+   puts the first line of every product name on the same baseline. */
+.pgrid>.pcard>h3{align-self:start}
+@media(max-width:560px){.pgrid>.pcard{grid-row:span 5}}
+.pcard,.acard{
+  background:linear-gradient(180deg,#37455B,#323F54);
+  border:1px solid rgba(255,255,255,.12);
+  /* Same material as the wordmark. The crystal is lit by a bright polished edge
+     along its top and a cooler bounce off the floor at its base, with the body
+     doing almost nothing — so every raised surface on the page is lit the same
+     way, with the same two lines and the same colours. It is not a card style
+     and a logo style; it is one material seen twice. */
+  box-shadow:
+    inset 0 1px 0 rgba(248,252,255,.15),
+    inset 0 -1px 0 rgba(174,239,245,.055),
+    0 18px 40px rgba(16,21,30,.34)}
+@media(hover:hover) and (pointer:fine){
+  .pcard,.acard{background:linear-gradient(180deg,#323F54,#2F3C51);
+    backdrop-filter:none;-webkit-backdrop-filter:none}
+  .pcard:hover,.acard:hover{background:linear-gradient(180deg,#3C4E6A,#364257);
+    border-color:rgba(62,207,142,.3)}
+}
+.acard .im{background:linear-gradient(135deg,#2F3C51,#262F3B)}
+.disc-group .gt{border-bottom-color:rgba(255,255,255,.09)}
+
+/* Newsletter, footer, bag portal — the last white surfaces */
+.nlform,.nlthanks{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:var(--ink)}
+.nlform input{color:var(--ink)}
+.nlform input::placeholder{color:rgba(232,237,244,.38)}
+.nlform button{background:var(--signal);color:var(--on-signal)}
+footer{background:transparent;border-top:1px solid rgba(255,255,255,.08);color:var(--ink);position:relative;z-index:1}
+.bigmark{color:rgba(232,237,244,.10)}
+#bagportal{background:transparent;position:relative;z-index:1}
+#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,rgba(51,63,84,.55),rgba(39,47,62,.30) 62%,rgba(29,36,45,0))}
+#bagportal .bpcap{color:var(--ink)}
+#bagportal .bpcap .k{color:var(--signal)}
+#bagportal .bagbig{filter:drop-shadow(0 26px 54px rgba(0,0,0,0.564))}
+
+/* Glass kept to the few chrome surfaces the brief allows */
+nav{background:rgba(30,39,54,.62);border-bottom:1px solid rgba(255,255,255,.10)}
+nav .brand,nav .nl a{color:var(--ink)}
+.navsearch{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 4px 16px rgba(0,0,0,0.282)}
+.navsearch input{color:var(--ink)}
+.navsearch input::placeholder{color:rgba(232,237,244,.38)}
+.searchhint{background:rgba(30,36,45,.96);border-color:rgba(255,255,255,.12);color:var(--mut)}
+@media(hover:none){
+  nav{background:rgba(38,47,59,.95)}
+  .navsearch{background:rgba(255,255,255,.06)}
+  .searchhint{background:#262F3B}
+}
+
+/* Green stays scarce: buttons, active states, highlights */
+.btn.p{background:var(--signal);color:var(--on-signal)}
+.btn.p:hover{box-shadow:0 10px 28px rgba(62,207,142,.24)}
+.btn.g{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:var(--ink)}
+.fchip{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);color:var(--ink)}
+.pcard .cls{background:rgba(255,255,255,.07);color:var(--mut)}
+.pcard .pr{color:var(--signal)}
+.pcard h3,.acard h4{color:var(--ink)}
+.acard .ad{color:var(--mut)}.acard .ap{color:var(--signal)}
+.fchip[aria-pressed="true"]{background:var(--signal);border-color:var(--signal);color:var(--on-signal)}
+.filterbtn{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--ink)}
+.filterpanel{background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.10)}
+.fcount{background:var(--signal);color:var(--on-signal)}
+.eyebrow,.sec-head .k{color:rgba(232,237,244,.42)}
+
+/* ---------- Floating discs ----------
+   One fixed layer behind everything, so the same few discs carry across
+   every section and tie them together. Transform only, and they sit under
+   the content layer so they can never cross text or buttons. */
+/* One floating system for the whole page, not a set per section.
+   The layers were previously pinned inside a fixed, viewport-sized box, so six
+   of the nine discs sat permanently off-screen and the three that showed never
+   moved relative to the viewport — nothing ever travelled from one section into
+   the next. Each layer now slides against the scroll at its own rate, so discs
+   cross the whole document and near ones pass far ones. That difference in rate
+   is the entire sensation of moving through a space rather than past a picture. */
+/* A wide, very low-alpha ramp on a dark page is exactly the case where 8-bit
+   colour bands: the steps are far apart in space and only one level apart in
+   value, so you see rings. This is the same noise tile the hero already uses,
+   fixed and barely visible, and it dithers those steps away. Without it the
+   ambient fields read as gradients you can point at; with it they read as
+   light in air. One 200px tile, composited, so it costs nothing to scroll. */
+/* An almost-nothing vignette over the whole page. At roughly 3% down in the
+   corners it is below the level you notice as darkening; it only biases the eye
+   toward the middle. Fixed, so it never moves against the content. */
+.fl-vig{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(118% 98% at 50% 48%,transparent 46%,rgba(15,20,27,.10) 78%,rgba(14,18,24,.20) 100%)}
+.fl-dither{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.018;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.fl-discs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.fl-layer{position:absolute;left:0;right:0;top:0;height:0;will-change:transform}
+/* Three depth layers, each on its own figure-eight. The paths cross at their
+   centre, so nothing ever tracks in a straight line and the drift reads as
+   floating rather than sliding. Transform only — these never touch layout. */
+/* Defocus is baked into each gradient instead of applied with filter: blur().
+   A 26px blur on a 58vmin element is one of the most expensive things you can
+   put behind a scrolling page, and a soft enough colour ramp is indis-
+   tinguishable from it — for a disc of flat colour there is nothing for the
+   blur to reveal that the gradient cannot state directly. */
+.fl-disc{position:absolute;width:var(--d);height:var(--d);border-radius:50%;
+  opacity:var(--o);will-change:transform;background:var(--bg)}
+/* Layer 1 — near: large and very blurred, because it is close to the eye and
+   far outside the focal plane. It should never resolve as an object. */
+.fl-disc.l1{--o:.30;--bg:radial-gradient(circle at 50% 50%,rgba(178,220,248,.34),rgba(150,196,230,.20) 26%,rgba(120,165,205,.08) 52%,transparent 74%)}
+/* Layer 2 — mid */
+.fl-disc.l2{--o:.10;--bg:radial-gradient(circle at 38% 30%,rgba(196,230,250,.80),rgba(110,158,196,.44) 40%,rgba(48,70,94,.14) 66%,transparent 78%)}
+/* Layer 3 — far: tiny and sharp, the only layer in focus. */
+.fl-disc.l3{--o:.11;--bg:radial-gradient(circle at 34% 28%,rgba(206,236,252,.95),rgba(96,144,182,.62) 44%,rgba(33,47,62,.24) 72%,transparent 80%)}
+@keyframes fl8-far{0%{transform:translate3d(7.00vw,0.00vh,0) rotateX(68deg) rotateZ(0deg)}12.5%{transform:translate3d(4.95vw,4.50vh,0) rotateX(68deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(68deg) rotateZ(90deg)}37.5%{transform:translate3d(-4.95vw,-4.50vh,0) rotateX(68deg) rotateZ(135deg)}50%{transform:translate3d(-7.00vw,0.00vh,0) rotateX(68deg) rotateZ(180deg)}62.5%{transform:translate3d(-4.95vw,4.50vh,0) rotateX(68deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(68deg) rotateZ(270deg)}87.5%{transform:translate3d(4.95vw,-4.50vh,0) rotateX(68deg) rotateZ(315deg)}100%{transform:translate3d(7.00vw,0.00vh,0) rotateX(68deg) rotateZ(360deg)}}
+@keyframes fl8-mid{0%{transform:translate3d(5.00vw,0.00vh,0) rotateX(62deg) rotateZ(0deg)}12.5%{transform:translate3d(3.53vw,3.00vh,0) rotateX(62deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(62deg) rotateZ(90deg)}37.5%{transform:translate3d(-3.53vw,-3.00vh,0) rotateX(62deg) rotateZ(135deg)}50%{transform:translate3d(-5.00vw,0.00vh,0) rotateX(62deg) rotateZ(180deg)}62.5%{transform:translate3d(-3.53vw,3.00vh,0) rotateX(62deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(62deg) rotateZ(270deg)}87.5%{transform:translate3d(3.53vw,-3.00vh,0) rotateX(62deg) rotateZ(315deg)}100%{transform:translate3d(5.00vw,0.00vh,0) rotateX(62deg) rotateZ(360deg)}}
+@keyframes fl8-near{0%{transform:translate3d(3.50vw,0.00vh,0) rotateX(58deg) rotateZ(0deg)}12.5%{transform:translate3d(2.47vw,2.25vh,0) rotateX(58deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(58deg) rotateZ(90deg)}37.5%{transform:translate3d(-2.47vw,-2.25vh,0) rotateX(58deg) rotateZ(135deg)}50%{transform:translate3d(-3.50vw,0.00vh,0) rotateX(58deg) rotateZ(180deg)}62.5%{transform:translate3d(-2.47vw,2.25vh,0) rotateX(58deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(58deg) rotateZ(270deg)}87.5%{transform:translate3d(2.47vw,-2.25vh,0) rotateX(58deg) rotateZ(315deg)}100%{transform:translate3d(3.50vw,0.00vh,0) rotateX(58deg) rotateZ(360deg)}}
+@media(max-width:560px){.fl-disc.l1.c,.fl-disc.l2.c,}
+/* On a phone the discs drop their rotation. A rotating soft ellipse looks
+   identical to a still one at these sizes and opacities, and translate-only
+   keyframes are the cheapest thing an animation can be. */
+@media(hover:none){
+  @keyframes fl8-far{0%{transform:translate3d(7vw,0,0)}25%{transform:translate3d(0,0,0)}
+    50%{transform:translate3d(-7vw,0,0)}75%{transform:translate3d(0,0,0)}100%{transform:translate3d(7vw,0,0)}}
+  @keyframes fl8-mid{0%{transform:translate3d(5vw,0,0)}25%{transform:translate3d(0,3vh,0)}
+    50%{transform:translate3d(-5vw,0,0)}75%{transform:translate3d(0,-3vh,0)}100%{transform:translate3d(5vw,0,0)}}
+  @keyframes fl8-near{0%{transform:translate3d(3.5vw,0,0)}25%{transform:translate3d(0,2vh,0)}
+    50%{transform:translate3d(-3.5vw,0,0)}75%{transform:translate3d(0,-2vh,0)}100%{transform:translate3d(3.5vw,0,0)}}
+}
+@media(prefers-reduced-motion:reduce){.fl-disc{animation:none}}
+
+/* ---------- Typography intro ----------
+   The camera dollies toward the word: apparent size comes from translateZ
+   under a perspective, not from scale(), so the letters gain real depth and
+   stay text rather than a stretched bitmap. */
+.scene{perspective:1100px;perspective-origin:50% 50%;
+  /* The origin has to sit where the word sits. It was at 46% while the wordmark
+     is centred at 50%, and everything under a perspective expands away from that
+     point — so the word slid downward as the camera came in: dead centre at rest,
+     68px low by the time it filled the phone. Same point now, so it grows in
+     place. */
+  /* No background of its own. The hero used to paint an opaque backdrop, and
+     where it ended — the join with #discer — the colour jumped 23 points of
+     blue in a single row, which is the line you could see. The page field runs
+     behind the hero instead, so the hero and the catalogue are literally the
+     same surface and there is nothing left to step. */
+  background:transparent}
+/* The environment lives here so it can be faded out on its own as the intro
+   finishes. By the time the join arrives there is nothing left of it, and the
+   hero hands over to the page field with no edge at all.
+   These two pseudo-elements also carried leftovers from the original light
+   theme — a 32%-white radial and a green ground wash, both still painting over
+   the dark hero. Overridden here rather than left to fight. */
+/* Light that has already been through the crystal, pooled low and behind it.
+   Two fields, drifting on different periods (54s and 71s) so their overlap never
+   repeats on a beat you could learn. Peak alpha is ~5%, which lands at 2-4% of
+   the surface once it is over the ambient field — below the level you notice as
+   a shape, above the level that reads as dead space. Transform-only animation on
+   composited layers, so this is a GPU move and not a repaint. */
+.fl-caus-a,.fl-caus-b{position:absolute;inset:-22%;pointer-events:none;will-change:transform}
+/* The hero's atmosphere kept animating for the entire page — measured at about
+   340ms of style recalculation across a full scroll, spent on something that
+   was not on screen. Parked whenever the hero is not in view. */
+.hero-off .fl-caus-a,.hero-off .fl-caus-b,
+.hero-off .fl-env,.hero-off .fl-lights{animation-play-state:paused}
+.fl-caus-a{background:
+    radial-gradient(46% 30% at 33% 63%,rgba(196,238,255,.0125),transparent 72%),
+    radial-gradient(38% 24% at 67% 71%,rgba(150,252,220,.0095),transparent 74%);
+  animation:fl-caus-a 54s ease-in-out infinite}
+.fl-caus-b{background:
+    radial-gradient(52% 27% at 58% 59%,rgba(172,212,255,.011),transparent 74%),
+    radial-gradient(34% 22% at 25% 72%,rgba(206,190,255,.009),transparent 76%);
+  animation:fl-caus-b 71s ease-in-out infinite}
+@keyframes fl-caus-a{
+  0%{transform:translate3d(-1.6%,.6%,0) scale(1)}
+  50%{transform:translate3d(2.1%,-.9%,0) scale(1.055)}
+  100%{transform:translate3d(-1.6%,.6%,0) scale(1)}}
+@keyframes fl-caus-b{
+  0%{transform:translate3d(1.9%,-.5%,0) scale(1.045)}
+  50%{transform:translate3d(-1.7%,1%,0) scale(1)}
+  100%{transform:translate3d(1.9%,-.5%,0) scale(1.045)}}
+/* The room breathes. 58s, two and a half per cent — under the threshold you can
+   see directly, over the threshold that makes a still image feel dead. */
+@keyframes fl-env-breathe{
+  0%{transform:translateZ(0) scale(1)}
+  50%{transform:translateZ(0) scale(1.025)}
+  100%{transform:translateZ(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){
+  .fl-caus-a,.fl-caus-b,.fl-env{animation:none}}
+.fl-env{position:absolute;inset:0;z-index:0;pointer-events:none;will-change:opacity;
+  /* Its own raster, so the sticky scene composites it instead of repainting
+     the whole gradient stack as the hero moves. Harmless under the scene's
+     perspective: translateZ(0) resolves to a scale of exactly 1. */
+  transform:translateZ(0);backface-visibility:hidden;
+  animation:fl-env-breathe 58s ease-in-out infinite;
+  background:
+    linear-gradient(180deg,transparent 62%,rgba(120,226,238,.07) 72%,rgba(29,36,45,.40) 100%),
+    radial-gradient(128% 100% at 50% 42%,transparent 62%,rgba(16,23,32,.30) 100%),
+    /* Neon pools, wide and very soft so they bleed into one another. A big
+       transparent colour ramp is what a blur of a small bright blob would give
+       you anyway, and it costs nothing to composite — an actual blur filter on
+       a layer this size is one of the most expensive things you can put behind
+       a scrolling page. Overlapping them is what makes the colour read as
+       lit air rather than as shapes. */
+    radial-gradient(66% 74% at 12% 44%,rgba(70,240,190,0.1110),rgba(56,226,206,.075) 46%,transparent 84%),
+    radial-gradient(64% 70% at 48% 58%,rgba(60,224,255,0.1110),rgba(88,186,255,.072) 48%,transparent 86%),
+    radial-gradient(66% 72% at 88% 40%,rgba(160,132,255,.170),rgba(206,118,236,.068) 48%,transparent 86%),
+    radial-gradient(92% 72% at 50% 42%,rgba(35,48,62,.72) 0%,rgba(33,44,56,.44) 40%,rgba(31,39,50,.18) 74%,transparent 100%)}
+.scene::after{content:none}
+.fl-stage{position:absolute;inset:0;z-index:2;transform-style:preserve-3d;pointer-events:none}
+.fl-mark{position:absolute;inset:0;margin:0;
+  transform-style:preserve-3d;will-change:transform,opacity;backface-visibility:hidden;
+  /* No filter here on purpose: a drop-shadow on an element that is being
+     transformed forces a re-raster of the whole thing every frame. */}
+
+/* ---- The crystal ----
+   Drawn in SVG rather than with -webkit-text-stroke, for two things the CSS
+   property cannot give: rounded corners (a stroke with round joins dilates the
+   glyph and rounds every corner on the way out; -webkit-text-stroke miters),
+   and gradient edges (an SVG stroke takes a paint server, a CSS stroke colour
+   is one flat value).
+
+   The last pass read as neon, and the reason was structural rather than a
+   matter of tuning: it was lit additively. mix-blend-mode:screen and a soft
+   outer halo are how you draw a light source, so that is what the eye saw.
+   Glass is not a light source. It is a dark-edged solid that redirects light,
+   and it is legible because of four things, none of which is a glow:
+
+     a dark contour where the surface turns away from the camera,
+     the background visibly displaced inside it,
+     specular hits confined to where a light actually points,
+     and light pooling at the bottom where the solid concentrates it.
+
+   All four are below. Nothing here blends additively and nothing glows.
+
+   The SVG carries no viewBox, so one user unit is one CSS pixel and em-based
+   stroke widths track the font size; nothing depends on knowing Inter's
+   metrics in advance, which matters because it arrives over the network. */
+.fl-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+/* The chips are drawn at native resolution on a plain, untransformed canvas.
+   Putting them inside .fl-mark would have been simpler, but the word is several
+   times its original size by the time it comes apart, and a bitmap carried along
+   by the dolly gets magnified with it. Positions are projected in script
+   instead, so every chip stays sharp however close the camera gets.
+   Without these rules the element falls back to a canvas's intrinsic 300x150 at
+   the top-left of the scene, and the whole dissolve happens in the corner. */
+.fl-shards{position:absolute;inset:0;width:100%;height:100%;z-index:3;
+  pointer-events:none;opacity:0}
+/* MITRED JOINS, NOT ROUND ONES.
+
+   Every layer of the crystal is a stroke laid on the glyph outline, so the
+   join style is not a detail of the bevel — it is what decides the shape of
+   the letter. With round joins and a bead this wide, each corner is replaced
+   by an arc of the bead's radius. On F, L, I, H, T, B that is invisible:
+   their corners are square and a 5px arc on a 190px letter reads as a
+   polished edge. It is the acute angles that a round join destroys: an apex
+   comes back as a dome and a pointed counter as a blob, both measurably away
+   from the real outline.
+
+   Mitred, the corners follow the outline again. The limit is 2.4, so nothing
+   spikes. Corners still carry more material than the flat runs — a miter
+   reaches further out than a round join does — so the crystal is still
+   thickest where it turns.
+
+   The A is drawn rather than typed (see flAPath below) and its corners are
+   rounded in the geometry itself, at radii chosen per corner. That is the
+   right place for them: a join style is a property of the bead and applies
+   the same everywhere, whereas an apex and a foot want different amounts of
+   softening. The letter arrives already rounded and the bead just follows it. */
+.fl-svg .fl-ly{font-family:var(--b);font-weight:800;font-size:13.4vw;
+  letter-spacing:-.045em;paint-order:stroke;
+  stroke-linejoin:miter;stroke-miterlimit:2.4;stroke-linecap:round}
+/* The typed A is still in the string — it keeps Inter's advance width, so L
+   and B sit exactly where they always did — but it paints nothing, and the
+   drawn A takes its place. */
+.fl-svg .a-slot{fill:none;stroke:none}
+
+/* Thickness.
+
+   This used to be a fully drawn copy of the word sitting behind the near face
+   with its own stroke, which through a transparent front face was not depth —
+   it was a second complete outline of every glyph, offset down and right. On
+   the A that put a whole second triangle inside the counter and a second
+   contour round both legs, which is the thing that kept looking wrong.
+
+   A real edge seen through glass is a soft change in density, not a line. So:
+   no stroke, so it cannot have a rim of its own, and a tenth of the alpha, so
+   what is left is a faint thickening towards the lower right and nothing you
+   could trace. */
+.fl-svg .g-ext{fill:rgba(140,196,224,.10);stroke:none;
+  transform:translate(.014em,.018em)}
+/* The dark contour. Widest layer, sitting under the body, so what shows is a
+   dark rim just outside the glass. This single layer is most of the difference
+   between glass and neon: a lit tube has no dark edge, a solid always does. */
+.fl-svg .g-dark{fill:none;stroke:url(#flDark);stroke-width:.032em;
+  transform:translate(.004em,.006em)}
+/* Refraction. The gradient is in userSpaceOnUse, so it is positioned against
+   the viewport rather than the glyph: it restates the light behind the word but
+   displaced sideways, which is what you see through a thick solid — the
+   backdrop, shifted and concentrated, not the backdrop lined up behind it. */
+.fl-svg .g-refr{fill:url(#flRefr);stroke:url(#flRefr);stroke-width:.032em}
+/* Body tint: blue-green, and almost clear. */
+.fl-svg .g-body{fill:url(#flBody);stroke:url(#flBody);stroke-width:.032em}
+/* Gloss — the sweep of reflected light a polished surface carries across
+   itself. Fill only, so it stays strictly inside the letter: a reflection ON
+   the glass, never a glow around it. This is what stops a fully clear letter
+   from reading as an empty hole. */
+.fl-svg .g-gloss{fill:url(#flGloss)}
+/* The caustic — light gathered and dumped out of the bottom of the solid. */
+.fl-svg .g-caus{fill:url(#flCaus)}
+/* The crystal is not the same thickness everywhere. This layer is wider than
+   the bevel that sits on top of it, and because the join is round, a wider
+   stroke deposits noticeably more material where the contour turns — the
+   corners and the outer edges — and almost none along a straight run. That is
+   the same place a real piece of crystal is thickest, and the same place it
+   bends light hardest, which is why the colour lives on this layer.
+
+   It was .030em, which was wide enough that its inner half stood clear of the
+   bevel above it and drew a complete second contour inside every glyph. On the
+   wide letters that read as a bevel; on the A it did not. The A's counter and
+   the notch between its legs are both small, so a second bright line running
+   round each of them cut the letter into a left bar, a right bar and a
+   crossbar — three pieces instead of one. None of the reference renders has a
+   double outline: a piece of glass has one edge. Halved, the layer still puts
+   colour where the contour turns, and every glyph is one continuous solid. */
+.fl-svg .g-iris{fill:none;stroke:url(#flIris);stroke-width:.024em}
+/* The polished bevel. Moderate, and dark through its middle band. */
+.fl-svg .g-bevel{fill:none;stroke:url(#flBevel);stroke-width:.052em}
+.fl-svg .g-valley{fill:none;stroke:url(#flValley);stroke-width:.015em}
+/* Specular. Confined to the top of the form, because a light points from
+   somewhere. An outline that is equally bright the whole way round is a tube. */
+.fl-svg .g-spec{fill:none;stroke:url(#flSpec);stroke-width:.027em;mask:url(#flSpecPos)}
+@keyframes fl-lights{
+  0%  {transform:translate(0,0)}
+  50% {transform:translate(2.6%,-1.1%)}
+  100%{transform:translate(0,0)}}
+.fl-lights{animation:fl-lights 34s ease-in-out infinite;transform-origin:50% 50%}
+.fl-moving .fl-lights{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.fl-lights{animation:none}}
+.fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.026em;opacity:.375;
+  transform-box:fill-box;transform-origin:center;
+  transform:translateY(.74em) scaleY(-1);mask:url(#flReflFade)}
+
+/* THE MATERIAL IS CONSTANT.
+   There used to be a .fl-moving state here that swapped the glass to flat paint,
+   thinned the bevel and hid five of the nine layers the moment the camera
+   started. It was a real saving, and it was also wrong: it meant the crystal
+   visibly changed substance the instant you touched the wheel. Every layer,
+   every gradient, every width and the reflection are now identical from load
+   until the fragments take over. Nothing about the material is keyed to scroll.
+
+   What still animates is only the camera — transform and perspective — the
+   opacity of the final dissolve, and the fragments themselves. */
+
+/* On a phone the section copy sat left while the hero captions sat centred,
+   so the page read as two different alignments stacked on each other. Both
+   .sec-head and the group titles are flex rows, so centring the text alone is
+   not enough — the rows have to centre their own items too. Nothing moves on
+   desktop; the two-column heading there is intact. */
+@media(max-width:760px){
+  .sec-head{justify-content:center;text-align:center;flex-direction:column;align-items:center}
+  .sec-head p{margin-left:auto;margin-right:auto;text-align:center}
+  .sec-head .fbtn,.sec-head .filterbtn{margin-inline:auto}
+  .disc-group .gt{justify-content:center;text-align:center;flex-wrap:wrap;row-gap:2px}
+  .sec .k{text-align:center}
+  /* The newsletter block is its own grid, not a .sec-head. */
+  #nl .k,#nl h2,#nl p{text-align:center}
+  #nl .nlform{margin-inline:auto}
+}
+/* On a narrow, tall viewport the aurora's ellipses stretch vertically and read
+   as three separate columns. Widen and flatten them so it stays one wash of
+   light sitting behind the word. */
+@media(max-width:760px){
+  .fl-env{background:
+    linear-gradient(180deg,transparent 66%,rgba(120,226,238,.06) 76%,rgba(29,36,45,.40) 100%),
+    radial-gradient(140% 100% at 50% 44%,transparent 64%,rgba(16,23,32,.28) 100%),
+    radial-gradient(96% 30% at 18% 44%,rgba(70,240,190,0.1110),rgba(70,240,190,0.0432) 46%,transparent 84%),
+    radial-gradient(92% 28% at 54% 58%,rgba(60,224,255,0.1110),rgba(60,224,255,0.0450) 46%,transparent 86%),
+    radial-gradient(94% 29% at 84% 40%,rgba(160,132,255,.170),rgba(206,118,236,.066) 46%,transparent 86%),
+    radial-gradient(116% 68% at 50% 44%,rgba(35,48,62,.72) 0%,rgba(33,44,56,.44) 40%,rgba(31,39,50,.18) 74%,transparent 100%)}
+  /* The bead used to be widened only here, which meant the wordmark was a
+     heavier, brighter piece of glass on a phone than on a desktop — two
+     materials, chosen by viewport. The phone's proportions were the right ones,
+     so they are the base now and there is nothing left to override. */
+}
+#loader{background:#262F3B}
+/* The hero used to carry its own film grain. Now that .fl-dither covers the
+   whole page, the hero was getting both — so it sat about two levels brighter
+   than everything below it, and the hero's bottom edge was exactly where that
+   difference stopped. That was the last of the divider. The element stays;
+   it just no longer double-dithers the one section it happens to live in. */
+.grain{opacity:0}
+
+/* ==========================================================================
+   MATERIAL PASS — one lighting model for the whole page
+
+   Up to here the page was correct but it was still built out of components:
+   every surface had its own background, its own uniform border and its own
+   idea of where the light was. This block does not add anything to look at.
+   It states the lighting once and then makes every surface obey it, so the
+   difference between a card, a button and a chip is which *material* it is,
+   not which style it was given.
+
+   Four materials, and they are the only ones on the page:
+
+     Crystal   the wordmark, and nothing else. Refracts. Untouched here.
+     Graphite  the environment. Absorbs. Never flat, never highlighted.
+     Smoked    cards and panels. Transmits the environment, reflects softly.
+     Satin     buttons, chips, badges, fields. Catches a highlight, never
+               a specular. Brushed, not chromed.
+
+   They deliberately do not react to light the same way, which is what makes
+   them read as different substances rather than different colours.
+   ========================================================================== */
+
+:root{
+  /* One light, above and slightly in front, plus a cool bounce off the floor.
+     Every surface below is lit by these two numbers and nothing else — this
+     is the same pair the crystal's polished top edge and floor bounce already
+     use, so a card and the wordmark are lit by the same lamp. */
+  --lit-top:rgba(248,252,255,.15);
+  --lit-bot:rgba(174,239,245,.055);
+  /* A real edge is not the same brightness the whole way round. The top rail
+     faces the light, the sides graze it, the bottom sees only the bounce.
+     A border that is one flat colour on all four sides is the single most
+     "drawn in a browser" thing a surface can do. */
+  --edge-top:rgba(255,255,255,.17);
+  --edge-side:rgba(255,255,255,.105);
+  --edge-bot:rgba(255,255,255,.055);
+  /* Contact with the ground, not a glow. Neutral, never tinted with the
+     accent — coloured shadow is light a surface does not emit. */
+  --contact:0 18px 40px rgba(16,21,30,.34);
+  --contact-near:0 8px 20px rgba(16,21,30,.30);
+  --contact-far:0 30px 62px rgba(16,21,30,.44);
+}
+
+/* ---------- Graphite: the environment is never still ----------
+   The page field is a document-tall gradient, which gave depth but froze the
+   moment you stopped scrolling. Light in a room does not hold still. This is
+   one fixed layer of very wide, very low colour that drifts on a 96s loop —
+   transform only, so it runs on the compositor and never touches layout or
+   style. It is under the dither and the vignette, so what you actually see is
+   the tone of the room changing, not three coloured blobs moving. */
+.fl-air{position:fixed;inset:-20%;z-index:-2;pointer-events:none;
+  will-change:transform;
+  background:
+    radial-gradient(40% 30% at 22% 24%,rgba(60,224,255,.052),transparent 72%),
+    radial-gradient(44% 33% at 79% 63%,rgba(158,124,255,.043),transparent 74%),
+    radial-gradient(38% 28% at 57% 11%,rgba(70,240,190,.040),transparent 72%),
+    radial-gradient(42% 31% at 30% 86%,rgba(96,146,255,.038),transparent 74%);
+  animation:fl-air 96s ease-in-out infinite}
+@keyframes fl-air{
+  0%  {transform:translate3d(-2.0%,-1.3%,0)}
+  34% {transform:translate3d(1.7%,1.1%,0)}
+  67% {transform:translate3d(-1.1%,1.9%,0)}
+  100%{transform:translate3d(-2.0%,-1.3%,0)}}
+@media(prefers-reduced-motion:reduce){.fl-air{animation:none}}
+
+/* ---------- Smoked glass: cards and panels ----------
+   These were opaque panels sitting on top of the environment. A panel that
+   blocks the light behind it is pasted onto the page; a pane that passes some
+   of it through is in the room. The fills are translucent now, so a card in
+   the cyan part of the page picks up cyan and a card lower down picks up
+   violet — without a single card-specific colour anywhere.
+
+   The first background layer is the reflection: a wide, very soft band with no
+   hard start or end. It is 3x the card's height, so only a slice of it shows,
+   and hover slides the slice — the reflection moves across the pane the way it
+   would if you leaned in. That is the whole hover effect. */
+.pcard,.acard{
+  background-color:transparent;
+  background-image:
+    linear-gradient(176deg,
+      rgba(255,255,255,0)     0%,
+      rgba(248,252,255,.052) 27%,
+      rgba(248,252,255,.016) 45%,
+      rgba(255,255,255,0)    66%),
+    linear-gradient(180deg,rgba(55,68,89,.50),rgba(44,56,73,.58));
+  background-repeat:no-repeat;
+  background-size:100% 300%,100% 100%;
+  background-position:0 20%,0 0;
+  border-top-color:var(--edge-top);
+  border-left-color:var(--edge-side);
+  border-right-color:var(--edge-side);
+  border-bottom-color:var(--edge-bot);
+  box-shadow:
+    inset 0 1px 0 var(--lit-top),
+    inset 0 -1px 0 var(--lit-bot),
+    var(--contact);
+  /* An object with mass does not bounce when you point at it. The overshoot
+     easing was the last thing on the page that felt like a UI animation
+     rather than a thing moving. */
+  transition:
+    transform .5s cubic-bezier(.22,1,.32,1),
+    box-shadow .45s cubic-bezier(.22,1,.32,1),
+    background-position .6s cubic-bezier(.22,1,.32,1),
+    border-color .45s ease}
+.pcard:hover,.acard:hover{
+  /* Depth increases, the reflection slides, the top rail catches more light.
+     No colour change: a pane of glass does not turn green when you look at
+     it, and the accent is reserved for things you can act on. */
+  transform:translateY(-4px);
+  /* Restated, not inherited: an earlier rule sets `background` on hover, and
+     the shorthand would drop this back to an opaque fill with the reflection
+     layer gone — the pane would stop being glass the moment you pointed at it.
+     The fill is identical to the resting one. Only the reflection moves. */
+  background-image:
+    linear-gradient(176deg,
+      rgba(255,255,255,0)     0%,
+      rgba(248,252,255,.052) 27%,
+      rgba(248,252,255,.016) 45%,
+      rgba(255,255,255,0)    66%),
+    linear-gradient(180deg,rgba(55,68,89,.50),rgba(44,56,73,.58));
+  background-size:100% 300%,100% 100%;
+  background-position:0 56%,0 0;
+  border-top-color:rgba(255,255,255,.26);
+  border-left-color:rgba(255,255,255,.14);
+  border-right-color:rgba(255,255,255,.14);
+  /* An earlier rule turned this edge green on hover. Green is for things you
+     can act on, not for announcing that the cursor exists. */
+  border-bottom-color:var(--edge-bot);
+  box-shadow:
+    inset 0 1px 0 rgba(248,252,255,.23),
+    inset 0 -1px 0 rgba(174,239,245,.075),
+    var(--contact-far)}
+/* No backdrop blur. It was the obvious way to say "glass", and it was measured:
+   twenty panes each re-compositing a blur while a fixed layer drifts behind
+   them took the catalogue scroll from 37.6ms to 69.3ms a frame on a throttled
+   desktop. A pane that transmits the room already reads as glass — the blur was
+   the effect, the transmission is the material, and a material that halves the
+   frame rate is not a premium one. */
+/* The media well was an opaque slab inside a translucent pane, which put a hard
+   seam across the middle of every accessory card — one object made of two
+   materials. It is the same pane, recessed: a recess catches less light, so it
+   is darker, and it still transmits the room. */
+.acard .im{
+  background:linear-gradient(150deg,rgba(26,32,43,.13),rgba(20,26,35,.21));
+  box-shadow:inset 0 -1px 0 rgba(248,252,255,.035)}
+/* Panels are the same pane, thinner. */
+.filterpanel,.nlform,.nlthanks{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
+  background-color:transparent;
+  border-top-color:var(--edge-top);
+  border-left-color:var(--edge-side);
+  border-right-color:var(--edge-side);
+  border-bottom-color:var(--edge-bot);
+  box-shadow:inset 0 1px 0 var(--lit-top)}
+
+/* ---------- Satin metal: everything you touch ----------
+   Brushed, not polished. A soft top-to-bottom fall in brightness, a single
+   hairline where the light lands on the top edge, and a dark line where the
+   underside turns away. No specular dot, no rim light, no chrome. Hover
+   raises the highlight rather than changing the colour — metal catching more
+   light, which is what actually happens when you tilt something towards a
+   lamp. All of it is inset shadow, so nothing here changes a box's size. */
+.btn.p{
+  background-image:linear-gradient(180deg,#50DAA1 0%,#3ECF8E 54%,#34BD7F 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -1px 0 rgba(0,0,0,0.1504),
+    var(--contact-near)}
+.btn.p:hover{
+  background-image:linear-gradient(180deg,#5DE3AC 0%,#46D796 54%,#3AC888 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.38),
+    inset 0 -1px 0 rgba(0,0,0,0.1504),
+    0 14px 30px rgba(16,21,30,.40)}
+.btn.g,.fchip,.filterbtn,.navsearch{
+  background-color:transparent;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.032));
+  border-top-color:var(--edge-top);
+  border-left-color:var(--edge-side);
+  border-right-color:var(--edge-side);
+  border-bottom-color:var(--edge-bot);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 14px rgba(16,21,30,.24);
+  transition:background-image .3s ease,box-shadow .3s ease,border-color .3s ease}
+.btn.g:hover,.fchip:hover,.filterbtn:hover{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.135),rgba(255,255,255,.052));
+  border-top-color:rgba(255,255,255,.26);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.19),0 8px 22px rgba(16,21,30,.32)}
+.navsearch:focus-within{
+  border-top-color:rgba(255,255,255,.28);
+  border-left-color:var(--edge-side);
+  border-right-color:var(--edge-side);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 8px 24px rgba(16,21,30,.34)}
+/* Pressed state is a real state change, so the metal is genuinely lit from
+   the other side: the top rail goes dark and the bottom picks up the bounce. */
+.fchip[aria-pressed="true"],.filterbtn[aria-expanded="true"]{
+  background-image:linear-gradient(180deg,#4AD79A,#35BE80);
+  border-top-color:rgba(255,255,255,.30);
+  border-bottom-color:rgba(0,0,0,0.2068);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(0,0,0,0.1504),
+    var(--contact-near)}
+.filterbtn[aria-expanded="true"]{color:var(--on-signal)}
+/* Small satin details. Inset only — these sit on the subgrid rows and must
+   not change height by so much as a pixel. */
+.pcard .cls{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.042));
+  background-color:transparent;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11),inset 0 -1px 0 rgba(0,0,0,0.094)}
+.fcount,.nlform button{
+  background-image:linear-gradient(180deg,#4AD79A,#35BE80);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(0,0,0,0.1316)}
+/* Once the button itself is the lit metal, a green count on it has nothing to
+   read against. It becomes the recess instead — cut into the same surface. */
+.filterbtn[aria-expanded="true"] .fcount{
+  background-image:linear-gradient(180deg,rgba(14,27,23,.42),rgba(14,27,23,.30));
+  color:rgba(240,255,248,.92);
+  box-shadow:inset 0 1px 0 rgba(0,0,0,0.188),inset 0 -1px 0 rgba(255,255,255,.16)}
+
+/* ---------- Chrome ----------
+   The header is a pane like the cards, lit the same way. */
+nav{
+  border-bottom:1px solid var(--edge-bot);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 30px rgba(16,21,30,.26)}
+/* A two-colour accent stripe pinned across the top of every screen is a web
+   page telling you it is a web page. It still reports position; it just does
+   it in the same satin as everything else instead of announcing itself. */
+.prog{height:2px;background:linear-gradient(90deg,
+  rgba(232,237,244,.20),rgba(232,237,244,.52))}
+footer{border-top:1px solid var(--edge-bot)!important}
+/* The footer links were still #2b3a33 — a dark green from the light theme that
+   nothing ever re-toned. On graphite they are all but unreadable. Nothing in a
+   premium product is illegible by accident. */
+.fcols .grp a{color:rgba(232,237,244,.60);transition:color .25s ease}
+.fcols .grp a:hover{color:var(--ink)}
