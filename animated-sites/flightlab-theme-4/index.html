@@ -343,12 +343,12 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
    ========================================================================== */
 
 :root{
-  --paper:#0D1117; --ink:#E8EDF4; --mut:rgba(232,237,244,.56);
+  --paper:#171C23; --ink:#E8EDF4; --mut:rgba(232,237,244,.56);
   --line:rgba(255,255,255,.09);
   --signal:#3ECF8E; --forest:#3ECF8E; --teal:#3ECF8E; --gold:rgba(232,237,244,.5);
   --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.07);
   --glassbrd:rgba(255,255,255,.12); --blur:blur(22px) saturate(150%);
-  --surf2:#232D3D; --surf3:#1D2531; --surf4:#2A374B;
+  --surf2:#2B3647; --surf3:#262F3B; --surf4:#323F54;
   --on-signal:#06140D;
 }
 
@@ -366,7 +366,7 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
    neighbours — the light is always crossfading and never restarts at a
    boundary. Nothing here is anchored to a section, so section edges have
    nothing to coincide with. */
-body{background:#1D2531;color:var(--ink);position:relative}
+body{background:#262F3B;color:var(--ink);position:relative}
 body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
   z-index:-2;pointer-events:none;
   background:
@@ -389,8 +389,8 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
     /* graphite -> dark navy -> slate blue -> a breath of cyan -> graphite.
        Each step is a couple of points of luminance, so the journey is felt
        rather than seen. */
-    linear-gradient(180deg,#1D2531 0%,#212A39 10%,#253145 22%,#29374E 34%,
-      #2C3C55 46%,#2B3D57 56%,#26344A 68%,#212C3E 80%,#1F2632 90%,#1D2531 100%)}
+    linear-gradient(180deg,#262F3B 0%,#2A3343 10%,#2D3A4E 22%,#313F57 34%,
+      #34445D 46%,#33455F 56%,#2E3D53 68%,#2A3547 80%,#282F3C 90%,#262F3B 100%)}
 .sec{position:relative;z-index:1}
 .sec.light,.sec.dark{background:transparent;color:var(--ink)}
 /* Sections carry no background and no ambient pool of their own. Anything
@@ -420,7 +420,7 @@ footer{border-top:none!important}
 .pgrid>.pcard>h3{align-self:start}
 @media(max-width:560px){.pgrid>.pcard{grid-row:span 5}}
 .pcard,.acard{
-  background:linear-gradient(180deg,#2F3D53,#2A374B);
+  background:linear-gradient(180deg,#37455B,#323F54);
   border:1px solid rgba(255,255,255,.12);
   /* Same material as the wordmark. The crystal is lit by a bright polished edge
      along its top and a cooler bounce off the floor at its base, with the body
@@ -430,14 +430,14 @@ footer{border-top:none!important}
   box-shadow:
     inset 0 1px 0 rgba(248,252,255,.15),
     inset 0 -1px 0 rgba(174,239,245,.055),
-    0 18px 40px rgba(6,10,18,.34)}
+    0 18px 40px rgba(16,21,30,.34)}
 @media(hover:hover) and (pointer:fine){
-  .pcard,.acard{background:linear-gradient(180deg,#2A374B,#273348);
+  .pcard,.acard{background:linear-gradient(180deg,#323F54,#2F3C51);
     backdrop-filter:none;-webkit-backdrop-filter:none}
-  .pcard:hover,.acard:hover{background:linear-gradient(180deg,#354663,#2E3A4F);
+  .pcard:hover,.acard:hover{background:linear-gradient(180deg,#3C4E6A,#364257);
     border-color:rgba(62,207,142,.3)}
 }
-.acard .im{background:linear-gradient(135deg,#273348,#1D2531)}
+.acard .im{background:linear-gradient(135deg,#2F3C51,#262F3B)}
 .disc-group .gt{border-bottom-color:rgba(255,255,255,.09)}
 
 /* Newsletter, footer, bag portal — the last white surfaces */
@@ -448,23 +448,23 @@ footer{border-top:none!important}
 footer{background:transparent;border-top:1px solid rgba(255,255,255,.08);color:var(--ink);position:relative;z-index:1}
 .bigmark{color:rgba(232,237,244,.10)}
 #bagportal{background:transparent;position:relative;z-index:1}
-#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,rgba(43,55,75,.55),rgba(30,38,52,.30) 62%,rgba(20,26,34,0))}
+#bagportal .pin{background:radial-gradient(62% 50% at 50% 44%,rgba(51,63,84,.55),rgba(39,47,62,.30) 62%,rgba(29,36,45,0))}
 #bagportal .bpcap{color:var(--ink)}
 #bagportal .bpcap .k{color:var(--signal)}
-#bagportal .bagbig{filter:drop-shadow(0 26px 54px rgba(0,0,0,.6))}
+#bagportal .bagbig{filter:drop-shadow(0 26px 54px rgba(0,0,0,0.564))}
 
 /* Glass kept to the few chrome surfaces the brief allows */
-nav{background:rgba(21,29,43,.62);border-bottom:1px solid rgba(255,255,255,.10)}
+nav{background:rgba(30,39,54,.62);border-bottom:1px solid rgba(255,255,255,.10)}
 nav .brand,nav .nl a{color:var(--ink)}
 .navsearch{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 4px 16px rgba(0,0,0,.3)}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 4px 16px rgba(0,0,0,0.282)}
 .navsearch input{color:var(--ink)}
 .navsearch input::placeholder{color:rgba(232,237,244,.38)}
-.searchhint{background:rgba(21,26,34,.96);border-color:rgba(255,255,255,.12);color:var(--mut)}
+.searchhint{background:rgba(30,36,45,.96);border-color:rgba(255,255,255,.12);color:var(--mut)}
 @media(hover:none){
-  nav{background:rgba(29,37,49,.95)}
+  nav{background:rgba(38,47,59,.95)}
   .navsearch{background:rgba(255,255,255,.06)}
-  .searchhint{background:#1D2531}
+  .searchhint{background:#262F3B}
 }
 
 /* Green stays scarce: buttons, active states, highlights */
@@ -503,7 +503,7 @@ nav .brand,nav .nl a{color:var(--ink)}
    corners it is below the level you notice as darkening; it only biases the eye
    toward the middle. Fixed, so it never moves against the content. */
 .fl-vig{position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:radial-gradient(118% 98% at 50% 48%,transparent 46%,rgba(5,9,15,.10) 78%,rgba(4,7,12,.20) 100%)}
+  background:radial-gradient(118% 98% at 50% 48%,transparent 46%,rgba(15,20,27,.10) 78%,rgba(14,18,24,.20) 100%)}
 .fl-dither{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.018;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 .fl-discs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
@@ -522,9 +522,9 @@ nav .brand,nav .nl a{color:var(--ink)}
    far outside the focal plane. It should never resolve as an object. */
 .fl-disc.l1{--o:.30;--bg:radial-gradient(circle at 50% 50%,rgba(178,220,248,.34),rgba(150,196,230,.20) 26%,rgba(120,165,205,.08) 52%,transparent 74%)}
 /* Layer 2 — mid */
-.fl-disc.l2{--o:.10;--bg:radial-gradient(circle at 38% 30%,rgba(196,230,250,.80),rgba(110,158,196,.44) 40%,rgba(40,62,86,.14) 66%,transparent 78%)}
+.fl-disc.l2{--o:.10;--bg:radial-gradient(circle at 38% 30%,rgba(196,230,250,.80),rgba(110,158,196,.44) 40%,rgba(48,70,94,.14) 66%,transparent 78%)}
 /* Layer 3 — far: tiny and sharp, the only layer in focus. */
-.fl-disc.l3{--o:.11;--bg:radial-gradient(circle at 34% 28%,rgba(206,236,252,.95),rgba(96,144,182,.62) 44%,rgba(24,38,52,.24) 72%,transparent 80%)}
+.fl-disc.l3{--o:.11;--bg:radial-gradient(circle at 34% 28%,rgba(206,236,252,.95),rgba(96,144,182,.62) 44%,rgba(33,47,62,.24) 72%,transparent 80%)}
 @keyframes fl8-far{0%{transform:translate3d(7.00vw,0.00vh,0) rotateX(68deg) rotateZ(0deg)}12.5%{transform:translate3d(4.95vw,4.50vh,0) rotateX(68deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(68deg) rotateZ(90deg)}37.5%{transform:translate3d(-4.95vw,-4.50vh,0) rotateX(68deg) rotateZ(135deg)}50%{transform:translate3d(-7.00vw,0.00vh,0) rotateX(68deg) rotateZ(180deg)}62.5%{transform:translate3d(-4.95vw,4.50vh,0) rotateX(68deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(68deg) rotateZ(270deg)}87.5%{transform:translate3d(4.95vw,-4.50vh,0) rotateX(68deg) rotateZ(315deg)}100%{transform:translate3d(7.00vw,0.00vh,0) rotateX(68deg) rotateZ(360deg)}}
 @keyframes fl8-mid{0%{transform:translate3d(5.00vw,0.00vh,0) rotateX(62deg) rotateZ(0deg)}12.5%{transform:translate3d(3.53vw,3.00vh,0) rotateX(62deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(62deg) rotateZ(90deg)}37.5%{transform:translate3d(-3.53vw,-3.00vh,0) rotateX(62deg) rotateZ(135deg)}50%{transform:translate3d(-5.00vw,0.00vh,0) rotateX(62deg) rotateZ(180deg)}62.5%{transform:translate3d(-3.53vw,3.00vh,0) rotateX(62deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(62deg) rotateZ(270deg)}87.5%{transform:translate3d(3.53vw,-3.00vh,0) rotateX(62deg) rotateZ(315deg)}100%{transform:translate3d(5.00vw,0.00vh,0) rotateX(62deg) rotateZ(360deg)}}
 @keyframes fl8-near{0%{transform:translate3d(3.50vw,0.00vh,0) rotateX(58deg) rotateZ(0deg)}12.5%{transform:translate3d(2.47vw,2.25vh,0) rotateX(58deg) rotateZ(45deg)}25%{transform:translate3d(0.00vw,0.00vh,0) rotateX(58deg) rotateZ(90deg)}37.5%{transform:translate3d(-2.47vw,-2.25vh,0) rotateX(58deg) rotateZ(135deg)}50%{transform:translate3d(-3.50vw,0.00vh,0) rotateX(58deg) rotateZ(180deg)}62.5%{transform:translate3d(-2.47vw,2.25vh,0) rotateX(58deg) rotateZ(225deg)}75%{transform:translate3d(0.00vw,0.00vh,0) rotateX(58deg) rotateZ(270deg)}87.5%{transform:translate3d(2.47vw,-2.25vh,0) rotateX(58deg) rotateZ(315deg)}100%{transform:translate3d(3.50vw,0.00vh,0) rotateX(58deg) rotateZ(360deg)}}
@@ -607,8 +607,8 @@ nav .brand,nav .nl a{color:var(--ink)}
   transform:translateZ(0);backface-visibility:hidden;
   animation:fl-env-breathe 58s ease-in-out infinite;
   background:
-    linear-gradient(180deg,transparent 62%,rgba(120,226,238,.07) 72%,rgba(20,26,34,.40) 100%),
-    radial-gradient(128% 100% at 50% 42%,transparent 62%,rgba(6,12,20,.30) 100%),
+    linear-gradient(180deg,transparent 62%,rgba(120,226,238,.07) 72%,rgba(29,36,45,.40) 100%),
+    radial-gradient(128% 100% at 50% 42%,transparent 62%,rgba(16,23,32,.30) 100%),
     /* Neon pools, wide and very soft so they bleed into one another. A big
        transparent colour ramp is what a blur of a small bright blob would give
        you anyway, and it costs nothing to composite — an actual blur filter on
@@ -618,7 +618,7 @@ nav .brand,nav .nl a{color:var(--ink)}
     radial-gradient(66% 74% at 12% 44%,rgba(70,240,190,0.1110),rgba(56,226,206,.075) 46%,transparent 84%),
     radial-gradient(64% 70% at 48% 58%,rgba(60,224,255,0.1110),rgba(88,186,255,.072) 48%,transparent 86%),
     radial-gradient(66% 72% at 88% 40%,rgba(160,132,255,.170),rgba(206,118,236,.068) 48%,transparent 86%),
-    radial-gradient(92% 72% at 50% 42%,rgba(26,39,52,.72) 0%,rgba(24,34,46,.44) 40%,rgba(22,29,39,.18) 74%,transparent 100%)}
+    radial-gradient(92% 72% at 50% 42%,rgba(35,48,62,.72) 0%,rgba(33,44,56,.44) 40%,rgba(31,39,50,.18) 74%,transparent 100%)}
 .scene::after{content:none}
 .fl-stage{position:absolute;inset:0;z-index:2;transform-style:preserve-3d;pointer-events:none}
 .fl-mark{position:absolute;inset:0;margin:0;
@@ -785,18 +785,18 @@ nav .brand,nav .nl a{color:var(--ink)}
    light sitting behind the word. */
 @media(max-width:760px){
   .fl-env{background:
-    linear-gradient(180deg,transparent 66%,rgba(120,226,238,.06) 76%,rgba(20,26,34,.40) 100%),
-    radial-gradient(140% 100% at 50% 44%,transparent 64%,rgba(6,12,20,.28) 100%),
+    linear-gradient(180deg,transparent 66%,rgba(120,226,238,.06) 76%,rgba(29,36,45,.40) 100%),
+    radial-gradient(140% 100% at 50% 44%,transparent 64%,rgba(16,23,32,.28) 100%),
     radial-gradient(96% 30% at 18% 44%,rgba(70,240,190,0.1110),rgba(70,240,190,0.0432) 46%,transparent 84%),
     radial-gradient(92% 28% at 54% 58%,rgba(60,224,255,0.1110),rgba(60,224,255,0.0450) 46%,transparent 86%),
     radial-gradient(94% 29% at 84% 40%,rgba(160,132,255,.170),rgba(206,118,236,.066) 46%,transparent 86%),
-    radial-gradient(116% 68% at 50% 44%,rgba(26,39,52,.72) 0%,rgba(24,34,46,.44) 40%,rgba(22,29,39,.18) 74%,transparent 100%)}
+    radial-gradient(116% 68% at 50% 44%,rgba(35,48,62,.72) 0%,rgba(33,44,56,.44) 40%,rgba(31,39,50,.18) 74%,transparent 100%)}
   /* The bead used to be widened only here, which meant the wordmark was a
      heavier, brighter piece of glass on a phone than on a desktop — two
      materials, chosen by viewport. The phone's proportions were the right ones,
      so they are the base now and there is nothing left to override. */
 }
-#loader{background:#1D2531}
+#loader{background:#262F3B}
 /* The hero used to carry its own film grain. Now that .fl-dither covers the
    whole page, the hero was getting both — so it sat about two levels brighter
    than everything below it, and the hero's bottom edge was exactly where that
@@ -842,9 +842,9 @@ nav .brand,nav .nl a{color:var(--ink)}
   --edge-bot:rgba(255,255,255,.055);
   /* Contact with the ground, not a glow. Neutral, never tinted with the
      accent — coloured shadow is light a surface does not emit. */
-  --contact:0 18px 40px rgba(6,10,18,.34);
-  --contact-near:0 8px 20px rgba(6,10,18,.30);
-  --contact-far:0 30px 62px rgba(6,10,18,.44);
+  --contact:0 18px 40px rgba(16,21,30,.34);
+  --contact-near:0 8px 20px rgba(16,21,30,.30);
+  --contact-far:0 30px 62px rgba(16,21,30,.44);
 }
 
 /* ---------- Graphite: the environment is never still ----------
@@ -888,7 +888,7 @@ nav .brand,nav .nl a{color:var(--ink)}
       rgba(248,252,255,.052) 27%,
       rgba(248,252,255,.016) 45%,
       rgba(255,255,255,0)    66%),
-    linear-gradient(180deg,rgba(47,60,81,.50),rgba(36,47,64,.58));
+    linear-gradient(180deg,rgba(55,68,89,.50),rgba(44,56,73,.58));
   background-repeat:no-repeat;
   background-size:100% 300%,100% 100%;
   background-position:0 20%,0 0;
@@ -923,7 +923,7 @@ nav .brand,nav .nl a{color:var(--ink)}
       rgba(248,252,255,.052) 27%,
       rgba(248,252,255,.016) 45%,
       rgba(255,255,255,0)    66%),
-    linear-gradient(180deg,rgba(47,60,81,.50),rgba(36,47,64,.58));
+    linear-gradient(180deg,rgba(55,68,89,.50),rgba(44,56,73,.58));
   background-size:100% 300%,100% 100%;
   background-position:0 56%,0 0;
   border-top-color:rgba(255,255,255,.26);
@@ -947,7 +947,7 @@ nav .brand,nav .nl a{color:var(--ink)}
    materials. It is the same pane, recessed: a recess catches less light, so it
    is darker, and it still transmits the room. */
 .acard .im{
-  background:linear-gradient(150deg,rgba(16,22,32,.13),rgba(10,15,23,.21));
+  background:linear-gradient(150deg,rgba(26,32,43,.13),rgba(20,26,35,.21));
   box-shadow:inset 0 -1px 0 rgba(248,252,255,.035)}
 /* Panels are the same pane, thinner. */
 .filterpanel,.nlform,.nlthanks{
@@ -970,14 +970,14 @@ nav .brand,nav .nl a{color:var(--ink)}
   background-image:linear-gradient(180deg,#50DAA1 0%,#3ECF8E 54%,#34BD7F 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.26),
-    inset 0 -1px 0 rgba(0,0,0,.16),
+    inset 0 -1px 0 rgba(0,0,0,0.1504),
     var(--contact-near)}
 .btn.p:hover{
   background-image:linear-gradient(180deg,#5DE3AC 0%,#46D796 54%,#3AC888 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.38),
-    inset 0 -1px 0 rgba(0,0,0,.16),
-    0 14px 30px rgba(6,10,18,.40)}
+    inset 0 -1px 0 rgba(0,0,0,0.1504),
+    0 14px 30px rgba(16,21,30,.40)}
 .btn.g,.fchip,.filterbtn,.navsearch{
   background-color:transparent;
   background-image:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.032));
@@ -985,24 +985,24 @@ nav .brand,nav .nl a{color:var(--ink)}
   border-left-color:var(--edge-side);
   border-right-color:var(--edge-side);
   border-bottom-color:var(--edge-bot);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 14px rgba(6,10,18,.24);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 14px rgba(16,21,30,.24);
   transition:background-image .3s ease,box-shadow .3s ease,border-color .3s ease}
 .btn.g:hover,.fchip:hover,.filterbtn:hover{
   background-image:linear-gradient(180deg,rgba(255,255,255,.135),rgba(255,255,255,.052));
   border-top-color:rgba(255,255,255,.26);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.19),0 8px 22px rgba(6,10,18,.32)}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.19),0 8px 22px rgba(16,21,30,.32)}
 .navsearch:focus-within{
   border-top-color:rgba(255,255,255,.28);
   border-left-color:var(--edge-side);
   border-right-color:var(--edge-side);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 8px 24px rgba(6,10,18,.34)}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 8px 24px rgba(16,21,30,.34)}
 /* Pressed state is a real state change, so the metal is genuinely lit from
    the other side: the top rail goes dark and the bottom picks up the bounce. */
 .fchip[aria-pressed="true"],.filterbtn[aria-expanded="true"]{
   background-image:linear-gradient(180deg,#4AD79A,#35BE80);
   border-top-color:rgba(255,255,255,.30);
-  border-bottom-color:rgba(0,0,0,.22);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(0,0,0,.16),
+  border-bottom-color:rgba(0,0,0,0.2068);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(0,0,0,0.1504),
     var(--contact-near)}
 .filterbtn[aria-expanded="true"]{color:var(--on-signal)}
 /* Small satin details. Inset only — these sit on the subgrid rows and must
@@ -1010,22 +1010,22 @@ nav .brand,nav .nl a{color:var(--ink)}
 .pcard .cls{
   background-image:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.042));
   background-color:transparent;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.11),inset 0 -1px 0 rgba(0,0,0,.10)}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11),inset 0 -1px 0 rgba(0,0,0,0.094)}
 .fcount,.nlform button{
   background-image:linear-gradient(180deg,#4AD79A,#35BE80);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(0,0,0,.14)}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(0,0,0,0.1316)}
 /* Once the button itself is the lit metal, a green count on it has nothing to
    read against. It becomes the recess instead — cut into the same surface. */
 .filterbtn[aria-expanded="true"] .fcount{
-  background-image:linear-gradient(180deg,rgba(4,16,10,.42),rgba(4,16,10,.30));
+  background-image:linear-gradient(180deg,rgba(14,27,23,.42),rgba(14,27,23,.30));
   color:rgba(240,255,248,.92);
-  box-shadow:inset 0 1px 0 rgba(0,0,0,.20),inset 0 -1px 0 rgba(255,255,255,.16)}
+  box-shadow:inset 0 1px 0 rgba(0,0,0,0.188),inset 0 -1px 0 rgba(255,255,255,.16)}
 
 /* ---------- Chrome ----------
    The header is a pane like the cards, lit the same way. */
 nav{
   border-bottom:1px solid var(--edge-bot);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 30px rgba(6,10,18,.26)}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 30px rgba(16,21,30,.26)}
 /* A two-colour accent stripe pinned across the top of every screen is a web
    page telling you it is a web page. It still reports position; it just does
    it in the same satin as everything else instead of announcing itself. */
