@@ -78,10 +78,19 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
 #flnum .fr{background:
   radial-gradient(120% 90% at 30% 10%,rgba(248,252,255,.06),rgba(248,252,255,0) 58%),
   linear-gradient(180deg,var(--surf4,#323F54),#293444 62%,#242D3B)}
+/* The brand panels were the thing painting over the ambient layer. The third
+   background layer here was an opaque graphite gradient, and .bpan is a
+   full-width sticky panel 66vh tall repeated down the whole section — so from
+   the first brand to the last, nothing behind it was ever visible. It came
+   from fl-bagcap.css and I had been re-declaring it here to carry the lift,
+   which meant this block was the one actually doing the covering.
+   The two radial glows stay: they are the brand's own colour and they fade to
+   transparent, so the environment reads straight through them. Only the
+   opaque plate is gone. */
 #merker .bpan{background:
   radial-gradient(26% 30% at 78% 50%,var(--g2) 0%,transparent 70%),
-  radial-gradient(58% 62% at 78% 50%,var(--g) 0%,transparent 72%),
-  linear-gradient(180deg,#242B3A 0%,#262F3B 42%,#242B3A 100%)}
+  radial-gradient(58% 62% at 78% 50%,var(--g) 0%,transparent 72%);
+  background-color:transparent}
 </style>
 <div class="fl-amb" aria-hidden="true"></div>
 <div class="fl-air" aria-hidden="true"></div>
