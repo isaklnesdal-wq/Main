@@ -654,8 +654,8 @@ nav .brand,nav .nl a{color:var(--ink)}
 /* Thickness. Offset behind the near face, so all you see is the sliver of the
    far side that the near face does not cover — which is what reading depth in
    a transparent solid actually consists of. */
-.fl-svg .g-ext{fill:rgba(160,212,234,.13);stroke:rgba(160,212,234,.13);stroke-width:.024em;
-  transform:translate(.019em,.025em)}
+.fl-svg .g-ext{fill:rgba(134,190,220,.38);stroke:rgba(134,190,220,.38);stroke-width:.032em;
+  transform:translate(.042em,.052em)}
 /* The dark contour. Widest layer, sitting under the body, so what shows is a
    dark rim just outside the glass. This single layer is most of the difference
    between glass and neon: a lit tube has no dark edge, a solid always does. */
@@ -690,13 +690,13 @@ nav .brand,nav .nl a{color:var(--ink)}
    crossbar — three pieces instead of one. None of the reference renders has a
    double outline: a piece of glass has one edge. Halved, the layer still puts
    colour where the contour turns, and every glyph is one continuous solid. */
-.fl-svg .g-iris{fill:none;stroke:url(#flIris);stroke-width:.016em}
+.fl-svg .g-iris{fill:none;stroke:url(#flIris);stroke-width:.018em}
 /* The polished bevel. Moderate, and dark through its middle band. */
-.fl-svg .g-bevel{fill:none;stroke:url(#flBevel);stroke-width:.016em}
-.fl-svg .g-valley{fill:none;stroke:url(#flValley);stroke-width:.0065em}
+.fl-svg .g-bevel{fill:none;stroke:url(#flBevel);stroke-width:.038em}
+.fl-svg .g-valley{fill:none;stroke:url(#flValley);stroke-width:.019em}
 /* Specular. Confined to the top of the form, because a light points from
    somewhere. An outline that is equally bright the whole way round is a tube. */
-.fl-svg .g-spec{fill:none;stroke:url(#flSpec);stroke-width:.0075em;mask:url(#flSpecPos)}
+.fl-svg .g-spec{fill:none;stroke:url(#flSpec);stroke-width:.020em;mask:url(#flSpecPos)}
 @keyframes fl-lights{
   0%  {transform:translate(0,0)}
   50% {transform:translate(2.6%,-1.1%)}
@@ -748,12 +748,12 @@ nav .brand,nav .nl a{color:var(--ink)}
   /* Every width here is proportional, so at phone sizes the bevel lands near a
      hairline. Widen the whole bead so it still reads as a rounded edge. */
   .fl-svg .g-body,.fl-svg .g-refr{stroke-width:.032em}
-  .fl-svg .g-ext{stroke-width:.032em}
+  .fl-svg .g-ext{stroke-width:.043em}
   .fl-svg .g-dark{stroke-width:.032em}
-  .fl-svg .g-iris{stroke-width:.021em}
-  .fl-svg .g-bevel{stroke-width:.022em}
-  .fl-svg .g-valley{stroke-width:.009em}
-  .fl-svg .g-spec{stroke-width:.010em}
+  .fl-svg .g-iris{stroke-width:.024em}
+  .fl-svg .g-bevel{stroke-width:.052em}
+  .fl-svg .g-valley{stroke-width:.026em}
+  .fl-svg .g-spec{stroke-width:.027em}
   .fl-svg .g-refl{stroke-width:.026em}
 }
 #loader{background:#1D2531}
