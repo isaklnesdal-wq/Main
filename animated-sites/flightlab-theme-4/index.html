@@ -662,11 +662,20 @@ nav .brand,nav .nl a{color:var(--ink)}
 .fl-svg text{font-family:var(--b);font-weight:800;font-size:13.4vw;
   letter-spacing:-.045em;paint-order:stroke;stroke-linejoin:round;stroke-linecap:round}
 
-/* Thickness. Offset behind the near face, so all you see is the sliver of the
-   far side that the near face does not cover — which is what reading depth in
-   a transparent solid actually consists of. */
-.fl-svg .g-ext{fill:rgba(134,190,220,.38);stroke:rgba(134,190,220,.38);stroke-width:.032em;
-  transform:translate(.042em,.052em)}
+/* Thickness.
+
+   This used to be a fully drawn copy of the word sitting behind the near face
+   with its own stroke, which through a transparent front face was not depth —
+   it was a second complete outline of every glyph, offset down and right. On
+   the A that put a whole second triangle inside the counter and a second
+   contour round both legs, which is the thing that kept looking wrong.
+
+   A real edge seen through glass is a soft change in density, not a line. So:
+   no stroke, so it cannot have a rim of its own, and a tenth of the alpha, so
+   what is left is a faint thickening towards the lower right and nothing you
+   could trace. */
+.fl-svg .g-ext{fill:rgba(140,196,224,.10);stroke:none;
+  transform:translate(.014em,.018em)}
 /* The dark contour. Widest layer, sitting under the body, so what shows is a
    dark rim just outside the glass. This single layer is most of the difference
    between glass and neon: a lit tube has no dark edge, a solid always does. */
@@ -704,7 +713,7 @@ nav .brand,nav .nl a{color:var(--ink)}
 .fl-svg .g-iris{fill:none;stroke:url(#flIris);stroke-width:.018em}
 /* The polished bevel. Moderate, and dark through its middle band. */
 .fl-svg .g-bevel{fill:none;stroke:url(#flBevel);stroke-width:.038em}
-.fl-svg .g-valley{fill:none;stroke:url(#flValley);stroke-width:.019em}
+.fl-svg .g-valley{fill:none;stroke:url(#flValley);stroke-width:.011em}
 /* Specular. Confined to the top of the form, because a light points from
    somewhere. An outline that is equally bright the whole way round is a tube. */
 .fl-svg .g-spec{fill:none;stroke:url(#flSpec);stroke-width:.020em;mask:url(#flSpecPos)}
@@ -759,11 +768,10 @@ nav .brand,nav .nl a{color:var(--ink)}
   /* Every width here is proportional, so at phone sizes the bevel lands near a
      hairline. Widen the whole bead so it still reads as a rounded edge. */
   .fl-svg .g-body,.fl-svg .g-refr{stroke-width:.032em}
-  .fl-svg .g-ext{stroke-width:.043em}
   .fl-svg .g-dark{stroke-width:.032em}
   .fl-svg .g-iris{stroke-width:.024em}
   .fl-svg .g-bevel{stroke-width:.052em}
-  .fl-svg .g-valley{stroke-width:.026em}
+  .fl-svg .g-valley{stroke-width:.015em}
   .fl-svg .g-spec{stroke-width:.027em}
   .fl-svg .g-refl{stroke-width:.026em}
 }
