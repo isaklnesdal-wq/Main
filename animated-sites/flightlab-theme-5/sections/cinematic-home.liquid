@@ -139,44 +139,45 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
                  very low: the centre of a letter is supposed to be almost clear,
                  so this may only tint what is already there. -->
             <linearGradient id="flRefr" gradientUnits="userSpaceOnUse" x1="8%" y1="0" x2="96%" y2="0">
-              <stop offset="0"   stop-color="#7CFFD4" stop-opacity=".022"/>
-              <stop offset=".30" stop-color="#5FE8FF" stop-opacity=".034"/>
-              <stop offset=".52" stop-color="#CFF4FF" stop-opacity=".036"/>
-              <stop offset=".68" stop-color="#B08CFF" stop-opacity=".022"/>
-              <stop offset=".82" stop-color="#6FE6FF" stop-opacity=".030"/>
-              <stop offset="1"   stop-color="#8CFFD0" stop-opacity=".018"/>
+              <stop offset="0"   stop-color="#CFEAF8" stop-opacity=".022"/>
+              <stop offset=".30" stop-color="#A9D8EE" stop-opacity=".034"/>
+              <stop offset=".52" stop-color="#E4F5FF" stop-opacity=".036"/>
+              <stop offset=".68" stop-color="#9FCFE8" stop-opacity=".024"/>
+              <stop offset=".82" stop-color="#BFE4F4" stop-opacity=".030"/>
+              <stop offset="1"   stop-color="#D6EEFA" stop-opacity=".018"/>
             </linearGradient>
             <!-- Body tint. The specified progression, but at the alpha of a
                  clear solid: the interior carries the colour, it does not become
                  the colour. -->
             <linearGradient id="flBody" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#F8FCFF" stop-opacity=".030"/>
-              <stop offset=".22" stop-color="#EEF9FF" stop-opacity=".008"/>
-              <stop offset=".50" stop-color="#DDF6FF" stop-opacity=".004"/>
-              <stop offset=".74" stop-color="#C6F2F8" stop-opacity=".008"/>
-              <stop offset="1"   stop-color="#AEEFF5" stop-opacity=".028"/>
+              <stop offset="0"   stop-color="#FFFFFF" stop-opacity=".60"/>
+              <stop offset=".20" stop-color="#E6F6FF" stop-opacity=".24"/>
+              <stop offset=".48" stop-color="#BCE4F5" stop-opacity=".09"/>
+              <stop offset=".74" stop-color="#9FD2E8" stop-opacity=".25"/>
+              <stop offset="1"   stop-color="#7FB9D6" stop-opacity=".60"/>
             </linearGradient>
             <!-- Light gathered through the solid and released at the base. -->
             <linearGradient id="flCaus" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"    stop-color="#FFFFFF" stop-opacity="0"/>
-              <stop offset=".64"  stop-color="#FFFFFF" stop-opacity="0"/>
-              <stop offset=".79"  stop-color="#C6F2F8" stop-opacity=".12"/>
-              <stop offset=".88"  stop-color="#B8FFD9" stop-opacity=".16"/>
-              <stop offset=".95"  stop-color="#DDF6FF" stop-opacity=".34"/>
-              <stop offset="1"    stop-color="#F8FCFF" stop-opacity=".52"/>
+              <stop offset=".56"  stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset=".76"  stop-color="#BFE4F4" stop-opacity=".26"/>
+              <stop offset=".86"  stop-color="#CFEEFA" stop-opacity=".32"/>
+              <stop offset=".95"  stop-color="#DEF4FF" stop-opacity=".58"/>
+              <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".88"/>
             </linearGradient>
             <!-- The bevel. This is where the material actually lives: the whole
                  specified progression at full strength, because the edges are
-                 what carry the reflections while the centre stays clear. The one
-                 green stop is a reflection caught low on the form, nothing more. -->
+                 what carry the reflections while the centre stays clear. All of
+                 it on one cool axis: a polished edge picks up the room it is
+                 standing in, and this room is not green. -->
             <linearGradient id="flBevel" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"   stop-color="#FFFFFF" stop-opacity="1"/>
-              <stop offset=".12" stop-color="#F6FDFF" stop-opacity=".82"/>
-              <stop offset=".34" stop-color="#DDF6FF" stop-opacity=".26"/>
-              <stop offset=".56" stop-color="#C6F2F8" stop-opacity=".30"/>
-              <stop offset=".74" stop-color="#B8FFD9" stop-opacity=".24"/>
-              <stop offset=".88" stop-color="#D6F7FC" stop-opacity=".70"/>
-              <stop offset="1"   stop-color="#C4F4F9" stop-opacity=".94"/>
+              <stop offset=".11" stop-color="#FBFEFF" stop-opacity=".92"/>
+              <stop offset=".33" stop-color="#DCF1FF" stop-opacity=".34"/>
+              <stop offset=".55" stop-color="#BFE4F4" stop-opacity=".38"/>
+              <stop offset=".73" stop-color="#AFDCEF" stop-opacity=".30"/>
+              <stop offset=".87" stop-color="#DCF2FD" stop-opacity=".80"/>
+              <stop offset="1"   stop-color="#C9EDFA" stop-opacity="1"/>
             </linearGradient>
             <linearGradient id="flValley" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"   stop-color="#0F2634" stop-opacity=".32"/>
@@ -194,20 +195,19 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
               <stop offset=".90"  stop-color="#FFFFFF" stop-opacity="0"/>
               <stop offset="1"    stop-color="#DDF6FF" stop-opacity=".34"/>
             </linearGradient>
-            <!-- Colour that only exists inside the glass. Real crystal splits
-                 light where it is thickest and where the surface turns hardest —
-                 the edges and corners — and barely at all across a flat face.
-                 So this is a stroke, not a fill: it can only ever appear on the
-                 edge. The hues run along the word rather than being one tint, so
-                 different letters catch different parts of the spectrum, the way
-                 a real piece does as you move past it. All of it under 0.2 alpha. -->
+            <!-- Colour that only exists on the edge. Real crystal turns hardest
+                 where it is thickest — the edges and corners — so this is a
+                 stroke, not a fill, and can never appear across a flat face.
+                 It used to run a full spectrum along the word, which put pink
+                 and violet on a letter standing in a blue room. What varies now
+                 is depth of the same cool tint, not hue: the word still shifts
+                 as your eye travels it, without ever announcing a colour. -->
             <linearGradient id="flIris" gradientUnits="userSpaceOnUse" x1="6%" y1="20%" x2="94%" y2="80%">
-              <stop offset="0"    stop-color="#5A8CFF" stop-opacity=".13"/>
-              <stop offset=".21"  stop-color="#78F0FF" stop-opacity=".18"/>
-              <stop offset=".43"  stop-color="#FFB4D7" stop-opacity=".12"/>
-              <stop offset=".63"  stop-color="#AA82FF" stop-opacity=".14"/>
-              <stop offset=".83"  stop-color="#6EFFC8" stop-opacity=".11"/>
-              <stop offset="1"    stop-color="#5A8CFF" stop-opacity=".12"/>
+              <stop offset="0"    stop-color="#8FC6E8" stop-opacity=".13"/>
+              <stop offset=".28"  stop-color="#B6E2F5" stop-opacity=".16"/>
+              <stop offset=".55"  stop-color="#93CDEA" stop-opacity=".11"/>
+              <stop offset=".80"  stop-color="#BEE6F7" stop-opacity=".14"/>
+              <stop offset="1"    stop-color="#8FC6E8" stop-opacity=".12"/>
             </linearGradient>
             <linearGradient id="flGloss" x1="0" y1="0" x2=".65" y2="1">
               <stop offset="0"    stop-color="#FFFFFF" stop-opacity=".30"/>
@@ -219,10 +219,19 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
               <stop offset=".88"  stop-color="#EAFBFF" stop-opacity=".26"/>
               <stop offset="1"    stop-color="#FFFFFF" stop-opacity=".34"/>
             </linearGradient>
+            <!-- The reflection's falloff. The layer is flipped, so the end of
+                 this ramp is the contact line where the word meets the floor and
+                 the start of it is the far end. It used to be close to linear,
+                 which is why the reflection ran the full height of the letters
+                 and then stopped at an edge. A real one loses almost everything
+                 in the first third: bright where the two touch, gone well before
+                 it has finished. -->
             <linearGradient id="flReflGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#000"/>
-              <stop offset=".38" stop-color="#454545"/>
-              <stop offset=".72" stop-color="#A6A6A6"/>
+              <stop offset="0"   stop-color="#000000"/>
+              <stop offset=".20" stop-color="#000000"/>
+              <stop offset=".42" stop-color="#1C1C1C"/>
+              <stop offset=".62" stop-color="#585858"/>
+              <stop offset=".84" stop-color="#B2B2B2"/>
               <stop offset="1"   stop-color="#FFFFFF"/>
             </linearGradient>
             <mask id="flReflFade" maskContentUnits="objectBoundingBox">
@@ -233,17 +242,17 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
                A. Every material property — fill, stroke, gradient, width, mask
                and transform — is set on the group, so both reach the letter the
                same way and the A cannot drift from the rest of the word. -->
-          <g class="fl-ly g-ext"   ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
-          <g class="fl-ly g-dark"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
-          <g class="fl-ly g-refr"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
-          <g class="fl-ly g-body"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
-          <g class="fl-ly g-gloss" ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
-          <g class="fl-ly g-caus"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
-          <g class="fl-ly g-iris"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
-          <g class="fl-ly g-bevel" ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
-          <g class="fl-ly g-valley"><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
-          <g class="fl-ly g-spec"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
-          <g class="fl-ly g-refl"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTL<tspan class="a-slot">A</tspan>B</text><path class="fl-a" d=""/></g>
+          <g class="fl-ly g-ext"   ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text></g>
+          <g class="fl-ly g-dark"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text></g>
+          <g class="fl-ly g-refr"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text></g>
+          <g class="fl-ly g-body"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text></g>
+          <g class="fl-ly g-gloss" ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text></g>
+          <g class="fl-ly g-caus"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text></g>
+          <g class="fl-ly g-iris"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text></g>
+          <g class="fl-ly g-bevel" ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text></g>
+          <g class="fl-ly g-valley"><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text></g>
+          <g class="fl-ly g-spec"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text></g>
+          <g class="fl-ly g-refl"  ><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">FLIGHTLAB</text></g>
         </svg>
       </h1>
     </div>
@@ -827,18 +836,10 @@ function buildChips(){
   x.font=cs.fontWeight+' '+(parseFloat(cs.fontSize)*k)+'px '+cs.fontFamily;
   if('letterSpacing' in x) x.letterSpacing=(parseFloat(cs.fontSize)*k*-0.045)+'px';
   x.textAlign='left'; x.textBaseline='middle'; x.fillStyle='#fff';
-  /* Drawn in the same three pieces as the SVG — the typed letters either side
-     of a gap, and the A in it — so the word comes apart into the shape you were
-     just looking at instead of into Inter's A. Positions come from the same
-     advances the browser would have used, so the letters land where a plain
-     centred fillText would have put them. */
-  const mH=x.measureText('H'),
-        capC=mH.actualBoundingBoxAscent+mH.actualBoundingBoxDescent,
-        left=RW/2-x.measureText('FLIGHTLAB').width/2,
-        preA=x.measureText('FLIGHTL').width;
-  x.fillText('FLIGHTL',left,RH/2);
-  x.fillText('B',left+x.measureText('FLIGHTLA').width,RH/2);
-  if(capC) x.fill(new Path2D(flAPath(left+preA,RH/2+mH.actualBoundingBoxDescent,capC)));
+  /* One call for the whole word, set from the same advances the browser would
+     have used, so the chips come apart out of exactly the shape on screen. */
+  const left=RW/2-x.measureText('FLIGHTLAB').width/2;
+  x.fillText('FLIGHTLAB',left,RH/2);
   const px=x.getImageData(0,0,RW,RH).data;
   const on=(ix,iy)=>ix>=0&&iy>=0&&ix<RW&&iy<RH&&px[((iy*RW+ix)<<2)+3]>110;
   const coarse=matchMedia('(hover:none)').matches;
@@ -946,126 +947,6 @@ function sizeShards(){
   flshards.width=Math.round(r.width*chipScale);
   flshards.height=Math.round(r.height*chipScale);
 }
-/* ---- The A ----
-   The one letter in the word that is drawn instead of typed. The brief for it
-   is a rounded triangular structure with softened corners and a crossbar that
-   hangs inside the glass rather than bridging the legs, and no typeface will
-   give you that.
-
-   The risk with drawing one letter of a word is that it reads as a letter from
-   somewhere else, so none of the numbers below are invented. The edge slopes,
-   the leg thickness, the axis, the counter and the height and weight of the
-   crossbar were all measured off a raster of Inter ExtraBold's own A, which is
-   what the other eight glyphs are set in. The letter therefore stands on the
-   same angles and carries the same weight as its neighbours; what changes is
-   only what the brief asked to change — the apex is rounded instead of cut
-   flat, the corners are softened, and the crossbar is detached.
-
-   Everything is in units of cap height, x from the glyph origin and y from the
-   cap line, so one description drives the SVG and the chip raster at any size. */
-const FLA={
-  oL:{f:.15,x:.3449,m:-.3660}, oR:{f:.15,x:.6827,m:.3618},  /* outer edges  */
-  iL:{f:.30,x:.4729,m:-.3325}, iR:{f:.30,x:.5547,m:.3325},  /* counter edges */
-  rApex:.105, rFootO:.055, rFootI:.046, rCount:.028,
-  barTop:.630, barBot:.788, barGap:.053, barR:.048
-};
-function flEdge(e,f){return e.x+e.m*(f-e.f)}
-/* Where two edges would meet if nothing rounded them off — the virtual apex. */
-function flMeet(a,b){
-  const f=((b.x-b.m*b.f)-(a.x-a.m*a.f))/(a.m-b.m);
-  return [flEdge(a,f),f];
-}
-/* A polygon with a radius per corner. Each corner becomes the arc inscribed in
-   it, which is what keeps the rounding tangent to both edges: the straight runs
-   arrive at the curve without a kink, so a stroke laid over the result reads as
-   one continuous polished edge rather than a chain of segments. */
-function flRound(pts,radii){
-  const n=pts.length, c=[];
-  for(let i=0;i<n;i++){
-    const P=pts[i], A=pts[(i+n-1)%n], B=pts[(i+1)%n];
-    let v1=[A[0]-P[0],A[1]-P[1]], v2=[B[0]-P[0],B[1]-P[1]];
-    const l1=Math.hypot(v1[0],v1[1]), l2=Math.hypot(v2[0],v2[1]);
-    v1=[v1[0]/l1,v1[1]/l1]; v2=[v2[0]/l2,v2[1]/l2];
-    const half=Math.acos(Math.max(-1,Math.min(1,v1[0]*v2[0]+v1[1]*v2[1])))/2;
-    let r=radii[i], d=r/Math.tan(half);
-    const lim=Math.min(l1,l2)*.5;            /* never eat a whole edge */
-    if(d>lim){d=lim; r=d*Math.tan(half)}
-    const T1=[P[0]+v1[0]*d,P[1]+v1[1]*d], T2=[P[0]+v2[0]*d,P[1]+v2[1]*d];
-    const bx=v1[0]+v2[0], by=v1[1]+v2[1], bl=Math.hypot(bx,by)||1, k=r/Math.sin(half);
-    const C=[P[0]+bx/bl*k, P[1]+by/bl*k];    /* centre of the inscribed arc */
-    const cr=(T1[0]-C[0])*(T2[1]-C[1])-(T1[1]-C[1])*(T2[0]-C[0]);
-    c.push({T1:T1,T2:T2,r:r,s:cr>0?1:0});
-  }
-  const f=v=>v.toFixed(2);
-  let d='M'+f(c[0].T1[0])+' '+f(c[0].T1[1]);
-  for(let i=0;i<n;i++){
-    const k=c[i], nx=c[(i+1)%n].T1;
-    d+='A'+f(k.r)+' '+f(k.r)+' 0 0 '+k.s+' '+f(k.T2[0])+' '+f(k.T2[1])
-      +'L'+f(nx[0])+' '+f(nx[1]);
-  }
-  return d+'Z';
-}
-/* Three closed contours, wound so the default fill rule does the work: the
-   outer triangle clockwise, the opening counter-clockwise so it cuts a hole,
-   and the crossbar clockwise again so it fills back in as solid material
-   floating in that hole. Stroked layers get the same three edges to run along,
-   which is what makes the bar look suspended inside the crystal — it carries
-   its own complete bevel, the way a real inclusion would. */
-function flAPath(ox,oy,cap){
-  const A=FLA, P=(nx,nf)=>[ox+nx*cap, oy+(nf-1)*cap];
-  const ip=flMeet(A.iL,A.iR);
-  /* The apex is rounded across the cap line rather than by extending the two
-     outer edges until they cross. That crossing sits well above the cap line —
-     Inter cuts its apex flat — so rounding it there is the one radius that
-     would make the letter the right height, and it comes out a dome. Rounding
-     the flat instead leaves the height fixed and the radius free, so the apex
-     can be softened as far as it wants without the A growing taller than the
-     letters beside it. */
-  const outer=flRound([P(flEdge(A.oL,0),0),P(flEdge(A.oR,0),0),
-                       P(flEdge(A.oR,1),1),P(flEdge(A.oL,1),1)],
-                      [A.rApex*cap,A.rApex*cap,A.rFootO*cap,A.rFootO*cap]);
-  const inner=flRound([P(ip[0],ip[1]),P(flEdge(A.iL,1),1),P(flEdge(A.iR,1),1)],
-                      [A.rCount*cap,A.rFootI*cap,A.rFootI*cap]);
-  /* The crossbar. Its ends run parallel to the legs rather than square to the
-     baseline, so the space around it is the same width the whole way down and
-     the bar reads as held in the middle of the opening rather than wedged into
-     it. It is a touch lighter than the legs and touches nothing. */
-  const g=A.barGap, t=A.barTop, b=A.barBot, rb=A.barR*cap;
-  const bar=flRound([P(flEdge(A.iL,t)+g,t),P(flEdge(A.iR,t)-g,t),
-                     P(flEdge(A.iR,b)-g,b),P(flEdge(A.iL,b)+g,b)],
-                    [rb,rb,rb,rb]);
-  return outer+inner+bar;
-}
-/* Cap height and font ascent, read off the ink of an H rather than off the font
-   size, so both are right whichever font actually rendered — Inter once it is
-   over the network, or the fallback until it lands. The ratios are only there
-   for browsers without actualBoundingBox. */
-function flMetrics(font,fs){
-  const c=(flMetrics.c||(flMetrics.c=document.createElement('canvas').getContext('2d')));
-  c.font=font; c.textBaseline='alphabetic';
-  const m=c.measureText('H');
-  return {cap:m.actualBoundingBoxAscent||fs*.7031,
-          asc:m.fontBoundingBoxAscent||fs*.9031};
-}
-/* Draw the A into every layer. The string is identical for all eleven, so it is
-   built once and shared; the material comes from the group each path sits in.
-
-   The letter is hung off getExtentOfChar rather than getStartPositionOfChar.
-   The word is set with dominant-baseline:central, and the position call reports
-   the y that was asked for — 50% — not the baseline the glyphs actually sit on,
-   which is half the font's ascent-minus-descent lower. The extent box is
-   measured, so its top plus the ascent is the real baseline. */
-function flDrawA(){
-  if(!flsvg) return;
-  const tx=flsvg.querySelector('.fl-ly text');
-  if(!tx) return;
-  let e; try{e=tx.getExtentOfChar(7)}catch(err){return}   /* the A's cell */
-  if(!e||!e.height) return;
-  const cs=getComputedStyle(tx), fs=parseFloat(cs.fontSize);
-  const m=flMetrics(cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily,fs);
-  const d=flAPath(e.x,e.y+m.asc,m.cap);
-  flsvg.querySelectorAll('.fl-a').forEach(n=>n.setAttribute('d',d));
-}
 
 /* Fit the wordmark to 70% of the viewport. Inter arrives over the network, so
    its metrics are not known at author time and a hard-coded font-size would
@@ -1081,10 +962,9 @@ function flFit(){
   if(!w) return;
   const cur=parseFloat(getComputedStyle(t).fontSize);
   const px=cur*(innerWidth*0.70)/w;
-  /* The size goes on the layer groups, not the text: the drawn A inherits its
-     scale and its em-based stroke widths from the same place the letters do. */
+  /* The size goes on the layer groups, not the text, so every layer's em-based
+     stroke width tracks it together. */
   flsvg.querySelectorAll('.fl-ly').forEach(n=>n.style.fontSize=px+'px');
-  flDrawA();
 }
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(flFit)}else{flFit()}
 flFit();
