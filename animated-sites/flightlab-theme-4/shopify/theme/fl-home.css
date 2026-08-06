@@ -369,12 +369,38 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
        real one over a document this tall repaints on every scroll frame. */
     /* Five rather than eight. They are wide enough that the overlap — and so the
        continuous colour drift — is unchanged, and this is a gradient stack being
-       rasterised down an 11700px-tall layer as you scroll. */
-    radial-gradient(140% 34% at 5% 8%,rgba(70,240,190,.083),rgba(70,240,190,.033) 46%,transparent 86%),
-    radial-gradient(144% 35% at 97% 29%,rgba(96,146,255,.080),rgba(96,146,255,.030) 46%,transparent 88%),
-    radial-gradient(140% 34% at 3% 50%,rgba(60,224,255,.082),rgba(60,224,255,.031) 46%,transparent 88%),
-    radial-gradient(144% 35% at 99% 71%,rgba(180,116,244,.072),rgba(180,116,244,.027) 46%,transparent 88%),
-    radial-gradient(140% 34% at 5% 92%,rgba(70,240,190,.076),rgba(70,240,190,.029) 46%,transparent 88%),
+       rasterised down an 11700px-tall layer as you scroll.
+
+       Each field belongs to what is standing in front of it, and none of them
+       is a colour for its own sake. They used to run mint, blue, cyan, violet,
+       mint: a spectrum laid down the page, which put violet behind the bags and
+       spring green behind the hero for no reason either section could have
+       given you. Saturation is now low enough that you would struggle to name
+       any of them — what survives at this alpha is temperature, and temperature
+       is the part that does the work. The discs and the bags are the only two
+       that lean at all, and they lean opposite ways, which is the whole point:
+       the page cools, warms, and cools again as you travel it.
+
+       Every one is quieter than what it replaced. On a dark page a wash reads
+       loudest exactly where the product photography is trying to, so these give
+       way to it — the environment is what the product is standing in, never
+       what it is competing with. */
+    /* Hero — premium, innovation, technology. Steel and a little cyan: the
+       colour of clean light on a cold surface. */
+    radial-gradient(140% 34% at 5% 8%,rgba(132,190,224,.062),rgba(132,190,224,.024) 46%,transparent 86%),
+    /* Discs — energy, movement, performance. The one field with any charge to
+       it, and it is still only a clearer cyan, not a brighter one. */
+    radial-gradient(144% 35% at 97% 29%,rgba(104,200,226,.066),rgba(104,200,226,.026) 46%,transparent 88%),
+    /* The catalogue in the middle wants no opinion at all — a neutral slate,
+       so the disc art is the only colour in the frame. */
+    radial-gradient(140% 34% at 3% 50%,rgba(150,176,204,.052),rgba(150,176,204,.020) 46%,transparent 88%),
+    /* Bags — adventure, quality, durability. Warm, earthy, and held well under
+       the others: on a blue page even a trace of bronze carries, so this is the
+       lowest alpha of the five and still the one you feel most. */
+    radial-gradient(144% 35% at 99% 71%,rgba(206,164,122,.044),rgba(206,164,122,.017) 46%,transparent 88%),
+    /* Accessories — precision, details. Back to cold and almost clear, because
+       small things read as precise when nothing is tinting them. */
+    radial-gradient(140% 34% at 5% 92%,rgba(158,188,212,.050),rgba(158,188,212,.019) 46%,transparent 88%),
     /* graphite -> dark navy -> slate blue -> a breath of cyan -> graphite.
        Each step is a couple of points of luminance, so the journey is felt
        rather than seen. */
@@ -664,18 +690,13 @@ nav .brand,nav .nl a{color:var(--ink)}
    reaches further out than a round join does — so the crystal is still
    thickest where it turns.
 
-   The A is drawn rather than typed (see flAPath below) and its corners are
-   rounded in the geometry itself, at radii chosen per corner. That is the
-   right place for them: a join style is a property of the bead and applies
-   the same everywhere, whereas an apex and a foot want different amounts of
-   softening. The letter arrives already rounded and the bead just follows it. */
+   The A is typed, like every other letter. It used to be a hand-fitted path
+   of its own, because round joins turned its apex into a dome; mitred joins
+   removed that reason, and ninety lines of geometry with it. A letter the
+   font already draws correctly cannot drift away from the eight beside it. */
 .fl-svg .fl-ly{font-family:var(--b);font-weight:800;font-size:13.4vw;
   letter-spacing:-.045em;paint-order:stroke;
   stroke-linejoin:miter;stroke-miterlimit:2.4;stroke-linecap:round}
-/* The typed A is still in the string — it keeps Inter's advance width, so L
-   and B sit exactly where they always did — but it paints nothing, and the
-   drawn A takes its place. */
-.fl-svg .a-slot{fill:none;stroke:none}
 
 /* Thickness.
 
@@ -739,9 +760,14 @@ nav .brand,nav .nl a{color:var(--ink)}
 .fl-lights{animation:fl-lights 34s ease-in-out infinite;transform-origin:50% 50%}
 .fl-moving .fl-lights{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.fl-lights{animation:none}}
-.fl-svg .g-refl{fill:none;stroke:url(#flBevel);stroke-width:.026em;opacity:.375;
+/* The floor. A flipped copy carrying both the body and the lit edges, so what
+   comes back is the word rather than an outline of it; dimmed, blurred a little
+   because a polished floor is not a mirror, and masked so it dies away with
+   distance instead of ending at a line. */
+.fl-svg .g-refl{fill:url(#flBody);stroke:url(#flBevel);stroke-width:.026em;opacity:.42;
   transform-box:fill-box;transform-origin:center;
-  transform:translateY(.74em) scaleY(-1);mask:url(#flReflFade)}
+  transform:translateY(.74em) scaleY(-1);mask:url(#flReflFade);
+  filter:blur(.012em)}
 
 /* THE MATERIAL IS CONSTANT.
    There used to be a .fl-moving state here that swapped the glass to flat paint,
