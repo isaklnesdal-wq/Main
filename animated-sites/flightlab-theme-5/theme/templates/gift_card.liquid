@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gavekort — {{ shop.name }}</title>
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+  {{ content_for_header }}
+</head>
+<body>
+  <main class="page-width utility-page">
+    <span class="eyebrow">Gavekort</span>
+    <h1 class="text-display">{{ gift_card.initial_value | money }}</h1>
+    <p class="lead" style="margin-inline: auto;">Kode: <strong>{{ gift_card.code | format_code }}</strong></p>
+    {%- if gift_card.expired -%}
+      <p>Dette gavekortet er utløpt.</p>
+    {%- else -%}
+      <p>Saldo: {{ gift_card.balance | money }}</p>
+    {%- endif -%}
+    <p style="margin-top: var(--space-5);">
+      <a href="{{ shop.url }}" class="btn btn--primary">Bruk gavekortet</a>
+    </p>
+  </main>
+</body>
+</html>

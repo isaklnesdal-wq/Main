@@ -1,0 +1,70 @@
+{%- comment -%} Beginner Guide (Homepage Blueprint §12) {%- endcomment -%}
+<section class="section section--sand beginner-guide">
+  <div class="page-width">
+    <div class="beginner-guide__inner">
+      <div data-reveal>
+        <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+        <h2 class="text-display">{{ section.settings.heading }}</h2>
+        <p class="lead">{{ section.settings.text }}</p>
+
+        <ol class="guide-steps">
+          {%- for block in section.blocks -%}
+            <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+          {%- endfor -%}
+        </ol>
+
+        <a href="{{ section.settings.cta_link }}" class="btn btn--primary">{{ section.settings.cta_label }}</a>
+      </div>
+
+      <div class="beginner-guide__media" data-reveal style="--reveal-delay: 140ms;">
+        {%- if section.settings.image != blank -%}
+          {{ section.settings.image
+            | image_url: width: 1000
+            | image_tag:
+              widths: '480, 700, 1000',
+              sizes: '(min-width: 990px) 40vw, 100vw',
+              loading: 'lazy',
+              alt: section.settings.heading }}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nybegynnerguide",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Overlinje", "default": "Kom i gang" },
+    { "type": "text", "id": "heading", "label": "Overskrift", "default": "Ny innen discgolf?" },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Tekst",
+      "default": "Du trenger ikke mye for å begynne — bare riktig utstyr og lysten til å komme deg ut. Vi hjelper deg med resten."
+    },
+    { "type": "image_picker", "id": "image", "label": "Bilde" },
+    { "type": "text", "id": "cta_label", "label": "CTA — tekst", "default": "Start her" },
+    { "type": "url", "id": "cta_link", "label": "CTA — lenke" }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Steg",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Tekst", "default": "Velg discer med lav speed og høy glide" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Nybegynnerguide",
+      "blocks": [
+        { "type": "step", "settings": { "text": "Velg et startsett — putter, midrange og driver" } },
+        { "type": "step", "settings": { "text": "Lær hva flight ratings betyr for kastet ditt" } },
+        { "type": "step", "settings": { "text": "Finn en bane i nærheten og kom deg ut" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

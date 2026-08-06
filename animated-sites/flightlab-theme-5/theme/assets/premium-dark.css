@@ -1,0 +1,530 @@
+/* ==========================================================================
+   FLIGHTLAB — premium-dark.css  (flightlab-theme-4 only)
+
+   Loaded after base/sections/commerce on every template except the homepage,
+   which ships its own styles in fl-home.css. It re-tones the existing design
+   and changes nothing structural: no layout, spacing, grid or component markup
+   is touched. Every rule here either retunes a token or repaints a surface
+   that was hardcoded light.
+
+   Palette matches the homepage exactly:
+     #323D4F page, #38455A secondary, #3F4E66 cards.
+   Green is reserved for things you can act on — buttons, active nav, focus,
+   badges, prices on sale — so it keeps its value. Everything else is neutral.
+   ========================================================================== */
+
+/* ---------- Tokens ---------- */
+:root {
+  /* base.css still defines --color-signal as #3ECF8E, the old orange. Nothing
+     overrode it, so primary buttons, the cart badge, sale prices, pagination
+     and the focus ring were all rendering orange on every page except the
+     homepage. This is the line that makes the accent FlightLab green. */
+  --color-signal: #3ECF8E;
+  --color-signal-hover: #5BE0A5;
+  --on-signal: #1F2E2E;
+
+  --color-ink: #E7ECF3;
+  --color-ink-soft: rgba(231, 236, 243, 0.60);
+  --color-sand: #38455A;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-on-dark: #F2F5F9;
+  --color-on-dark-soft: rgba(242, 245, 249, 0.62);
+
+  --surface-0: #323D4F;
+  --surface-1: #38455A;
+  --surface-2: #44546D;
+
+  --glass: rgba(255, 255, 255, 0.045);
+  --glass-strong: rgba(255, 255, 255, 0.075);
+  --glass-line: rgba(255, 255, 255, 0.10);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --shadow-lift: 0 20px 48px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- One continuous page ----------
+   The same field the homepage uses, so moving from the homepage to a product
+   or collection page does not change the colour under your feet. */
+body {
+  background-color: var(--surface-0);
+  background-image:
+    /* Neon pools, wide and very soft so they bleed into one another — the same
+       set the homepage uses, so the colour under your feet carries across. A
+       broad transparent ramp gives what a blur of a small bright blob would,
+       without a filter that would repaint on every scroll frame. */
+    radial-gradient(128% 26% at 6% 5%, rgba(70, 240, 190,0.0810), rgba(70, 240, 190,0.0330) 44%, transparent 84%),
+    radial-gradient(132% 27% at 96% 18%, rgba(96, 146, 255,0.0780), rgba(96, 146, 255,0.0300) 44%, transparent 86%),
+    radial-gradient(128% 26% at 4% 31%, rgba(60, 224, 255,0.0810), rgba(60, 224, 255,0.0312) 44%, transparent 86%),
+    radial-gradient(132% 27% at 98% 44%, rgba(214, 120, 232,0.0690), rgba(214, 120, 232,0.0264) 44%, transparent 86%),
+    radial-gradient(128% 26% at 6% 57%, rgba(160, 116, 255,0.0720), rgba(160, 116, 255,0.0276) 44%, transparent 86%),
+    radial-gradient(132% 27% at 96% 70%, rgba(60, 224, 255,0.0768), rgba(60, 224, 255,0.0300) 44%, transparent 86%),
+    radial-gradient(128% 26% at 4% 83%, rgba(70, 240, 190,0.0732), rgba(70, 240, 190,0.0282) 44%, transparent 86%),
+    radial-gradient(132% 27% at 98% 96%, rgba(96, 146, 255,0.0708), rgba(96, 146, 255,0.0270) 44%, transparent 86%),
+    linear-gradient(180deg, #323D4F 0%, #364256 10%, #3A4961 22%, #3E4E69 34%,
+      #41536F 46%, #405471 56%, #3B4B66 68%, #36445B 80%, #343E4F 90%, #323D4F 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-attachment: scroll;
+  color: var(--color-ink);
+}
+
+.section--dark,
+.section--sand,
+.collection-hero,
+.site-footer { background: transparent; }
+
+.section--dark { color: var(--color-ink); }
+
+.section { position: relative; }
+/* No rule between sections. A drawn hairline is exactly what makes a page read
+   as stacked blocks; the space around a heading already separates it. */
+.section + .section::before { content: none; }
+
+/* ---------- Header, announcement, bottom nav: subtle glass ---------- */
+.site-header {
+  background: rgba(50,61,79, 0.68);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+  border-bottom: 1px solid var(--glass-line);
+  color: var(--color-ink);
+}
+.site-header__logo { color: var(--color-ink); }
+.header-icon-btn:hover { background: var(--glass-strong); }
+
+.announcement {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--color-on-dark-soft);
+  border-bottom: 1px solid var(--glass-line);
+}
+
+.mobile-bottom-nav {
+  background: rgba(50,61,79, 0.80);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border-top: 1px solid var(--glass-line);
+}
+.mobile-bottom-nav__item { color: var(--color-ink-soft); }
+
+/* A blurred bar that is on screen for the whole scroll has to re-composite
+   every frame, which is the one glass effect phones actually feel. Opaque
+   there instead — visually near-identical, materially cheaper. */
+@media (hover: none) {
+  .site-header,
+  .mobile-bottom-nav {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .site-header { background: rgba(50,61,79, 0.95); }
+  .mobile-bottom-nav { background: rgba(50,61,79, 0.96); }
+}
+
+.mobile-menu__panel { background: var(--surface-1); }
+.mobile-menu__backdrop,
+.cart-drawer__backdrop { background: rgba(33,40,51, 0.66); }
+
+/* ---------- Surfaces that were hardcoded light ---------- */
+.discovery-card {
+  background: linear-gradient(180deg, #44546D, #3F4E66);
+  border-color: var(--glass-line);
+}
+.discovery-card:hover {
+  background: linear-gradient(180deg, #4A5C7B, #435169);
+  border-color: rgba(62, 207, 142, 0.34);
+  box-shadow: var(--shadow-lift);
+}
+
+.field input, .field textarea, .field select,
+.newsletter-form input[type='email'],
+.utility-page .search-form input,
+.facets__price input {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--glass-line);
+  color: var(--color-ink);
+}
+input::placeholder, textarea::placeholder { color: rgba(231, 236, 243, 0.36); }
+
+.field input:focus, .field textarea:focus,
+.newsletter-form input[type='email']:focus { border-color: var(--color-signal); }
+
+.collection-toolbar select {
+  background-color: rgba(255, 255, 255, 0.04);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23E7ECF3' stroke-width='1.5'/%3E%3C/svg%3E");
+  border-color: var(--glass-line);
+  color: var(--color-ink);
+}
+
+.facets summary { border-color: var(--glass-line); }
+.facets details[open] summary { border-color: var(--color-signal); }
+.facets__panel {
+  background: var(--surface-2);
+  border-color: var(--glass-line);
+}
+.active-facets a { background: var(--glass-strong); }
+
+.cart-drawer__panel { background: var(--surface-1); }
+.cart-drawer__foot {
+  background: var(--surface-2);
+  border-top-color: var(--glass-line);
+}
+
+.product-trust {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+}
+.qty { border-color: var(--glass-line); }
+.qty button:hover { background: var(--glass-strong); }
+
+.flight-chip { background: rgba(255, 255, 255, 0.05); }
+.flight-chip__value { color: var(--color-ink); }
+
+.flight-tile {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--glass-line);
+}
+.flight-tile:hover, .flight-tile:focus-within {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(62, 207, 142, 0.45);
+}
+
+/* Media wells and gradient placeholders, re-keyed to the palette */
+.product-card__media,
+.product-gallery__main,
+.product-gallery__thumb,
+.cart-line__media { background: var(--surface-2); }
+.product-gallery__thumb.is-active { border-color: var(--color-signal); }
+
+.brand-story__media,
+.article-card__media { background: linear-gradient(160deg, #3F4E66, #323D4F); }
+.category-card__media { background: linear-gradient(150deg, #3F4E66 0%, #38455A 55%, #323D4F 100%); }
+.community__media { background: linear-gradient(120deg, #3C4A64 0%, #323D4F 60%, #38455A 100%); }
+.beginner-guide__media {
+  background:
+    radial-gradient(90% 90% at 20% 15%, rgba(62, 207, 142, 0.10) 0%, transparent 55%),
+    linear-gradient(200deg, #3F4E66 0%, #323D4F 100%);
+}
+.hero__media--placeholder {
+  background: linear-gradient(158deg, #323D4F 0%, #38455A 58%, #323D4F 100%);
+}
+
+/* ---------- Green, used sparingly ----------
+   Eyebrows and trust icons were signal-coloured, which put the accent on
+   almost every section. Those go neutral; green stays on the things a
+   visitor can act on, plus a few genuine highlights. */
+.eyebrow, .on-dark .eyebrow { color: rgba(231, 236, 243, 0.42); }
+.trust-bar__item svg { color: rgba(231, 236, 243, 0.38); }
+.discovery-card__label { color: rgba(231, 236, 243, 0.42); }
+
+.btn--primary { background: var(--color-signal); color: var(--on-signal); }
+.btn--primary:hover {
+  background: var(--color-signal-hover);
+  box-shadow: 0 10px 30px rgba(62, 207, 142, 0.22);
+}
+.btn--secondary {
+  background: var(--glass);
+  border-color: var(--glass-line);
+  color: var(--color-ink);
+}
+.btn--secondary:hover, .on-dark .btn--secondary:hover { background: var(--glass-strong); }
+.btn--dark {
+  background: var(--glass-strong);
+  color: var(--color-ink);
+  border-color: var(--glass-line);
+}
+.btn--dark:hover { background: rgba(255, 255, 255, 0.11); }
+
+.product-card__badge { background: var(--glass-strong); color: var(--color-ink); }
+.product-card__badge--sale { background: var(--color-signal); color: var(--on-signal); }
+.cart-count { background: var(--color-signal); color: var(--on-signal); }
+.pagination [aria-current='page'] { background: var(--color-signal); color: var(--on-signal); }
+.pagination a:hover { background: var(--glass-strong); }
+.newsletter__success { color: var(--color-signal); }
+.price--sale { color: var(--color-signal); }
+.product-trust__item svg { color: var(--color-signal); }
+.site-footer a:hover { color: var(--color-signal); }
+
+.site-footer {
+  border-top: 1px solid var(--glass-line);
+  color: var(--color-on-dark-soft);
+}
+.site-footer__bottom { border-top-color: var(--glass-line); }
+
+.skip-link { background: var(--color-signal); color: var(--on-signal); }
+
+/* ==========================================================================
+   MATERIAL PASS — the same four materials as the homepage
+
+   Everything above this line re-toned the theme. This states the lighting
+   once and makes every surface obey it, so a product page and the homepage
+   are not two designs that happen to share a palette — they are the same
+   room, lit by the same lamp, built from the same four substances:
+
+     Crystal   the wordmark. Refracts. Homepage only.
+     Graphite  the environment. Absorbs. Never flat, never highlighted.
+     Smoked    cards and panels. Transmits the room, reflects softly.
+     Satin     buttons, chips, badges, fields. Catches a highlight, never a
+               specular. Brushed, not chromed.
+
+   Nothing here changes a box's size: every added highlight is an inset
+   shadow, and borders are only recoloured, never added or widened.
+   ========================================================================== */
+:root {
+  /* One light, above and slightly in front, and a cool bounce off the floor.
+     The same two values the crystal's polished top edge and floor bounce use. */
+  --lit-top: rgba(248, 252, 255, 0.15);
+  --lit-bot: rgba(174, 239, 245, 0.055);
+  /* An edge is not equally bright all the way round. The top rail faces the
+     light, the sides graze it, the underside sees only the bounce. */
+  --edge-top: rgba(255, 255, 255, 0.17);
+  --edge-side: rgba(255, 255, 255, 0.105);
+  --edge-bot: rgba(255, 255, 255, 0.055);
+  /* Contact with the ground, never tinted with the accent — a coloured
+     shadow is light the surface does not emit. */
+  --contact: 0 18px 40px rgba(6, 10, 18, 0.34);
+  --contact-near: 0 8px 20px rgba(6, 10, 18, 0.30);
+  --contact-far: 0 30px 62px rgba(6, 10, 18, 0.44);
+}
+
+/* ---------- Graphite: the room is never still ----------
+   The page field gave depth but froze the moment you stopped scrolling, and
+   light in a room does not hold still. One fixed layer of very wide, very low
+   colour on a 96s loop. Transform only, so it runs on the compositor and
+   never touches layout or style; it sits under the dither, so what reads is
+   the tone of the room changing rather than blobs moving. */
+html::before {
+  content: '';
+  position: fixed;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+  background:
+    radial-gradient(40% 30% at 22% 24%, rgba(60, 224, 255, 0.052), transparent 72%),
+    radial-gradient(44% 33% at 79% 63%, rgba(158, 124, 255, 0.043), transparent 74%),
+    radial-gradient(38% 28% at 57% 11%, rgba(70, 240, 190, 0.040), transparent 72%),
+    radial-gradient(42% 31% at 30% 86%, rgba(96, 146, 255, 0.038), transparent 74%);
+  animation: fl-air 96s ease-in-out infinite;
+}
+@keyframes fl-air {
+  0%   { transform: translate3d(-2.0%, -1.3%, 0); }
+  34%  { transform: translate3d(1.7%, 1.1%, 0); }
+  67%  { transform: translate3d(-1.1%, 1.9%, 0); }
+  100% { transform: translate3d(-2.0%, -1.3%, 0); }
+}
+@media (prefers-reduced-motion: reduce) { html::before { animation: none; } }
+
+/* ---------- Smoked glass: cards and panels ----------
+   These were opaque panels sitting on the environment. A panel that blocks
+   the light behind it is pasted onto the page; a pane that passes some of it
+   through is in the room. The fills are translucent, so a card high on the
+   page picks up cyan and one lower down picks up violet, without a single
+   card-specific colour anywhere.
+
+   The first background layer is the reflection: a wide, soft band with no
+   hard start or end, three times the card's height so only a slice shows.
+   Hover slides the slice — the reflection moves across the pane the way it
+   would if you leaned in. That is the whole hover effect. */
+.discovery-card,
+.product-card,
+.article-card,
+.category-card,
+.facets__panel,
+.product-trust,
+.flight-tile {
+  background-color: transparent;
+  background-image:
+    linear-gradient(176deg,
+      rgba(255, 255, 255, 0)      0%,
+      rgba(248, 252, 255, 0.052) 27%,
+      rgba(248, 252, 255, 0.016) 45%,
+      rgba(255, 255, 255, 0)     66%),
+    linear-gradient(180deg, rgba(68,83,107, 0.50), rgba(57,71,92, 0.58));
+  background-repeat: no-repeat;
+  background-size: 100% 300%, 100% 100%;
+  background-position: 0 20%, 0 0;
+  border-top-color: var(--edge-top);
+  border-left-color: var(--edge-side);
+  border-right-color: var(--edge-side);
+  border-bottom-color: var(--edge-bot);
+  box-shadow:
+    inset 0 1px 0 var(--lit-top),
+    inset 0 -1px 0 var(--lit-bot),
+    var(--contact);
+  /* An object with mass does not bounce when you point at it. */
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.32, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.32, 1),
+    background-position 0.6s cubic-bezier(0.22, 1, 0.32, 1),
+    border-color 0.45s ease;
+}
+.discovery-card:hover,
+.product-card:hover,
+.article-card:hover,
+.category-card:hover,
+.flight-tile:hover,
+.flight-tile:focus-within {
+  /* Depth increases, the reflection slides, the top rail catches more light.
+     No colour change: a pane of glass does not turn green when you look at
+     it, and the accent belongs to things you can act on. */
+  background-image:
+    linear-gradient(176deg,
+      rgba(255, 255, 255, 0)      0%,
+      rgba(248, 252, 255, 0.052) 27%,
+      rgba(248, 252, 255, 0.016) 45%,
+      rgba(255, 255, 255, 0)     66%),
+    linear-gradient(180deg, rgba(68,83,107, 0.50), rgba(57,71,92, 0.58));
+  background-size: 100% 300%, 100% 100%;
+  background-position: 0 56%, 0 0;
+  border-top-color: rgba(255, 255, 255, 0.26);
+  border-left-color: rgba(255, 255, 255, 0.14);
+  border-right-color: rgba(255, 255, 255, 0.14);
+  /* Earlier rules turned these edges green on hover. Green is for things you
+     can act on, not for announcing that the cursor exists. */
+  border-bottom-color: var(--edge-bot);
+  box-shadow:
+    inset 0 1px 0 rgba(248, 252, 255, 0.23),
+    inset 0 -1px 0 rgba(174, 239, 245, 0.075),
+    var(--contact-far);
+}
+/* No backdrop blur on the panes. It was the obvious way to say "glass", and it
+   was measured on the homepage grid: twenty panes each re-compositing a blur
+   while a fixed layer drifts behind them took the catalogue scroll from 37.6ms
+   to 69.3ms a frame on a throttled desktop. A pane that transmits the room
+   already reads as glass — the blur was the effect, the transmission is the
+   material. Blur stays where it is affordable and where it earns its keep: the
+   two chrome bars, which are single elements pinned to the viewport. */
+/* Media wells were opaque slabs inside translucent panes, which put a hard
+   seam across every card — one object made of two materials. They are the
+   same pane, recessed: a recess catches less light, and still transmits. */
+.product-card__media,
+.product-gallery__main,
+.product-gallery__thumb,
+.cart-line__media,
+.article-card__media,
+.category-card__media,
+.brand-story__media,
+.community__media,
+.beginner-guide__media,
+.hero__media--placeholder {
+  background: linear-gradient(150deg, rgba(37,47,64, 0.13), rgba(33,42,55, 0.21));
+  box-shadow: inset 0 -1px 0 rgba(248, 252, 255, 0.035);
+}
+
+/* ---------- Satin metal: everything you touch ----------
+   Brushed, not polished. A soft top-to-bottom fall in brightness, one
+   hairline where the light lands on the top edge, a dark line where the
+   underside turns away. No specular dot, no rim light, no chrome. Hover
+   raises the highlight rather than changing the colour — metal tilted
+   towards a lamp catches more light; it does not repaint itself. */
+.btn--primary {
+  background-image: linear-gradient(180deg, #50DAA1 0%, #3ECF8E 54%, #34BD7F 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.16),
+    var(--contact-near);
+}
+.btn--primary:hover,
+.btn:hover {
+  background-image: linear-gradient(180deg, #5DE3AC 0%, #46D796 54%, #3AC888 100%);
+  /* Was a green bloom. A button does not emit light. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.16),
+    0 14px 30px rgba(6, 10, 18, 0.40);
+}
+.btn--secondary,
+.btn--dark,
+.btn.ghost,
+.flight-chip,
+.qty,
+.active-facets a,
+.pagination a,
+.field input, .field textarea, .field select,
+.newsletter-form input[type='email'],
+.utility-page .search-form input,
+.facets__price input,
+.collection-toolbar select {
+  background-color: transparent;
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.032));
+  border-top-color: var(--edge-top);
+  border-left-color: var(--edge-side);
+  border-right-color: var(--edge-side);
+  border-bottom-color: var(--edge-bot);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 4px 14px rgba(6, 10, 18, 0.24);
+  transition: background-image 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.btn--secondary:hover,
+.btn--dark:hover,
+.btn.ghost:hover,
+.on-dark .btn--secondary:hover,
+.pagination a:hover,
+.active-facets a:hover {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.135), rgba(255, 255, 255, 0.052));
+  border-top-color: rgba(255, 255, 255, 0.26);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.19), 0 8px 22px rgba(6, 10, 18, 0.32);
+}
+.field input:focus, .field textarea:focus,
+.newsletter-form input[type='email']:focus {
+  border-top-color: rgba(255, 255, 255, 0.28);
+  border-left-color: rgba(255, 255, 255, 0.14);
+  border-right-color: rgba(255, 255, 255, 0.14);
+  border-bottom-color: var(--color-signal);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 8px 24px rgba(6, 10, 18, 0.34);
+}
+/* Pressed and active states are real state changes, so the metal is lit from
+   the other side: the top rail brightens and the underside goes dark. */
+.product-card__badge--sale,
+.cart-count,
+.pagination [aria-current='page'],
+.skip-link {
+  background-image: linear-gradient(180deg, #4AD79A, #35BE80);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.16);
+}
+/* Small satin details — inset only, so nothing changes height. */
+.product-card__badge {
+  background-color: transparent;
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.042));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.11), inset 0 -1px 0 rgba(0, 0, 0, 0.10);
+}
+.facets summary { border-color: var(--edge-bot); }
+.facets details[open] summary { border-color: rgba(255, 255, 255, 0.20); }
+.product-gallery__thumb.is-active { border-color: var(--color-signal); }
+
+/* ---------- Chrome ----------
+   The bars are panes like the cards, lit the same way. */
+.site-header {
+  border-bottom: 1px solid var(--edge-bot);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 30px rgba(6, 10, 18, 0.26);
+}
+.mobile-bottom-nav {
+  border-top: 1px solid var(--edge-top);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 -10px 30px rgba(6, 10, 18, 0.30);
+}
+.announcement { border-bottom: 1px solid var(--edge-bot); }
+.site-footer { border-top: 1px solid var(--edge-bot); }
+.site-footer__bottom { border-top-color: var(--edge-bot); }
+.cart-drawer__panel,
+.mobile-menu__panel {
+  background-image: linear-gradient(180deg, rgba(68,83,107, 0.30), rgba(57,71,92, 0.16));
+  box-shadow: inset 1px 0 0 var(--lit-top);
+}
+.cart-drawer__foot {
+  background: rgba(255, 255, 255, 0.035);
+  border-top-color: var(--edge-bot);
+  box-shadow: inset 0 1px 0 var(--lit-top);
+}
+
+/* Dither. A wide, very low-alpha ramp on a dark page is exactly where 8-bit
+   colour bands, and banding is the thing that makes an ambient field read as a
+   gradient rather than as light in air. One 200px noise tile, fixed and barely
+   visible, breaks those steps up. Costs nothing to scroll. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}

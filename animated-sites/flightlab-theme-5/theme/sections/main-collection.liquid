@@ -1,0 +1,138 @@
+{%- comment -%} Kategoriside med identitet og filtrering (Design Bible §14, Shopify-spek §7) {%- endcomment -%}
+<section class="collection-hero">
+  <div class="page-width">
+    <span class="eyebrow">Kategori</span>
+    <h1 class="text-display">{{ collection.title }}</h1>
+    {%- if collection.description != blank -%}
+      <div class="collection-hero__desc">{{ collection.description }}</div>
+    {%- endif -%}
+  </div>
+</section>
+
+<div class="page-width" style="padding-bottom: var(--space-8);">
+  <form id="FacetForm">
+    <div class="collection-toolbar">
+      <div class="facets">
+        {%- for filter in collection.filters -%}
+          {%- case filter.type -%}
+            {%- when 'boolean', 'list' -%}
+              <details>
+                <summary>
+                  {{ filter.label }}
+                  {%- if filter.active_values.size > 0 %} ({{ filter.active_values.size }}){% endif %}
+                  {% render 'icon', name: 'plus', size: 14 %}
+                </summary>
+                <div class="facets__panel">
+                  {%- for value in filter.values -%}
+                    <label>
+                      <input
+                        type="checkbox"
+                        name="{{ value.param_name }}"
+                        value="{{ value.value }}"
+                        {% if value.active %}checked{% endif %}
+                        {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                      >
+                      {{ value.label }} ({{ value.count }})
+                    </label>
+                  {%- endfor -%}
+                </div>
+              </details>
+            {%- when 'price_range' -%}
+              <details>
+                <summary>Pris {% render 'icon', name: 'plus', size: 14 %}</summary>
+                <div class="facets__panel">
+                  <div class="facets__price">
+                    <input
+                      type="number"
+                      name="{{ filter.min_value.param_name }}"
+                      placeholder="Fra"
+                      min="0"
+                      {% if filter.min_value.value %}value="{{ filter.min_value.value | money_without_currency | replace: ',', '.' }}"{% endif %}
+                    >
+                    <span>–</span>
+                    <input
+                      type="number"
+                      name="{{ filter.max_value.param_name }}"
+                      placeholder="Til"
+                      min="0"
+                      {% if filter.max_value.value %}value="{{ filter.max_value.value | money_without_currency | replace: ',', '.' }}"{% endif %}
+                    >
+                    <button type="submit" class="btn btn--dark" style="min-height: 40px; padding: 8px 18px;">Bruk</button>
+                  </div>
+                </div>
+              </details>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+
+      <div style="display: flex; align-items: center; gap: var(--space-3);">
+        <span class="collection-toolbar__count">{{ collection.products_count }} produkter</span>
+        <label class="visually-hidden" for="SortBy">Sorter etter</label>
+        <select name="sort_by" id="SortBy">
+          {%- assign current_sort = collection.sort_by | default: collection.default_sort_by -%}
+          {%- for option in collection.sort_options -%}
+            <option value="{{ option.value }}"{% if option.value == current_sort %} selected{% endif %}>{{ option.name }}</option>
+          {%- endfor -%}
+        </select>
+      </div>
+    </div>
+
+    {%- comment -%} Aktive filtre {%- endcomment -%}
+    {%- assign has_active = false -%}
+    {%- for filter in collection.filters -%}
+      {%- if filter.active_values.size > 0 -%}{%- assign has_active = true -%}{%- endif -%}
+    {%- endfor -%}
+    {%- if has_active -%}
+      <div class="active-facets">
+        {%- for filter in collection.filters -%}
+          {%- for value in filter.active_values -%}
+            <a href="{{ value.url_to_remove }}">{{ value.label }} {% render 'icon', name: 'close', size: 12 %}</a>
+          {%- endfor -%}
+        {%- endfor -%}
+        <a href="{{ collection.url }}">Nullstill alle</a>
+      </div>
+    {%- endif -%}
+  </form>
+
+  {%- paginate collection.products by 24 -%}
+    {%- if collection.products.size > 0 -%}
+      <div class="product-grid">
+        {%- for product in collection.products -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination" aria-label="Sider">
+          {%- if paginate.previous -%}
+            <a href="{{ paginate.previous.url }}" aria-label="Forrige side">←</a>
+          {%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}">{{ part.title }}</a>
+            {%- elsif part.title == paginate.current_page -%}
+              <span aria-current="page">{{ part.title }}</span>
+            {%- else -%}
+              <span>{{ part.title }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" aria-label="Neste side">→</a>
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- else -%}
+      <div class="collection-empty">
+        <p>Ingen produkter matcher valgene dine.</p>
+        <a href="{{ collection.url }}" class="btn btn--dark">Nullstill filtre</a>
+      </div>
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "Kategoriside",
+  "settings": []
+}
+{% endschema %}

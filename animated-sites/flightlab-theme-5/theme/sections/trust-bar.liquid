@@ -1,0 +1,53 @@
+{%- comment -%} Trust Bar (Homepage Blueprint §6) {%- endcomment -%}
+<section class="trust-bar" aria-label="Fordeler">
+  <div class="page-width">
+    <ul class="trust-bar__list">
+      {%- for block in section.blocks -%}
+        <li class="trust-bar__item" {{ block.shopify_attributes }}>
+          {% render 'icon', name: block.settings.icon, size: 20 %}
+          <span>{{ block.settings.text }}</span>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trust bar",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Fordel",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Ikon",
+          "options": [
+            { "value": "truck", "label": "Levering" },
+            { "value": "shield", "label": "Trygghet" },
+            { "value": "disc", "label": "Disc" },
+            { "value": "support", "label": "Support" },
+            { "value": "check", "label": "Hake" }
+          ],
+          "default": "check"
+        },
+        { "type": "text", "id": "text", "label": "Tekst", "default": "Rask levering" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust bar",
+      "blocks": [
+        { "type": "item", "settings": { "icon": "truck", "text": "Rask levering i hele Norge" } },
+        { "type": "item", "settings": { "icon": "shield", "text": "Trygg handel og enkel retur" } },
+        { "type": "item", "settings": { "icon": "disc", "text": "Utvalgte kvalitetsprodukter" } },
+        { "type": "item", "settings": { "icon": "support", "text": "Support fra discgolfere" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

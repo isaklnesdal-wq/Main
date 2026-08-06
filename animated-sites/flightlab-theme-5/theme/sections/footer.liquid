@@ -1,0 +1,73 @@
+<footer class="site-footer">
+  <div class="page-width">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a href="{{ routes.root_url }}" class="site-footer__logo">Flightlab</a>
+        <p class="site-footer__tagline">{{ section.settings.tagline }}</p>
+        <ul class="site-footer__social" style="margin-top: var(--space-4);">
+          {%- if settings.social_instagram != blank -%}
+            <li><a href="{{ settings.social_instagram }}" target="_blank" rel="noopener">Instagram</a></li>
+          {%- endif -%}
+          {%- if settings.social_tiktok != blank -%}
+            <li><a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener">TikTok</a></li>
+          {%- endif -%}
+          {%- if settings.social_youtube != blank -%}
+            <li><a href="{{ settings.social_youtube }}" target="_blank" rel="noopener">YouTube</a></li>
+          {%- endif -%}
+          {%- if settings.social_facebook != blank -%}
+            <li><a href="{{ settings.social_facebook }}" target="_blank" rel="noopener">Facebook</a></li>
+          {%- endif -%}
+        </ul>
+      </div>
+
+      <div>
+        <h3>Butikk</h3>
+        <ul>
+          {%- for link in section.settings.menu_shop.links -%}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <div>
+        <h3>Kundeservice</h3>
+        <ul>
+          {%- for link in section.settings.menu_support.links -%}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <div>
+        <h3>Flightlab</h3>
+        <ul>
+          {%- for link in section.settings.menu_about.links -%}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <span>© {{ 'now' | date: '%Y' }} {{ shop.name }} · Org.nr kommer</span>
+      <span>{{ settings.shipping_note }} · {{ settings.returns_note }}</span>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Slagord",
+      "default": "Et nordisk merke for deg som elsker sporten, naturen og jakten på det perfekte kastet."
+    },
+    { "type": "link_list", "id": "menu_shop", "label": "Butikkmeny" },
+    { "type": "link_list", "id": "menu_support", "label": "Kundeservicemeny" },
+    { "type": "link_list", "id": "menu_about", "label": "Om oss-meny" }
+  ]
+}
+{% endschema %}

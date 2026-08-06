@@ -1,0 +1,172 @@
+{%- comment -%} Produktside (Design Bible §13, Shopify-spek §8) {%- endcomment -%}
+<div class="product-page">
+  <div class="page-width">
+    <div class="product-page__grid">
+
+      {%- comment -%} Galleri {%- endcomment -%}
+      <div class="product-gallery" data-gallery>
+        <div class="product-gallery__main">
+          {%- if product.featured_image -%}
+            {{ product.featured_image
+              | image_url: width: 1400
+              | image_tag:
+                widths: '550, 800, 1100, 1400',
+                sizes: '(min-width: 990px) 55vw, 100vw',
+                loading: 'eager',
+                fetchpriority: 'high',
+                alt: product.featured_image.alt | default: product.title }}
+          {%- else -%}
+            {% render 'disc-placeholder' %}
+          {%- endif -%}
+        </div>
+
+        {%- if product.images.size > 1 -%}
+          <div class="product-gallery__thumbs">
+            {%- for image in product.images -%}
+              <button
+                class="product-gallery__thumb{% if forloop.first %} is-active{% endif %}"
+                type="button"
+                data-full="{{ image | image_url: width: 1400 }}"
+                aria-label="Vis bilde {{ forloop.index }}"
+              >
+                {{ image | image_url: width: 160 | image_tag: loading: 'lazy', alt: image.alt | default: product.title }}
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Produktinfo {%- endcomment -%}
+      <div class="product-info">
+        <span class="product-info__vendor">{{ product.vendor }}</span>
+        <h1 class="text-title product-info__title">{{ product.title }}</h1>
+        <p class="product-info__price">{% render 'price', product: product %}</p>
+
+        {%- assign fl = product.metafields.flightlab -%}
+        {%- if fl.speed != blank -%}
+          <div class="product-info__flight">
+            <p class="product-info__flight-title">Flight ratings</p>
+            {% render 'flight-ratings', product: product, size: 'large' %}
+          </div>
+        {%- endif -%}
+
+        {%- assign variant = product.selected_or_first_available_variant -%}
+        <form method="post" action="/cart/add" data-product-form class="product-form">
+          <input type="hidden" name="id" value="{{ variant.id }}">
+
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              <div class="field">
+                <label for="Option{{ forloop.index }}">{{ option.name }}</label>
+                <select id="Option{{ forloop.index }}" name="options[{{ option.name }}]" disabled>
+                  {%- for value in option.values -%}
+                    <option{% if option.selected_value == value %} selected{% endif %}>{{ value }}</option>
+                  {%- endfor -%}
+                </select>
+              </div>
+            {%- endfor -%}
+          {%- endunless -%}
+
+          <div class="product-form__row">
+            <span class="qty">
+              <button type="button" data-qty-change="down" aria-label="Reduser antall">−</button>
+              <input type="number" name="quantity" value="1" min="1" aria-label="Antall">
+              <button type="button" data-qty-change="up" aria-label="Øk antall">+</button>
+            </span>
+
+            {%- if product.available -%}
+              <button type="submit" class="btn btn--primary">Legg i handlekurv</button>
+            {%- else -%}
+              <button type="button" class="btn btn--primary" disabled>Utsolgt</button>
+            {%- endif -%}
+          </div>
+        </form>
+
+        <div class="product-trust">
+          <span class="product-trust__item">{% render 'icon', name: 'truck', size: 18 %} {{ settings.shipping_note }} · {{ settings.delivery_note }}</span>
+          <span class="product-trust__item">{% render 'icon', name: 'shield', size: 18 %} {{ settings.returns_note }}</span>
+          <span class="product-trust__item">{% render 'icon', name: 'support', size: 18 %} Spørsmål? Vi er discgolfere — spør oss.</span>
+        </div>
+
+        <div class="product-details">
+          <details open>
+            <summary>Om discen {% render 'icon', name: 'plus', size: 18 %}</summary>
+            <div class="product-details__body">{{ product.description }}</div>
+          </details>
+
+          {%- if fl.speed != blank or fl.skill_level != blank -%}
+            <details>
+              <summary>Hvem passer den for? {% render 'icon', name: 'plus', size: 18 %}</summary>
+              <div class="product-details__body">
+                <ul class="spec-list">
+                  {%- if fl.skill_level != blank -%}
+                    <li><span class="spec-label">Erfaringsnivå</span> <span class="spec-value">{{ fl.skill_level.value }}</span></li>
+                  {%- endif -%}
+                  {%- if fl.stability != blank -%}
+                    <li><span class="spec-label">Stabilitet</span> <span class="spec-value">{{ fl.stability.value }}</span></li>
+                  {%- endif -%}
+                  {%- if fl.recommended_use != blank -%}
+                    <li><span class="spec-label">Anbefalt bruk</span> <span class="spec-value">{{ fl.recommended_use.value }}</span></li>
+                  {%- endif -%}
+                </ul>
+              </div>
+            </details>
+          {%- endif -%}
+
+          <details>
+            <summary>Detaljer {% render 'icon', name: 'plus', size: 18 %}</summary>
+            <div class="product-details__body">
+              <ul class="spec-list">
+                <li><span class="spec-label">Produsent</span> <span class="spec-value">{{ product.vendor }}</span></li>
+                <li><span class="spec-label">Type</span> <span class="spec-value">{{ product.type }}</span></li>
+                {%- if fl.plastic != blank -%}
+                  <li><span class="spec-label">Plast</span> <span class="spec-value">{{ fl.plastic.value }}</span></li>
+                {%- endif -%}
+                {%- if variant.sku != blank -%}
+                  <li><span class="spec-label">Varenummer</span> <span class="spec-value">{{ variant.sku }}</span></li>
+                {%- endif -%}
+              </ul>
+            </div>
+          </details>
+
+          <details>
+            <summary>Frakt og retur {% render 'icon', name: 'plus', size: 18 %}</summary>
+            <div class="product-details__body">
+              <p>{{ settings.shipping_note }}. {{ settings.delivery_note }}. {{ settings.returns_note }} — uåpnede varer returneres enkelt.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{%- comment -%} Relaterte produkter — samme kategori {%- endcomment -%}
+{%- assign type_handle = product.type | handleize -%}
+{%- assign related_collection = collections[type_handle] -%}
+{%- if related_collection != blank and related_collection.products.size > 1 -%}
+  <section class="related">
+    <div class="page-width">
+      <div class="section-head">
+        <span class="eyebrow">Fortsett utforskningen</span>
+        <h2 class="text-title">Flere i {{ related_collection.title | downcase }}</h2>
+      </div>
+      <div class="product-grid">
+        {%- assign shown = 0 -%}
+        {%- for related in related_collection.products -%}
+          {%- if related.id != product.id and shown < 4 -%}
+            {%- assign shown = shown | plus: 1 -%}
+            {% render 'product-card', product: related %}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Produktside",
+  "settings": []
+}
+{% endschema %}

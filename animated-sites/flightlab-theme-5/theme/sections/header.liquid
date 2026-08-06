@@ -1,0 +1,92 @@
+<header class="site-header" data-header>
+  <div class="page-width site-header__inner">
+    <button class="header-icon-btn site-header__menu-toggle" type="button" data-menu-open aria-label="Åpne meny">
+      {% render 'icon', name: 'menu', size: 22 %}
+    </button>
+
+    <a href="{{ routes.root_url }}" class="site-header__logo">
+      {%- if settings.logo != blank -%}
+        {%- capture logo_style -%}width: {{ settings.logo_width }}px{%- endcapture -%}
+        {{ settings.logo | image_url: width: 480 | image_tag: alt: shop.name, style: logo_style }}
+      {%- else -%}
+        Flightlab
+      {%- endif -%}
+    </a>
+
+    <nav class="site-nav" aria-label="Hovedmeny">
+      <ul class="site-nav__list">
+        {%- for link in section.settings.menu.links -%}
+          <li>
+            <a href="{{ link.url }}" class="site-nav__link"{% if link.current %} aria-current="page"{% endif %}>
+              {{ link.title }}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <a href="{{ routes.search_url }}" class="header-icon-btn" aria-label="Søk">
+        {% render 'icon', name: 'search' %}
+      </a>
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{{ routes.account_url }}" class="header-icon-btn" aria-label="Min konto">
+          {% render 'icon', name: 'account' %}
+        </a>
+      {%- endif -%}
+      <button class="header-icon-btn" type="button" data-cart-open aria-label="Handlekurv">
+        {% render 'icon', name: 'cart' %}
+        <span class="cart-count" data-cart-count data-count="{{ cart.item_count }}">{% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+{%- comment -%} Mobilmeny-skuff {%- endcomment -%}
+<div class="mobile-menu" id="MobileMenu" aria-hidden="true">
+  <div class="mobile-menu__backdrop"></div>
+  <div class="mobile-menu__panel" role="dialog" aria-modal="true" aria-label="Meny">
+    <button class="header-icon-btn mobile-menu__close" type="button" data-drawer-close aria-label="Lukk meny">
+      {% render 'icon', name: 'close', size: 22 %}
+    </button>
+    <ul class="mobile-menu__list">
+      {%- for link in section.settings.menu.links -%}
+        <li><a href="{{ link.url }}" class="mobile-menu__link">{{ link.title }}</a></li>
+      {%- endfor -%}
+    </ul>
+    <div class="mobile-menu__footer">
+      <p>{{ settings.shipping_note }} · {{ settings.returns_note }}</p>
+    </div>
+  </div>
+</div>
+
+{%- comment -%} Sticky bunn-navigasjon, mobil (Homepage Blueprint §4) {%- endcomment -%}
+<nav class="mobile-bottom-nav" aria-label="Hurtignavigasjon">
+  <a href="{{ routes.root_url }}" class="mobile-bottom-nav__item">
+    {% render 'icon', name: 'home' %}
+    <span>Hjem</span>
+  </a>
+  <a href="{{ section.settings.shop_link | default: routes.all_products_collection_url }}" class="mobile-bottom-nav__item">
+    {% render 'icon', name: 'disc' %}
+    <span>Discer</span>
+  </a>
+  <a href="{{ routes.search_url }}" class="mobile-bottom-nav__item">
+    {% render 'icon', name: 'search' %}
+    <span>Søk</span>
+  </a>
+  <button type="button" class="mobile-bottom-nav__item" data-cart-open>
+    {% render 'icon', name: 'cart' %}
+    <span>Kurv</span>
+    <span class="cart-count" data-cart-count data-count="{{ cart.item_count }}">{% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}</span>
+  </button>
+</nav>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Hovedmeny", "default": "main-menu" },
+    { "type": "url", "id": "shop_link", "label": "Lenke for «Discer» i bunn-nav" }
+  ]
+}
+{% endschema %}

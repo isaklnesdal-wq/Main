@@ -1,0 +1,54 @@
+{%- comment -%} Newsletter (Homepage Blueprint §14) — merkevarebasert, ikke generisk {%- endcomment -%}
+<section class="section newsletter">
+  <div class="page-width">
+    <div class="newsletter__inner" data-reveal>
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2 class="text-display">{{ section.settings.heading }}</h2>
+      <p class="lead" style="margin-inline: auto;">{{ section.settings.text }}</p>
+
+      {%- form 'customer', class: 'newsletter-form-wrap' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="newsletter__success">Velkommen om bord! Du hører fra oss snart.</p>
+        {%- else -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="newsletter-form">
+            <label for="NewsletterEmail" class="visually-hidden">E-postadresse</label>
+            <input
+              id="NewsletterEmail"
+              type="email"
+              name="contact[email]"
+              placeholder="Din e-postadresse"
+              required
+              autocomplete="email"
+            >
+            <button type="submit" class="btn btn--primary">{{ section.settings.cta_label }}</button>
+          </div>
+          {%- if form.errors -%}
+            <p class="newsletter__note" role="alert">Noe gikk galt — sjekk e-postadressen og prøv igjen.</p>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endform -%}
+
+      <p class="newsletter__note">{{ section.settings.note }}</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nyhetsbrev",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Overlinje", "default": "Bli med" },
+    { "type": "text", "id": "heading", "label": "Overskrift", "default": "Få utvalgte flights rett i innboksen." },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Tekst",
+      "default": "Tips som gjør deg bedre, nyheter fra sporten og først tilgang på nye produkter. Ingen støy."
+    },
+    { "type": "text", "id": "cta_label", "label": "Knappetekst", "default": "Meld meg på" },
+    { "type": "text", "id": "note", "label": "Liten tekst", "default": "Du kan melde deg av når som helst." }
+  ],
+  "presets": [{ "name": "Nyhetsbrev" }]
+}
+{% endschema %}

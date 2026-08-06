@@ -1,0 +1,65 @@
+{%- comment -%}
+  Hero Experience (Homepage Blueprint §5, Motion Bible §5).
+  Video → bilde → premium plassholder-gradient med flight path.
+{%- endcomment -%}
+<section class="hero">
+  <div class="hero__media{% unless section.settings.video != blank or section.settings.image != blank %} hero__media--placeholder{% endunless %}">
+    {%- if section.settings.video != blank -%}
+      {{ section.settings.video | video_tag:
+        autoplay: true,
+        loop: true,
+        muted: true,
+        playsinline: true,
+        preload: 'metadata',
+        image_size: '1600x' }}
+    {%- elsif section.settings.image != blank -%}
+      {{ section.settings.image
+        | image_url: width: 2400
+        | image_tag:
+          widths: '750, 1100, 1600, 2000, 2400',
+          sizes: '100vw',
+          loading: 'eager',
+          fetchpriority: 'high',
+          alt: section.settings.image.alt | default: section.settings.heading }}
+    {%- else -%}
+      <svg class="hero__flightpath" viewBox="0 0 1440 800" fill="none" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <path d="M-60 640 C 260 520, 520 300, 780 260 S 1280 300, 1520 140" stroke="rgba(246,245,239,0.28)" stroke-width="1.5" stroke-dasharray="2 10" stroke-linecap="round"/>
+        <path d="M-60 700 C 300 600, 560 420, 820 370 S 1300 380, 1520 240" stroke="rgba(242,92,26,0.5)" stroke-width="2" stroke-linecap="round"/>
+        <ellipse cx="820" cy="368" rx="26" ry="9" fill="#3ECF8E" opacity="0.95"/>
+        <ellipse cx="820" cy="366" rx="20" ry="6.5" fill="#FF7A3D"/>
+      </svg>
+    {%- endif -%}
+  </div>
+
+  <div class="page-width hero__content">
+    <h1 class="text-hero hero__title" data-hero-step="1">{{ section.settings.heading }}</h1>
+    <p class="lead hero__lead" data-hero-step="2">{{ section.settings.subheading }}</p>
+    <div class="hero__actions" data-hero-step="3">
+      {%- if section.settings.cta_primary_label != blank -%}
+        <a href="{{ section.settings.cta_primary_link }}" class="btn btn--primary">{{ section.settings.cta_primary_label }}</a>
+      {%- endif -%}
+      {%- if section.settings.cta_secondary_label != blank -%}
+        <a href="{{ section.settings.cta_secondary_link }}" class="btn btn--secondary">{{ section.settings.cta_secondary_label }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <a class="hero__scroll-cue" href="#main-content">Scroll</a>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    { "type": "video", "id": "video", "label": "Bakgrunnsvideo", "info": "Kort, komprimert loop uten lyd. Anbefalt under 8 MB." },
+    { "type": "image_picker", "id": "image", "label": "Bakgrunnsbilde (fallback)", "info": "Brukes når video mangler. Uten begge vises en merkevaretro plassholder." },
+    { "type": "text", "id": "heading", "label": "Overskrift", "default": "Fra første kast til siste putt." },
+    { "type": "textarea", "id": "subheading", "label": "Undertekst", "default": "Utstyr valgt for spillere som ønsker mer kontroll, mer glede og bedre opplevelser på banen." },
+    { "type": "text", "id": "cta_primary_label", "label": "Primær CTA — tekst", "default": "Utforsk discer" },
+    { "type": "url", "id": "cta_primary_link", "label": "Primær CTA — lenke" },
+    { "type": "text", "id": "cta_secondary_label", "label": "Sekundær CTA — tekst", "default": "Finn riktig disc" },
+    { "type": "url", "id": "cta_secondary_link", "label": "Sekundær CTA — lenke" }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}

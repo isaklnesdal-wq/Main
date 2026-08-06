@@ -1,0 +1,22 @@
+<article class="page-width article-body">
+  <span class="eyebrow">{{ blog.title }}</span>
+  <h1 class="text-display">{{ article.title }}</h1>
+  <p class="collection-toolbar__count" style="margin-bottom: var(--space-5);">
+    {{ article.published_at | date: '%d.%m.%Y' }}
+  </p>
+
+  {%- if article.image -%}
+    <div style="border-radius: var(--radius-l); overflow: hidden; margin-bottom: var(--space-5);">
+      {{ article.image | image_url: width: 1400 | image_tag: loading: 'eager', alt: article.title }}
+    </div>
+  {%- endif -%}
+
+  <div class="rte">{{ article.content }}</div>
+</article>
+
+{% schema %}
+{
+  "name": "Artikkel",
+  "settings": []
+}
+{% endschema %}

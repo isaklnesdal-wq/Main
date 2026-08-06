@@ -1,0 +1,46 @@
+{%- comment -%} Community / Lifestyle (Homepage Blueprint §13) {%- endcomment -%}
+<section class="community on-dark">
+  <div class="community__media">
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image
+        | image_url: width: 2000
+        | image_tag:
+          widths: '750, 1100, 1600, 2000',
+          sizes: '100vw',
+          loading: 'lazy',
+          alt: section.settings.heading }}
+    {%- endif -%}
+  </div>
+  <div class="page-width">
+    <div class="community__content" data-reveal>
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2 class="text-display">{{ section.settings.heading }}</h2>
+      <p class="lead">{{ section.settings.text }}</p>
+      {%- if section.settings.cta_label != blank -%}
+        <p style="margin-top: var(--space-5);">
+          <a href="{{ section.settings.cta_link }}" class="btn btn--secondary">{{ section.settings.cta_label }}</a>
+        </p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Community",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Bakgrunnsbilde" },
+    { "type": "text", "id": "eyebrow", "label": "Overlinje", "default": "Flightlab-universet" },
+    { "type": "text", "id": "heading", "label": "Overskrift", "default": "Sporten er bedre sammen." },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Tekst",
+      "default": "Baner, folk og øyeblikk. Følg oss for tips, runder og historier fra norske skoger — og del dine egne."
+    },
+    { "type": "text", "id": "cta_label", "label": "CTA — tekst", "default": "Følg @flightlab" },
+    { "type": "url", "id": "cta_link", "label": "CTA — lenke" }
+  ],
+  "presets": [{ "name": "Community" }]
+}
+{% endschema %}

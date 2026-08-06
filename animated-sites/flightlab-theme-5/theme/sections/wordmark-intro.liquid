@@ -1,0 +1,216 @@
+{%- comment -%}
+  Wordmark intro (experiment, flightlab-theme-4).
+
+  Replaces the hero video. A single word held in the centre of an almost
+  monochrome frame; scrolling travels the camera into it until it passes the
+  viewer and the homepage is simply there underneath.
+
+  Everything that moves is transform and opacity on one element, written from
+  a scroll listener that is throttled to one animation frame. No library, no
+  per-frame layout reads beyond a single getBoundingClientRect.
+
+  The styles live in this file rather than in a stylesheet so that removing
+  the section from the template removes the experiment completely — including
+  the rule that hides the header until the intro has passed.
+{%- endcomment -%}
+
+<style>
+  .intro {
+    position: relative;
+    height: {{ section.settings.scroll_length }}vh;
+    background: transparent;
+  }
+
+  .intro__stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    text-align: center;
+    padding-inline: var(--page-pad);
+  }
+
+  /* Almost monochrome: one very soft pool of light behind the type, and a
+     vignette so the frame reads as deep rather than flat. */
+  .intro__glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(52% 40% at 50% 46%, rgba(150, 190, 215, 0.10) 0%, transparent 70%),
+      radial-gradient(120% 90% at 50% 50%, transparent 42%, rgba(4, 6, 10, 0.75) 100%);
+    will-change: opacity;
+  }
+
+  .intro__mark {
+    position: relative;
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.75rem, 13vw, 11rem);
+    letter-spacing: -0.045em;
+    line-height: 1;
+    white-space: nowrap;
+
+    /* Liquid glass: a gradient face with a light top edge, a faint bloom,
+       and nothing else. The weight does the work, not the effect. */
+    background: linear-gradient(180deg, #FFFFFF 0%, #DCE5F0 38%, #9AACC0 72%, #8397AC 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 46px rgba(150, 195, 225, 0.16));
+
+    transform-origin: 50% 50%;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
+
+  .intro__sub {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: clamp(18vh, 24vh, 30vh);
+    margin: 0;
+    font-size: var(--text-micro);
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: rgba(231, 236, 243, 0.42);
+    will-change: opacity;
+  }
+
+  .intro__cue {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(28px, 6vh, 54px);
+    width: 1px;
+    height: 46px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, transparent, rgba(231, 236, 243, 0.5));
+    will-change: opacity;
+  }
+
+  /* The header only belongs to the homepage once the intro has been passed.
+     Without JS it is visible from the start, so nothing can strand it. */
+  .js .template-index .site-header,
+  .js .template-index .mobile-bottom-nav {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 900ms var(--ease-out);
+  }
+  /* Both classes live on <html>, so these must be compounded, not nested. */
+  .js.intro-done .site-header,
+  .js.intro-done .mobile-bottom-nav {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* A first load should not slam the wordmark in; it settles. */
+  .js .intro__mark { animation: intro-settle 1.4s var(--ease-out) both; }
+  .js .intro__sub { animation: intro-settle 1.4s var(--ease-out) 0.25s both; }
+  @keyframes intro-settle {
+    from { opacity: 0; letter-spacing: -0.02em; }
+    to { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intro { height: 100svh; }
+    .js .intro__mark, .js .intro__sub { animation: none; }
+    .js .template-index .site-header,
+    .js .template-index .mobile-bottom-nav { opacity: 1; pointer-events: auto; }
+  }
+</style>
+
+<section class="intro" data-intro>
+  <div class="intro__stage">
+    <div class="intro__glow" data-intro-glow aria-hidden="true"></div>
+    <h1 class="intro__mark" data-intro-mark>{{ section.settings.wordmark }}</h1>
+    {%- if section.settings.subline != blank -%}
+      <p class="intro__sub" data-intro-sub>{{ section.settings.subline }}</p>
+    {%- endif -%}
+    <span class="intro__cue" data-intro-cue aria-hidden="true"></span>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var sec = document.querySelector('[data-intro]');
+    if (!sec) return;
+
+    var root = document.documentElement;
+    var mark = sec.querySelector('[data-intro-mark]');
+    var sub = sec.querySelector('[data-intro-sub]');
+    var cue = sec.querySelector('[data-intro-cue]');
+    var glow = sec.querySelector('[data-intro-glow]');
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      root.classList.add('intro-done');
+      return;
+    }
+
+    /* Travelling into type reads as linear only if the scale is exponential,
+       because apparent size grows with distance, not with scroll. */
+    var MAX = window.matchMedia('(pointer: coarse)').matches ? 9 : 14;
+    var ticking = false;
+    var passed = false;
+
+    function frame() {
+      ticking = false;
+      var span = sec.offsetHeight - window.innerHeight;
+      if (span <= 0) return;
+
+      var p = -sec.getBoundingClientRect().top / span;
+      p = p < 0 ? 0 : p > 1 ? 1 : p;
+
+      mark.style.transform = 'scale(' + (1 + Math.pow(p, 1.35) * MAX).toFixed(4) + ')';
+      mark.style.opacity = (1 - Math.min(1, Math.max(0, (p - 0.40) / 0.45))).toFixed(3);
+
+      if (sub) sub.style.opacity = (1 - Math.min(1, p / 0.20)).toFixed(3);
+      if (cue) cue.style.opacity = (1 - Math.min(1, p / 0.14)).toFixed(3);
+      if (glow) glow.style.opacity = (1 - Math.min(1, Math.max(0, (p - 0.55) / 0.4)) * 0.65).toFixed(3);
+
+      /* Hand over halfway through the fade, so the header arrives while the
+         wordmark is still dissolving and neither edge is visible. */
+      var now = p > 0.52;
+      if (now !== passed) {
+        passed = now;
+        root.classList.toggle('intro-done', now);
+      }
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(frame);
+      }
+    }
+
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+    frame();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Wordmark-intro",
+  "settings": [
+    { "type": "text", "id": "wordmark", "label": "Ordmerke", "default": "FLIGHTLAB" },
+    { "type": "text", "id": "subline", "label": "Underlinje", "default": "Norsk discgolf" },
+    {
+      "type": "range",
+      "id": "scroll_length",
+      "label": "Lengde på intro",
+      "unit": "vh",
+      "min": 160,
+      "max": 400,
+      "step": 20,
+      "default": 260,
+      "info": "Hvor langt man skroller før intro er passert. Lengre = roligere."
+    }
+  ],
+  "presets": [{ "name": "Wordmark-intro" }]
+}
+{% endschema %}

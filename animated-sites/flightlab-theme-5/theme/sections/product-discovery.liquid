@@ -1,0 +1,83 @@
+{%- comment -%} Product Discovery — behovsbaserte innganger (Homepage Blueprint §8) {%- endcomment -%}
+<section class="section section--sand product-discovery">
+  <div class="page-width">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2 class="text-display">{{ section.settings.heading }}</h2>
+    </div>
+
+    <div class="discovery__grid">
+      {%- for block in section.blocks -%}
+        <a href="{{ block.settings.link }}" class="discovery-card" data-reveal style="--reveal-delay: {{ forloop.index0 | times: 100 }}ms;" {{ block.shopify_attributes }}>
+          <div>
+            <span class="discovery-card__label">{{ block.settings.label }}</span>
+            <h3 class="discovery-card__title">{{ block.settings.title }}</h3>
+            <p class="discovery-card__text">{{ block.settings.text }}</p>
+          </div>
+          <span class="link-arrow">
+            {{ block.settings.cta }}
+            {% render 'icon', name: 'arrow-right', size: 18 %}
+          </span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Finn riktig produkt",
+  "max_blocks": 3,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Overlinje", "default": "Start her" },
+    { "type": "text", "id": "heading", "label": "Overskrift", "default": "Hvor er du i spillet?" }
+  ],
+  "blocks": [
+    {
+      "type": "path",
+      "name": "Inngang",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Etikett", "default": "Ny spiller?" },
+        { "type": "text", "id": "title", "label": "Tittel", "default": "Finn ditt første sett" },
+        { "type": "textarea", "id": "text", "label": "Tekst", "default": "Nøye utvalgte startsett som gjør det enkelt å komme i gang." },
+        { "type": "text", "id": "cta", "label": "Lenketekst", "default": "Se startsett" },
+        { "type": "url", "id": "link", "label": "Lenke" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Finn riktig produkt",
+      "blocks": [
+        {
+          "type": "path",
+          "settings": {
+            "label": "Ny spiller?",
+            "title": "Finn ditt første sett",
+            "text": "Nøye utvalgte startsett som gjør det enkelt — og gøy — å komme i gang.",
+            "cta": "Se startsett"
+          }
+        },
+        {
+          "type": "path",
+          "settings": {
+            "label": "Vil du bli bedre?",
+            "title": "Finn riktig disc",
+            "text": "Bruk flight ratings til å finne discen som løfter spillet ditt til neste nivå.",
+            "cta": "Lær om flight ratings"
+          }
+        },
+        {
+          "type": "path",
+          "settings": {
+            "label": "Vet du hva du trenger?",
+            "title": "Utforsk alle discer",
+            "text": "Filtrer på type, produsent og flyegenskaper. Rett på sak.",
+            "cta": "Se alle discer"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

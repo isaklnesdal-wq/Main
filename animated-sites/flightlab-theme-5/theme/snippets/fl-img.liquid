@@ -1,0 +1,20 @@
+{%- comment -%}
+  Velger bildet for ett forsidekort og skriver det som "handle":"url".
+
+  Parametre:
+    h    produkt-handle, f.eks. 'flightlab-sling'
+    s    bildet fra temainnstillingene (kan være tomt)
+    last true på siste element, så vi ikke skriver komma til slutt
+
+  Rekkefølge: temainnstilling → produktets hovedbilde → null
+  (null betyr "bruk standardbildet som ligger i forsidekoden").
+{%- endcomment -%}
+{%- assign fl_prod = all_products[h] -%}
+{%- if s != blank -%}
+{{ h | json }}:{{ s | image_url: width: 800 | json }}
+{%- elsif fl_prod.featured_image != blank -%}
+{{ h | json }}:{{ fl_prod.featured_image | image_url: width: 800 | json }}
+{%- else -%}
+{{ h | json }}:null
+{%- endif -%}
+{%- unless last -%},{%- endunless -%}

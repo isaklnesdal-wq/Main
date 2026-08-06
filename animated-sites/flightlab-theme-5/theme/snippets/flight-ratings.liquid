@@ -1,0 +1,26 @@
+{%- comment -%}
+  Flight rating-komponent — Flightlab sitt signatur-designelement (Design Bible §12).
+  Bruk: {% render 'flight-ratings', product: product %} eller size: 'large'
+  Vises kun når produktet har flight-data i metafields.
+{%- endcomment -%}
+{%- assign fl = product.metafields.flightlab -%}
+{%- if fl.speed != blank -%}
+<div class="flight-ratings{% if size == 'large' %} flight-ratings--large{% endif %}" role="group" aria-label="Flight ratings: Speed {{ fl.speed.value }}, Glide {{ fl.glide.value }}, Turn {{ fl.turn.value }}, Fade {{ fl.fade.value }}">
+  <span class="flight-chip" title="Speed – hvor mye kraft discen er designet for">
+    <span class="flight-chip__label" aria-hidden="true">Speed</span>
+    <span class="flight-chip__value">{{ fl.speed.value | round: 1 | remove: '.0' }}</span>
+  </span>
+  <span class="flight-chip" title="Glide – hvor godt discen holder seg i luften">
+    <span class="flight-chip__label" aria-hidden="true">Glide</span>
+    <span class="flight-chip__value">{{ fl.glide.value | round: 1 | remove: '.0' }}</span>
+  </span>
+  <span class="flight-chip" title="Turn – tendens til å vri mot høyre tidlig i flyvningen">
+    <span class="flight-chip__label" aria-hidden="true">Turn</span>
+    <span class="flight-chip__value">{{ fl.turn.value | round: 1 | remove: '.0' }}</span>
+  </span>
+  <span class="flight-chip" title="Fade – hvor hardt discen faller mot venstre til slutt">
+    <span class="flight-chip__label" aria-hidden="true">Fade</span>
+    <span class="flight-chip__value">{{ fl.fade.value | round: 1 | remove: '.0' }}</span>
+  </span>
+</div>
+{%- endif -%}

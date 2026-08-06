@@ -1,0 +1,66 @@
+{%- comment -%} Søkeside {%- endcomment -%}
+<div class="page-width" style="padding-block: var(--space-6) var(--space-8);">
+  <h1 class="text-display">
+    {%- if search.performed -%}
+      Søk: «{{ search.terms }}»
+    {%- else -%}
+      Søk
+    {%- endif -%}
+  </h1>
+
+  <form action="{{ routes.search_url }}" method="get" class="search-form" role="search" style="display: flex; gap: var(--space-2); max-width: 480px; margin-bottom: var(--space-6);">
+    <label for="SearchInput" class="visually-hidden">Søk</label>
+    <input
+      id="SearchInput"
+      type="search"
+      name="q"
+      value="{{ search.terms | escape }}"
+      placeholder="Søk etter discer, merker eller tilbehør"
+      style="flex: 1; padding: 14px 22px; border: 1.5px solid var(--color-line); border-radius: var(--radius-pill);"
+    >
+    <button type="submit" class="btn btn--dark">Søk</button>
+  </form>
+
+  {%- if search.performed -%}
+    {%- if search.results_count > 0 -%}
+      <p class="collection-toolbar__count" style="margin-bottom: var(--space-4);">{{ search.results_count }} treff</p>
+      {%- paginate search.results by 24 -%}
+        <div class="product-grid">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              {% render 'product-card', product: item %}
+            {%- else -%}
+              <a href="{{ item.url }}" class="article-card">
+                <div class="article-card__media"></div>
+                <h3 class="article-card__title">{{ item.title }}</h3>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="Sider">
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a href="{{ part.url }}">{{ part.title }}</a>
+              {%- elsif part.title == paginate.current_page -%}
+                <span aria-current="page">{{ part.title }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- else -%}
+      <div class="collection-empty" style="text-align: left; padding-block: var(--space-5);">
+        <p class="lead">Ingen treff på «{{ search.terms }}». Prøv et annet søkeord, eller utforsk kategoriene våre.</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">Se alle produkter</a>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Søk",
+  "settings": []
+}
+{% endschema %}

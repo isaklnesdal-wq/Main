@@ -1,0 +1,62 @@
+{%- comment -%} Flight Rating Education — unikt Flightlab-element (Homepage Blueprint §10) {%- endcomment -%}
+<section class="section section--dark on-dark flight-explainer">
+  <div class="page-width">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2 class="text-display">{{ section.settings.heading }}</h2>
+      <p class="lead">{{ section.settings.text }}</p>
+    </div>
+
+    <div class="flight-explainer__grid">
+      <div class="flight-tile" data-reveal tabindex="0">
+        <span class="flight-tile__letter" aria-hidden="true">S</span>
+        <h3 class="flight-tile__name">Speed</h3>
+        <span class="flight-tile__range">1–14</span>
+        <p class="flight-tile__desc">Hvor mye kraft discen er designet for. Høy speed krever mer armfart — nybegynnere når lengst med lav speed.</p>
+      </div>
+      <div class="flight-tile" data-reveal style="--reveal-delay: 90ms;" tabindex="0">
+        <span class="flight-tile__letter" aria-hidden="true">G</span>
+        <h3 class="flight-tile__name">Glide</h3>
+        <span class="flight-tile__range">1–7</span>
+        <p class="flight-tile__desc">Hvor godt discen holder seg i luften. Mer glide gir mer lengde og tilgir småfeil i kastet.</p>
+      </div>
+      <div class="flight-tile" data-reveal style="--reveal-delay: 180ms;" tabindex="0">
+        <span class="flight-tile__letter" aria-hidden="true">T</span>
+        <h3 class="flight-tile__name">Turn</h3>
+        <span class="flight-tile__range">+1 til −5</span>
+        <p class="flight-tile__desc">Tendens til å vri mot høyre tidlig i flyvningen (for høyrehendt backhand). Jo mer minus, jo lettere svinger den.</p>
+      </div>
+      <div class="flight-tile" data-reveal style="--reveal-delay: 270ms;" tabindex="0">
+        <span class="flight-tile__letter" aria-hidden="true">F</span>
+        <h3 class="flight-tile__name">Fade</h3>
+        <span class="flight-tile__range">0–5</span>
+        <p class="flight-tile__desc">Hvor bestemt discen faller mot venstre på slutten. Høy fade gir forutsigbare, harde avslutninger.</p>
+      </div>
+    </div>
+
+    {%- if section.settings.cta_label != blank -%}
+      <p style="margin-top: var(--space-6);" data-reveal>
+        <a href="{{ section.settings.cta_link }}" class="btn btn--secondary">{{ section.settings.cta_label }}</a>
+      </p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Flight ratings forklart",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Overlinje", "default": "Flight ratings" },
+    { "type": "text", "id": "heading", "label": "Overskrift", "default": "Fire tall. Hele flyvningen." },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Tekst",
+      "default": "Hver disc har fire tall som beskriver hvordan den flyr. Lær dem én gang — så velger du riktig disc resten av livet."
+    },
+    { "type": "text", "id": "cta_label", "label": "CTA — tekst", "default": "Les hele guiden" },
+    { "type": "url", "id": "cta_link", "label": "CTA — lenke" }
+  ],
+  "presets": [{ "name": "Flight ratings forklart" }]
+}
+{% endschema %}

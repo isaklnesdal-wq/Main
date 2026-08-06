@@ -1,0 +1,51 @@
+{%- comment -%} Featured Products (Homepage Blueprint §11) {%- endcomment -%}
+<section class="section featured-products">
+  <div class="page-width">
+    <div class="featured-products__head" data-reveal>
+      <div>
+        <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+        <h2 class="text-display" style="margin-bottom: 0;">{{ section.settings.heading }}</h2>
+      </div>
+      {%- if section.settings.collection != blank -%}
+        <a href="{{ section.settings.collection.url }}" class="link-arrow">
+          Se alle
+          {% render 'icon', name: 'arrow-right', size: 18 %}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="product-grid">
+      {%- assign col = section.settings.collection -%}
+      {%- if col != blank -%}
+        {%- for product in col.products limit: section.settings.count -%}
+          <div data-reveal style="--reveal-delay: {{ forloop.index0 | modulo: 4 | times: 80 }}ms;">
+            {% render 'product-card', product: product %}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..4) -%}
+          <div class="product-card">
+            <div class="product-card__media">{% render 'disc-placeholder' %}</div>
+            <div class="product-card__info">
+              <span class="product-card__vendor">Produsent</span>
+              <h3 class="product-card__title">Velg en collection i seksjonsinnstillingene</h3>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Utvalgte produkter",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Overlinje", "default": "Utvalget" },
+    { "type": "text", "id": "heading", "label": "Overskrift", "default": "Discer vi stoler på" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "count", "min": 4, "max": 12, "step": 4, "label": "Antall produkter", "default": 8 }
+  ],
+  "presets": [{ "name": "Utvalgte produkter" }]
+}
+{% endschema %}

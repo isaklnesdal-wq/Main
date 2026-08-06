@@ -1,0 +1,52 @@
+{%- comment -%} Handlekurv-side (fallback for skuffen) {%- endcomment -%}
+<div class="cart-page page-width">
+  <h1 class="text-display">Handlekurv</h1>
+
+  {%- if cart.item_count > 0 -%}
+    <div class="cart-drawer__items" style="padding: var(--space-4) 0; max-width: 640px;">
+      {%- for item in cart.items -%}
+        <div class="cart-line">
+          <div class="cart-line__media">
+            {%- if item.image -%}
+              {{ item.image | image_url: width: 160 | image_tag: loading: 'lazy', alt: item.title }}
+            {%- endif -%}
+          </div>
+          <div>
+            <a href="{{ item.url }}" class="cart-line__title">{{ item.product.title }}</a>
+            <div class="cart-line__meta">{{ item.vendor }}</div>
+            <div class="cart-line__row">
+              <span class="qty">
+                <button type="button" data-cart-change data-key="{{ item.key }}" data-quantity="{{ item.quantity | minus: 1 }}" aria-label="Reduser antall">−</button>
+                <input type="text" value="{{ item.quantity }}" readonly aria-label="Antall">
+                <button type="button" data-cart-change data-key="{{ item.key }}" data-quantity="{{ item.quantity | plus: 1 }}" aria-label="Øk antall">+</button>
+              </span>
+              <strong>{{ item.final_line_price | money }}</strong>
+            </div>
+            <button class="cart-line__remove" type="button" data-cart-change data-key="{{ item.key }}" data-quantity="0">Fjern</button>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div style="max-width: 640px;">
+      <div class="cart-drawer__subtotal">
+        <span>Delsum</span>
+        <span>{{ cart.total_price | money }}</span>
+      </div>
+      <p class="cart-drawer__shipping" style="text-align: left;">{{ settings.shipping_note }} · Frakt beregnes i kassen.</p>
+      <a href="{{ routes.cart_url }}/checkout" class="btn btn--primary">Til kassen</a>
+    </div>
+  {%- else -%}
+    <div class="utility-page" style="text-align: left; padding-block: var(--space-6);">
+      <p class="lead">Handlekurven er tom. På tide å finne din neste favorittdisc.</p>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">Utforsk discer</a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Handlekurv",
+  "settings": []
+}
+{% endschema %}

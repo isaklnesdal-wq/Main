@@ -1,0 +1,39 @@
+{%- comment -%}
+  ProductCard — gjenbrukbart produktkort (Design Bible §11).
+  Bruk: {% render 'product-card', product: product %}
+{%- endcomment -%}
+<a href="{{ product.url }}" class="product-card">
+  <div class="product-card__media">
+    {%- if product.featured_image -%}
+      {{ product.featured_image
+        | image_url: width: 900
+        | image_tag:
+          widths: '360, 540, 720, 900',
+          sizes: '(min-width: 990px) 300px, (min-width: 750px) 33vw, 50vw',
+          loading: 'lazy',
+          alt: product.featured_image.alt | default: product.title }}
+    {%- else -%}
+      {% render 'disc-placeholder' %}
+    {%- endif -%}
+
+    {%- if product.compare_at_price > product.price -%}
+      <span class="product-card__badge product-card__badge--sale">Tilbud</span>
+    {%- elsif product.tags contains 'bestselger' -%}
+      <span class="product-card__badge">Bestselger</span>
+    {%- elsif product.tags contains 'nybegynnervennlig' -%}
+      <span class="product-card__badge">For nye spillere</span>
+    {%- endif -%}
+  </div>
+
+  <div class="product-card__info">
+    <div>
+      <span class="product-card__vendor">{{ product.vendor }}</span>
+      <h3 class="product-card__title">{{ product.title }}</h3>
+    </div>
+
+    <div class="product-card__meta">
+      {% render 'flight-ratings', product: product %}
+      <span class="product-card__price">{% render 'price', product: product %}</span>
+    </div>
+  </div>
+</a>

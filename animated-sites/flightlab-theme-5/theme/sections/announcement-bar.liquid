@@ -1,0 +1,15 @@
+{%- if section.settings.show and section.settings.text != blank -%}
+<div class="announcement" role="region" aria-label="Kunngjøring">
+  {{ section.settings.text }}
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Kunngjøringslinje",
+  "settings": [
+    { "type": "checkbox", "id": "show", "label": "Vis kunngjøring", "default": true },
+    { "type": "text", "id": "text", "label": "Tekst", "default": "Fri frakt over 999 kr — levering 1–3 virkedager" }
+  ]
+}
+{% endschema %}
