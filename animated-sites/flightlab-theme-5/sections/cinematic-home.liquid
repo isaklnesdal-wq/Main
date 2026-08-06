@@ -71,8 +71,8 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
 </script>
 <!-- Floating discs: one fixed layer behind every section, tying them together -->
 {%- comment -%}
-  Kapasitetsvelgeren, flighttallene og merkepanelene har bakgrunnene sine i
-  fl-bagcap.css, som ligger utenfor dette repoet og derfor ikke fikk lysloeftet.
+  Bakgrunnene til kapasitetsvelgeren, flighttallene og merkepanelene ligger i
+  fl-bagcap.css, utenfor dette repoet, og fikk derfor ikke lysloeftet.
 {%- endcomment -%}
 <style>
 #flnum .fr{background:
@@ -982,8 +982,13 @@ function sizeShards(){
    thin the letter. So the bar sits low, at two thirds, and the opening above
    it runs nearly a quarter of the cap height. Against Inter's A — wide flat
    apex, small counter, bar at mid-height — it is a different letter. */
-const FLA_OUT=[[.462,0],[.538,0],[1,1],[.755,1],[.6626,.80],[.3374,.80],[.245,1],[0,1]];
-const FLA_CNT=[[.5,.448],[.4021,.66],[.5979,.66]];
+/* Both were overdone at first. An apex cut to a third of Inter's width and a
+   bar down at two thirds made a letter that was certainly different and had
+   stopped belonging to the eight beside it. The apex is a tenth of the width
+   now against Inter's sixth, and the bar has come back up — still lower than
+   the font sets it, still a taller counter, but a member of the same word. */
+const FLA_OUT=[[.45,0],[.55,0],[1,1],[.755,1],[.65375,.775],[.34625,.775],[.245,1],[0,1]];
+const FLA_CNT=[[.5,.4333],[.4115,.63],[.5885,.63]];
 /* Radius per corner, in cap units. The apex is barely touched, so its flat
    still reads as a cut rather than a dome; the feet and the counter get more,
    because that is where a real piece of glass is worn round. */
@@ -1033,7 +1038,12 @@ function flDrawA(){
   const cs=getComputedStyle(tx), fs=parseFloat(cs.fontSize);
   const m=flMetrics(cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily,fs);
   const top=e.y+m.asc-m.cap, C=m.cap;
-  const W=e.width*.98, ox=e.x+e.width*.01;
+  /* The advance, slightly over-filled and re-centred. Drawn at 98% the letter
+     sat inside its own slot with air on both sides, and against tracking this
+     tight that air is the difference between a letter in a word and a letter
+     next to one. At 103% the feet close on the L and the B the way every other
+     pair on the line closes. */
+  const W=e.width*1.03, ox=e.x-e.width*.015;
   const d=flPoly(FLA_OUT,ox,top,W,C,FLA_ROUT)
          +flPoly(FLA_CNT,ox,top,W,C,FLA_RCNT);
   flsvg.querySelectorAll('.fl-a').forEach(n=>n.setAttribute('d',d));
