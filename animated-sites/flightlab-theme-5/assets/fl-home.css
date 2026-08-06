@@ -392,7 +392,15 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
 :root{--amb1:rgba(58,134,255,.180);--amb1b:rgba(58,134,255,.067);
       --amb2:rgba(64,214,240,.166);--amb2b:rgba(64,214,240,.061);
       --amb3:rgba(38,58,96,.144); --amb3b:rgba(38,58,96,.053)}
+/* The environment is held off the centre of the frame. Products sit in the
+   middle column, and a wash is loudest exactly where they are trying to be —
+   so the layer is masked down to a little over a third of its strength there
+   and comes up to full only out at the edges, where there is nothing but room.
+   The atmosphere is unchanged in character; it has simply been moved off the
+   merchandise and onto the walls. */
 .fl-amb{position:fixed;inset:-18%;z-index:-2;pointer-events:none;
+  -webkit-mask-image:radial-gradient(64% 54% at 50% 46%,rgba(0,0,0,.38),rgba(0,0,0,.74) 58%,#000 86%);
+          mask-image:radial-gradient(64% 54% at 50% 46%,rgba(0,0,0,.38),rgba(0,0,0,.74) 58%,#000 86%);
   background:
     radial-gradient(78% 62% at 16% 18%,var(--amb1),var(--amb1b) 44%,transparent 80%),
     radial-gradient(82% 66% at 86% 46%,var(--amb2),var(--amb2b) 44%,transparent 82%),

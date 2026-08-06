@@ -403,7 +403,15 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
 :root{--amb1:rgba(58,134,255,.180);--amb1b:rgba(58,134,255,.067);
       --amb2:rgba(64,214,240,.166);--amb2b:rgba(64,214,240,.061);
       --amb3:rgba(38,58,96,.144); --amb3b:rgba(38,58,96,.053)}
+/* The environment is held off the centre of the frame. Products sit in the
+   middle column, and a wash is loudest exactly where they are trying to be —
+   so the layer is masked down to a little over a third of its strength there
+   and comes up to full only out at the edges, where there is nothing but room.
+   The atmosphere is unchanged in character; it has simply been moved off the
+   merchandise and onto the walls. */
 .fl-amb{position:fixed;inset:-18%;z-index:-2;pointer-events:none;
+  -webkit-mask-image:radial-gradient(64% 54% at 50% 46%,rgba(0,0,0,.38),rgba(0,0,0,.74) 58%,#000 86%);
+          mask-image:radial-gradient(64% 54% at 50% 46%,rgba(0,0,0,.38),rgba(0,0,0,.74) 58%,#000 86%);
   background:
     radial-gradient(78% 62% at 16% 18%,var(--amb1),var(--amb1b) 44%,transparent 80%),
     radial-gradient(82% 66% at 86% 46%,var(--amb2),var(--amb2b) 44%,transparent 82%),
@@ -2141,16 +2149,38 @@ else{caps.forEach(c=>c.classList.remove('show'));caps[0].classList.add('show');i
    scroll does not drag the colour along with it at the same speed; the room
    arrives a moment after you do. */
 const AMB=[
-  [0.00,[ 58,134,255,.180],[ 64,214,240,.166],[ 38, 58, 96,.144]],  /* hero: electric blue, cyan, deep graphite */
-  [0.28,[124, 77,255,.200],[214, 94,196,.184],[ 58,134,255,.160]],  /* discs: deep violet, magenta, a blue reflection */
-  [0.62,[176,124, 72,.190],[224,166, 90,.175],[120, 96, 72,.152]],  /* bags: bronze, amber, warm graphite */
-  [0.85,[ 38,168,112,.190],[ 28,122,132,.175],[ 40,100,124,.152]],  /* accessories: emerald, dark teal, petrol */
-  [1.00,[ 42, 62,104,.170],[ 36, 52, 84,.156],[ 38, 48, 72,.136]]   /* footer: dark navy, deep graphite */
+  /* Crystal blue and ice blue. Both were too saturated before — an electric
+     blue and a cyan, which are lit colours rather than cold ones. Crystal and
+     ice are pale and nearly grey; what they carry is temperature, not hue. */
+  [0.00,[146,190,232,.172],[186,222,240,.158],[ 44, 58, 90,.140]],
+  /* Midnight violet and deep indigo. The magenta that stood here was the one
+     field on the page you could have named from across the room, and naming it
+     is the failure. Indigo sits between violet and the hero's blue, so the
+     discs are reached through the colour before them rather than against it.
+     The electric blue stays, small, as a reflection thrown forward. */
+  [0.28,[104, 80,190,.184],[ 74, 86,176,.170],[ 72,140,235,.146]],
+  /* Smoky bronze, soft amber, warm graphite. Smoke means grey in it: the
+     bronze is pulled well off full saturation so the warmth arrives as a
+     change of temperature and not as a brown. */
+  [0.62,[158,120, 84,.180],[214,164,102,.164],[118,104, 92,.146]],
+  /* Deep emerald, dark teal, petrol. */
+  [0.85,[ 34,150,104,.180],[ 28,112,124,.166],[ 36, 96,116,.146]],
+  /* Deep graphite and dark navy: the room it started in. */
+  [1.00,[ 44, 50, 60,.164],[ 38, 54, 92,.152],[ 42, 48, 66,.134]]
 ];
 let ambP=0, ambRoot=document.documentElement, ambLast='';
 function ambMix(t){
   let i=0; while(i<AMB.length-2&&t>AMB[i+1][0]) i++;
-  const A=AMB[i],B=AMB[i+1],f=Math.max(0,Math.min(1,(t-A[0])/((B[0]-A[0])||1)));
+  const A=AMB[i],B=AMB[i+1];
+  let f=Math.max(0,Math.min(1,(t-A[0])/((B[0]-A[0])||1)));
+  /* Smoothstep, not the raw fraction. Interpolating straight between keys is
+     continuous in value but not in rate: at every key the colour changes
+     direction on a corner, and a corner is a moment — the eye finds it even at
+     this alpha, and that moment is the thing the brief calls a visible
+     transition. Easing the fraction so its rate is zero at both ends means the
+     colour arrives at each key already travelling at the speed it will leave
+     it. There is then no instant anywhere on the page where anything happens. */
+  f=f*f*(3-2*f);
   const out=[];
   for(let k=1;k<=3;k++){
     const a=A[k],b=B[k];
