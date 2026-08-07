@@ -397,8 +397,8 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
 
     /* DISCS — deep violet, soft magenta, and electric blue kept small, so it
        reads as a reflection thrown from the hero rather than a third colour. */
-    radial-gradient(154% 32% at 4% 31%,rgba(124,77,255,.085),rgba(124,77,255,.032) 46%,transparent 88%),
-    radial-gradient(150% 30% at 97% 43%,rgba(214,94,196,.075),rgba(214,94,196,.028) 46%,transparent 88%),
+    radial-gradient(154% 32% at 4% 31%,rgba(124,77,255,.096),rgba(124,77,255,.036) 46%,transparent 88%),
+    radial-gradient(150% 30% at 97% 43%,rgba(150,88,224,.086),rgba(150,88,224,.032) 46%,transparent 88%),
     radial-gradient(88% 15% at 8% 51%,rgba(58,134,255,.055),rgba(58,134,255,.020) 48%,transparent 84%),
 
     /* BAGS — warm graphite carried by the ramp, bronze and amber over it. The

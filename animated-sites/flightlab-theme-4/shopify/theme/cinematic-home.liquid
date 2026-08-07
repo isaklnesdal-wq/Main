@@ -743,12 +743,12 @@ function flDrawA(){
   const cs=getComputedStyle(tx), fs=parseFloat(cs.fontSize);
   const m=flMetrics(cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily,fs);
   const top=e.y+m.asc-m.cap, C=m.cap;
-  /* The advance, slightly over-filled and re-centred. Drawn at 98% the letter
-     sat inside its own slot with air on both sides, and against tracking this
-     tight that air is the difference between a letter in a word and a letter
-     next to one. At 103% the feet close on the L and the B the way every other
-     pair on the line closes. */
-  const W=e.width*1.03, ox=e.x-e.width*.015;
+  /* 103% og sentrert var for mye av det gode: venstre fot naadde helt bort i
+     L-ens fot, og en A hvis fot ligger inntil nabobokstaven leses som om den
+     staar inni den. Nede er A-en paa sitt bredeste, saa det er der det merkes.
+     96% og forskjovet til hoyre gir klaring paa venstre side uten aa ta borti
+     B-en, som staar loddrett og taaler mindre luft. */
+  const W=e.width*.96, ox=e.x+e.width*.035;
   const d=flPoly(FLA_OUT,ox,top,W,C,FLA_ROUT)
          +flPoly(FLA_CNT,ox,top,W,C,FLA_RCNT);
   flsvg.querySelectorAll('.fl-a').forEach(n=>n.setAttribute('d',d));
@@ -1160,7 +1160,7 @@ const AMB=[
      is the failure. Indigo sits between violet and the hero's blue, so the
      discs are reached through the colour before them rather than against it.
      The electric blue stays, small, as a reflection thrown forward. */
-  [0.28,[104,80,190,.186],[74,86,176,.171],[72,140,235,.146]],
+  [0.28,[124,72,214,.200],[96,78,200,.184],[72,140,235,.132]],
   /* Smoky bronze, soft amber, warm graphite. Smoke means grey in it: the
      bronze is pulled well off full saturation so the warmth arrives as a
      change of temperature and not as a brown. */
