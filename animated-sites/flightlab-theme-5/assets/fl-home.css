@@ -1185,3 +1185,17 @@ footer{border-top:1px solid var(--edge-bot)!important}
    for aa kunne pinne. */
 #discer,#bager,#tilbehor,#flightguide,#nybegynner,#nl{
   content-visibility:auto;contain-intrinsic-size:auto 1400px}
+
+/* ---- Krystallen paa telefon ------------------------------------------
+   Elleve strouklag rastreres paa nytt hvert bilde mens kameraet beveger seg.
+   Paa PC er det gratis; paa telefon er det hovedkostnaden i hele siden.
+   Fire av dem fjernes her: tykkelsen, refraksjonen, kantfargen og kaustikken.
+   Alle fire er under 0.2 i alfa og leses knapt paa en skjerm som holdes i
+   haanden - det som baerer formen er den moerke konturen, kroppen, bevelen,
+   glansen og speilingen, og de staar. Skjermen mister rundt en tredel av
+   arbeidet per bilde; oyet mister nesten ingenting.
+   Vil du heller ha helt likt uttrykk paa telefon og PC, er dette blokka som
+   skal bort - én regel, ingen bivirkninger. */
+@media(hover:none){
+  .fl-svg .g-ext,.fl-svg .g-refr,.fl-svg .g-iris,.fl-svg .g-caus{display:none}
+}

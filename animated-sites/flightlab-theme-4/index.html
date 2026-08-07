@@ -1196,6 +1196,20 @@ footer{border-top:1px solid var(--edge-bot)!important}
    for aa kunne pinne. */
 #discer,#bager,#tilbehor,#flightguide,#nybegynner,#nl{
   content-visibility:auto;contain-intrinsic-size:auto 1400px}
+
+/* ---- Krystallen paa telefon ------------------------------------------
+   Elleve strouklag rastreres paa nytt hvert bilde mens kameraet beveger seg.
+   Paa PC er det gratis; paa telefon er det hovedkostnaden i hele siden.
+   Fire av dem fjernes her: tykkelsen, refraksjonen, kantfargen og kaustikken.
+   Alle fire er under 0.2 i alfa og leses knapt paa en skjerm som holdes i
+   haanden - det som baerer formen er den moerke konturen, kroppen, bevelen,
+   glansen og speilingen, og de staar. Skjermen mister rundt en tredel av
+   arbeidet per bilde; oyet mister nesten ingenting.
+   Vil du heller ha helt likt uttrykk paa telefon og PC, er dette blokka som
+   skal bort - én regel, ingen bivirkninger. */
+@media(hover:none){
+  .fl-svg .g-ext,.fl-svg .g-refr,.fl-svg .g-iris,.fl-svg .g-caus{display:none}
+}
 </style>
 </head>
 <body>
@@ -1882,7 +1896,12 @@ function sizeShards(){
    stopped belonging to the eight beside it. The apex is a tenth of the width
    now against Inter's sixth, and the bar has come back up — still lower than
    the font sets it, still a taller counter, but a member of the same word. */
-const FLA_OUT=[[.45,0],[.55,0],[1,1],[.755,1],[.65375,.775],[.34625,.775],[.245,1],[0,1]];
+/* Apex ligger paa .035, ikke paa 0. Geometrisk er kapslinjen 0, men bokstaven
+   tegnes med de samme brede stroekene som resten av ordet, og et strouk rundt
+   en spiss topp rekker hoyere enn et strouk rundt en flat. L og B har flate
+   topper og stopper paa linjen; A-en gjorde ikke det, og stakk i luften. .035
+   av kapshoyden er omtrent det overskårne overskuddet fra bevelen. */
+const FLA_OUT=[[.45,.035],[.55,.035],[1,1],[.755,1],[.65375,.775],[.34625,.775],[.245,1],[0,1]];
 const FLA_CNT=[[.5,.4333],[.4115,.63],[.5885,.63]];
 /* Radius per corner, in cap units. The apex is barely touched, so its flat
    still reads as a cut rather than a dome; the feet and the counter get more,
@@ -1963,7 +1982,16 @@ function flFit(){
   flsvg.querySelectorAll('.fl-ly').forEach(n=>n.style.fontSize=px+'px');
   flDrawA();
 }
+/* fonts.ready lover bare at nettleseren er ferdig med aa laste det den mente
+   den trengte - ikke at Inter i akkurat 800 er klar. Paa PC rekker den det
+   uansett; paa telefon, over mobilnett, gjor den det ofte ikke, og da maaler
+   flMetrics fallback-fonten mens SVG-en tegner Inter. Ascent spriker, og A-en
+   havner i luften. Her bes det eksplisitt om den ene fonten som betyr noe, og
+   ordmerket settes paa nytt naar den faktisk er inne. */
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(flFit)}else{flFit()}
+if(document.fonts&&document.fonts.load){
+  document.fonts.load('800 100px Inter').then(function(){flFit()}).catch(function(){});
+}
 flFit();
 addEventListener('resize',(()=>{let t;return()=>{clearTimeout(t);t=setTimeout(()=>{flFit();sizeShards();buildChips();flBuildDiscs();flDiscParallax(scrollY)},150)}})());
 /* Rasterising and sampling the word costs about a frame, so it happens when the

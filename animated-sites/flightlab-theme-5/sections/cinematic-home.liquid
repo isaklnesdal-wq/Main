@@ -814,7 +814,12 @@ function sizeShards(){
    stopped belonging to the eight beside it. The apex is a tenth of the width
    now against Inter's sixth, and the bar has come back up — still lower than
    the font sets it, still a taller counter, but a member of the same word. */
-const FLA_OUT=[[.45,0],[.55,0],[1,1],[.755,1],[.65375,.775],[.34625,.775],[.245,1],[0,1]];
+/* Apex ligger paa .035, ikke paa 0. Geometrisk er kapslinjen 0, men bokstaven
+   tegnes med de samme brede stroekene som resten av ordet, og et strouk rundt
+   en spiss topp rekker hoyere enn et strouk rundt en flat. L og B har flate
+   topper og stopper paa linjen; A-en gjorde ikke det, og stakk i luften. .035
+   av kapshoyden er omtrent det overskårne overskuddet fra bevelen. */
+const FLA_OUT=[[.45,.035],[.55,.035],[1,1],[.755,1],[.65375,.775],[.34625,.775],[.245,1],[0,1]];
 const FLA_CNT=[[.5,.4333],[.4115,.63],[.5885,.63]];
 /* Radius per corner, in cap units. The apex is barely touched, so its flat
    still reads as a cut rather than a dome; the feet and the counter get more,
@@ -895,7 +900,16 @@ function flFit(){
   flsvg.querySelectorAll('.fl-ly').forEach(n=>n.style.fontSize=px+'px');
   flDrawA();
 }
+/* fonts.ready lover bare at nettleseren er ferdig med aa laste det den mente
+   den trengte - ikke at Inter i akkurat 800 er klar. Paa PC rekker den det
+   uansett; paa telefon, over mobilnett, gjor den det ofte ikke, og da maaler
+   flMetrics fallback-fonten mens SVG-en tegner Inter. Ascent spriker, og A-en
+   havner i luften. Her bes det eksplisitt om den ene fonten som betyr noe, og
+   ordmerket settes paa nytt naar den faktisk er inne. */
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(flFit)}else{flFit()}
+if(document.fonts&&document.fonts.load){
+  document.fonts.load('800 100px Inter').then(function(){flFit()}).catch(function(){});
+}
 flFit();
 addEventListener('resize',(()=>{let t;return()=>{clearTimeout(t);t=setTimeout(()=>{flFit();sizeShards();buildChips();flBuildDiscs();flDiscParallax(scrollY)},150)}})());
 /* Rasterising and sampling the word costs about a frame, so it happens when the
