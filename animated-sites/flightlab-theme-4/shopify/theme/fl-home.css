@@ -1,5 +1,5 @@
 :root{
-  --paper:#FAF9F5; --ink:#0A1614; --forest:#7C4DFF; --signal:#3A86FF; --gold:#B08150;
+  --paper:#FAF9F5; --ink:#0A1614; --forest:#7C4DFF; --signal:#3A86FF; --gold:#D4AF37;
   --teal:#7C4DFF; --mut:#6b7d72; --line:rgba(10,22,20,.12);
   --glass:rgba(255,255,255,.24); --glass2:rgba(255,255,255,.46); --glassbrd:rgba(255,255,255,.6);
   --blur:blur(24px) saturate(190%);
@@ -11,7 +11,7 @@ html{scroll-behavior:smooth}
    scroll-container, og da slutter position:sticky aa virke i alt som ligger
    under - altsaa hver eneste pinnede scene paa forsiden. Sidelengs drag loses
    paa elementet som faktisk flyter over, ikke paa roten. */
-body{background:var(--paper);color:var(--ink);font-family:var(--b);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{background:var(--paper);color:var(--ink);font-family:var(--b);overflow-x:hidden;-webkit-font-smoothing:auto}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
 .eyebrow{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--signal)}
@@ -161,7 +161,7 @@ nav .nl a:hover{color:var(--signal)}
 #bagportal .bagbig svg{width:100%;height:100%;display:block}
 #bagportal .bpcap{position:absolute;z-index:3;top:12%;left:0;right:0;text-align:center;color:var(--ink);pointer-events:none;will-change:opacity}
 #bagportal .bpcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--signal);margin-bottom:10px}
-#bagportal .bpcap h2{font-family:var(--h);font-weight:500;font-size:clamp(24px,4vw,44px)}
+#bagportal .bpcap h2{font-family:var(--h);font-weight:500;font-size:clamp(31px,4vw,44px)}
 
 /* journey captions */
 .jcap{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);z-index:6;text-align:center;padding:0 24px;pointer-events:none;opacity:0;transition:opacity .5s}
@@ -173,7 +173,7 @@ nav .nl a:hover{color:var(--signal)}
   background:radial-gradient(46% 38% at 50% 50%,rgba(8,22,15,.52),rgba(8,22,15,.22) 55%,rgba(8,22,15,0) 78%)}
 .jcap .k{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
 .jcap h1{font-family:var(--h);font-weight:700;font-size:clamp(46px,11vw,140px);line-height:.9;letter-spacing:-.03em;color:#fff;text-shadow:0 4px 18px rgba(6,18,12,.75),0 10px 46px rgba(6,18,12,.55)}
-.jcap h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,5vw,60px);letter-spacing:-.02em;color:#fff;text-shadow:0 4px 16px rgba(6,18,12,.75),0 8px 34px rgba(6,18,12,.5)}
+.jcap h2{font-family:var(--h);font-weight:500;font-size:clamp(36px,5vw,60px);letter-spacing:-.02em;color:#fff;text-shadow:0 4px 16px rgba(6,18,12,.75),0 8px 34px rgba(6,18,12,.5)}
 .jcap p{margin:16px auto 0;max-width:40ch;font-size:14.5px;font-weight:300;line-height:1.7;color:rgba(255,255,255,.9)}
 .jcap .btns{margin-top:26px;display:flex;gap:14px;justify-content:center;pointer-events:auto}
 .btn{border:none;cursor:pointer;font-family:var(--b);font-size:13px;font-weight:600;padding:13px 26px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;transition:transform .4s cubic-bezier(.34,1.5,.5,1),box-shadow .25s,background .25s}
@@ -198,7 +198,7 @@ nav .nl a.pressing,.brand.pressing{display:inline-block;transform:scale(.88)!imp
 .sec.light{background:var(--paper);color:var(--ink)}
 .sec.dark{background:#e8f2ee;color:var(--ink)}
 .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:44px}
-.sec-head h2{font-family:var(--h);font-weight:500;font-size:clamp(28px,4.6vw,52px);line-height:1;letter-spacing:-.02em}
+.sec-head h2{font-family:var(--h);font-weight:500;font-size:clamp(36px,4.6vw,52px);line-height:1;letter-spacing:-.02em}
 .sec-head h2 em{font-style:italic;color:var(--forest)}
 .sec.dark .sec-head h2 em{color:var(--forest)}
 .sec-head p{font-size:14px;font-weight:300;color:var(--mut);max-width:44ch;margin-top:10px}
@@ -311,7 +311,7 @@ nav .nl a.pressing,.brand.pressing{display:inline-block;transform:scale(.88)!imp
 .acard .ad{font-size:11.5px;font-weight:300;color:var(--mut);margin-top:5px;line-height:1.5}
 .acard .ap{margin-top:auto;padding-top:10px;font-size:14px;font-weight:600;color:var(--forest)}
 .brandrow{display:flex;flex-wrap:wrap;gap:clamp(18px,4vw,54px);align-items:center;justify-content:center;margin-top:8px}
-.brandrow span{font-family:var(--h);font-style:italic;font-size:clamp(18px,2.4vw,30px);color:var(--mut)}
+.brandrow span{font-family:var(--h);font-style:italic;font-size:clamp(23px,2.4vw,30px);color:var(--mut)}
 /* footer */
 footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
 .nlrow{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:end;padding-bottom:56px;border-bottom:1px solid rgba(14,26,19,.12)}
@@ -342,7 +342,7 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
 :root{
   --paper:#1A1C1E; --ink:#E8EDF4; --mut:rgba(232,237,244,.56);
   --line:rgba(255,255,255,.09);
-  --signal:#3A86FF; --forest:#7C4DFF; --teal:#7C4DFF; --gold:#B08150;
+  --signal:#3A86FF; --forest:#7C4DFF; --teal:#7C4DFF; --gold:#D4AF37;
   --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.07);
   --glassbrd:rgba(255,255,255,.12); --blur:blur(22px) saturate(150%);
   --surf2:#343538; --surf3:#2D2E31; --surf4:#3D3E41;
