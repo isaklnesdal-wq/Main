@@ -524,16 +524,17 @@ footer{border-top:none!important}
 /* Plast og vekt. Egen linje under flighttallene: den som leter etter en
    bestemt plast leter etter et ord, ikke et tall, saa de to skal ikke staa i
    samme rad og slaass. Vekten settes i kursiv til hoyre av samme grunn. */
+/* Plast og vekt i ETT element, ikke to. Da de var to, ble kortet et sjette
+   flex-barn rikere enn det har hoyde til, og vektlinja havnet oppaa
+   plastlinja - "K1170 - 176 gK3". Ett barn, to visuelle linjer: da kan de
+   ikke kollidere uansett hvor trangt kortet blir. Vekten er samtidig lys nok
+   til aa leses - ingen opacity oppaa en farge som allerede er
+   halvgjennomsiktig, for de to ganges sammen. */
 .pcard .pw{font-family:var(--b);font-size:11px;letter-spacing:.02em;color:var(--mut);
-  display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* Vekten paa egen rad. Den stod ytterst paa plastlinjen og endte visuelt
-   inntil prisen, saa "176 g" og "179 kr" leste som ett felt. To tall med hver
-   sin betydning trenger hver sin linje. */
-/* Vekten stod paa --mut ganget med opacity .7, altsaa effektiv alfa .39 mot en
-   flate paa L*20 - rundt 2.6:1, godt under grensen for lesbar tekst. Ingen
-   opacity her: dempingen ligger i fargen selv, saa den er maalbar. */
-.pcard .wt{font-family:var(--b);font-size:12px;color:rgba(232,237,244,.78);
-  display:block;margin-top:3px;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+  display:block;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard .pw b{display:block;font-weight:400;font-size:12px;margin-top:4px;
+  color:rgba(232,237,244,.80);letter-spacing:.01em;font-variant-numeric:tabular-nums}
+
 @media(max-width:560px){.pgrid>.pcard{grid-row:span 6}}
 .pcard,.acard{
   background:linear-gradient(180deg,#37455B,#3D3E41);
@@ -1156,6 +1157,22 @@ footer{border-top:1px solid var(--edge-bot)!important}
    premium product is illegible by accident. */
 .fcols .grp a{color:rgba(232,237,244,.60);transition:color .25s ease}
 .fcols .grp a:hover{color:var(--ink)}
+
+/* ---- Produktkortet: plass til plast og vekt -----------------------------
+   Prisen laa paa margin-top:auto, som presser den til bunnen av kortet. Det
+   virker saa lenge innholdet er kortere enn kortet; med plast og vekt i
+   tillegg ble det én linje for hoyt, og da ble prisen liggende oppaa vekten
+   i stedet for under den. Vanlig flyt i stedet. Reglene staar sist i arket
+   fordi de maa slaa bade lys- og moerkvarianten av .pcard .pr. */
+/* Kortet er display:grid i moerk variant, med et fast radoppsett fra den
+   gang det hadde fire barn. Plastlinja ble et femte, og siden det ikke fantes
+   en rad til den, delte den rad med prisen - maalt y=747 mot y=756, altsaa 21
+   px overlapp. Radene faar folge innholdet i stedet for aa vaere talt paa
+   forhaand, saa kortet aldri kan kollidere med seg selv igjen uansett hvor
+   mange linjer som kommer til. */
+.pcard{grid-template-rows:none!important;grid-auto-rows:min-content!important;
+  align-content:start!important;height:auto!important}
+.pcard .pr{margin-top:12px!important;padding-top:0!important}
 </style>
 </head>
 <body>
@@ -2441,7 +2458,7 @@ const priceText=d=>{const p=FLPRICE[d.h];return p&&p.text?p.text:'179 kr'};
 
 function card(d){return '<a class="pcard rv" href="/products/'+d.h+'"><div class="dw">'+disc3(d.b,d.m,d.n)+'</div><div class="shadow"></div>'+
   '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span>'+
-  (d.p?'<span class="pw">'+d.p.join(' · ')+'</span><span class="wt">'+d.w[0]+'–'+d.w[1]+' g</span>':'')+
+  (d.p?'<span class="pw">'+d.p.join(' · ')+'<b>'+d.w[0]+'–'+d.w[1]+' g</b></span>':'')+
   '<span class="pr">'+priceText(d)+'</span></a>';}
 
 /* ---- catalogue filter: brand, type, price ---- */

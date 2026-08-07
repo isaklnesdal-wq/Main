@@ -1351,7 +1351,7 @@ const priceText=d=>{const p=FLPRICE[d.h];return p&&p.text?p.text:'179 kr'};
 
 function card(d){return '<a class="pcard rv" href="/products/'+d.h+'"><div class="dw">'+disc3(d.b,d.m,d.n)+'</div><div class="shadow"></div>'+
   '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span>'+
-  (d.p?'<span class="pw">'+d.p.join(' · ')+'</span><span class="wt">'+d.w[0]+'–'+d.w[1]+' g</span>':'')+
+  (d.p?'<span class="pw">'+d.p.join(' · ')+'<b>'+d.w[0]+'–'+d.w[1]+' g</b></span>':'')+
   '<span class="pr">'+priceText(d)+'</span></a>';}
 
 /* ---- catalogue filter: brand, type, price ---- */
