@@ -1088,9 +1088,35 @@ function flDrawA(){
      96% og forskjovet til hoyre gir klaring paa venstre side uten aa ta borti
      B-en, som staar loddrett og taaler mindre luft. */
   const W=e.width*.96, ox=e.x+e.width*.035;
-  const d=flPoly(FLA_OUT,ox,top,W,C,FLA_ROUT)
-         +flPoly(FLA_CNT,ox,top,W,C,FLA_RCNT);
-  flsvg.querySelectorAll('.fl-a').forEach(n=>n.setAttribute('d',d));
+  const build=(t,c)=>flPoly(FLA_OUT,ox,t,W,c,FLA_ROUT)
+                    +flPoly(FLA_CNT,ox,t,W,c,FLA_RCNT);
+  const nodes=flsvg.querySelectorAll('.fl-a');
+  let d=build(top,C);
+  nodes.forEach(n=>n.setAttribute('d',d));
+  /* Den avrundede spissen ligger et stykke under den toppen vi ber om. Radien
+     skalerer med ordmerket, saa jo storre det er, jo lenger ned havner det
+     synlige toppunktet. Nominelt sto A-en paa kapslinjen; blekket gjorde det
+     ikke. Maalt med ekte Inter lastet la spissen 14 enhetspiksler under toppen
+     av B-en paa 1240px og 5 paa 390px - A-en var blitt for kort.
+
+     Vi maaler derfor formen etter at den er tegnet og skyver den opp igjen med
+     noyaktig det avviket. Foten staar stille fordi hoyden vokser like mye som
+     toppen flyttes. To runder holder: den andre tar at radien endrer seg litt
+     naar hoyden gjor det. */
+  try{
+    let t=top, c=C;
+    for(let i=0;i<2;i++){
+      /* Avviket maales mot kapslinjen, ikke mot der formen staar naa. Maales
+         det mot seg selv, finner hver runde den samme radien paa nytt og
+         legger korreksjonen paa en gang til - da havner spissen like langt
+         over linjen som den foer laa under. */
+      const off=nodes[0].getBBox().y-top;
+      if(!(Math.abs(off)>0.15)) break;
+      t-=off; c+=off;
+      d=build(t,c);
+      nodes.forEach(n=>n.setAttribute('d',d));
+    }
+  }catch(err){}
 }
 
 /* Fit the wordmark to 70% of the viewport. Inter arrives over the network, so
