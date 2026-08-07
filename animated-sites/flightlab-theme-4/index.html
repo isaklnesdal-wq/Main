@@ -215,17 +215,21 @@ nav .nl a.pressing,.brand.pressing{display:inline-block;transform:scale(.88)!imp
 .sec-head p{font-size:14px;font-weight:300;color:var(--mut);max-width:44ch;margin-top:10px}
 .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 @media(max-width:1000px){.pgrid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.pgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media(max-width:560px){/* To kolonner, ikke tre. Skriften er naa den samme som paa PC, og tre kort paa
+   en telefon gir 111 px hver - da maatte typen krympes for aa passe, og det var
+   nettopp krympingen som gjorde mobilen til en annen side enn PC-en. To kort
+   gir rundt 170 px, nok til at 17 px overskrift og 15 px pris staar som de skal. */
+.pgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   .pcard{padding:12px 6px;border-radius:14px}
   .pcard .dw{height:74px}
   .pcard .disc-scene{zoom:.6}
   .pcard .shadow{width:48px;height:9px;margin-top:-4px}
-  .pcard h3{font-size:11px;margin-top:6px;line-height:1.15}
-  .pcard .cls{margin-top:6px;font-size:8px;letter-spacing:.06em;padding:3px 6px}
+  .pcard h3{font-size:17px;margin-top:14px;line-height:1.2}
+  .pcard .cls{margin-top:8px;font-size:10px;letter-spacing:.12em;padding:4px 11px}
   .pcard .fn{display:none}
-  .pcard .pr{margin-top:auto;padding-top:8px;font-size:12.5px}
+  .pcard .pr{padding-top:8px;font-size:15px}
   .disc-group{margin-bottom:26px}
-  .disc-group .gt h3{font-size:16px}}
+  .disc-group .gt h3{font-size:20px;letter-spacing:-.01em}}
 .disc-group{margin-bottom:40px}
 /* ---- catalogue filter ---- */
 .filterbtn{display:inline-flex;align-items:center;gap:7px;vertical-align:middle;margin-left:14px;
@@ -293,7 +297,7 @@ nav .nl a.pressing,.brand.pressing{display:inline-block;transform:scale(.88)!imp
 .agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 @media(max-width:1000px){.agrid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.agrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .acard .bd{padding:12px 12px 14px}.acard h4{font-size:14px}.acard .ad{font-size:11px}}
+  .acard .bd{padding:12px 12px 14px}.acard h4{font-size:16px}.acard .ad{font-size:11.5px}}
 .acard{background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.56));border:1px solid rgba(255,255,255,.8);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 24px rgba(14,26,19,.06);transition:transform .42s cubic-bezier(.34,1.4,.5,1),box-shadow .3s}
 /* frosted glass only on desktop pointers (backdrop-filter is too heavy on mobile GPUs) */
 @media(hover:hover) and (pointer:fine){
@@ -1173,6 +1177,24 @@ footer{border-top:1px solid var(--edge-bot)!important}
 .pcard{grid-template-rows:none!important;grid-auto-rows:min-content!important;
   align-content:start!important;height:auto!important}
 .pcard .pr{margin-top:12px!important;padding-top:0!important}
+
+/* ---- Mobilytelse: ikke mal det som ikke er paa skjermen --------------
+   Katalogen er 25 kort med hver sin inline-SVG, og guidene og kurvene under
+   den kommer i tillegg. Alt sammen ble lagt ut og malt selv naar det stod
+   tusenvis av piksler under skjermkanten, og det er hovedtraaden som gjor
+   den jobben - den samme traaden som skal flytte krystallen mens du drar.
+   Derfor tyngden akkurat i overgangen fra ordmerket til discene.
+
+   content-visibility:auto lar nettleseren hoppe over layout og maling for
+   seksjoner som er utenfor synsfeltet. contain-intrinsic-size med auto gjor
+   at den husker hvor hoy seksjonen var sist, saa rullefeltet ikke hopper naar
+   den kommer inn igjen.
+
+   De scrolldrevne seksjonene staar utenfor med vilje: #journey, #bagportal,
+   #discfly, #flnum og #merker er bygget paa sticky og maa males kontinuerlig
+   for aa kunne pinne. */
+#discer,#bager,#tilbehor,#flightguide,#nybegynner,#nl{
+  content-visibility:auto;contain-intrinsic-size:auto 1400px}
 </style>
 </head>
 <body>
