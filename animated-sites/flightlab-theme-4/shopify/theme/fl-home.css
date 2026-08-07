@@ -486,7 +486,34 @@ footer{border-top:none!important}
 /* Shorter names would otherwise centre inside the shared row; start-aligning
    puts the first line of every product name on the same baseline. */
 .pgrid>.pcard>h3{align-self:start}
-@media(max-width:560px){.pgrid>.pcard{grid-row:span 5}}
+/* Guider. To rutenett bygget av de samme flatene og kantene som resten av
+   siden, saa de leses som en del av katalogen og ikke som en artikkel limt
+   inn under den. Tallene er dempet: de nummererer, de roper ikke. */
+.gtiles,.gsteps{display:grid;gap:clamp(12px,1.6vw,20px);margin-top:clamp(20px,3vh,34px)}
+.gtiles{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.gsteps{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.gtile,.gstep{position:relative;padding:clamp(18px,2vw,26px);border-radius:16px;
+  background:linear-gradient(180deg,var(--surf2),var(--surf3));
+  border:1px solid transparent;border-top-color:rgba(255,255,255,.14);
+  border-left-color:rgba(255,255,255,.08);border-right-color:rgba(255,255,255,.08);
+  border-bottom-color:rgba(255,255,255,.05);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 18px rgba(0,0,0,.18)}
+.gtile b,.gstep b{font-family:var(--b);font-size:11px;font-weight:600;letter-spacing:.2em;
+  color:var(--signal);font-variant-numeric:tabular-nums}
+.gtile h4,.gstep h4{font-family:var(--h);font-weight:600;font-size:17px;color:var(--ink);margin:10px 0 0}
+.gtile span{display:block;font-family:var(--b);font-size:12px;color:var(--mut);
+  margin-top:3px;font-variant-numeric:tabular-nums}
+.gtile p,.gstep p{font-size:13.5px;font-weight:300;line-height:1.62;color:var(--mut);margin:10px 0 0}
+.gnote{font-size:12.5px;font-weight:300;color:var(--mut);opacity:.8;margin-top:clamp(14px,2vh,22px)}
+@media(max-width:560px){.gtiles,.gsteps{grid-template-columns:1fr}}
+/* Plast og vekt. Egen linje under flighttallene: den som leter etter en
+   bestemt plast leter etter et ord, ikke et tall, saa de to skal ikke staa i
+   samme rad og slaass. Vekten settes i kursiv til hoyre av samme grunn. */
+.pcard .pw{font-family:var(--b);font-size:11px;letter-spacing:.02em;color:var(--mut);
+  display:flex;justify-content:space-between;gap:8px;align-items:baseline;
+  margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard .pw i{font-style:normal;opacity:.72;flex:none;font-variant-numeric:tabular-nums}
+@media(max-width:560px){.pgrid>.pcard{grid-row:span 6}}
 .pcard,.acard{
   background:linear-gradient(180deg,#37455B,#3D3E41);
   border:1px solid rgba(255,255,255,.12);

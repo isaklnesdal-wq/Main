@@ -348,7 +348,9 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
     <div class="filterpanel" id="filterpanel" hidden>
       <div class="fgroup"><h4>Merke</h4><div class="fchips" id="fbrand"></div></div>
       <div class="fgroup"><h4>Type</h4><div class="fchips" id="ftype"></div></div>
-      <div class="fgroup"><h4>Pris</h4><div class="fchips" id="fprice"></div></div>
+      <div class="fgroup"><h4>Plast</h4><div class="fchips" id="fplast"></div></div>
+        <div class="fgroup"><h4>Vekt</h4><div class="fchips" id="fvekt"></div></div>
+        <div class="fgroup"><h4>Pris</h4><div class="fchips" id="fprice"></div></div>
       <div class="frow"><span class="fres" id="fres"></span><button class="fclear" id="fclear" type="button">Nullstill</button></div>
     </div>
     <div id="disc-groups"></div>
@@ -429,6 +431,7 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
   </div>
 </section>
 
+<<<<<<< new
         <!-- LEFT side pocket + white bottle -->
         <path d="M100 208 C74 212 66 236 66 268 L66 330 C66 356 82 368 102 368 L102 208 Z" fill="#000" opacity=".4" filter="url(#bgSoft)"/>
         <rect x="74" y="176" width="26" height="70" rx="10" fill="url(#bgBottle)"/>
@@ -439,6 +442,66 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
         <path d="M100 210 C78 214 70 236 70 266" stroke="rgba(255,255,255,.12)" stroke-width="2" fill="none"/>
         <path d="M70 300 q16 6 32 0" stroke="#0c0d0b" stroke-width="4" fill="none"/>
         <circle cx="72" cy="304" r="4" fill="#111" stroke="#3A86FF" stroke-width="1.4"/>
+=======
+<!-- ===== Kapasitetsvelgeren: hvor stor bag trenger du? ===================
+     Glasset er samme materiale som ordmerket i hero. Scrollingen fyller det
+     med discer og tenner modellen som tar akkurat saa mange. ============== -->
+<section id="bagcap">
+  <div class="pin">
+    <div class="inner">
+      <div class="glass"><svg viewBox="0 0 360 530" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Discgolf-bag i glass som fylles med discer">
+  <defs>
+    <!-- perlen: lys -> moerk -> lys tvers over kanten, som paa referansen -->
+    <linearGradient id="capBead" x1=".08" y1="0" x2=".92" y2="1">
+      <stop offset="0"   stop-color="#F2FCFF" stop-opacity=".95"/>
+      <stop offset=".22" stop-color="#BFE6FA" stop-opacity=".55"/>
+      <stop offset=".45" stop-color="#2E4B66" stop-opacity=".45"/>
+      <stop offset=".68" stop-color="#9FD8F2" stop-opacity=".60"/>
+      <stop offset="1"   stop-color="#EAFAFF" stop-opacity=".92"/>
+    </linearGradient>
+    <linearGradient id="capMid" x1="0" y1="0" x2=".6" y2="1">
+      <stop offset="0" stop-color="#CFEEFC" stop-opacity=".40"/>
+      <stop offset=".5" stop-color="#7FB6D8" stop-opacity=".26"/>
+      <stop offset="1" stop-color="#DCF4FF" stop-opacity=".44"/>
+    </linearGradient>
+    <!-- kroppen: klarest nede, der glasset samler lyset -->
+    <linearGradient id="capBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9EC8E4" stop-opacity=".05"/>
+      <stop offset=".55" stop-color="#B6DCF2" stop-opacity=".09"/>
+      <stop offset="1" stop-color="#DAF2FF" stop-opacity=".17"/>
+    </linearGradient>
+    <radialGradient id="capCaus" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#EAFFF7" stop-opacity=".40"/>
+      <stop offset=".32" stop-color="#3A86FF" stop-opacity=".22"/>
+      <stop offset=".7" stop-color="#3A86FF" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#3A86FF" stop-opacity="0"/></radialGradient>
+    <linearGradient id="capSpec" x1=".1" y1="0" x2=".5" y2="1">
+      <stop offset="0" stop-color="#fff"/><stop offset=".17" stop-color="#fff"/>
+      <stop offset=".31" stop-color="#000"/><stop offset="1" stop-color="#000"/></linearGradient>
+    <mask id="capSpecPos"><rect width="360" height="530" fill="url(#capSpec)"/></mask>
+    <linearGradient id="capReflFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".5"/>
+      <stop offset=".55" stop-color="#fff" stop-opacity=".07"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <mask id="capReflMask"><rect y="428" width="360" height="102" fill="url(#capReflFade)"/></mask>
+    <filter id="capBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.4"/></filter>
+    <clipPath id="capBodyClip"><path d="M112 126 C112 110 138 102 180 102 C222 102 248 110 248 126 L268 364 C272 400 232 424 180 424 C128 424 88 400 92 364 Z"/></clipPath>
+    <radialGradient id="dA" cx=".36" cy=".28" r=".85">
+      <stop offset="0" stop-color="#EAF9FF" stop-opacity=".98"/>
+      <stop offset=".45" stop-color="#8EC6E8" stop-opacity=".62"/>
+      <stop offset="1" stop-color="#2C4560" stop-opacity=".34"/></radialGradient>
+    <radialGradient id="dB" cx=".42" cy=".28" r=".85">
+      <stop offset="0" stop-color="#D8F3FE" stop-opacity=".88"/>
+      <stop offset=".45" stop-color="#6BA4C8" stop-opacity=".54"/>
+      <stop offset="1" stop-color="#22364C" stop-opacity=".32"/></radialGradient>
+    <radialGradient id="dC" cx=".46" cy=".26" r=".85">
+      <stop offset="0" stop-color="#C8F0E2" stop-opacity=".80"/>
+      <stop offset=".45" stop-color="#59AE95" stop-opacity=".48"/>
+      <stop offset="1" stop-color="#1F3A34" stop-opacity=".30"/></radialGradient>
+  </defs>
+>>>>>>> theme5
 
   <!-- speilbildet i gulvet -->
   <g mask="url(#capReflMask)" filter="url(#capBlur)" opacity=".5"
@@ -450,6 +513,7 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
   <!-- kaustikken: lyset glasset samler og slipper ut i bunnen -->
   <ellipse class="caustic" id="capCausEl" cx="180" cy="432" rx="140" ry="24"/>
 
+<<<<<<< new
         <!-- TAN front flap (folds down on scroll) -->
         <g id="bagflap">
           <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="url(#bgTan)" filter="url(#bgFab)"/>
@@ -466,6 +530,11 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
           </g>
           <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="none" stroke="#050605" stroke-width="1.5" opacity=".5"/>
         </g>
+=======
+  <!-- baerehank -->
+  <path class="gl-thick" d="M152 104 Q180 68 208 104" fill="none"/>
+  <path class="gl-bead"  d="M152 104 Q180 68 208 104" fill="none"/>
+>>>>>>> theme5
 
   <!-- kroppen -->
   <path class="gl-fill" d="M112 126 C112 110 138 102 180 102 C222 102 248 110 248 126 L268 364 C272 400 232 424 180 424 C128 424 88 400 92 364 Z"/>
@@ -512,6 +581,47 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
   </div>
 </section>
 
+<<<<<<< new
+<!-- ===== Guider =========================================================
+     Skrevet i forsidens eget vokabular - .sec, .wrap, .sec-head, .rv - og
+     ikke i det fra sections.css. Seksjonsfilene beginner-guide.liquid og
+     flight-rating-explainer.liquid finnes i temaet, men de bruker
+     page-width, section--sand og flight-tile, som bare finnes i ark forsiden
+     ikke laster. Slippes de inn slik, faller de tilbake til bar tekst - samme
+     feil som den foreldrelose kapasitetsvelgeren. Derfor staar innholdet her.
+     ==================================================================== -->
+<section class="sec" id="flightguide">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><div class="eyebrow rv">// Slik leser du en disc</div>
+      <h2 class="rv" style="margin-top:12px">Fire tall, <em>hele flukten</em></h2></div>
+      <p class="rv">Hver disc har fire tall. De beskriver hvordan den oppfører seg i lufta, i rekkefølgen den opplever dem.</p>
+    </div>
+    <div class="gtiles">
+      <div class="gtile rv"><b>1</b><h4>Speed</h4><span>1–14</span><p>Hvor fort discen må gå for å fly som den skal. Høyt tall krever mer arm — ikke mer lengde for nybegynneren.</p></div>
+      <div class="gtile rv"><b>2</b><h4>Glide</h4><span>1–7</span><p>Hvor godt den holder seg i lufta. Høy glide gir lengde med lite kraft, og er en venn tidlig.</p></div>
+      <div class="gtile rv"><b>3</b><h4>Turn</h4><span>+1 til −5</span><p>Hvor mye den svinger til høyre først. Jo mer negativt, jo lettere å kaste for de fleste.</p></div>
+      <div class="gtile rv"><b>4</b><h4>Fade</h4><span>0–5</span><p>Hvor hardt den trekker til venstre på slutten. Høy fade gir en forutsigbar avslutning.</p></div>
+    </div>
+    <p class="gnote rv">Tallene forutsetter høyrehendt bakhåndskast. Er du venstrehendt, speilvend retningene.</p>
+  </div>
+</section>
+<section class="sec" id="nybegynner">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><div class="eyebrow rv">// Kom i gang</div>
+      <h2 class="rv" style="margin-top:12px">Tre discer er <em>nok</em></h2></div>
+      <p class="rv">Du trenger ikke tjuefem. Du trenger én du treffer med, én som går rett, og én som går langt.</p>
+    </div>
+    <div class="gsteps">
+      <div class="gstep rv"><b>01</b><h4>En putter</h4><p>Den du kaster mest, og den eneste som teller på de siste ti meterne. Start med en myk en — den blir i kurven i stedet for å sprette ut.</p></div>
+      <div class="gstep rv"><b>02</b><h4>En midrange</h4><p>Arbeidshesten. Går dit du peker, uten å straffe deg for at kastet ikke var perfekt. Lær denne før du kjøper fart.</p></div>
+      <div class="gstep rv"><b>03</b><h4>En fairwaydriver</h4><p>Lengde du faktisk kontrollerer. Hopp over distansedriverne til putteren sitter — de gir ikke meter før teknikken er der.</p></div>
+    </div>
+    <p class="gnote rv">Lette discer, 150–165 g, er lettere å få opp i fart. Tyngre discer står støere i vind.</p>
+  </div>
+</section>
+=======
 <!-- ===== Merkene: stablede paneler ======================================
      Hvert merke er sitt eget panel som legger seg over det forrige mens du
      scroller. Fargen straaler ut fra platen selv og doer ut foer den naar
@@ -696,6 +806,7 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
   </div>
 </section>
 
+>>>>>>> theme5
 <section class="sec dark">
   <div class="wrap" style="text-align:center">
     <div class="eyebrow rv" style="color:var(--signal)">// Vi fører</div>
@@ -1713,31 +1824,31 @@ const BRAND={
 };
 // 25 discs across the 7 brands, grouped by flight class
 const DISCS=[
-  {b:'Kastaplast',m:'Reko',c:'Putter',n:[3,3,0,1],h:'kastaplast-reko-putter'},
-  {b:'Dynamic Discs',m:'Judge',c:'Putter',n:[2,4,0,1],h:'dynamic-discs-judge-putter'},
-  {b:'Discmania',m:'P2',c:'Putter',n:[2,3,0,2],h:'discmania-p2-putter'},
-  {b:'Discraft',m:'Luna',c:'Putter',n:[3,3,0,3],h:'discraft-luna-putter'},
-  {b:'Innova',m:'Aviar',c:'Putter',n:[2,3,0,1],h:'innova-aviar-putter'},
-  {b:'Kastaplast',m:'Berg',c:'Approach',n:[1,1,0,2],h:'kastaplast-berg-approach'},
-  {b:'Westside',m:'Harp',c:'Approach',n:[4,3,0,3],h:'westside-harp-approach'},
-  {b:'Discraft',m:'Zone',c:'Approach',n:[4,3,0,3],h:'discraft-zone-approach'},
-  {b:'Innova',m:'Rhyno',c:'Approach',n:[1,3,0,3],h:'innova-rhyno-approach'},
-  {b:'Discmania',m:'MD3',c:'Midrange',n:[5,5,0,2],h:'discmania-md3-midrange'},
-  {b:'Kastaplast',m:'Lots',c:'Midrange',n:[5,5,-0.5,1.5],h:'kastaplast-lots-midrange'},
-  {b:'Latitude 64',m:'Fuse',c:'Midrange',n:[6,6,-1,1],h:'latitude-64-fuse-midrange'},
-  {b:'Discraft',m:'Buzzz',c:'Midrange',n:[5,4,-1,1],h:'discraft-buzzz-midrange'},
-  {b:'Innova',m:'Roc3',c:'Midrange',n:[5,4,0,3],h:'innova-roc3-midrange'},
-  {b:'Latitude 64',m:'River',c:'Fairway',n:[7,7,-1,1],h:'latitude-64-river-fairway-driver'},
-  {b:'Discmania',m:'FD',c:'Fairway',n:[7,6,-1,1],h:'discmania-fd-fairway-driver'},
-  {b:'Westside',m:'Underworld',c:'Fairway',n:[7,6,-3,1],h:'westside-underworld-fairway-driver'},
-  {b:'Discraft',m:'Undertaker',c:'Fairway',n:[9,5,-1,2],h:'discraft-undertaker-fairway-driver'},
-  {b:'Innova',m:'Teebird',c:'Fairway',n:[7,5,0,2],h:'innova-teebird-fairway-driver'},
-  {b:'Latitude 64',m:'Ballista Pro',c:'Distanse',n:[14,4,0,3],h:'latitude-64-ballista-pro-distansedriver'},
-  {b:'Discmania',m:'DD3',c:'Distanse',n:[13,5,-1,3],h:'discmania-dd3-distansedriver'},
-  {b:'Dynamic Discs',m:'Trespass',c:'Distanse',n:[12,5,-0.5,3],h:'dynamic-discs-trespass-distansedriver'},
-  {b:'Kastaplast',m:'Grym X',c:'Distanse',n:[12,5,-1,3],h:'kastaplast-grym-x-distansedriver'},
-  {b:'Discraft',m:'Zeus',c:'Distanse',n:[12,5,-1,3],h:'discraft-zeus-distansedriver'},
-  {b:'Innova',m:'Destroyer',c:'Distanse',n:[12,5,-1,3],h:'innova-destroyer-distansedriver'}
+  {b:'Kastaplast',m:'Reko',c:'Putter',n:[3,3,0,1],h:'kastaplast-reko-putter',p:['K1','K1 Soft','K3'],w:[170,176]},
+  {b:'Dynamic Discs',m:'Judge',c:'Putter',n:[2,4,0,1],h:'dynamic-discs-judge-putter',p:['Lucid','Fuzion','Prime'],w:[170,176]},
+  {b:'Discmania',m:'P2',c:'Putter',n:[2,3,0,2],h:'discmania-p2-putter',p:['C-line','S-line','D-line'],w:[170,176]},
+  {b:'Discraft',m:'Luna',c:'Putter',n:[3,3,0,3],h:'discraft-luna-putter',p:['ESP','Z','Big Z'],w:[170,176]},
+  {b:'Innova',m:'Aviar',c:'Putter',n:[2,3,0,1],h:'innova-aviar-putter',p:['Star','Champion','DX'],w:[170,176]},
+  {b:'Kastaplast',m:'Berg',c:'Approach',n:[1,1,0,2],h:'kastaplast-berg-approach',p:['K1','K1 Soft','K3'],w:[170,176]},
+  {b:'Westside',m:'Harp',c:'Approach',n:[4,3,0,3],h:'westside-harp-approach',p:['VIP','Tournament','BT'],w:[170,176]},
+  {b:'Discraft',m:'Zone',c:'Approach',n:[4,3,0,3],h:'discraft-zone-approach',p:['ESP','Z','Big Z'],w:[170,176]},
+  {b:'Innova',m:'Rhyno',c:'Approach',n:[1,3,0,3],h:'innova-rhyno-approach',p:['Star','Champion','DX'],w:[170,176]},
+  {b:'Discmania',m:'MD3',c:'Midrange',n:[5,5,0,2],h:'discmania-md3-midrange',p:['C-line','S-line','D-line'],w:[170,180]},
+  {b:'Kastaplast',m:'Lots',c:'Midrange',n:[5,5,-0.5,1.5],h:'kastaplast-lots-midrange',p:['K1','K1 Soft','K3'],w:[170,180]},
+  {b:'Latitude 64',m:'Fuse',c:'Midrange',n:[6,6,-1,1],h:'latitude-64-fuse-midrange',p:['Opto','Gold','Zero'],w:[170,180]},
+  {b:'Discraft',m:'Buzzz',c:'Midrange',n:[5,4,-1,1],h:'discraft-buzzz-midrange',p:['ESP','Z','Big Z'],w:[170,180]},
+  {b:'Innova',m:'Roc3',c:'Midrange',n:[5,4,0,3],h:'innova-roc3-midrange',p:['Star','Champion','DX'],w:[170,180]},
+  {b:'Latitude 64',m:'River',c:'Fairway',n:[7,7,-1,1],h:'latitude-64-river-fairway-driver',p:['Opto','Gold','Zero'],w:[165,176]},
+  {b:'Discmania',m:'FD',c:'Fairway',n:[7,6,-1,1],h:'discmania-fd-fairway-driver',p:['C-line','S-line','D-line'],w:[165,176]},
+  {b:'Westside',m:'Underworld',c:'Fairway',n:[7,6,-3,1],h:'westside-underworld-fairway-driver',p:['VIP','Tournament','BT'],w:[165,176]},
+  {b:'Discraft',m:'Undertaker',c:'Fairway',n:[9,5,-1,2],h:'discraft-undertaker-fairway-driver',p:['ESP','Z','Big Z'],w:[165,176]},
+  {b:'Innova',m:'Teebird',c:'Fairway',n:[7,5,0,2],h:'innova-teebird-fairway-driver',p:['Star','Champion','DX'],w:[165,176]},
+  {b:'Latitude 64',m:'Ballista Pro',c:'Distanse',n:[14,4,0,3],h:'latitude-64-ballista-pro-distansedriver',p:['Opto','Gold','Zero'],w:[165,175]},
+  {b:'Discmania',m:'DD3',c:'Distanse',n:[13,5,-1,3],h:'discmania-dd3-distansedriver',p:['C-line','S-line','D-line'],w:[165,175]},
+  {b:'Dynamic Discs',m:'Trespass',c:'Distanse',n:[12,5,-0.5,3],h:'dynamic-discs-trespass-distansedriver',p:['Lucid','Fuzion','Prime'],w:[165,175]},
+  {b:'Kastaplast',m:'Grym X',c:'Distanse',n:[12,5,-1,3],h:'kastaplast-grym-x-distansedriver',p:['K1','K1 Soft','K3'],w:[165,175]},
+  {b:'Discraft',m:'Zeus',c:'Distanse',n:[12,5,-1,3],h:'discraft-zeus-distansedriver',p:['ESP','Z','Big Z'],w:[165,175]},
+  {b:'Innova',m:'Destroyer',c:'Distanse',n:[12,5,-1,3],h:'innova-destroyer-distansedriver',p:['Star','Champion','DX'],w:[165,175]}
 ];
 const CLASS_ORDER=[['Putter','Puttere','Presisjon og kontroll rundt kurven'],['Approach','Approach','Trygge innspill mot kurven'],['Midrange','Midrange','Allrounderen i bagen'],['Fairway','Fairway-drivere','Kontrollert lengde'],['Distanse','Distansedrivere','Maks meter fra utkastet']];
 function disc3(b,m,n){const s=BRAND[b],S=108;
@@ -1757,14 +1868,23 @@ const priceOf=d=>{const p=FLPRICE[d.h];return p&&isFinite(p.amount)?+p.amount:17
 const priceText=d=>{const p=FLPRICE[d.h];return p&&p.text?p.text:'179 kr'};
 
 function card(d){return '<a class="pcard rv" href="/products/'+d.h+'"><div class="dw">'+disc3(d.b,d.m,d.n)+'</div><div class="shadow"></div>'+
-  '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span><span class="pr">'+priceText(d)+'</span></a>';}
+  '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span>'+
+  (d.p?'<span class="pw">'+d.p.join(' · ')+'<i>'+d.w[0]+'–'+d.w[1]+' g</i></span>':'')+
+  '<span class="pr">'+priceText(d)+'</span></a>';}
 
 /* ---- catalogue filter: brand, type, price ---- */
-const F={brand:new Set(),type:new Set(),sort:''};
+const F={brand:new Set(),type:new Set(),plast:new Set(),vekt:new Set(),sort:''};
+/* Vektintervaller. En disc treffer et intervall dersom dens eget spenn
+   overlapper det — ikke bare dersom det ligger helt innenfor. */
+const VEKTBAND=[['Under 165 g','0-164'],['165–169 g','165-169'],['170–175 g','170-175'],['176 g og over','176-999']];
 const groupsEl=document.getElementById('disc-groups');
 
 function renderDiscs(first){
-  let items=DISCS.filter(d=>(!F.brand.size||F.brand.has(d.b))&&(!F.type.size||F.type.has(d.c)));
+  let items=DISCS.filter(d=>
+      (!F.brand.size||F.brand.has(d.b)) && (!F.type.size||F.type.has(d.c)) &&
+      (!F.plast.size||(d.p||[]).some(x=>F.plast.has(x))) &&
+      (!F.vekt.size||[...F.vekt].some(r=>{const b=r.split('-');
+        return d.w && d.w[0]<=+b[1] && d.w[1]>=+b[0];})));
   if(F.sort){
     /* A price sort is global, so the per-class grouping is dropped while
        it is active — otherwise you would only be sorting within a class. */
@@ -1778,7 +1898,7 @@ function renderDiscs(first){
     }).join('');
   }
   const empty=document.getElementById('fempty');if(empty)empty.hidden=items.length>0;
-  const n=F.brand.size+F.type.size+(F.sort?1:0);
+  const n=F.brand.size+F.type.size+F.plast.size+F.vekt.size+(F.sort?1:0);
   const c=document.getElementById('fcount');if(c){c.hidden=!n;c.textContent=n||''}
   const res=document.getElementById('fres');
   if(res)res.textContent=items.length===DISCS.length?'Viser alle '+DISCS.length+' discer'
@@ -1797,6 +1917,9 @@ function renderDiscs(first){
   document.getElementById('fbrand').innerHTML=brands.map(b=>chip(b,b)).join('');
   document.getElementById('ftype').innerHTML=CLASS_ORDER
     .filter(([k])=>DISCS.some(d=>d.c===k)).map(([k,title])=>chip(title,k)).join('');
+  const plaster=[...new Set(DISCS.flatMap(d=>d.p||[]))].sort((a,b)=>a.localeCompare(b,'no'));
+  document.getElementById('fplast').innerHTML=plaster.map(x=>chip(x,x)).join('');
+  document.getElementById('fvekt').innerHTML=VEKTBAND.map(([t,v])=>chip(t,v)).join('');
   document.getElementById('fprice').innerHTML=chip('Lav til høy','asc')+chip('Høy til lav','desc');
 
   btn.addEventListener('click',()=>{
@@ -1811,7 +1934,7 @@ function renderDiscs(first){
         const on=F.sort===v;F.sort=on?'':v;
         [...t.parentElement.children].forEach(c=>c.setAttribute('aria-pressed',String(!on&&c===t)));
       }else{
-        const set=grp==='fbrand'?F.brand:F.type;
+        const set=grp==='fbrand'?F.brand:grp==='fplast'?F.plast:grp==='fvekt'?F.vekt:F.type;
         if(set.has(v)){set.delete(v);t.setAttribute('aria-pressed','false')}
         else{set.add(v);t.setAttribute('aria-pressed','true')}
       }
@@ -1821,7 +1944,7 @@ function renderDiscs(first){
   });
   document.addEventListener('click',e=>{if(e.target.closest('[data-clear]'))clearAll()});
   function clearAll(){
-    F.brand.clear();F.type.clear();F.sort='';
+    F.brand.clear();F.type.clear();F.plast.clear();F.vekt.clear();F.sort='';
     panel.querySelectorAll('.fchip').forEach(c=>c.setAttribute('aria-pressed','false'));
     renderDiscs(false);
   }
