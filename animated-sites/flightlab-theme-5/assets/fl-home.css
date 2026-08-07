@@ -332,12 +332,12 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
    ========================================================================== */
 
 :root{
-  --paper:#171C23; --ink:#E8EDF4; --mut:rgba(232,237,244,.56);
+  --paper:#1A1C1E; --ink:#E8EDF4; --mut:rgba(232,237,244,.56);
   --line:rgba(255,255,255,.09);
   --signal:#3A86FF; --forest:#7C4DFF; --teal:#7C4DFF; --gold:#B08150;
   --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.07);
   --glassbrd:rgba(255,255,255,.12); --blur:blur(22px) saturate(150%);
-  --surf2:#2B3647; --surf3:#262F3B; --surf4:#323F54;
+  --surf2:#343538; --surf3:#2D2E31; --surf4:#3D3E41;
   --on-signal:#FFFFFF;
 }
 
@@ -355,7 +355,7 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
    neighbours — the light is always crossfading and never restarts at a
    boundary. Nothing here is anchored to a section, so section edges have
    nothing to coincide with. */
-body{background:#262F3B;color:var(--ink);position:relative}
+body{background:#2D2E31;color:var(--ink);position:relative}
 body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
   z-index:-2;pointer-events:none;
   background:
@@ -419,7 +419,7 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
        laid on it per zone — never a colour of its own, only a temperature —
        and every stop holds the lightness the lift gave it, so the page cannot
        darken on the way through. It ends on the exact colour it started. */
-    linear-gradient(180deg,#262F3B 0%,#283648 14%,#343B50 26%,#3C3E59 38%,#454059 48%,#454254 56%,#423D43 64%,#403837 72%,#343535 80%,#213436 86%,#1F313A 93%,#262F3B 100%)}
+    linear-gradient(180deg,#2D2E31 0%,#283648 14%,#343B50 26%,#3C3E59 38%,#454059 48%,#454254 56%,#423D43 64%,#403837 72%,#343535 80%,#213436 86%,#1F313A 93%,#2D2E31 100%)}
 
 /* ===== ONE CONTINUOUS ENVIRONMENT ========================================
    A single fixed layer, three very large soft fields on it, and the only thing
@@ -488,7 +488,7 @@ footer{border-top:none!important}
 .pgrid>.pcard>h3{align-self:start}
 @media(max-width:560px){.pgrid>.pcard{grid-row:span 5}}
 .pcard,.acard{
-  background:linear-gradient(180deg,#37455B,#323F54);
+  background:linear-gradient(180deg,#37455B,#3D3E41);
   border:1px solid rgba(255,255,255,.12);
   /* Same material as the wordmark. The crystal is lit by a bright polished edge
      along its top and a cooler bounce off the floor at its base, with the body
@@ -500,12 +500,12 @@ footer{border-top:none!important}
     inset 0 -1px 0 rgba(174,239,245,.055),
     0 18px 40px rgba(16,21,30,.34)}
 @media(hover:hover) and (pointer:fine){
-  .pcard,.acard{background:linear-gradient(180deg,#323F54,#2F3C51);
+  .pcard,.acard{background:linear-gradient(180deg,#3D3E41,#2F3C51);
     backdrop-filter:none;-webkit-backdrop-filter:none}
   .pcard:hover,.acard:hover{background:linear-gradient(180deg,#3C4E6A,#364257);
     border-color:rgba(62,207,142,.3)}
 }
-.acard .im{background:linear-gradient(135deg,#2F3C51,#262F3B)}
+.acard .im{background:linear-gradient(135deg,#2F3C51,#2D2E31)}
 .disc-group .gt{border-bottom-color:rgba(255,255,255,.09)}
 
 /* Newsletter, footer, bag portal — the last white surfaces */
@@ -532,7 +532,7 @@ nav .brand,nav .nl a{color:var(--ink)}
 @media(hover:none){
   nav{background:rgba(38,47,59,.95)}
   .navsearch{background:rgba(255,255,255,.06)}
-  .searchhint{background:#262F3B}
+  .searchhint{background:#2D2E31}
 }
 
 /* Green stays scarce: buttons, active states, highlights */
@@ -867,7 +867,7 @@ nav .brand,nav .nl a{color:var(--ink)}
      materials, chosen by viewport. The phone's proportions were the right ones,
      so they are the base now and there is nothing left to override. */
 }
-#loader{background:#262F3B}
+#loader{background:#2D2E31}
 /* The hero used to carry its own film grain. Now that .fl-dither covers the
    whole page, the hero was getting both — so it sat about two levels brighter
    than everything below it, and the hero's bottom edge was exactly where that

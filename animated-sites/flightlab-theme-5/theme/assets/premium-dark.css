@@ -8,7 +8,7 @@
    that was hardcoded light.
 
    Palette matches the homepage exactly:
-     #323D4F page, #38455A secondary, #3F4E66 cards.
+     #3B3C3F page, #434447 secondary, #4C4D50 cards.
    Green is reserved for things you can act on — buttons, active nav, focus,
    badges, prices on sale — so it keeps its value. Everything else is neutral.
    ========================================================================== */
@@ -25,14 +25,14 @@
 
   --color-ink: #E7ECF3;
   --color-ink-soft: rgba(231, 236, 243, 0.60);
-  --color-sand: #38455A;
+  --color-sand: #434447;
   --color-line: rgba(255, 255, 255, 0.08);
   --color-on-dark: #F2F5F9;
   --color-on-dark-soft: rgba(242, 245, 249, 0.62);
 
-  --surface-0: #323D4F;
-  --surface-1: #38455A;
-  --surface-2: #44546D;
+  --surface-0: #3B3C3F;
+  --surface-1: #434447;
+  --surface-2: #525356;
 
   --glass: rgba(255, 255, 255, 0.045);
   --glass-strong: rgba(255, 255, 255, 0.075);
@@ -60,8 +60,8 @@ body {
     radial-gradient(132% 27% at 96% 70%, rgba(60, 224, 255,0.0768), rgba(60, 224, 255,0.0300) 44%, transparent 86%),
     radial-gradient(128% 26% at 4% 83%, rgba(70, 240, 190,0.0732), rgba(70, 240, 190,0.0282) 44%, transparent 86%),
     radial-gradient(132% 27% at 98% 96%, rgba(96, 146, 255,0.0708), rgba(96, 146, 255,0.0270) 44%, transparent 86%),
-    linear-gradient(180deg, #323D4F 0%, #364256 10%, #3A4961 22%, #3E4E69 34%,
-      #41536F 46%, #405471 56%, #3B4B66 68%, #36445B 80%, #343E4F 90%, #323D4F 100%);
+    linear-gradient(180deg, #3B3C3F 0%, #404144 10%, #47484B 22%, #4C4D50 34%,
+      #515255 46%, #525355 56%, #494A4D 68%, #424346 80%, #3C3E40 90%, #3B3C3F 100%);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-attachment: scroll;
@@ -82,7 +82,7 @@ body {
 
 /* ---------- Header, announcement, bottom nav: subtle glass ---------- */
 .site-header {
-  background: rgba(50,61,79, 0.68);
+  background: rgba(59,60,63, 0.68);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
   backdrop-filter: blur(20px) saturate(150%);
   border-bottom: 1px solid var(--glass-line);
@@ -98,7 +98,7 @@ body {
 }
 
 .mobile-bottom-nav {
-  background: rgba(50,61,79, 0.80);
+  background: rgba(59,60,63, 0.80);
   -webkit-backdrop-filter: blur(18px) saturate(150%);
   backdrop-filter: blur(18px) saturate(150%);
   border-top: 1px solid var(--glass-line);
@@ -114,21 +114,21 @@ body {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
-  .site-header { background: rgba(50,61,79, 0.95); }
-  .mobile-bottom-nav { background: rgba(50,61,79, 0.96); }
+  .site-header { background: rgba(59,60,63, 0.95); }
+  .mobile-bottom-nav { background: rgba(59,60,63, 0.96); }
 }
 
 .mobile-menu__panel { background: var(--surface-1); }
 .mobile-menu__backdrop,
-.cart-drawer__backdrop { background: rgba(33,40,51, 0.66); }
+.cart-drawer__backdrop { background: rgba(38,40,42, 0.66); }
 
 /* ---------- Surfaces that were hardcoded light ---------- */
 .discovery-card {
-  background: linear-gradient(180deg, #44546D, #3F4E66);
+  background: linear-gradient(180deg, #525356, #4C4D50);
   border-color: var(--glass-line);
 }
 .discovery-card:hover {
-  background: linear-gradient(180deg, #4A5C7B, #435169);
+  background: linear-gradient(180deg, #5A5B5E, #4F5053);
   border-color: rgba(62, 207, 142, 0.34);
   box-shadow: var(--shadow-lift);
 }
@@ -194,16 +194,16 @@ input::placeholder, textarea::placeholder { color: rgba(231, 236, 243, 0.36); }
 .product-gallery__thumb.is-active { border-color: var(--color-signal); }
 
 .brand-story__media,
-.article-card__media { background: linear-gradient(160deg, #3F4E66, #323D4F); }
-.category-card__media { background: linear-gradient(150deg, #3F4E66 0%, #38455A 55%, #323D4F 100%); }
-.community__media { background: linear-gradient(120deg, #3C4A64 0%, #323D4F 60%, #38455A 100%); }
+.article-card__media { background: linear-gradient(160deg, #4C4D50, #3B3C3F); }
+.category-card__media { background: linear-gradient(150deg, #4C4D50 0%, #434447 55%, #3B3C3F 100%); }
+.community__media { background: linear-gradient(120deg, #494A4C 0%, #3B3C3F 60%, #434447 100%); }
 .beginner-guide__media {
   background:
     radial-gradient(90% 90% at 20% 15%, rgba(62, 207, 142, 0.10) 0%, transparent 55%),
-    linear-gradient(200deg, #3F4E66 0%, #323D4F 100%);
+    linear-gradient(200deg, #4C4D50 0%, #3B3C3F 100%);
 }
 .hero__media--placeholder {
-  background: linear-gradient(158deg, #323D4F 0%, #38455A 58%, #323D4F 100%);
+  background: linear-gradient(158deg, #3B3C3F 0%, #434447 58%, #3B3C3F 100%);
 }
 
 /* ---------- Green, used sparingly ----------
@@ -337,7 +337,7 @@ html::before {
       rgba(248, 252, 255, 0.052) 27%,
       rgba(248, 252, 255, 0.016) 45%,
       rgba(255, 255, 255, 0)     66%),
-    linear-gradient(180deg, rgba(68,83,107, 0.50), rgba(57,71,92, 0.58));
+    linear-gradient(180deg, rgba(81,82,85, 0.50), rgba(69,70,73, 0.58));
   background-repeat: no-repeat;
   background-size: 100% 300%, 100% 100%;
   background-position: 0 20%, 0 0;
@@ -371,7 +371,7 @@ html::before {
       rgba(248, 252, 255, 0.052) 27%,
       rgba(248, 252, 255, 0.016) 45%,
       rgba(255, 255, 255, 0)     66%),
-    linear-gradient(180deg, rgba(68,83,107, 0.50), rgba(57,71,92, 0.58));
+    linear-gradient(180deg, rgba(81,82,85, 0.50), rgba(69,70,73, 0.58));
   background-size: 100% 300%, 100% 100%;
   background-position: 0 56%, 0 0;
   border-top-color: rgba(255, 255, 255, 0.26);
@@ -405,7 +405,7 @@ html::before {
 .community__media,
 .beginner-guide__media,
 .hero__media--placeholder {
-  background: linear-gradient(150deg, rgba(37,47,64, 0.13), rgba(33,42,55, 0.21));
+  background: linear-gradient(150deg, rgba(46,47,49, 0.13), rgba(40,41,44, 0.21));
   box-shadow: inset 0 -1px 0 rgba(248, 252, 255, 0.035);
 }
 
@@ -506,7 +506,7 @@ html::before {
 .site-footer__bottom { border-top-color: var(--edge-bot); }
 .cart-drawer__panel,
 .mobile-menu__panel {
-  background-image: linear-gradient(180deg, rgba(68,83,107, 0.30), rgba(57,71,92, 0.16));
+  background-image: linear-gradient(180deg, rgba(81,82,85, 0.30), rgba(69,70,73, 0.16));
   box-shadow: inset 1px 0 0 var(--lit-top);
 }
 .cart-drawer__foot {
