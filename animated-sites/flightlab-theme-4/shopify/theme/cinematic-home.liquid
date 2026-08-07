@@ -805,9 +805,20 @@ function flDrawA(){
   const tx=flsvg.querySelector('.fl-ly text'); if(!tx) return;
   let e; try{e=tx.getExtentOfChar(7)}catch(err){return}
   if(!e||!e.height||!e.width) return;
+  /* Ingen canvas-maaling lenger. Den matchet fontstrengen paa nytt og traff
+     ikke alltid samme font som SVG-en tegner med - er ikke Inter inne i det
+     oyeblikket, maales fallback-fonten, ascent spriker, og A-en havner i
+     luften. Det slo ut paa telefon og ikke paa PC, fordi PC-en rekker aa laste
+     fonten foer maalingen.
+
+     Tallene er Inters egne, faste forhold: kapshoyde 0.727 av em, ascent
+     0.9688. getExtentOfChar gir toppen av linjeboksen, saa grunnlinjen ligger
+     ascent ned fra den og kapslinjen kapshoyde over grunnlinjen. Alt regnes ut
+     av font-size, som flFit selv nettopp har satt i piksler - ingenting kan
+     sprike, og telefon og PC faar identisk resultat uansett nettverk. */
   const cs=getComputedStyle(tx), fs=parseFloat(cs.fontSize);
-  const m=flMetrics(cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily,fs);
-  const top=e.y+m.asc-m.cap, C=m.cap;
+  const CAP=.727, ASC=.9688;
+  const top=e.y+fs*(ASC-CAP), C=fs*CAP;
   /* 103% og sentrert var for mye av det gode: venstre fot naadde helt bort i
      L-ens fot, og en A hvis fot ligger inntil nabobokstaven leses som om den
      staar inni den. Nede er A-en paa sitt bredeste, saa det er der det merkes.
