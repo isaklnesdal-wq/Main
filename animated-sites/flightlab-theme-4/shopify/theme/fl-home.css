@@ -7,10 +7,10 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-/* overflow-x paa body alene stopper ikke rullingen: naar rotelementet er det
-   som flyter over, maa html ha den ogsaa. De dekorative kaustikkflatene er
-   bredere enn telefonen med vilje, og uten dette gir de 11 px sidelengs drag. */
-html{overflow-x:hidden}
+/* IKKE overflow-x:hidden paa html. Det gjor rotelementet til en
+   scroll-container, og da slutter position:sticky aa virke i alt som ligger
+   under - altsaa hver eneste pinnede scene paa forsiden. Sidelengs drag loses
+   paa elementet som faktisk flyter over, ikke paa roten. */
 body{background:var(--paper);color:var(--ink);font-family:var(--b);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
