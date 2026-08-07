@@ -529,8 +529,11 @@ footer{border-top:none!important}
 /* Vekten paa egen rad. Den stod ytterst paa plastlinjen og endte visuelt
    inntil prisen, saa "176 g" og "179 kr" leste som ett felt. To tall med hver
    sin betydning trenger hver sin linje. */
-.pcard .wt{font-family:var(--b);font-size:11px;color:var(--mut);opacity:.7;
-  display:block;margin-top:1px;font-variant-numeric:tabular-nums}
+/* Vekten stod paa --mut ganget med opacity .7, altsaa effektiv alfa .39 mot en
+   flate paa L*20 - rundt 2.6:1, godt under grensen for lesbar tekst. Ingen
+   opacity her: dempingen ligger i fargen selv, saa den er maalbar. */
+.pcard .wt{font-family:var(--b);font-size:12px;color:rgba(232,237,244,.78);
+  display:block;margin-top:3px;letter-spacing:.01em;font-variant-numeric:tabular-nums}
 @media(max-width:560px){.pgrid>.pcard{grid-row:span 6}}
 .pcard,.acard{
   background:linear-gradient(180deg,#37455B,#3D3E41);
