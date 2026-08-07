@@ -1214,24 +1214,24 @@ const AMB=[
   /* Crystal blue and ice blue. Both were too saturated before — an electric
      blue and a cyan, which are lit colours rather than cold ones. Crystal and
      ice are pale and nearly grey; what they carry is temperature, not hue. */
-  [0.00,[146,190,232,.171],[186,222,240,.157],[44,58,90,.139]],
+  [0.00,[146,190,232,.219],[186,222,240,.201],[44,58,90,.178]],
   /* Midnight violet and deep indigo. The magenta that stood here was the one
      field on the page you could have named from across the room, and naming it
      is the failure. Indigo sits between violet and the hero's blue, so the
      discs are reached through the colour before them rather than against it.
      The electric blue stays, small, as a reflection thrown forward. */
-  [0.28,[124,72,214,.200],[96,78,200,.184],[72,140,235,.132]],
+  [0.28,[124,72,214,.256],[96,78,200,.236],[72,140,235,.169]],
   /* Smoky bronze, soft amber, warm graphite. Smoke means grey in it: the
      bronze is pulled well off full saturation so the warmth arrives as a
      change of temperature and not as a brown. */
   /* Electric blue faar staa alene et stykke foer bronsen tar over, saa reisen
      er violett -> blaatt -> varmt i stedet for violett rett i brunt. */
-  [0.47,[58,134,255,.196],[96,150,240,.178],[72,120,200,.140]],
-  [0.62,[158,120,84,.179],[214,164,102,.164],[118,104,92,.146]],
+  [0.47,[58,134,255,.251],[96,150,240,.228],[72,120,200,.179]],
+  [0.62,[158,120,84,.229],[214,164,102,.210],[118,104,92,.187]],
   /* Deep emerald, dark teal, petrol. */
-  [0.85,[34,150,104,.179],[28,112,124,.164],[36,96,116,.146]],
+  [0.85,[34,150,104,.229],[28,112,124,.210],[36,96,116,.187]],
   /* Deep graphite and dark navy: the room it started in. */
-  [1.00,[44,50,60,.164],[38,54,92,.154],[42,48,66,.136]]
+  [1.00,[44,50,60,.210],[38,54,92,.197],[42,48,66,.174]]
 ];
 let ambP=0, ambRoot=document.documentElement, ambLast='';
 function ambMix(t){
@@ -1351,7 +1351,7 @@ const priceText=d=>{const p=FLPRICE[d.h];return p&&p.text?p.text:'179 kr'};
 
 function card(d){return '<a class="pcard rv" href="/products/'+d.h+'"><div class="dw">'+disc3(d.b,d.m,d.n)+'</div><div class="shadow"></div>'+
   '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span>'+
-  (d.p?'<span class="pw">'+d.p.join(' · ')+'<i>'+d.w[0]+'–'+d.w[1]+' g</i></span>':'')+
+  (d.p?'<span class="pw">'+d.p.join(' · ')+'</span><span class="wt">'+d.w[0]+'–'+d.w[1]+' g</span>':'')+
   '<span class="pr">'+priceText(d)+'</span></a>';}
 
 /* ---- catalogue filter: brand, type, price ---- */

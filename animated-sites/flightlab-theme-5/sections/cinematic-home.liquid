@@ -431,7 +431,6 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
   </div>
 </section>
 
-<<<<<<< new
         <!-- LEFT side pocket + white bottle -->
         <path d="M100 208 C74 212 66 236 66 268 L66 330 C66 356 82 368 102 368 L102 208 Z" fill="#000" opacity=".4" filter="url(#bgSoft)"/>
         <rect x="74" y="176" width="26" height="70" rx="10" fill="url(#bgBottle)"/>
@@ -442,66 +441,6 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
         <path d="M100 210 C78 214 70 236 70 266" stroke="rgba(255,255,255,.12)" stroke-width="2" fill="none"/>
         <path d="M70 300 q16 6 32 0" stroke="#0c0d0b" stroke-width="4" fill="none"/>
         <circle cx="72" cy="304" r="4" fill="#111" stroke="#3A86FF" stroke-width="1.4"/>
-=======
-<!-- ===== Kapasitetsvelgeren: hvor stor bag trenger du? ===================
-     Glasset er samme materiale som ordmerket i hero. Scrollingen fyller det
-     med discer og tenner modellen som tar akkurat saa mange. ============== -->
-<section id="bagcap">
-  <div class="pin">
-    <div class="inner">
-      <div class="glass"><svg viewBox="0 0 360 530" xmlns="http://www.w3.org/2000/svg" role="img"
-     aria-label="Discgolf-bag i glass som fylles med discer">
-  <defs>
-    <!-- perlen: lys -> moerk -> lys tvers over kanten, som paa referansen -->
-    <linearGradient id="capBead" x1=".08" y1="0" x2=".92" y2="1">
-      <stop offset="0"   stop-color="#F2FCFF" stop-opacity=".95"/>
-      <stop offset=".22" stop-color="#BFE6FA" stop-opacity=".55"/>
-      <stop offset=".45" stop-color="#2E4B66" stop-opacity=".45"/>
-      <stop offset=".68" stop-color="#9FD8F2" stop-opacity=".60"/>
-      <stop offset="1"   stop-color="#EAFAFF" stop-opacity=".92"/>
-    </linearGradient>
-    <linearGradient id="capMid" x1="0" y1="0" x2=".6" y2="1">
-      <stop offset="0" stop-color="#CFEEFC" stop-opacity=".40"/>
-      <stop offset=".5" stop-color="#7FB6D8" stop-opacity=".26"/>
-      <stop offset="1" stop-color="#DCF4FF" stop-opacity=".44"/>
-    </linearGradient>
-    <!-- kroppen: klarest nede, der glasset samler lyset -->
-    <linearGradient id="capBody" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#9EC8E4" stop-opacity=".05"/>
-      <stop offset=".55" stop-color="#B6DCF2" stop-opacity=".09"/>
-      <stop offset="1" stop-color="#DAF2FF" stop-opacity=".17"/>
-    </linearGradient>
-    <radialGradient id="capCaus" cx=".5" cy=".5" r=".5">
-      <stop offset="0" stop-color="#EAFFF7" stop-opacity=".40"/>
-      <stop offset=".32" stop-color="#3A86FF" stop-opacity=".22"/>
-      <stop offset=".7" stop-color="#3A86FF" stop-opacity=".06"/>
-      <stop offset="1" stop-color="#3A86FF" stop-opacity="0"/></radialGradient>
-    <linearGradient id="capSpec" x1=".1" y1="0" x2=".5" y2="1">
-      <stop offset="0" stop-color="#fff"/><stop offset=".17" stop-color="#fff"/>
-      <stop offset=".31" stop-color="#000"/><stop offset="1" stop-color="#000"/></linearGradient>
-    <mask id="capSpecPos"><rect width="360" height="530" fill="url(#capSpec)"/></mask>
-    <linearGradient id="capReflFade" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fff" stop-opacity=".5"/>
-      <stop offset=".55" stop-color="#fff" stop-opacity=".07"/>
-      <stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-    <mask id="capReflMask"><rect y="428" width="360" height="102" fill="url(#capReflFade)"/></mask>
-    <filter id="capBlur" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="2.4"/></filter>
-    <clipPath id="capBodyClip"><path d="M112 126 C112 110 138 102 180 102 C222 102 248 110 248 126 L268 364 C272 400 232 424 180 424 C128 424 88 400 92 364 Z"/></clipPath>
-    <radialGradient id="dA" cx=".36" cy=".28" r=".85">
-      <stop offset="0" stop-color="#EAF9FF" stop-opacity=".98"/>
-      <stop offset=".45" stop-color="#8EC6E8" stop-opacity=".62"/>
-      <stop offset="1" stop-color="#2C4560" stop-opacity=".34"/></radialGradient>
-    <radialGradient id="dB" cx=".42" cy=".28" r=".85">
-      <stop offset="0" stop-color="#D8F3FE" stop-opacity=".88"/>
-      <stop offset=".45" stop-color="#6BA4C8" stop-opacity=".54"/>
-      <stop offset="1" stop-color="#22364C" stop-opacity=".32"/></radialGradient>
-    <radialGradient id="dC" cx=".46" cy=".26" r=".85">
-      <stop offset="0" stop-color="#C8F0E2" stop-opacity=".80"/>
-      <stop offset=".45" stop-color="#59AE95" stop-opacity=".48"/>
-      <stop offset="1" stop-color="#1F3A34" stop-opacity=".30"/></radialGradient>
-  </defs>
->>>>>>> theme5
 
   <!-- speilbildet i gulvet -->
   <g mask="url(#capReflMask)" filter="url(#capBlur)" opacity=".5"
@@ -513,7 +452,6 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
   <!-- kaustikken: lyset glasset samler og slipper ut i bunnen -->
   <ellipse class="caustic" id="capCausEl" cx="180" cy="432" rx="140" ry="24"/>
 
-<<<<<<< new
         <!-- TAN front flap (folds down on scroll) -->
         <g id="bagflap">
           <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="url(#bgTan)" filter="url(#bgFab)"/>
@@ -530,11 +468,6 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
           </g>
           <path d="M124 214 h112 a18 18 0 0 1 18 18 v118 a18 18 0 0 1 -18 18 h-112 a18 18 0 0 1 -18 -18 v-118 a18 18 0 0 1 18 -18 Z" fill="none" stroke="#050605" stroke-width="1.5" opacity=".5"/>
         </g>
-=======
-  <!-- baerehank -->
-  <path class="gl-thick" d="M152 104 Q180 68 208 104" fill="none"/>
-  <path class="gl-bead"  d="M152 104 Q180 68 208 104" fill="none"/>
->>>>>>> theme5
 
   <!-- kroppen -->
   <path class="gl-fill" d="M112 126 C112 110 138 102 180 102 C222 102 248 110 248 126 L268 364 C272 400 232 424 180 424 C128 424 88 400 92 364 Z"/>
@@ -581,7 +514,6 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
   </div>
 </section>
 
-<<<<<<< new
 <!-- ===== Guider =========================================================
      Skrevet i forsidens eget vokabular - .sec, .wrap, .sec-head, .rv - og
      ikke i det fra sections.css. Seksjonsfilene beginner-guide.liquid og
@@ -621,192 +553,6 @@ window.FL_SCENE_BG={src:{{ bg | image_url: width: bgw | json }},srcset:{{ bg_src
     <p class="gnote rv">Lette discer, 150–165 g, er lettere å få opp i fart. Tyngre discer står støere i vind.</p>
   </div>
 </section>
-=======
-<!-- ===== Merkene: stablede paneler ======================================
-     Hvert merke er sitt eget panel som legger seg over det forrige mens du
-     scroller. Fargen straaler ut fra platen selv og doer ut foer den naar
-     teksten, saa den leses som lys fra objektet og ikke som en farget boks.
-     Klikk setter merkefilteret i katalogen og tar deg tilbake dit.
-     ==================================================================== -->
-<section id="merker">
-  <div class="wrap">
-    <div class="bhead">
-      <div class="k">// Merkene</div>
-      <h2>Plasten vi <em>fører</em></h2>
-      <p class="lede">Fem produsenter, hver med sin egen følelse i hånden. Trykk på et
-        merke, så filtrerer vi katalogen ned til akkurat det.</p>
-    </div>
-  </div>
-  <div class="bstack" id="bStack">
-      <div class="bslot">
-      <a class="bpan" href="#discer" data-b="Kastaplast"
-         style="--g:rgba(169,201,59,.26);--g2:rgba(169,201,59,.34);--c:#A9C93B">
-        <div class="bplate"><svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <radialGradient id="bpkpf" cx=".34" cy=".28" r=".86">
-              <stop offset="0" stop-color="#C8E05A" stop-opacity=".34"/>
-              <stop offset=".38" stop-color="#A9C93B" stop-opacity=".20"/>
-              <stop offset=".76" stop-color="#22301A" stop-opacity=".97"/>
-              <stop offset="1" stop-color="#0E1408" stop-opacity="1"/>
-            </radialGradient>
-            <radialGradient id="bpkpr" cx=".34" cy=".26" r=".8">
-              <stop offset="0" stop-color="#C8E05A" stop-opacity=".52"/>
-              <stop offset=".5" stop-color="#A9C93B" stop-opacity=".38"/>
-              <stop offset="1" stop-color="#7C9A24" stop-opacity=".28"/>
-            </radialGradient>
-          </defs>
-          <circle cx="200" cy="200" r="146" fill="url(#bpkpr)"/>
-          <circle cx="200" cy="200" r="132" fill="url(#bpkpf)"/>
-          <circle cx="200" cy="200" r="132" fill="none" stroke="#C8E05A" stroke-opacity=".14"/>
-          <circle cx="200" cy="200" r="104" fill="none" stroke="#C8E05A" stroke-opacity=".10"/>
-          <circle cx="200" cy="200" r="76" fill="none" stroke="#C8E05A" stroke-opacity=".07"/>
-          <ellipse cx="160" cy="146" rx="62" ry="34" fill="#fff" fill-opacity=".04"
-                   transform="rotate(-24 160 146)"/>
-        </svg></div>
-        <div class="bin">
-          <div class="bmeta"><span class="bnum">01</span><p>Svensk plast og nordisk formspråk. Rene former, godt grep når det er vått.</p></div>
-          <div class="bname"><h3><span>Kastaplast</span><svg class="barr" viewBox="0 0 44 16" aria-hidden="true">
-            <path d="M0 8h40M33 1l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round"/></svg></h3></div>
-        </div>
-      </a>
-      </div>
-      <div class="bslot">
-      <a class="bpan" href="#discer" data-b="Discmania"
-         style="--g:rgba(74,111,212,.26);--g2:rgba(74,111,212,.34);--c:#24439B">
-        <div class="bplate"><svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <radialGradient id="bpdmf" cx=".34" cy=".28" r=".86">
-              <stop offset="0" stop-color="#4A6FD4" stop-opacity=".34"/>
-              <stop offset=".38" stop-color="#24439B" stop-opacity=".20"/>
-              <stop offset=".76" stop-color="#101B3E" stop-opacity=".97"/>
-              <stop offset="1" stop-color="#070D22" stop-opacity="1"/>
-            </radialGradient>
-            <radialGradient id="bpdmr" cx=".34" cy=".26" r=".8">
-              <stop offset="0" stop-color="#4A6FD4" stop-opacity=".52"/>
-              <stop offset=".5" stop-color="#24439B" stop-opacity=".38"/>
-              <stop offset="1" stop-color="#152A66" stop-opacity=".28"/>
-            </radialGradient>
-          </defs>
-          <circle cx="200" cy="200" r="146" fill="url(#bpdmr)"/>
-          <circle cx="200" cy="200" r="132" fill="url(#bpdmf)"/>
-          <circle cx="200" cy="200" r="132" fill="none" stroke="#4A6FD4" stroke-opacity=".14"/>
-          <circle cx="200" cy="200" r="104" fill="none" stroke="#4A6FD4" stroke-opacity=".10"/>
-          <circle cx="200" cy="200" r="76" fill="none" stroke="#4A6FD4" stroke-opacity=".07"/>
-          <ellipse cx="160" cy="146" rx="62" ry="34" fill="#fff" fill-opacity=".04"
-                   transform="rotate(-24 160 146)"/>
-        </svg></div>
-        <div class="bin">
-          <div class="bmeta"><span class="bnum">02</span><p>Finsk presisjon. Bygget for spillere som vil ha forutsigbar flukt.</p></div>
-          <div class="bname"><h3><span>Discmania</span><svg class="barr" viewBox="0 0 44 16" aria-hidden="true">
-            <path d="M0 8h40M33 1l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round"/></svg></h3></div>
-        </div>
-      </a>
-      </div>
-      <div class="bslot">
-      <a class="bpan" href="#discer" data-b="Latitude 64"
-         style="--g:rgba(242,183,5,.26);--g2:rgba(242,183,5,.34);--c:#F2B705">
-        <div class="bplate"><svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <radialGradient id="bpl64f" cx=".34" cy=".28" r=".86">
-              <stop offset="0" stop-color="#FFD34D" stop-opacity=".34"/>
-              <stop offset=".38" stop-color="#F2B705" stop-opacity=".20"/>
-              <stop offset=".76" stop-color="#2E2408" stop-opacity=".97"/>
-              <stop offset="1" stop-color="#141003" stop-opacity="1"/>
-            </radialGradient>
-            <radialGradient id="bpl64r" cx=".34" cy=".26" r=".8">
-              <stop offset="0" stop-color="#FFD34D" stop-opacity=".52"/>
-              <stop offset=".5" stop-color="#F2B705" stop-opacity=".38"/>
-              <stop offset="1" stop-color="#B98603" stop-opacity=".28"/>
-            </radialGradient>
-          </defs>
-          <circle cx="200" cy="200" r="146" fill="url(#bpl64r)"/>
-          <circle cx="200" cy="200" r="132" fill="url(#bpl64f)"/>
-          <circle cx="200" cy="200" r="132" fill="none" stroke="#FFD34D" stroke-opacity=".14"/>
-          <circle cx="200" cy="200" r="104" fill="none" stroke="#FFD34D" stroke-opacity=".10"/>
-          <circle cx="200" cy="200" r="76" fill="none" stroke="#FFD34D" stroke-opacity=".07"/>
-          <ellipse cx="160" cy="146" rx="62" ry="34" fill="#fff" fill-opacity=".04"
-                   transform="rotate(-24 160 146)"/>
-        </svg></div>
-        <div class="bin">
-          <div class="bmeta"><span class="bnum">03</span><p>Fra Skövde i Sverige. Lange, kontrollerte linjer for åpne baner.</p></div>
-          <div class="bname"><h3><span>Latitude 64</span><svg class="barr" viewBox="0 0 44 16" aria-hidden="true">
-            <path d="M0 8h40M33 1l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round"/></svg></h3></div>
-        </div>
-      </a>
-      </div>
-      <div class="bslot">
-      <a class="bpan" href="#discer" data-b="Westside"
-         style="--g:rgba(201,69,59,.26);--g2:rgba(201,69,59,.34);--c:#C9453B">
-        <div class="bplate"><svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <radialGradient id="bpwsf" cx=".34" cy=".28" r=".86">
-              <stop offset="0" stop-color="#E06A5A" stop-opacity=".34"/>
-              <stop offset=".38" stop-color="#C9453B" stop-opacity=".20"/>
-              <stop offset=".76" stop-color="#301A17" stop-opacity=".97"/>
-              <stop offset="1" stop-color="#140807" stop-opacity="1"/>
-            </radialGradient>
-            <radialGradient id="bpwsr" cx=".34" cy=".26" r=".8">
-              <stop offset="0" stop-color="#E06A5A" stop-opacity=".52"/>
-              <stop offset=".5" stop-color="#C9453B" stop-opacity=".38"/>
-              <stop offset="1" stop-color="#8F2A24" stop-opacity=".28"/>
-            </radialGradient>
-          </defs>
-          <circle cx="200" cy="200" r="146" fill="url(#bpwsr)"/>
-          <circle cx="200" cy="200" r="132" fill="url(#bpwsf)"/>
-          <circle cx="200" cy="200" r="132" fill="none" stroke="#E06A5A" stroke-opacity=".14"/>
-          <circle cx="200" cy="200" r="104" fill="none" stroke="#E06A5A" stroke-opacity=".10"/>
-          <circle cx="200" cy="200" r="76" fill="none" stroke="#E06A5A" stroke-opacity=".07"/>
-          <ellipse cx="160" cy="146" rx="62" ry="34" fill="#fff" fill-opacity=".04"
-                   transform="rotate(-24 160 146)"/>
-        </svg></div>
-        <div class="bin">
-          <div class="bmeta"><span class="bnum">04</span><p>Kraft og stabilitet når det blåser. Laget for motvind.</p></div>
-          <div class="bname"><h3><span>Westside</span><svg class="barr" viewBox="0 0 44 16" aria-hidden="true">
-            <path d="M0 8h40M33 1l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round"/></svg></h3></div>
-        </div>
-      </a>
-      </div>
-      <div class="bslot">
-      <a class="bpan" href="#discer" data-b="Dynamic Discs"
-         style="--g:rgba(59,169,201,.26);--g2:rgba(59,169,201,.34);--c:#3BA9C9">
-        <div class="bplate"><svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <radialGradient id="bpddf" cx=".34" cy=".28" r=".86">
-              <stop offset="0" stop-color="#5AC8E0" stop-opacity=".34"/>
-              <stop offset=".38" stop-color="#3BA9C9" stop-opacity=".20"/>
-              <stop offset=".76" stop-color="#17282E" stop-opacity=".97"/>
-              <stop offset="1" stop-color="#081013" stop-opacity="1"/>
-            </radialGradient>
-            <radialGradient id="bpddr" cx=".34" cy=".26" r=".8">
-              <stop offset="0" stop-color="#5AC8E0" stop-opacity=".52"/>
-              <stop offset=".5" stop-color="#3BA9C9" stop-opacity=".38"/>
-              <stop offset="1" stop-color="#247C9A" stop-opacity=".28"/>
-            </radialGradient>
-          </defs>
-          <circle cx="200" cy="200" r="146" fill="url(#bpddr)"/>
-          <circle cx="200" cy="200" r="132" fill="url(#bpddf)"/>
-          <circle cx="200" cy="200" r="132" fill="none" stroke="#5AC8E0" stroke-opacity=".14"/>
-          <circle cx="200" cy="200" r="104" fill="none" stroke="#5AC8E0" stroke-opacity=".10"/>
-          <circle cx="200" cy="200" r="76" fill="none" stroke="#5AC8E0" stroke-opacity=".07"/>
-          <ellipse cx="160" cy="146" rx="62" ry="34" fill="#fff" fill-opacity=".04"
-                   transform="rotate(-24 160 146)"/>
-        </svg></div>
-        <div class="bin">
-          <div class="bmeta"><span class="bnum">05</span><p>Amerikansk allround. Puttere og drivere som holder linja under press.</p></div>
-          <div class="bname"><h3><span>Dynamic Discs</span><svg class="barr" viewBox="0 0 44 16" aria-hidden="true">
-            <path d="M0 8h40M33 1l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round"/></svg></h3></div>
-        </div>
-      </a>
-      </div>
-  </div>
-</section>
-
->>>>>>> theme5
 <section class="sec dark">
   <div class="wrap" style="text-align:center">
     <div class="eyebrow rv" style="color:var(--signal)">// Vi fører</div>
@@ -1732,24 +1478,24 @@ const AMB=[
   /* Crystal blue and ice blue. Both were too saturated before — an electric
      blue and a cyan, which are lit colours rather than cold ones. Crystal and
      ice are pale and nearly grey; what they carry is temperature, not hue. */
-  [0.00,[146,190,232,.171],[186,222,240,.157],[44,58,90,.139]],
+  [0.00,[146,190,232,.219],[186,222,240,.201],[44,58,90,.178]],
   /* Midnight violet and deep indigo. The magenta that stood here was the one
      field on the page you could have named from across the room, and naming it
      is the failure. Indigo sits between violet and the hero's blue, so the
      discs are reached through the colour before them rather than against it.
      The electric blue stays, small, as a reflection thrown forward. */
-  [0.28,[124,72,214,.200],[96,78,200,.184],[72,140,235,.132]],
+  [0.28,[124,72,214,.256],[96,78,200,.236],[72,140,235,.169]],
   /* Smoky bronze, soft amber, warm graphite. Smoke means grey in it: the
      bronze is pulled well off full saturation so the warmth arrives as a
      change of temperature and not as a brown. */
   /* Electric blue faar staa alene et stykke foer bronsen tar over, saa reisen
      er violett -> blaatt -> varmt i stedet for violett rett i brunt. */
-  [0.47,[58,134,255,.196],[96,150,240,.178],[72,120,200,.140]],
-  [0.62,[158,120,84,.179],[214,164,102,.164],[118,104,92,.146]],
+  [0.47,[58,134,255,.251],[96,150,240,.228],[72,120,200,.179]],
+  [0.62,[158,120,84,.229],[214,164,102,.210],[118,104,92,.187]],
   /* Deep emerald, dark teal, petrol. */
-  [0.85,[34,150,104,.179],[28,112,124,.164],[36,96,116,.146]],
+  [0.85,[34,150,104,.229],[28,112,124,.210],[36,96,116,.187]],
   /* Deep graphite and dark navy: the room it started in. */
-  [1.00,[44,50,60,.164],[38,54,92,.154],[42,48,66,.136]]
+  [1.00,[44,50,60,.210],[38,54,92,.197],[42,48,66,.174]]
 ];
 let ambP=0, ambRoot=document.documentElement, ambLast='';
 function ambMix(t){
@@ -1869,7 +1615,7 @@ const priceText=d=>{const p=FLPRICE[d.h];return p&&p.text?p.text:'179 kr'};
 
 function card(d){return '<a class="pcard rv" href="/products/'+d.h+'"><div class="dw">'+disc3(d.b,d.m,d.n)+'</div><div class="shadow"></div>'+
   '<h3>'+d.b+' '+d.m+'</h3><span class="cls">'+d.c+'</span><span class="fn">'+d.n.join(' · ')+'</span>'+
-  (d.p?'<span class="pw">'+d.p.join(' · ')+'<i>'+d.w[0]+'–'+d.w[1]+' g</i></span>':'')+
+  (d.p?'<span class="pw">'+d.p.join(' · ')+'</span><span class="wt">'+d.w[0]+'–'+d.w[1]+' g</span>':'')+
   '<span class="pr">'+priceText(d)+'</span></a>';}
 
 /* ---- catalogue filter: brand, type, price ---- */

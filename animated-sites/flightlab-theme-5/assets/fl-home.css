@@ -7,6 +7,10 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
+/* overflow-x paa body alene stopper ikke rullingen: naar rotelementet er det
+   som flyter over, maa html ha den ogsaa. De dekorative kaustikkflatene er
+   bredere enn telefonen med vilje, og uten dette gir de 11 px sidelengs drag. */
+html{overflow-x:hidden}
 body{background:var(--paper);color:var(--ink);font-family:var(--b);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
@@ -510,9 +514,12 @@ footer{border-top:none!important}
    bestemt plast leter etter et ord, ikke et tall, saa de to skal ikke staa i
    samme rad og slaass. Vekten settes i kursiv til hoyre av samme grunn. */
 .pcard .pw{font-family:var(--b);font-size:11px;letter-spacing:.02em;color:var(--mut);
-  display:flex;justify-content:space-between;gap:8px;align-items:baseline;
-  margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pcard .pw i{font-style:normal;opacity:.72;flex:none;font-variant-numeric:tabular-nums}
+  display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Vekten paa egen rad. Den stod ytterst paa plastlinjen og endte visuelt
+   inntil prisen, saa "176 g" og "179 kr" leste som ett felt. To tall med hver
+   sin betydning trenger hver sin linje. */
+.pcard .wt{font-family:var(--b);font-size:11px;color:var(--mut);opacity:.7;
+  display:block;margin-top:1px;font-variant-numeric:tabular-nums}
 @media(max-width:560px){.pgrid>.pcard{grid-row:span 6}}
 .pcard,.acard{
   background:linear-gradient(180deg,#37455B,#3D3E41);
