@@ -1,5 +1,5 @@
 :root{
-  --paper:#FAF9F5; --ink:#0A1614; --forest:#7C4DFF; --signal:#3A86FF; --gold:#D4AF37;
+  --paper:#FAF9F5; --ink:#0A1614; --forest:#7C4DFF; --signal:#3A86FF; --gold:#F0C33C;
   --teal:#7C4DFF; --mut:#6b7d72; --line:rgba(10,22,20,.12);
   --glass:rgba(255,255,255,.24); --glass2:rgba(255,255,255,.46); --glassbrd:rgba(255,255,255,.6);
   --blur:blur(24px) saturate(190%);
@@ -342,7 +342,7 @@ footer{background:#eef4f1;color:var(--ink);padding:clamp(60px,9vh,110px) 0 40px}
 :root{
   --paper:#1A1C1E; --ink:#E8EDF4; --mut:rgba(232,237,244,.56);
   --line:rgba(255,255,255,.09);
-  --signal:#3A86FF; --forest:#7C4DFF; --teal:#7C4DFF; --gold:#D4AF37;
+  --signal:#3A86FF; --forest:#7C4DFF; --teal:#7C4DFF; --gold:#F0C33C;
   --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.07);
   --glassbrd:rgba(255,255,255,.12); --blur:blur(22px) saturate(150%);
   --surf2:#343538; --surf3:#2D2E31; --surf4:#3D3E41;
@@ -412,8 +412,9 @@ body::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;
     /* BAGS — warm graphite carried by the ramp, bronze and amber over it. The
        swing from violet to warm is the largest on the page and it is spread
        across fourteen per cent of the document so that none of it is an edge. */
-    radial-gradient(152% 31% at 96% 62%,rgba(176,124,72,.080),rgba(176,124,72,.030) 46%,transparent 88%),
-    radial-gradient(150% 30% at 5% 71%,rgba(224,166,90,.075),rgba(224,166,90,.028) 46%,transparent 88%),
+    radial-gradient(152% 31% at 96% 61%,rgba(204,156,66,.092),rgba(204,156,66,.034) 46%,transparent 88%),
+    radial-gradient(150% 30% at 5% 70%,rgba(236,190,92,.086),rgba(236,190,92,.032) 46%,transparent 88%),
+    radial-gradient(150% 28% at 92% 78%,rgba(214,168,74,.078),rgba(214,168,74,.029) 46%,transparent 88%),
 
     /* ACCESSORIES — deep emerald, dark teal, and a small petrol reflection. */
     radial-gradient(150% 28% at 95% 82%,rgba(38,168,112,.080),rgba(38,168,112,.030) 46%,transparent 88%),
