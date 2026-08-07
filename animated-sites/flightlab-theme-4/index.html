@@ -1968,19 +1968,36 @@ function flDrawA(){
   const tx=flsvg.querySelector('.fl-ly text'); if(!tx) return;
   let e; try{e=tx.getExtentOfChar(7)}catch(err){return}
   if(!e||!e.height||!e.width) return;
-  /* Ingen canvas-maaling lenger. Den matchet fontstrengen paa nytt og traff
-     ikke alltid samme font som SVG-en tegner med - er ikke Inter inne i det
-     oyeblikket, maales fallback-fonten, ascent spriker, og A-en havner i
-     luften. Det slo ut paa telefon og ikke paa PC, fordi PC-en rekker aa laste
-     fonten foer maalingen.
+  /* Kapshoyden maales paa det faktisk rendrede blekket, ikke paa antatte tall.
 
-     Tallene er Inters egne, faste forhold: kapshoyde 0.727 av em, ascent
-     0.9688. getExtentOfChar gir toppen av linjeboksen, saa grunnlinjen ligger
-     ascent ned fra den og kapslinjen kapshoyde over grunnlinjen. Alt regnes ut
-     av font-size, som flFit selv nettopp har satt i piksler - ingenting kan
-     sprike, og telefon og PC faar identisk resultat uansett nettverk. */
+     Tidligere sto Inters egne forhold hardkodet her. Det er riktig bare hvis
+     Inter faktisk er fonten som havner paa skjermen. Den lastes med
+     display=swap, saa nettleseren tegner enhetens sans-serif foerst og bytter
+     naar Inter kommer - og enhetens sans-serif er ikke den samme paa telefon
+     som paa PC. Roboto og SF Pro har lavere kapshoyde enn Inter, saa A-en ble
+     tegnet for hoyt i forhold til bokstavene rundt. Det er derfor den svevde
+     paa telefon og sto stille paa PC.
+
+     Naa tegnes en enkelt B i den samme beregnede fonten paa et lite canvas, og
+     bildepunktene skannes ovenfra til foerste rad med blekk. Det gir kapshoyden
+     til den fonten som virkelig brukes i oyeblikket, uten aa vite hvilken det
+     er. Slaar maalingen feil, faller vi tilbake paa Inters tall. */
   const cs=getComputedStyle(tx), fs=parseFloat(cs.fontSize);
-  const CAP=.727, ASC=.9688;
+  let CAP=.727; const ASC=.9688;
+  try{
+    const R=200, cv=document.createElement('canvas');
+    cv.width=R; cv.height=R*2;
+    const g=cv.getContext('2d');
+    g.font=cs.fontWeight+' '+R+'px '+cs.fontFamily;
+    g.textBaseline='alphabetic'; g.fillStyle='#000';
+    g.fillText('B', 10, R*1.5);
+    const d=g.getImageData(0,0,R,R*2).data;
+    let top=-1;
+    for(let y=0;y<R*2&&top<0;y++){
+      for(let x=0;x<R;x++){ if(d[(y*R+x)*4+3]>40){top=y;break} }
+    }
+    if(top>0){ const c=(R*1.5-top)/R; if(c>.5&&c<.95) CAP=c; }
+  }catch(err){}
   const top=e.y+fs*(ASC-CAP), C=fs*CAP;
   /* 103% og sentrert var for mye av det gode: venstre fot naadde helt bort i
      L-ens fot, og en A hvis fot ligger inntil nabobokstaven leses som om den
