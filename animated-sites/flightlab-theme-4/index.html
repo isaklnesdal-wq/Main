@@ -1564,7 +1564,7 @@ if(window.Lenis && !REDUCED && !matchMedia('(pointer:coarse)').matches){
      0.068 is a long tail, about a third of a second to settle, and the wheel is
      geared down slightly so a notch asks for less distance and the tail can be
      that long without the page feeling loose. */
-  lenis=new Lenis({lerp:.068,smoothWheel:true,wheelMultiplier:.85,touchMultiplier:1.4});
+  lenis=new Lenis({lerp:.062,smoothWheel:true,wheelMultiplier:.82,touchMultiplier:1.4});
   (function raf(t){lenis.raf(t);requestAnimationFrame(raf)})();
   document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
     const id=a.getAttribute('href');if(id&&id.length>1&&document.querySelector(id)){e.preventDefault();lenis.scrollTo(id,{duration:1.9,
@@ -1694,9 +1694,28 @@ function flBuildDiscs(){
     L.el.innerHTML=html;
   });
 }
+/* EN GLATTET SCROLLVERDI.
+
+   Paa PC glatter Lenis selve scrollen, saa scrollY er allerede myk naar vi
+   leser den og verdien skal foelges 1:1. Paa telefon er Lenis av - den tar
+   over touch og gjoer det verre, ikke bedre - saa der er scrollY den raa,
+   hakkete verdien fra kompositoren, og alt som tegnes ut fra den arver
+   hakkene. Den eksponentielle etterfoelgeren under koster ingenting og gir
+   telefonen den samme mykheten uten aa roere selve scrollingen.
+
+   Store hopp - ankerklikk, tilbakeknapp, gjenopprettet scrollposisjon - festes
+   umiddelbart i stedet for aa gli over halve dokumentet. */
+let sySm=null;
+function flScrollSmooth(){
+  const y=window.scrollY;
+  if(sySm===null||Math.abs(y-sySm)>700) sySm=y;
+  else sySm += (y-sySm)*(lenis?1:0.16);
+  return sySm;
+}
 function flDiscParallax(y){
   /* Sub-pixel changes are invisible and still cost a style recalculation on
      three elements, so only write when the rounded value actually moves. */
+  y=Math.round(y*2)/2;
   if(y===lastPar) return;
   lastPar=y;
   for(let i=0;i<flLayers.length;i++){
@@ -2184,7 +2203,7 @@ function loop(){
       }
     }
   }
-  flDiscParallax(_y);
+  flDiscParallax(flScrollSmooth());
   ambStep(_y);
   if(prog){const w=(clamp(0,1,_y/GEO.max)*100).toFixed(1)+'%';
     if(w!==lastProg){lastProg=w;prog.style.width=w}}
