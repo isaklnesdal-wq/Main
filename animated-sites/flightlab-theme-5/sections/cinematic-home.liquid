@@ -606,15 +606,15 @@ if(TOUCH){
 let lenis=null;
 if(window.Lenis && !REDUCED && !matchMedia('(pointer:coarse)').matches){
   document.documentElement.style.scrollBehavior='auto';
-  /* Lerp rather than duration. A duration runs a fixed-length curve for every
-     wheel notch, so a second notch mid-flight restarts the easing and the page
-     changes speed under you — that is the mechanical feeling. An exponential
-     approach has no length to restart: new input just moves the target and the
-     page keeps closing on it at the same rate, however many notches arrive.
-     0.068 is a long tail, about a third of a second to settle, and the wheel is
-     geared down slightly so a notch asks for less distance and the tail can be
-     that long without the page feeling loose. */
-  lenis=new Lenis({lerp:.062,smoothWheel:true,wheelMultiplier:.82,touchMultiplier:1.4});
+  /* Lerp rather than duration, av samme grunn som for: en fast varighet starter
+     paa nytt for hvert hjulhakk og gjor at siden skifter fart under deg.
+     Men halen var for lang. .062 er rundt en tredels sekund fra fingeren
+     slipper til siden staar stille, og alt som tegnes ut fra scrollen henger
+     etter i hele den tiden. Det leses ikke som mykt - det leses som tregt.
+     .11 er rundt 90 ms: fortsatt ingen hakk ved retningsskifte, men siden
+     folger haanden i stedet for aa hale etter den. Hjulet er heller ikke
+     lenger giret ned, saa ett hakk flytter like langt som ellers paa nettet. */
+  lenis=new Lenis({lerp:.11,smoothWheel:true,wheelMultiplier:1,touchMultiplier:1.6});
   (function raf(t){lenis.raf(t);requestAnimationFrame(raf)})();
   document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
     const id=a.getAttribute('href');if(id&&id.length>1&&document.querySelector(id)){e.preventDefault();lenis.scrollTo(id,{duration:1.9,
@@ -759,7 +759,7 @@ let sySm=null;
 function flScrollSmooth(){
   const y=window.scrollY;
   if(sySm===null||Math.abs(y-sySm)>700) sySm=y;
-  else sySm += (y-sySm)*(lenis?1:0.16);
+  else sySm += (y-sySm)*(lenis?1:0.34);
   return sySm;
 }
 function flDiscParallax(y){
@@ -1310,7 +1310,7 @@ function loop(){
        scrolled during the hold, the camera still starts from rest and arrives
        without a step. */
     if(!flArmed) pShown=0;
-    else pShown += (pRaw-pShown)*0.055;
+    else pShown += (pRaw-pShown)*0.10;
     const p=pShown;
     const e=smooth(p);
     /* Dolly, not scale. We pick the apparent size we want, then solve for the
