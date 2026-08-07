@@ -1197,6 +1197,25 @@ footer{border-top:1px solid var(--edge-bot)!important}
 #discer,#bager,#tilbehor,#flightguide,#nybegynner,#nl{
   content-visibility:auto;contain-intrinsic-size:auto 1400px}
 
+/* ---- Atmosfaerelagene paa telefon ------------------------------------
+   Maalt med LayerTree paa 390px ved 3x pikselforhold: kaustikken, luften,
+   ambienten og kornet holder hvert sitt komposittlag paa 16-22 MB, til sammen
+   omtrent 99 MB som ligger resident hele siden igjennom. will-change:transform
+   ber nettleseren om aa allokere laget og aldri gi det fra seg igjen.
+
+   PC-en har VRAM til overs og merker det ikke. En telefon har det ikke, og naar
+   budsjettet sprekker kaster den lag og rastrerer dem paa nytt ved neste bilde
+   - som er nettopp det som kjennes som lagg under scroll.
+
+   Kaustikken og kornet koster mest og bidrar minst: begge ligger under .05 i
+   alfa og er ikke synlige for oyet paa en telefonskjerm. De gaar. Luften og
+   ambienten blir staaende, men uten will-change, saa laget lever bare mens de
+   faktisk animeres i heroen og frigjoeres etterpaa. */
+@media(hover:none){
+  .fl-caus-a,.fl-caus-b,.grain{display:none}
+  .fl-air,.fl-amb{will-change:auto}
+}
+
 /* ---- Krystallen paa telefon ------------------------------------------
    Elleve strouklag rastreres paa nytt hvert bilde mens kameraet beveger seg.
    Paa PC er det gratis; paa telefon er det hovedkostnaden i hele siden.
