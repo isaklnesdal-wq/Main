@@ -2509,7 +2509,19 @@ const AMB=[
   /* Deep graphite and dark navy: the room it started in. */
   [1.00,[44,50,60,.210],[38,54,92,.197],[42,48,66,.174]]
 ];
-let ambP=0, ambRoot=document.documentElement, ambLast='';
+/* Variablene skrives paa .fl-amb, ikke paa rotelementet.
+
+   Egendefinerte CSS-variabler arves. Skrives de paa <html>, maa nettleseren
+   regne om stilen for hele dokumentet - alle tre tusen nodene - hver eneste
+   gang en av dem endrer seg. Under rulling endrer de seg nesten hver ramme.
+
+   Maalt paa 1440x900 med fire gangers struping, rulling gjennom heroen:
+   recalcStyle 2109 ms og UpdateLayoutTree 2245 ms, med hakk i 66 av 66 rammer.
+
+   Bare .fl-amb leser --amb1 til --amb3 - tre regler i hele stilarket. Naar de
+   skrives der i stedet, begrenses omregningen til det ene elementet. Gradienten
+   ser noyaktig lik ut; det er bare hvem som eier variablene som endrer seg. */
+let ambP=0, ambRoot=document.querySelector('.fl-amb')||document.documentElement, ambLast='';
 function ambMix(t){
   let i=0; while(i<AMB.length-2&&t>AMB[i+1][0]) i++;
   const A=AMB[i],B=AMB[i+1];
