@@ -3610,6 +3610,14 @@ document.getElementById('nlform').addEventListener('submit',e=>{e.preventDefault
   min-height:52px}
 #fld-run:disabled{background:#2A3644;color:var(--mut);cursor:default}
 #fld-run:focus-visible{outline:3px solid #fff;outline-offset:2px}
+#fld-still{appearance:none;border:0;cursor:pointer;width:100%;font-family:inherit;
+  font-weight:600;font-size:16px;color:#04120B;background:var(--acc);border-radius:12px;
+  padding:15px 18px;margin:2px 0 10px;min-height:52px}
+#fld-still:disabled{background:#2A3644;color:var(--mut);cursor:default}
+#fld-still:focus-visible{outline:3px solid #fff;outline-offset:2px}
+#fld-rec.sec{background:transparent;border:1px solid var(--line);color:var(--mut);
+  font-size:14px;font-weight:500;min-height:44px;padding:11px 16px;margin:4px 0 10px}
+#fld-rec.sec:disabled{background:transparent;color:#4A5A6B}
 #fld-rec{appearance:none;border:0;cursor:pointer;width:100%;font-family:inherit;
   font-weight:600;font-size:16px;color:#04120B;background:var(--acc);border-radius:12px;
   padding:15px 18px;margin:2px 0 10px;min-height:52px}
@@ -3659,7 +3667,8 @@ table.fld td.n{color:var(--mut)}
   </div>
   <div id="fld-body">
     <p id="fld-note">Tar opp bildetiden i heroen i 60 sekunder og tegner den sekund for sekund. Da ser vi om tregheten er en oppstart som går over, eller noe som slår inn med mellomrom. Panelet skjuler seg mens det måler — legg fra deg telefonen og la den ligge i ro.</p>
-    <button id="fld-rec">Ta opp 60 sekunder</button>
+    <button id="fld-still">Hold heroen stille — 60 s</button>
+    <button id="fld-rec" class="sec">Ta opp med rulling i stedet</button>
     <canvas id="fld-chart" height="150" hidden></canvas>
     <div id="fld-recsum"></div>
     <button id="fld-run" class="sec">Sveip lagene i stedet</button>
@@ -3813,6 +3822,70 @@ function drawChart(B){
   g.fillText(Math.round(top)+' ms',w-46,12);
 }
 
+/* ===== HEROEN I RO ========================================================
+   Rulleopptaket viste soeyler som vekslet mellom 17-25 ms og 130-200 ms jevnt
+   gjennom hele minuttet - ikke en oppstart som faller av. Men saa lenge vi
+   ruller, endrer det seg hva som er paa skjermen, og da vet vi ikke om det er
+   heroen eller rullingen som svinger.
+   Her staar siden bom stille med heroen i bildet. Veksler den fortsatt, er det
+   ikke arbeidsmengden som endrer seg - da er det lagene som kastes og rastres
+   paa nytt. ============================================================== */
+var STILL=document.getElementById('fld-still');
+
+function recordStill(sec){
+  return new Promise(function(res){
+    var d=[],ts=[],last=performance.now(),t0=last;
+    scrollTo(0,0);
+    function tick(now){
+      d.push(now-last); ts.push(now-t0); last=now;
+      if(now-t0<sec*1000) requestAnimationFrame(tick); else res({d:d,ts:ts});
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+STILL.addEventListener('click',async function(){
+  STILL.disabled=true; REC.disabled=true; RUN.disabled=true;
+  RS.innerHTML=''; CH.hidden=true; SUM.innerHTML=''; TBL.hidden=true; WARN.textContent='';
+  PROG.textContent='Tar opp med heroen i ro — ikke rør telefonen …';
+  P.hidden=true; MIN.hidden=true;
+  var r=await recordStill(RECSEC);
+  P.hidden=false; PROG.textContent='';
+  var B=buckets(r,RECSEC);
+  CH.hidden=false; drawChart(B);
+
+  /* Et sekund er tregt naar p95 ligger over fire bilder, raskt naar det ligger
+     under to. Antall ganger den krysser mellom de to tilstandene er svaret:
+     mange kryss med uendret innhold betyr at lagene kastes og bygges igjen. */
+  var SLOW=64, FAST=32, state=null, flips=0, slow=0, fast=0;
+  B.forEach(function(b){
+    if(b.p95>=SLOW){ slow++; if(state==='f')flips++; state='s'; }
+    else if(b.p95<=FAST){ fast++; if(state==='s')flips++; state='f'; }
+  });
+  var srt=B.map(function(b){return b.p95}).sort(function(a,b){return a-b});
+  var med=srt[srt.length>>1]||0, worst=srt[srt.length-1]||0;
+  var totJank=B.reduce(function(s,b){return s+b.jank},0);
+
+  var s='Med siden i ro: median <b>'+med.toFixed(0)+' ms</b>, verste sekund '+
+        worst.toFixed(0)+' ms, '+totJank+' hakk.<br>'+
+        slow+' trege sekunder, '+fast+' raske, <b>'+flips+' vekslinger</b> mellom dem.<br>';
+  if(flips>=6)
+    s+='<b>Den veksler med siden i ro.</b> Innholdet er identisk fra sekund til '+
+       'sekund, så arbeidsmengden endrer seg ikke — da er det lagene som kastes '+
+       'og må rastres på nytt. Det er GPU-minne, og det kan jeg fikse ved å gjøre '+
+       'lagene billigere å rastre uten å ta bort noe av dem.';
+  else if(slow>fast)
+    s+='<b>Den er jevnt tung</b>, ikke ustabil. Da er det en fast kostnad i heroen, '+
+       'og neste steg er å finne hvilken flate som koster mest med siden i ro.';
+  else if(med<=FAST)
+    s+='<b>Heroen er rolig når siden står stille.</b> Da oppstår tregheten av selve '+
+       'rullingen, ikke av å tegne heroen — det er et annet problem, og et enklere et.';
+  else s+='Blandet bilde. Ta opp én gang til, så ser vi om mønsteret gjentar seg.';
+  RS.innerHTML=s;
+  STILL.disabled=false; REC.disabled=false; RUN.disabled=false;
+  STILL.textContent='Ta opp i ro på nytt';
+});
+
 REC.addEventListener('click',async function(){
   REC.disabled=true; RUN.disabled=true; RS.innerHTML=''; CH.hidden=true;
   SUM.innerHTML=''; TBL.hidden=true; WARN.textContent='';
@@ -3846,8 +3919,12 @@ REC.addEventListener('click',async function(){
       'heroen er tung etter at siden er åpnet.';
   if(spikes>0) s+='<br>'+spikes+' sekund'+(spikes>1?'er':'')+' med tilbakefall etter at den '+
       'hadde roet seg — da er det ikke bare oppstart, men noe som slår inn med mellomrom.';
-  if(floor>24) s+='<br><span style="color:var(--warn)">Gulvet ligger over 24 ms. '+
-      'Er strømsparing på, kapper telefonen selv — sjekk batteriet.</span>';
+  /* Varselet gjelder bare naar gulvet ligger paa noyaktig to skjermoppdateringer.
+     Det traff feil paa et gulv paa 106 ms, som aapenbart ikke er et 30 Hz-tak
+     men reell kostnad. */
+  if(floor>=30&&floor<=37) s+='<br><span style="color:var(--warn)">Gulvet ligger på '+
+      floor.toFixed(0)+' ms — nøyaktig to skjermoppdateringer. Er strømsparing på, '+
+      'kapper telefonen selv. Sjekk batteriet og mål på nytt.</span>';
   RS.innerHTML=s;
   REC.disabled=false; RUN.disabled=false; REC.textContent='Ta opp på nytt';
 });
