@@ -2739,7 +2739,51 @@ function flFit(){
   /* The size goes on the layer groups, not the text, so every layer's em-based
      stroke width tracks it together. */
   flsvg.querySelectorAll('.fl-ly').forEach(n=>n.style.fontSize=px+'px');
+  flSyncGrad();
   flDrawA();
+}
+
+/* ---- Ett felles rom for gradientene --------------------------------------
+   Gradientene laa i objectBoundingBox, altsaa relativt til hvert elements egen
+   ramme. Teksten sin ramme er hele ordet og er hoyere enn versalhoyden, fordi
+   den rommer over- og underlengder. A-banen sin ramme er noyaktig A-en, fra
+   kapslinje til grunnlinje. Samme gradient la seg derfor helt ulikt paa de to.
+
+   flBevel starter paa ren hvit med full dekkevne ved offset 0. For teksten
+   havnet den stoppen oppe i overhoyden, der versaler ikke har blekk, saa
+   bokstavene viste den aldri. For A-en landet den rett paa spissen. Maalt paa
+   390px lyste A-en 216-230 der B-en laa paa 170-177. Det er derfor A-en leste
+   som et eget objekt som svevde foran ordet.
+
+   Vi laaser dem til tekstens egen ramme i brukerkoordinater. For teksten er
+   det noyaktig samme gjengivelse som for - vi regner bare om det samme rommet.
+   Det er A-en som endrer seg, og den faller ned i samme materiale som resten. */
+var FLG=['flDark','flBody','flCaus','flBevel','flValley','flSpec','flGloss','flReflGrad'],
+    FLGN=null;
+function flSyncGrad(){
+  if(!flsvg) return;
+  var tx=flsvg.querySelector('.g-body text'); if(!tx) return;
+  var bb; try{bb=tx.getBBox()}catch(e){return}
+  if(!bb||!bb.width||!bb.height) return;
+  if(!FLGN){
+    FLGN={};
+    FLG.forEach(function(id){
+      var g=flsvg.querySelector('#'+id); if(!g) return;
+      /* Standardverdiene for linearGradient er x1=0 y1=0 x2=1 y2=0. */
+      FLGN[id]=[parseFloat(g.getAttribute('x1')||0),
+                parseFloat(g.getAttribute('y1')||0),
+                g.hasAttribute('x2')?parseFloat(g.getAttribute('x2')):1,
+                parseFloat(g.getAttribute('y2')||0)];
+    });
+  }
+  FLG.forEach(function(id){
+    var g=flsvg.querySelector('#'+id), n=FLGN[id]; if(!g||!n) return;
+    g.setAttribute('gradientUnits','userSpaceOnUse');
+    g.setAttribute('x1', bb.x + n[0]*bb.width);
+    g.setAttribute('y1', bb.y + n[1]*bb.height);
+    g.setAttribute('x2', bb.x + n[2]*bb.width);
+    g.setAttribute('y2', bb.y + n[3]*bb.height);
+  });
 }
 /* fonts.ready lover bare at nettleseren er ferdig med aa laste det den mente
    den trengte - ikke at Inter i akkurat 800 er klar. Paa PC rekker den det
@@ -3910,9 +3954,17 @@ var STILL=document.getElementById('fld-still');
 var BOOT=document.getElementById('fld-boot'),
     BTBL=document.getElementById('fld-btbl'), BSUM=document.getElementById('fld-bsum');
 
-/* Tiden fra navigasjonsstart til bildetiden holder seg under 32 ms i tre
-   paafolgende kvartsekunder. Kvart sekund i stedet for halvt gir dobbelt saa
-   fin opploesning; tre i stedet for to holder bekreftelsestiden paa 750 ms. rAF gir tidsstempel maalt fra samme nullpunkt som
+/* Tiden fra navigasjonsstart til bildetiden har roet seg.
+
+   Foerste forsoek krevde p95 under 32 ms i tre paafolgende kvartsekunder. Det
+   traff aldri: maalingen i ro viste omtrent ett hakk i sekundet selv naar
+   heroen ellers laa paa 17 ms, og en kvartsekundsboette rommer bare femten
+   bilder - ett hakk river p95 opp. Alle tolv lagene traff taket paa 15 s, og
+   tabellen ble ubrukelig.
+
+   Vi ser derfor paa hele sekunder og krever p95 under 64 ms i to paafolgende.
+   Maalingen i ro skiller tydelig: de trege sekundene laa paa 110-134 ms og de
+   rolige paa 17. Enkelthakk river ikke lenger maalingen i stykker. rAF gir tidsstempel maalt fra samme nullpunkt som
    performance.now(), saa verdien er oppstartstiden slik brukeren opplever den -
    parsing og foerste maling inkludert. */
 function settleTime(maxMs){
@@ -3920,12 +3972,12 @@ function settleTime(maxMs){
     var w0=performance.now(), last=w0, buf=[], good=0;
     function tick(now){
       buf.push(now-last); last=now;
-      if(now-w0>=250){
+      if(now-w0>=1000){
         var s=buf.slice().sort(function(a,b){return a-b});
         var p95=s[Math.floor(s.length*0.95)]||0;
-        good = p95<32 ? good+1 : 0;
+        good = p95<64 ? good+1 : 0;
         buf=[]; w0=now;
-        if(good>=3) return res({t:now,capped:false});
+        if(good>=2) return res({t:now,capped:false});
       }
       if(now<maxMs) requestAnimationFrame(tick); else res({t:now,capped:true});
     }
@@ -3981,7 +4033,7 @@ async function bootStep(){
   BUSY.hidden=false;
   P.hidden=true; MIN.hidden=true;
   var out;
-  try{ out=await settleTime(15000); }
+  try{ out=await settleTime(25000); }
   catch(e){ sessionStorage.removeItem('fldiag-boot'); BUSY.hidden=true; P.hidden=false;
             WARN.textContent='Målingen stoppet uventet og ble avbrutt. Prøv igjen.';
             BOOT.disabled=false; STILL.disabled=false; REC.disabled=false; RUN.disabled=false;
