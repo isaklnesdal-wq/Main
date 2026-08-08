@@ -1136,7 +1136,51 @@ function flFit(){
   /* The size goes on the layer groups, not the text, so every layer's em-based
      stroke width tracks it together. */
   flsvg.querySelectorAll('.fl-ly').forEach(n=>n.style.fontSize=px+'px');
+  flSyncGrad();
   flDrawA();
+}
+
+/* ---- Ett felles rom for gradientene --------------------------------------
+   Gradientene laa i objectBoundingBox, altsaa relativt til hvert elements egen
+   ramme. Teksten sin ramme er hele ordet og er hoyere enn versalhoyden, fordi
+   den rommer over- og underlengder. A-banen sin ramme er noyaktig A-en, fra
+   kapslinje til grunnlinje. Samme gradient la seg derfor helt ulikt paa de to.
+
+   flBevel starter paa ren hvit med full dekkevne ved offset 0. For teksten
+   havnet den stoppen oppe i overhoyden, der versaler ikke har blekk, saa
+   bokstavene viste den aldri. For A-en landet den rett paa spissen. Maalt paa
+   390px lyste A-en 216-230 der B-en laa paa 170-177. Det er derfor A-en leste
+   som et eget objekt som svevde foran ordet.
+
+   Vi laaser dem til tekstens egen ramme i brukerkoordinater. For teksten er
+   det noyaktig samme gjengivelse som for - vi regner bare om det samme rommet.
+   Det er A-en som endrer seg, og den faller ned i samme materiale som resten. */
+var FLG=['flDark','flBody','flCaus','flBevel','flValley','flSpec','flGloss','flReflGrad'],
+    FLGN=null;
+function flSyncGrad(){
+  if(!flsvg) return;
+  var tx=flsvg.querySelector('.g-body text'); if(!tx) return;
+  var bb; try{bb=tx.getBBox()}catch(e){return}
+  if(!bb||!bb.width||!bb.height) return;
+  if(!FLGN){
+    FLGN={};
+    FLG.forEach(function(id){
+      var g=flsvg.querySelector('#'+id); if(!g) return;
+      /* Standardverdiene for linearGradient er x1=0 y1=0 x2=1 y2=0. */
+      FLGN[id]=[parseFloat(g.getAttribute('x1')||0),
+                parseFloat(g.getAttribute('y1')||0),
+                g.hasAttribute('x2')?parseFloat(g.getAttribute('x2')):1,
+                parseFloat(g.getAttribute('y2')||0)];
+    });
+  }
+  FLG.forEach(function(id){
+    var g=flsvg.querySelector('#'+id), n=FLGN[id]; if(!g||!n) return;
+    g.setAttribute('gradientUnits','userSpaceOnUse');
+    g.setAttribute('x1', bb.x + n[0]*bb.width);
+    g.setAttribute('y1', bb.y + n[1]*bb.height);
+    g.setAttribute('x2', bb.x + n[2]*bb.width);
+    g.setAttribute('y2', bb.y + n[3]*bb.height);
+  });
 }
 /* fonts.ready lover bare at nettleseren er ferdig med aa laste det den mente
    den trengte - ikke at Inter i akkurat 800 er klar. Paa PC rekker den det
