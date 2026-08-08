@@ -1510,18 +1510,49 @@ function renderDiscs(first){
 
 (function(){
   const btn=document.getElementById('filterbtn'),panel=document.getElementById('filterpanel');
-  if(!btn||!panel){renderDiscs(true);return}
   const chip=(label,v)=>'<button class="fchip" type="button" role="switch" aria-pressed="false" data-v="'+v+'">'+label+'</button>';
-  const brands=[...new Set(DISCS.map(d=>d.b))].sort((a,b)=>a.localeCompare(b,'no'));
-  document.getElementById('fbrand').innerHTML=brands.map(b=>chip(b,b)).join('');
-  document.getElementById('ftype').innerHTML=CLASS_ORDER
-    .filter(([k])=>DISCS.some(d=>d.c===k)).map(([k,title])=>chip(title,k)).join('');
-  const plaster=[...new Set(DISCS.flatMap(d=>d.p||[]))].sort((a,b)=>a.localeCompare(b,'no'));
-  document.getElementById('fplast').innerHTML=plaster.map(x=>chip(x,x)).join('');
-  document.getElementById('fvekt').innerHTML=VEKTBAND.map(([t,v])=>chip(t,v)).join('');
-  document.getElementById('fprice').innerHTML=chip('Lav til høy','asc')+chip('Høy til lav','desc');
+
+  /* ---- Katalogen bygges etter at heroen er malt --------------------------
+     Maalt paa telefon: oppstarten laa paa 4,7 sekunder, og var noyaktig like
+     lang med hvert eneste atmosfaerelag slaatt av - alle tolv innenfor to
+     prosent, grunnlinje og kontroll begge 4,7 s. Kostnaden er altsaa ikke
+     maling. Den ligger i arbeid som skjer uansett hva som vises.
+
+     Her er det arbeidet: tjuefem kort med hver sin tegnede disc, fem grupper
+     filterchips, alt bygget av JavaScript foer noe annet slipper til. Maalt
+     lokalt med strupet CPU gaar tiden til stilberegning, JavaScript og layout -
+     ingenting av det er tegning.
+
+     Katalogen ser lik ut og kommer like fullt. Den bygges bare etter at heroen
+     har faatt males ferdig, i stedet for foran den. Trenger noen den med én
+     gang - direktelenke til en seksjon, scroll nedover, eller klikk paa
+     filterknappen foer den er klar - bygges den umiddelbart. */
+  let built=false;
+  function buildCatalog(){
+    if(built) return; built=true;
+    if(btn&&panel){
+      const brands=[...new Set(DISCS.map(d=>d.b))].sort((a,b)=>a.localeCompare(b,'no'));
+      document.getElementById('fbrand').innerHTML=brands.map(b=>chip(b,b)).join('');
+      document.getElementById('ftype').innerHTML=CLASS_ORDER
+        .filter(([k])=>DISCS.some(d=>d.c===k)).map(([k,title])=>chip(title,k)).join('');
+      const plaster=[...new Set(DISCS.flatMap(d=>d.p||[]))].sort((a,b)=>a.localeCompare(b,'no'));
+      document.getElementById('fplast').innerHTML=plaster.map(x=>chip(x,x)).join('');
+      document.getElementById('fvekt').innerHTML=VEKTBAND.map(([t,v])=>chip(t,v)).join('');
+      document.getElementById('fprice').innerHTML=chip('Lav til høy','asc')+chip('Høy til lav','desc');
+    }
+    renderDiscs(true);
+  }
+  function schedule(){
+    /* Direktelenke til en seksjon lenger nede maa ha katalogen med én gang. */
+    if(location.hash){ buildCatalog(); return }
+    addEventListener('scroll',buildCatalog,{passive:true,once:true});
+    if(window.requestIdleCallback) requestIdleCallback(buildCatalog,{timeout:1200});
+    else addEventListener('load',function(){setTimeout(buildCatalog,120)});
+  }
+  if(!btn||!panel){ schedule(); return }
 
   btn.addEventListener('click',()=>{
+    buildCatalog();
     const open=btn.getAttribute('aria-expanded')==='true';
     btn.setAttribute('aria-expanded',String(!open));panel.hidden=open;
   });
@@ -1547,7 +1578,7 @@ function renderDiscs(first){
     panel.querySelectorAll('.fchip').forEach(c=>c.setAttribute('aria-pressed','false'));
     renderDiscs(false);
   }
-  renderDiscs(true);
+  schedule();
 })();
 
 // bags (dedicated section)
