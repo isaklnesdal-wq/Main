@@ -1618,7 +1618,17 @@ footer{border-top:1px solid var(--edge-bot)!important}
   ];
   try{
     var r=JSON.parse(sessionStorage.getItem('fldiag-boot')||'null');
+    /* Sikringer mot en kjoering som henger igjen. Uten dem starter siden en ny
+       omlasting hver gang den aapnes, uten synlig grensesnitt - og da ser det ut
+       som at lenken ikke virker. */
+    if(r){
+      var stale = !r.ts || (Date.now()-r.ts) > 900000;      /* eldre enn 15 min */
+      var runaway = (r.loads||0) > window.FLDV.length + 3;   /* flere lastinger enn lag */
+      if(stale||runaway){ sessionStorage.removeItem('fldiag-boot'); r=null; }
+    }
     if(r && typeof r.i==='number' && r.i>=0 && r.i<window.FLDV.length){
+      r.loads=(r.loads||0)+1;
+      try{sessionStorage.setItem('fldiag-boot',JSON.stringify(r))}catch(e){}
       var c=window.FLDV[r.i].css;
       if(c){ var s=document.createElement('style'); s.textContent=c;
              (document.head||document.documentElement).appendChild(s); }
@@ -3645,6 +3655,18 @@ document.getElementById('nlform').addEventListener('submit',e=>{e.preventDefault
   min-height:52px}
 #fld-run:disabled{background:#2A3644;color:var(--mut);cursor:default}
 #fld-run:focus-visible{outline:3px solid #fff;outline-offset:2px}
+/* Alltid synlig mens oppstartsmaalingen gaar, saa siden aldri ser doed ut.
+   Ren tekst uten animasjon, og den staar likt i alle tolv lastingene, saa den
+   paavirker ikke sammenligningen. */
+#fld-busy{position:fixed;top:0;left:0;right:0;z-index:100000;display:flex;
+  align-items:center;gap:10px;padding:10px 12px;
+  background:#0B1119;border-bottom:1px solid var(--line);
+  font-family:'Inter',system-ui,sans-serif;font-size:12.5px;color:var(--ink)}
+#fld-busy[hidden]{display:none}
+#fld-busytxt{flex:1;min-width:0}
+#fld-abort{appearance:none;border:1px solid var(--line);background:transparent;
+  color:var(--warn);font-family:inherit;font-size:12.5px;font-weight:600;
+  border-radius:8px;padding:8px 12px;cursor:pointer;min-height:36px;flex:none}
 #fld-boot{appearance:none;border:0;cursor:pointer;width:100%;font-family:inherit;
   font-weight:600;font-size:16px;color:#04120B;background:var(--acc);border-radius:12px;
   padding:15px 18px;margin:2px 0 10px;min-height:52px}
@@ -3704,6 +3726,10 @@ table.fld td.n{color:var(--mut)}
 @media(prefers-reduced-motion:reduce){#fldiag{transition:none}}
 </style>
 
+<div id="fld-busy" hidden>
+  <span id="fld-busytxt"></span>
+  <button id="fld-abort" type="button">Avbryt</button>
+</div>
 <button id="fld-min" hidden>Måling ▲</button>
 <section id="fldiag" aria-label="Ytelsesmåling av heroseksjonen">
   <div id="fld-hd">
@@ -3942,12 +3968,24 @@ function renderBoot(R){
   STILL.disabled=false; REC.disabled=false; RUN.disabled=false;
 }
 
+var BUSY=document.getElementById('fld-busy'), BUSYT=document.getElementById('fld-busytxt');
+document.getElementById('fld-abort').addEventListener('click',function(){
+  sessionStorage.removeItem('fldiag-boot');
+  location.reload();
+});
+
 async function bootStep(){
   var r=window.FLDRUN, V=window.FLDV;
   BOOT.disabled=true; STILL.disabled=true; REC.disabled=true; RUN.disabled=true;
-  PROG.textContent='Oppstart '+(r.i+1)+' av '+V.length+': '+V[r.i].n+' — ikke rør telefonen';
+  BUSYT.textContent='Måler oppstart '+(r.i+1)+' av '+V.length+' — '+V[r.i].n;
+  BUSY.hidden=false;
   P.hidden=true; MIN.hidden=true;
-  var out=await settleTime(15000);
+  var out;
+  try{ out=await settleTime(15000); }
+  catch(e){ sessionStorage.removeItem('fldiag-boot'); BUSY.hidden=true; P.hidden=false;
+            WARN.textContent='Målingen stoppet uventet og ble avbrutt. Prøv igjen.';
+            BOOT.disabled=false; STILL.disabled=false; REC.disabled=false; RUN.disabled=false;
+            return; }
   r.results.push({n:V[r.i].n,t:out.t,capped:out.capped});
   r.i++;
   if(r.i<V.length){
@@ -3955,13 +3993,13 @@ async function bootStep(){
     location.reload();
   }else{
     sessionStorage.removeItem('fldiag-boot');
-    P.hidden=false; PROG.textContent='';
+    BUSY.hidden=true; P.hidden=false; PROG.textContent='';
     renderBoot(r.results);
   }
 }
 
 BOOT.addEventListener('click',function(){
-  sessionStorage.setItem('fldiag-boot',JSON.stringify({i:0,results:[]}));
+  sessionStorage.setItem('fldiag-boot',JSON.stringify({i:0,results:[],ts:Date.now(),loads:0}));
   location.reload();
 });
 if(window.FLDRUN) bootStep();
