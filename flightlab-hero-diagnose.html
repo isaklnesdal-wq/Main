@@ -3610,6 +3610,19 @@ document.getElementById('nlform').addEventListener('submit',e=>{e.preventDefault
   min-height:52px}
 #fld-run:disabled{background:#2A3644;color:var(--mut);cursor:default}
 #fld-run:focus-visible{outline:3px solid #fff;outline-offset:2px}
+#fld-rec{appearance:none;border:0;cursor:pointer;width:100%;font-family:inherit;
+  font-weight:600;font-size:16px;color:#04120B;background:var(--acc);border-radius:12px;
+  padding:15px 18px;margin:2px 0 10px;min-height:52px}
+#fld-rec:disabled{background:#2A3644;color:var(--mut);cursor:default}
+#fld-rec:focus-visible,#fld-run:focus-visible{outline:3px solid #fff;outline-offset:2px}
+#fld-run.sec{background:transparent;border:1px solid var(--line);color:var(--mut);
+  font-size:14px;font-weight:500;min-height:44px;padding:11px 16px;margin:4px 0 12px}
+#fld-run.sec:disabled{background:transparent;color:#4A5A6B}
+#fld-chart{width:100%;display:block;margin:4px 0 10px;border-radius:8px;background:var(--panel2)}
+#fld-chart[hidden]{display:none}
+#fld-recsum{font-size:13.5px;line-height:1.6;margin:0 0 12px}
+#fld-recsum:empty{display:none}
+#fld-recsum b{color:var(--acc)}
 #fld-note{font-size:12.5px;line-height:1.55;color:var(--mut);margin:0 0 12px}
 #fld-prog{font-size:12px;color:var(--acc);font-variant-numeric:tabular-nums;margin:0 0 10px;min-height:16px}
 #fld-warn{font-size:12.5px;line-height:1.5;color:var(--warn);margin:0 0 10px}
@@ -3645,8 +3658,11 @@ table.fld td.n{color:var(--mut)}
     <div id="fld-dev"></div>
   </div>
   <div id="fld-body">
-    <p id="fld-note">Måler bildetid på din telefon, ett lag av gangen. Panelet skjuler seg mens det måler. Legg fra deg telefonen og la den ligge i ro til den er ferdig — cirka ett minutt.</p>
-    <button id="fld-run">Start måling</button>
+    <p id="fld-note">Tar opp bildetiden i heroen i 60 sekunder og tegner den sekund for sekund. Da ser vi om tregheten er en oppstart som går over, eller noe som slår inn med mellomrom. Panelet skjuler seg mens det måler — legg fra deg telefonen og la den ligge i ro.</p>
+    <button id="fld-rec">Ta opp 60 sekunder</button>
+    <canvas id="fld-chart" height="150" hidden></canvas>
+    <div id="fld-recsum"></div>
+    <button id="fld-run" class="sec">Sveip lagene i stedet</button>
     <p id="fld-prog"></p>
     <p id="fld-warn"></p>
     <div style="overflow-x:auto"><table class="fld" id="fld-tbl" hidden>
@@ -3730,6 +3746,111 @@ async function measure(v){
 }
 
 function cls(g){ return g>=20?'big':(g>=8?'mid':'none') }
+
+/* ===== OPPTAK AV FORLOEPET ================================================
+   Lag-sveipet svarte paa sitt spoersmaal: med alt paa kjorer heroen paa 21 ms,
+   og rad 1 mot rad 11 - samme oppsett - ga 145 mot 22 ms. Da er det ikke
+   lagene som maales, men noe som endrer seg over tid.
+   Her tar vi opp sammenhengende og viser bildetiden sekund for sekund. Da ser
+   vi forskjell paa en oppstart som gaar over og noe som slaar inn periodisk -
+   og de to krever helt forskjellige losninger. ============================ */
+var REC=document.getElementById('fld-rec'), CH=document.getElementById('fld-chart'),
+    RS=document.getElementById('fld-recsum');
+var RECSEC=60;
+
+function record(sec){
+  return new Promise(function(res){
+    var d=[],ts=[],last=performance.now(),t0=last,H=Math.min(760,innerHeight*0.9);
+    function tick(now){
+      d.push(now-last); ts.push(now-t0); last=now;
+      var k=(now-t0)/1000;
+      scrollTo(0, Math.round((Math.sin(k*0.7)*0.5+0.5)*H));
+      if(now-t0<sec*1000) requestAnimationFrame(tick);
+      else{ scrollTo(0,0); res({d:d,ts:ts}); }
+    }
+    requestAnimationFrame(tick);
+  });
+}
+function buckets(r,sec){
+  var B=[],i;
+  for(i=0;i<sec;i++) B.push([]);
+  for(i=0;i<r.d.length;i++){
+    var b=Math.floor(r.ts[i]/1000); if(b>=0&&b<sec) B[b].push(r.d[i]);
+  }
+  return B.map(function(a){
+    if(!a.length) return {p95:0,jank:0,over:0,n:0};
+    var s=a.slice().sort(function(x,y){return x-y}), ov=0;
+    for(var j=0;j<a.length;j++) ov+=Math.max(0,a[j]-1000/60);
+    return {p95:s[Math.floor(s.length*0.95)],
+            jank:a.filter(function(x){return x>32}).length, over:ov/a.length, n:a.length};
+  });
+}
+function drawChart(B){
+  var dpr=Math.min(3,devicePixelRatio||1), w=CH.clientWidth||340, h=150;
+  CH.width=w*dpr; CH.height=h*dpr;
+  var g=CH.getContext('2d'); g.scale(dpr,dpr);
+  var css=getComputedStyle(document.documentElement);
+  var acc=css.getPropertyValue('--acc').trim()||'#3ECF8E',
+      warn=css.getPropertyValue('--warn').trim()||'#F2B441',
+      crit=css.getPropertyValue('--crit').trim()||'#FF7A66',
+      mut=css.getPropertyValue('--mut').trim()||'#8DA2B8';
+  g.clearRect(0,0,w,h);
+  var top=Math.max(40,Math.min(200,Math.max.apply(null,B.map(function(b){return b.p95}))*1.1));
+  var pad=18, bw=(w-8)/B.length;
+  /* referanselinja: ett bilde paa 60 Hz */
+  var yb=h-pad-(1000/60)/top*(h-pad-6);
+  g.strokeStyle='rgba(255,255,255,.22)'; g.setLineDash([3,3]); g.beginPath();
+  g.moveTo(0,yb); g.lineTo(w,yb); g.stroke(); g.setLineDash([]);
+  g.fillStyle=mut; g.font='10px Inter,system-ui,sans-serif';
+  g.fillText('17 ms',2,yb-4);
+  B.forEach(function(b,i){
+    var bh=Math.max(1,(b.p95/top)*(h-pad-6));
+    g.fillStyle = b.p95>=40?crit : (b.p95>=24?warn : acc);
+    g.fillRect(4+i*bw, h-pad-bh, Math.max(1,bw-1), bh);
+  });
+  g.fillStyle=mut;
+  g.fillText('0 s',4,h-6); g.fillText(B.length+' s',w-26,h-6);
+  g.fillText(Math.round(top)+' ms',w-46,12);
+}
+
+REC.addEventListener('click',async function(){
+  REC.disabled=true; RUN.disabled=true; RS.innerHTML=''; CH.hidden=true;
+  SUM.innerHTML=''; TBL.hidden=true; WARN.textContent='';
+  PROG.textContent='Tar opp — la telefonen ligge i ro …';
+  P.hidden=true; MIN.hidden=true;
+  var r=await record(RECSEC);
+  P.hidden=false; PROG.textContent='';
+  var B=buckets(r,RECSEC);
+  CH.hidden=false; drawChart(B);
+
+  /* Gulvet er medianen av de siste femten sekundene - da har den satt seg hvis
+     den kommer til aa gjore det. Oppstarten er tiden til bildetiden foerste
+     gang holder seg under halvannen gang gulvet og blir der. */
+  var tailArr=B.slice(-15).map(function(b){return b.p95}).sort(function(a,b){return a-b});
+  var floor=tailArr[tailArr.length>>1]||0;
+  var settleAt=-1;
+  for(var i=0;i<B.length;i++){
+    var ok=true;
+    for(var j=i;j<B.length;j++) if(B[j].p95>floor*1.5+2){ok=false;break}
+    if(ok){settleAt=i;break}
+  }
+  var after=settleAt<0?[]:B.slice(settleAt);
+  var spikes=after.filter(function(b){return b.p95>Math.max(32,floor*2)}).length;
+  var totJank=B.reduce(function(s,b){return s+b.jank},0);
+
+  var s='Gulv: <b>'+floor.toFixed(0)+' ms</b> p95. Hakk totalt: <b>'+totJank+'</b>.<br>';
+  if(settleAt<0) s+='<span style="color:var(--warn)">Den satte seg aldri i loepet av '+
+      RECSEC+' sekunder — bildetiden var ujevn hele veien.</span>';
+  else if(settleAt<=2) s+='Den var jevn nesten med én gang ('+settleAt+' s).';
+  else s+='<b>Oppstart: '+settleAt+' sekunder</b> før den la seg til ro. Det er så lenge '+
+      'heroen er tung etter at siden er åpnet.';
+  if(spikes>0) s+='<br>'+spikes+' sekund'+(spikes>1?'er':'')+' med tilbakefall etter at den '+
+      'hadde roet seg — da er det ikke bare oppstart, men noe som slår inn med mellomrom.';
+  if(floor>24) s+='<br><span style="color:var(--warn)">Gulvet ligger over 24 ms. '+
+      'Er strømsparing på, kapper telefonen selv — sjekk batteriet.</span>';
+  RS.innerHTML=s;
+  REC.disabled=false; RUN.disabled=false; REC.textContent='Ta opp på nytt';
+});
 
 RUN.addEventListener('click',async function(){
   RUN.disabled=true; TB.innerHTML=''; SUM.innerHTML=''; WARN.textContent='';
