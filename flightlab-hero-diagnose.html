@@ -1593,6 +1593,41 @@ footer{border-top:1px solid var(--edge-bot)!important}
   #merker .bpan{position:static;height:auto;padding:52px 0}
 }
 </style>
+<script>
+/* ===== OPPSTARTSMAALING, LAG FOR LAG ======================================
+   Oppstartskostnaden finnes bare én gang per sidelasting. Et sveip paa en side
+   som allerede er varm maaler derfor ingenting - det var derfor det foerste
+   sveipet ga rot. Her lastes siden paa nytt én gang per lag, og hver lasting
+   maaler sin egen oppstart.
+   Dette skriptet maa kjore FOER hero-markupen leses, ellers rekker flaten aa
+   males én gang foer den skjules, og da er kostnaden allerede betalt. ===== */
+(function(){
+  window.FLDV=[
+    {n:'Alt på (grunnlinje)', css:''},
+    {n:'Kaustikk',            css:'.fl-caus-a,.fl-caus-b{display:none!important}'},
+    {n:'Korn',                css:'.grain{display:none!important}'},
+    {n:'Dither (feTurbulence)',css:'.fl-dither{display:none!important}'},
+    {n:'Luft + ambiens',      css:'.fl-air,.fl-amb{display:none!important}'},
+    {n:'Flytende discer',     css:'.fl-discs{display:none!important}'},
+    {n:'Vignett',             css:'.fl-vig{display:none!important}'},
+    {n:'Miljølaget',          css:'#flenv{display:none!important}'},
+    {n:'Shards-canvas',       css:'#flshards{display:none!important}'},
+    {n:'Ordmerket: 4 glasslag',css:'.fl-svg .g-ext,.fl-svg .g-refr,.fl-svg .g-iris,.fl-svg .g-caus{display:none!important}'},
+    {n:'Ordmerket helt',      css:'#flmark{visibility:hidden!important}'},
+    {n:'Alt på (kontroll)',   css:''}
+  ];
+  try{
+    var r=JSON.parse(sessionStorage.getItem('fldiag-boot')||'null');
+    if(r && typeof r.i==='number' && r.i>=0 && r.i<window.FLDV.length){
+      var c=window.FLDV[r.i].css;
+      if(c){ var s=document.createElement('style'); s.textContent=c;
+             (document.head||document.documentElement).appendChild(s); }
+      window.FLDRUN=r;
+    }
+  }catch(e){}
+})();
+</script>
+
 
 
 <script>
@@ -3610,6 +3645,16 @@ document.getElementById('nlform').addEventListener('submit',e=>{e.preventDefault
   min-height:52px}
 #fld-run:disabled{background:#2A3644;color:var(--mut);cursor:default}
 #fld-run:focus-visible{outline:3px solid #fff;outline-offset:2px}
+#fld-boot{appearance:none;border:0;cursor:pointer;width:100%;font-family:inherit;
+  font-weight:600;font-size:16px;color:#04120B;background:var(--acc);border-radius:12px;
+  padding:15px 18px;margin:2px 0 10px;min-height:52px}
+#fld-boot:disabled{background:#2A3644;color:var(--mut);cursor:default}
+#fld-boot:focus-visible{outline:3px solid #fff;outline-offset:2px}
+#fld-still.sec{background:transparent;border:1px solid var(--line);color:var(--mut);
+  font-size:14px;font-weight:500;min-height:44px;padding:11px 16px;margin:4px 0 10px}
+#fld-bsum{font-size:13.5px;line-height:1.6;margin:10px 0 12px}
+#fld-bsum:empty{display:none}
+#fld-bsum b{color:var(--acc)}
 #fld-still{appearance:none;border:0;cursor:pointer;width:100%;font-family:inherit;
   font-weight:600;font-size:16px;color:#04120B;background:var(--acc);border-radius:12px;
   padding:15px 18px;margin:2px 0 10px;min-height:52px}
@@ -3667,7 +3712,12 @@ table.fld td.n{color:var(--mut)}
   </div>
   <div id="fld-body">
     <p id="fld-note">Tar opp bildetiden i heroen i 60 sekunder og tegner den sekund for sekund. Da ser vi om tregheten er en oppstart som går over, eller noe som slår inn med mellomrom. Panelet skjuler seg mens det måler — legg fra deg telefonen og la den ligge i ro.</p>
-    <button id="fld-still">Hold heroen stille — 60 s</button>
+    <button id="fld-boot">Mål oppstarten lag for lag</button>
+    <div style="overflow-x:auto"><table class="fld" id="fld-btbl" hidden>
+      <thead><tr><th>Lag</th><th>Oppstart</th><th>Spart</th></tr></thead><tbody></tbody>
+    </table></div>
+    <div id="fld-bsum"></div>
+    <button id="fld-still" class="sec">Hold heroen stille — 60 s</button>
     <button id="fld-rec" class="sec">Ta opp med rulling i stedet</button>
     <canvas id="fld-chart" height="150" hidden></canvas>
     <div id="fld-recsum"></div>
@@ -3831,6 +3881,90 @@ function drawChart(B){
    ikke arbeidsmengden som endrer seg - da er det lagene som kastes og rastres
    paa nytt. ============================================================== */
 var STILL=document.getElementById('fld-still');
+var BOOT=document.getElementById('fld-boot'),
+    BTBL=document.getElementById('fld-btbl'), BSUM=document.getElementById('fld-bsum');
+
+/* Tiden fra navigasjonsstart til bildetiden holder seg under 32 ms i tre
+   paafolgende kvartsekunder. Kvart sekund i stedet for halvt gir dobbelt saa
+   fin opploesning; tre i stedet for to holder bekreftelsestiden paa 750 ms. rAF gir tidsstempel maalt fra samme nullpunkt som
+   performance.now(), saa verdien er oppstartstiden slik brukeren opplever den -
+   parsing og foerste maling inkludert. */
+function settleTime(maxMs){
+  return new Promise(function(res){
+    var w0=performance.now(), last=w0, buf=[], good=0;
+    function tick(now){
+      buf.push(now-last); last=now;
+      if(now-w0>=250){
+        var s=buf.slice().sort(function(a,b){return a-b});
+        var p95=s[Math.floor(s.length*0.95)]||0;
+        good = p95<32 ? good+1 : 0;
+        buf=[]; w0=now;
+        if(good>=3) return res({t:now,capped:false});
+      }
+      if(now<maxMs) requestAnimationFrame(tick); else res({t:now,capped:true});
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+function renderBoot(R){
+  BTBL.hidden=false;
+  var tb=BTBL.querySelector('tbody'); tb.innerHTML='';
+  var b1=R[0].t, b2=R[R.length-1].t, ref=(b1+b2)/2;
+  var spread=ref>0?Math.abs(b2-b1)/ref*100:0, shaky=spread>35;
+  R.forEach(function(r,i){
+    var isBase=(i===0||i===R.length-1);
+    var g=Math.round((ref-r.t)/ref*100);
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+r.n+'</td><td class="n">'+(r.t/1000).toFixed(1)+' s'+
+      (r.capped?' +':'')+'</td><td><span class="gain '+
+      ((isBase||shaky)?'none':(g>=25?'big':(g>=10?'mid':'none')))+'">'+
+      (isBase?'—':(shaky?'·':(g>0?'−'+g+'%':'+'+(-g)+'%')))+'</span></td>';
+    tb.appendChild(tr);
+  });
+  var s='Grunnlinje: <b>'+(ref/1000).toFixed(1)+' s</b> oppstart (to målinger: '+
+        (b1/1000).toFixed(1)+' s og '+(b2/1000).toFixed(1)+' s).<br>';
+  if(shaky) s+='<span style="color:var(--warn)">De to grunnlinjene spriker '+
+      spread.toFixed(0)+' % — telefonen endret seg underveis. Prosentene er skjult. '+
+      'La den hvile og mål på nytt.</span>';
+  else{
+    var best=R.slice(1,-1).map(function(r){return {n:r.n,g:(ref-r.t)/ref*100}})
+              .sort(function(a,b){return b.g-a.g})[0];
+    if(best&&best.g>=25) s+='Størst utslag: <b>'+best.n+'</b>, −'+best.g.toFixed(0)+
+      ' % av oppstarten. Det er flaten jeg gjør billigere å rastre — uten å ta bort noe.';
+    else if(best&&best.g>=10) s+='Størst utslag: <b>'+best.n+'</b>, −'+best.g.toFixed(0)+
+      ' %. Merkbart, men ikke alene om kostnaden — flere flater deler på den.';
+    else s+='Ingen enkelt flate eier oppstarten. Da er det summen av dem, og løsningen '+
+      'er å rastre heroen i færre og mindre lag i stedet for å gjøre noe billigere.';
+  }
+  BSUM.innerHTML=s;
+  BOOT.disabled=false; BOOT.textContent='Mål oppstarten på nytt';
+  STILL.disabled=false; REC.disabled=false; RUN.disabled=false;
+}
+
+async function bootStep(){
+  var r=window.FLDRUN, V=window.FLDV;
+  BOOT.disabled=true; STILL.disabled=true; REC.disabled=true; RUN.disabled=true;
+  PROG.textContent='Oppstart '+(r.i+1)+' av '+V.length+': '+V[r.i].n+' — ikke rør telefonen';
+  P.hidden=true; MIN.hidden=true;
+  var out=await settleTime(15000);
+  r.results.push({n:V[r.i].n,t:out.t,capped:out.capped});
+  r.i++;
+  if(r.i<V.length){
+    sessionStorage.setItem('fldiag-boot',JSON.stringify(r));
+    location.reload();
+  }else{
+    sessionStorage.removeItem('fldiag-boot');
+    P.hidden=false; PROG.textContent='';
+    renderBoot(r.results);
+  }
+}
+
+BOOT.addEventListener('click',function(){
+  sessionStorage.setItem('fldiag-boot',JSON.stringify({i:0,results:[]}));
+  location.reload();
+});
+if(window.FLDRUN) bootStep();
 
 function recordStill(sec){
   return new Promise(function(res){
@@ -3877,6 +4011,10 @@ STILL.addEventListener('click',async function(){
   else if(slow>fast)
     s+='<b>Den er jevnt tung</b>, ikke ustabil. Da er det en fast kostnad i heroen, '+
        'og neste steg er å finne hvilken flate som koster mest med siden i ro.';
+  else if(med<=FAST && slow>=3)
+    s+='<b>Oppstartskostnad.</b> De '+slow+' første sekundene er tunge, så er den '+
+       'stabil resten av tiden. Heroen males dyrt én gang — det er den du kjenner '+
+       'når du åpner siden.';
   else if(med<=FAST)
     s+='<b>Heroen er rolig når siden står stille.</b> Da oppstår tregheten av selve '+
        'rullingen, ikke av å tegne heroen — det er et annet problem, og et enklere et.';
