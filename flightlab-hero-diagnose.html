@@ -3736,13 +3736,31 @@ RUN.addEventListener('click',async function(){
   TBL.hidden=false;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)
     WARN.textContent='Telefonen står på redusert bevegelse. Da er animasjonene i heroen allerede av, og målingen sier lite. Skru det av i innstillingene og kjør på nytt.';
-  /* En oppvarming som kastes. Foerste maaling er alltid tregest - JIT-en har
-     ikke kompilert loekka, lagene er ikke rastret, og fonten kan fortsatt
-     bytte. Uten den ble grunnlinjen kunstig treg og alt etterpaa saa ut som
-     en forbedring; kontrollmaalingen viste -93 % der den skulle vist 0. */
-  PROG.textContent='Varmer opp …';
+  /* OPPSTARTEN ER SITT EGET FUNN.
+     Foerste maaling paa telefon la paa 221 ms, andre 359, tredje 201 - og
+     deretter 34 ms resten av runden, ogsaa med alt paa igjen. Kostnaden laa
+     altsaa ikke i noe enkelt lag, men i at heroen bruker lang tid paa aa komme
+     opp i fart. En fast oppvarming paa fem sekunder var for kort, og gjorde i
+     tillegg grunnlinjen kunstig treg.
+     Vi varmer derfor til bildetiden har flatet ut, og teller hvor lenge det
+     tok. Den tiden er sannsynligvis det brukeren faktisk kjenner. */
+  PROG.textContent='Varmer opp — måler oppstart …';
   P.hidden=true; MIN.hidden=true;
-  await measure({n:'warmup',css:''});
+  /* Telefonen i forrige runde brukte omtrent 16 sekunder paa aa sette seg, saa
+     taket maa ligge godt over det. 16 runder gir rundt 23 sekunder. */
+  var t0=performance.now(), prev=null, curve=[], warmRuns=0, settled=false;
+  for(var w=0;w<16;w++){
+    var wr=await frames(1300,true); warmRuns++;
+    curve.push(wr.over);
+    if(prev!==null){
+      var better=prev>0?(prev-wr.over)/prev:0;
+      /* Flat naar den slutter aa bli merkbart bedre, eller naar to paafolgende
+         runder begge ligger under et halvt millisekund over budsjett. */
+      if((better<0.20 && wr.over<=prev*1.25) || (wr.over<0.5 && prev<0.5)){settled=true;break}
+    }
+    prev=wr.over; await wait(120);
+  }
+  var settleSec=(performance.now()-t0)/1000;
   P.hidden=false;
 
   var out=[];
@@ -3769,6 +3787,10 @@ RUN.addEventListener('click',async function(){
      er 140 % og betyr ingenting. Runden underkjennes bare hvis spriket ogsaa
      er reelt i millisekunder. */
   var flat=ref<0.5, shaky=(spread>40 && Math.abs(o2-o1)>0.4);
+  /* Er bildefrekvensen kappet, sier ikke lag-for-lag noe - alt lander paa
+     taket. Da skjules prosentene paa samme grunnlag som ved sprik. */
+  var medEnd=out[out.length-1].r.scroll.med;
+  if(medEnd>30 && medEnd<37) shaky=true;
   var rows=TB.querySelectorAll('tr');
   for(var i=0;i<out.length;i++){
     var g=flat?0:Math.round((ref-out[i].r.scroll.over)/ref*100);
@@ -3780,10 +3802,29 @@ RUN.addEventListener('click',async function(){
   }
   var b1=out[0].r.scroll.p95;
   var ov=ref, ovi=out[0].r.idle.over;
-  var s='Grunnlinje under rulling: <b>'+b1.toFixed(0)+' ms</b> p95, '+
+  var s=(settled
+        ? '<b>Oppstart: '+settleSec.toFixed(1)+' s</b> før heroen kom opp i fart'
+        : '<span style="color:var(--warn)"><b>Heroen flatet aldri ut</b> — den var fortsatt '+
+          'ujevn etter '+settleSec.toFixed(0)+' sekunder</span>')+
+        ' ('+warmRuns+' runder, fra '+curve[0].toFixed(1)+' til '+
+        curve[curve.length-1].toFixed(1)+' ms over budsjett).<br>'+
+        'Grunnlinje under rulling: <b>'+b1.toFixed(0)+' ms</b> p95, '+
         out[0].r.scroll.jank+' hakk, <b>'+ov.toFixed(1)+' ms</b> snitt over budsjett.<br>'+
         'Stille: '+ovi.toFixed(1)+' ms over budsjett.<br>';
-  if(ov<0.5){
+  /* 33-34 ms er noyaktig to skjermoppdateringer. Ligger bunnen der uansett hva
+     vi slaar av, er det ikke sidens kostnad vi maaler, men et tak: iOS kapper
+     til 30 Hz i strømsparing. Da er hele runden ubrukelig som grunnlag. */
+  var med=out[out.length-1].r.scroll.med;
+  var capped=(med>30 && med<37);
+  if(capped) s+='<span style="color:var(--warn)">Bunnen ligger på '+med.toFixed(0)+
+    ' ms — nøyaktig to skjermoppdateringer, uansett hva som slås av. Det ser ut som '+
+    'et tak på 30 Hz, ikke som sidens kostnad. Er strømsparing på, eller batteriet '+
+    'lavt, kapper telefonen bildefrekvensen selv. Lad over 50 %, skru av strømsparing '+
+    'og mål på nytt — ellers måler vi telefonen, ikke heroen.</span><br>';
+  if(shaky){
+    /* Ingen konklusjon om lagene naar runden ikke holder. Oppstartstallet over
+       staar likevel - det maales foer sveipet og paavirkes ikke av spriket. */
+  } else if(ov<0.5){
     s+='Heroen rekker bildene sine på denne telefonen — det er ingen målbar lagg her nå. '+
        'Kjenner du den likevel, skjer det et annet sted enn i disse lagene, eller bare når telefonen er varm.';
   } else {
@@ -3794,7 +3835,7 @@ RUN.addEventListener('click',async function(){
       '%. Det er laget jeg gjør billigere — uten å fjerne det.';
     else s+='Ingen enkelt lag skiller seg ut. Da ligger kostnaden spredt, og løsningen er å male hele heroen sjeldnere, ikke å ta bort en del.';
   }
-  if(shaky) s='<span style="color:var(--warn)">De to grunnlinjene spriker '+spread.toFixed(0)+
+  if(shaky && !capped) s+='<span style="color:var(--warn)">De to grunnlinjene spriker '+spread.toFixed(0)+
     ' % — telefonen endret seg underveis (varm, strømsparing, eller noe annet som kjørte). '+
     'Prosentene er derfor skjult, for de ville vært gjetning. La telefonen hvile og mål på nytt.</span>';
   SUM.innerHTML=s;
