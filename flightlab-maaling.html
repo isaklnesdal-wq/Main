@@ -1635,6 +1635,38 @@ footer{border-top:1px solid var(--edge-bot)!important}
       window.FLDRUN=r;
     }
   }catch(e){}
+
+  /* ---- Oppstartsforloepet -------------------------------------------------
+     Sveipet lag for lag ga 4,7 s for alle tolv variantene, innenfor to prosent.
+     Da er kostnaden ikke maling av flatene - den ligger i arbeid som skjer
+     uansett hva som vises. Her samler vi det fra aller foerste oyeblikk:
+     lange oppgaver paa hovedtraaden, malingstidspunkter, og naar katalogen og
+     ordmerket faktisk er paa plass. Observatorene maa settes opp her, foer
+     markupen leses, ellers gaar de foerste og tyngste oppgavene tapt. */
+  window.FLDT={long:[],paint:{},mark:{},longTotal:0};
+  try{
+    new PerformanceObserver(function(l){
+      l.getEntries().forEach(function(e){
+        window.FLDT.long.push({t:e.startTime,d:e.duration});
+        window.FLDT.longTotal+=e.duration;
+      });
+    }).observe({type:'longtask',buffered:true});
+  }catch(e){}
+  try{
+    new PerformanceObserver(function(l){
+      l.getEntries().forEach(function(e){ window.FLDT.paint[e.name]=e.startTime });
+    }).observe({type:'paint',buffered:true});
+  }catch(e){}
+  document.addEventListener('DOMContentLoaded',function(){window.FLDT.mark.dcl=performance.now()});
+  addEventListener('load',function(){window.FLDT.mark.load=performance.now()});
+  (function poll(){
+    var M=window.FLDT.mark;
+    if(!M.card1 && document.querySelector('.pcard')) M.card1=performance.now();
+    if(!M.cards && document.querySelectorAll('.pcard').length>=20) M.cards=performance.now();
+    var a=document.querySelector('.fl-a');
+    if(!M.mark && a && (a.getAttribute('d')||'').length>10) M.mark=performance.now();
+    if(!(M.cards&&M.mark) && performance.now()<20000) requestAnimationFrame(poll);
+  })();
 })();
 </script>
 
@@ -3711,6 +3743,16 @@ document.getElementById('nlform').addEventListener('submit',e=>{e.preventDefault
 #fld-abort{appearance:none;border:1px solid var(--line);background:transparent;
   color:var(--warn);font-family:inherit;font-size:12.5px;font-weight:600;
   border-radius:8px;padding:8px 12px;cursor:pointer;min-height:36px;flex:none}
+#fld-time{appearance:none;border:0;cursor:pointer;width:100%;font-family:inherit;
+  font-weight:600;font-size:16px;color:#04120B;background:var(--acc);border-radius:12px;
+  padding:15px 18px;margin:2px 0 10px;min-height:52px}
+#fld-time:focus-visible{outline:3px solid #fff;outline-offset:2px}
+#fld-boot.sec{background:transparent;border:1px solid var(--line);color:var(--mut);
+  font-size:14px;font-weight:500;min-height:44px;padding:11px 16px;margin:4px 0 10px}
+#fld-boot.sec:disabled{background:transparent;color:#4A5A6B}
+#fld-tsum{font-size:13.5px;line-height:1.6;margin:10px 0 12px}
+#fld-tsum:empty{display:none}
+#fld-tsum b{color:var(--acc)}
 #fld-boot{appearance:none;border:0;cursor:pointer;width:100%;font-family:inherit;
   font-weight:600;font-size:16px;color:#04120B;background:var(--acc);border-radius:12px;
   padding:15px 18px;margin:2px 0 10px;min-height:52px}
@@ -3782,7 +3824,12 @@ table.fld td.n{color:var(--mut)}
   </div>
   <div id="fld-body">
     <p id="fld-note">Tar opp bildetiden i heroen i 60 sekunder og tegner den sekund for sekund. Da ser vi om tregheten er en oppstart som går over, eller noe som slår inn med mellomrom. Panelet skjuler seg mens det måler — legg fra deg telefonen og la den ligge i ro.</p>
-    <button id="fld-boot">Mål oppstarten lag for lag</button>
+    <button id="fld-time">Hvor går sekundene?</button>
+    <div style="overflow-x:auto"><table class="fld" id="fld-ttbl" hidden>
+      <thead><tr><th>Hendelse</th><th>Tid</th></tr></thead><tbody></tbody>
+    </table></div>
+    <div id="fld-tsum"></div>
+    <button id="fld-boot" class="sec">Mål oppstarten lag for lag</button>
     <div style="overflow-x:auto"><table class="fld" id="fld-btbl" hidden>
       <thead><tr><th>Lag</th><th>Oppstart</th><th>Spart</th></tr></thead><tbody></tbody>
     </table></div>
@@ -3951,6 +3998,46 @@ function drawChart(B){
    ikke arbeidsmengden som endrer seg - da er det lagene som kastes og rastres
    paa nytt. ============================================================== */
 var STILL=document.getElementById('fld-still');
+var TIME=document.getElementById('fld-time'),
+    TTBL=document.getElementById('fld-ttbl'), TSUM=document.getElementById('fld-tsum');
+
+TIME.addEventListener('click',function(){
+  var T=window.FLDT||{long:[],paint:{},mark:{},longTotal:0};
+  var rows=[
+    ['Første maling',            T.paint['first-paint']],
+    ['Første innhold på skjerm', T.paint['first-contentful-paint']],
+    ['Markup ferdig lest',       T.mark.dcl],
+    ['Første produktkort',       T.mark.card1],
+    ['Ordmerket tegnet',         T.mark.mark],
+    ['Hele katalogen bygget',    T.mark.cards],
+    ['Alt lastet',               T.mark.load]
+  ].filter(function(r){return typeof r[1]==='number'})
+   .sort(function(a,b){return a[1]-b[1]});
+  var tb=TTBL.querySelector('tbody'); tb.innerHTML='';
+  rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+r[0]+'</td><td class="n">'+(r[1]/1000).toFixed(2)+' s</td>';
+    tb.appendChild(tr);
+  });
+  TTBL.hidden=false;
+  var L=T.long.slice().sort(function(a,b){return b.d-a.d});
+  var worst=L[0];
+  var s='Lange oppgaver på hovedtråden: <b>'+T.long.length+'</b> stykker, '+
+        'til sammen <b>'+(T.longTotal/1000).toFixed(1)+' s</b>.<br>';
+  if(worst) s+='Den lengste alene: <b>'+worst.d.toFixed(0)+' ms</b>, '+
+        (worst.t/1000).toFixed(1)+' s etter start.<br>';
+  var last=rows.length?rows[rows.length-1][1]:0;
+  if(T.longTotal>last*0.5)
+    s+='<b>Det er JavaScript, ikke tegning.</b> Mer enn halve oppstarten går med til '+
+       'arbeid på hovedtråden. Da kan den deles opp og utsettes uten å røre en '+
+       'eneste flate — heroen males ferdig først, resten bygges etterpå.';
+  else if(T.paint['first-contentful-paint']>1500)
+    s+='<b>Det er parsing og layout.</b> Lite tid går til JavaScript, men det tar '+
+       'lang tid før noe kommer på skjermen i det hele tatt.';
+  else s+='Oppstarten fordeler seg jevnt. Send skjermbildet, så leser jeg fordelingen.';
+  TSUM.innerHTML=s;
+});
+
 var BOOT=document.getElementById('fld-boot'),
     BTBL=document.getElementById('fld-btbl'), BSUM=document.getElementById('fld-bsum');
 
