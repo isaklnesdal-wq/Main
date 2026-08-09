@@ -1760,6 +1760,30 @@ function loop(){
 if(!REDUCED)requestAnimationFrame(loop);
 else{caps.forEach(c=>c.classList.remove('show'));caps[0].classList.add('show');if(l)l.classList.add('done');}
 
+/* ---- Ambient-fargen skal folge scrollen uansett -------------------------
+   Fargen ble drevet av hovedloekka alene, og loekka starter ikke naar
+   prefers-reduced-motion er paa. Da sto fargen bom stille. En tone som folger
+   hvor du er paa siden er ikke bevegelse i den forstand innstillingen handler
+   om - den skal virke ogsaa der.
+
+   Sikringen gjelder generelt: gaar loekka, roerer den ikke noe, fordi ambStep
+   stempler tidspunktet sitt og vi holder oss unna saa lenge stempelet er
+   ferskt. Stopper loekka av en hvilken som helst grunn, tar denne over.
+   Tikkeren kjorer bare mens fargen naermer seg maalet og stopper naar den er
+   framme, saa den koster ingenting naar siden staar stille. */
+(function(){
+  var tick=0;
+  function run(){
+    var before=ambP;
+    ambStep(scrollY);
+    tick = Math.abs(ambP-before)>0.0005 ? requestAnimationFrame(run) : 0;
+  }
+  addEventListener('scroll',function(){
+    if(performance.now()-ambSeen<400) return;   /* loekka gjor jobben allerede */
+    if(!tick) tick=requestAnimationFrame(run);
+  },{passive:true});
+})();
+
 /* ===== the environment's colour journey =================================
    Five keys down the document, three lights each. Between any two keys the
    channels are interpolated straight, so the room is never at a key except in
@@ -1844,7 +1868,9 @@ function ambMix(t){
   }
   return out;
 }
+let ambSeen=0;
 function ambStep(y){
+  ambSeen=performance.now();          /* saa sikringen under vet at fargen lever */
   const lim=Math.max(1,document.documentElement.scrollHeight-innerHeight);
   const target=Math.max(0,Math.min(1,y/lim));
   ambP+=(target-ambP)*0.06;
